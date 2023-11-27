@@ -33,7 +33,7 @@ def save_repo_contributors_to_neo4j(contributor: dict, repository_id: str):
         session.execute_write(lambda tx: 
             tx.run(f"""
                 MERGE (ghu:{Node.GitHubUser.value} {{id: $member.id}})
-                  SET ghu += $member, im.latestSavedAt = datetime()
+                  SET ghu += $member, ghu.latestSavedAt = datetime()
                 WITH ghu
                 MATCH (r:{Node.Repository.value} {{id: $repository_id}})
                 WITH ghu, r
