@@ -1,4 +1,4 @@
-import requests
+from .smart_proxy import get
 
 # Pull requests
 def fetch_pull_requests(owner: str, repo: str, page: int, per_page: int = 100):
@@ -18,7 +18,7 @@ def fetch_pull_requests(owner: str, repo: str, page: int, per_page: int = 100):
         "page": page,
         "state": "all",
     }
-    response = requests.get(endpoint, params=params)
+    response = get(endpoint, params=params)
     response_data = response.json()
     
     return response_data
@@ -64,7 +64,7 @@ def fetch_pull_requests_commits(owner: str, repo: str, pull_number: int, page: i
         "per_page": per_page,
         "page": page
     }
-    response = requests.get(endpoint, params=params)
+    response = get(endpoint, params=params)
     response_data = response.json()
     
     return response_data
@@ -106,7 +106,7 @@ def fetch_pull_request_comments(owner: str, repo: str, issue_number: int, page: 
     """
     endpoint = f'https://api.github.com/repos/{owner}/{repo}/issues/{issue_number}/comments'
     params = {"page": page, "per_page": per_page}
-    response = requests.get(endpoint, params=params)
+    response = get(endpoint, params=params)
     return response.json()
 
 def get_all_comments_of_pull_request(owner: str, repo: str, issue_number: int):
@@ -142,7 +142,7 @@ def fetch_pull_request_review_comments(owner: str, repo: str, pull_number: int, 
     """
     endpoint = f'https://api.github.com/repos/{owner}/{repo}/pulls/{pull_number}/comments'
     params = {"page": page, "per_page": per_page}
-    response = requests.get(endpoint, params=params)
+    response = get(endpoint, params=params)
     return response.json()
 
 def get_all_review_comments_of_pull_request(owner: str, repo: str, pull_number: int):
@@ -178,7 +178,7 @@ def fetch_review_comment_reactions(owner: str, repo: str, comment_id: int, page:
     """
     endpoint = f'https://api.github.com/repos/{owner}/{repo}/pulls/comments/{comment_id}/reactions'
     params = {"page": page, "per_page": per_page}
-    response = requests.get(endpoint, params=params)
+    response = get(endpoint, params=params)
     return response.json()
 
 def get_all_reactions_of_review_comment(owner: str, repo: str, comment_id: int):
@@ -215,7 +215,7 @@ def fetch_comment_reactions(owner: str, repo: str, comment_id: int, page: int, p
     endpoint = f'https://api.github.com/repos/{owner}/{repo}/issues/comments/{comment_id}/reactions'
     headers = {"Accept": "application/vnd.github.squirrel-girl-preview+json"}  # Custom media type is required
     params = {"page": page, "per_page": per_page}
-    response = requests.get(endpoint, headers=headers, params=params)
+    response = get(endpoint, headers=headers, params=params)
     return response.json()
 
 def get_all_reactions_of_comment(owner: str, repo: str, comment_id: int):

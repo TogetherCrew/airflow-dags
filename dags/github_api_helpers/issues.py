@@ -1,4 +1,5 @@
 import requests
+from .smart_proxy import get
 
 # Issues
 def fetch_issues(owner: str, repo: str, page: int, per_page: int = 100):
@@ -18,7 +19,7 @@ def fetch_issues(owner: str, repo: str, page: int, per_page: int = 100):
         "page": page,
         "state": "all",
     }
-    response = requests.get(endpoint, params=params)
+    response = get(endpoint, params=params)
     response_data = response.json()
 
     # Filter out pull requests
@@ -63,7 +64,7 @@ def fetch_issue_comments(owner: str, repo: str, issue_number: int, page: int, pe
     """
     endpoint = f'https://api.github.com/repos/{owner}/{repo}/issues/{issue_number}/comments'
     params = {"page": page, "per_page": per_page}
-    response = requests.get(endpoint, params=params)
+    response = get(endpoint, params=params)
     return response.json()
 
 def get_all_comments_of_issue(owner: str, repo: str, issue_number: int):

@@ -1,4 +1,5 @@
 import requests
+from .smart_proxy import get
 
 def fetch_commits(owner: str, repo: str, page: int, per_page: int = 100):
     """
@@ -16,7 +17,7 @@ def fetch_commits(owner: str, repo: str, page: int, per_page: int = 100):
         "per_page": per_page,
         "page": page
     }
-    response = requests.get(endpoint, params=params)
+    response = get(endpoint, params=params)
     response_data = response.json()
 
     return response_data
@@ -53,5 +54,5 @@ def fetch_commit_details(owner: str, repo: str, commit_sha: str):
     :return: Detailed information about the specified commit.
     """
     endpoint = f'https://api.github.com/repos/{owner}/{repo}/commits/{commit_sha}'
-    response = requests.get(endpoint)
+    response = get(endpoint)
     return response.json()

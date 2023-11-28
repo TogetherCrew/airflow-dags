@@ -1,4 +1,4 @@
-import requests
+from .smart_proxy import get
 
 def fetch_org_repos_page(org_name: str, page: int, per_page: int = 100):
     """
@@ -15,7 +15,7 @@ def fetch_org_repos_page(org_name: str, page: int, per_page: int = 100):
         "per_page": per_page,
         "page": page
     }
-    response = requests.get(endpoint, params=params)
+    response = get(endpoint, params=params)
     response_data = response.json()
 
     return response_data
@@ -57,7 +57,7 @@ def fetch_repo_contributors_page(owner: str, repo: str, page: int, per_page: int
         "per_page": per_page,
         "page": page
     }
-    response = requests.get(endpoint, params=params)
+    response = get(endpoint, params=params)
     response_data = response.json()
 
     return response_data
