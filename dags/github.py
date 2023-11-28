@@ -36,7 +36,7 @@ from neo4j_storage import (
     save_org_member_to_neo4j
 )
 
-with DAG(dag_id="github_functionality", start_date=datetime(2022, 11, 10, 12), schedule_interval=timedelta(minutes=60), catchup=False,) as dag:
+with DAG(dag_id="github_functionality", start_date=datetime(2022, 11, 27, 13), schedule_interval=timedelta(minutes=60), catchup=False,) as dag:
 
     @task
     def get_all_organization():
@@ -56,7 +56,7 @@ with DAG(dag_id="github_functionality", start_date=datetime(2022, 11, 10, 12), s
             "key": ""
         }
         
-        orgs = [rndao_org]
+        orgs = [rndao_org, toghether_crew_org]
         return orgs
 
     #region organization ETL
@@ -155,6 +155,7 @@ with DAG(dag_id="github_functionality", start_date=datetime(2022, 11, 10, 12), s
         prs = data['prs']
         repository_id = data['repo']['id']
         for pr in prs:
+            print("PR(pull-request): ", pr)
             save_pull_requests_to_neo4j(pr= pr, repository_id= repository_id)
 
         return data
@@ -190,40 +191,42 @@ with DAG(dag_id="github_functionality", start_date=datetime(2022, 11, 10, 12), s
 
     #region issues ETL
     @task
-    def extract_issue(repo):
+    def extract_issues(data):
+        repo = data['repo']
         owner = repo['owner']['login']
         repo_name = repo['name']
         issues = get_all_issues(owner= owner, repo= repo_name)
 
         print("issues IN TASK: ", issues)
-        return issues
+        return { "issues": issues, **data }
 
     @task
-    def transform_issue(issues):
-        return issues
+    def transform_issues(data):
+        return data
 
     @task
-    def load_issue(issues):
-        return issues
+    def load_issues(data):
+        return data
 
     #endregion
 
     #region commits ETL
     @task
-    def extract_commits(repo):
+    def extract_commits(data):
+        repo = data['repo']
         owner = repo['owner']['login']
         repo_name = repo['name']
         commits = get_all_commits(owner= owner, repo= repo_name)
 
-        return { "commits": commits }
+        return { "commits": commits, **data }
 
     @task
-    def transform_commits(commits):
-        return commits
+    def transform_commits(data):
+        return data
 
     @task
-    def load_commits(commits):
-        return commits
+    def load_commits(data):
+        return data
 
     #endregion
 
@@ -247,15 +250,15 @@ with DAG(dag_id="github_functionality", start_date=datetime(2022, 11, 10, 12), s
     load_contributors = load_repo_contributors.expand(data= transform_contributors)
     load_repos >> load_contributors
 
-    # prs = extract_pull_requests.expand(data= repos)
-    # transform_prs = transform_pull_requests.expand(data= prs)
-    # load_prs = load_pull_requests.expand(data= transform_prs)
+    prs = extract_pull_requests.expand(data= repos)
+    transform_prs = transform_pull_requests.expand(data= prs)
+    load_prs = load_pull_requests.expand(data= transform_prs)
     
-    # issues = extract_issue.expand(repo= repos)
-    # transform_issue = transform_issue.expand(issues= issues)
-    # load_issue = load_issue.expand(issues= transform_issue)
+    issues = extract_issues.expand(data= repos)
+    transform_issue = transform_issues.expand(data= issues)
+    load_issue = load_issues.expand(data= transform_issue)
 
-    # commits = extract_commits.expand(repo= repos)
-    # transform_comment = transform_commits.expand(commits= commits)
-    # load_comment = load_commits.expand(commits= transform_comment)
+    # commits = extract_commits.expand(data= repos)
+    # transform_comment = transform_commits.expand(data= commits)
+    # load_comment = load_commits.expand(data= transform_comment)
     
