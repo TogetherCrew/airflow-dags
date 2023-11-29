@@ -33,7 +33,8 @@ from neo4j_storage import (
     save_orgs_to_neo4j, save_repos_to_neo4j, 
     save_pull_requests_to_neo4j, 
     save_repo_contributors_to_neo4j,
-    save_org_member_to_neo4j
+    save_org_member_to_neo4j,
+    save_issue_to_neo4j
 )
 
 with DAG(dag_id="github_functionality", start_date=datetime(2022, 11, 27, 13), schedule_interval=timedelta(minutes=60), catchup=False,) as dag:
@@ -206,6 +207,13 @@ with DAG(dag_id="github_functionality", start_date=datetime(2022, 11, 27, 13), s
 
     @task
     def load_issues(data):
+
+        issues = data['issues']
+        repository_id = data['repo']['id']
+
+        for issue in issues:
+            save_issue_to_neo4j(issue= issue, repository_id= repository_id)
+
         return data
 
     #endregion
