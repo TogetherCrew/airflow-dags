@@ -1,7 +1,7 @@
 from .neo4j_connection import Neo4jConnection
 from .neo4j_enums import Node, Relationship
 
-def save_repos_to_neo4j(repo: dict):
+def save_repo_to_neo4j(repo: dict):
 
     owner = repo.pop('owner', None)
     repo.pop('permissions', None)
