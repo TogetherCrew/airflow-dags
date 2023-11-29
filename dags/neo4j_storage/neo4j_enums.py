@@ -5,8 +5,10 @@ class Node(Enum):
     GitHubUser = "GitHubUser"
     PullRequest = "PullRequest"
     Repository = "Repository"
+    Issue = "Issue"
 
 
 class Relationship(Enum):
     IS_MEMBER = "IS_MEMBER"
     IS_WITHIN = "IS_WITHIN"
+    CREATED = "CREATED"
