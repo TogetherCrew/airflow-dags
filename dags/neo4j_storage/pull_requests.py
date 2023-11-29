@@ -2,7 +2,7 @@ from .neo4j_connection import Neo4jConnection
 from .neo4j_enums import Node
 from .utils import remove_nested_collections
 
-def save_pull_requests_to_neo4j(pr: dict, repository_id: str):
+def save_pull_request_to_neo4j(pr: dict, repository_id: str):
     
     neo4jConnection = Neo4jConnection()
     driver = neo4jConnection.connect_neo4j()
