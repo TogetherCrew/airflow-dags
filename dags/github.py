@@ -27,17 +27,19 @@ from github_api_helpers import (
     get_all_pull_requests, get_all_issues, 
     get_all_commits, fetch_org_details, 
     get_all_repo_contributors,
-    get_all_org_members
+    get_all_org_members,
+    get_all_repo_labels
 )
 from neo4j_storage import (
     save_orgs_to_neo4j, save_repo_to_neo4j, 
     save_pull_request_to_neo4j, 
     save_repo_contributors_to_neo4j,
     save_org_member_to_neo4j,
-    save_issue_to_neo4j
+    save_issue_to_neo4j,
+    save_label_to_neo4j
 )
 
-with DAG(dag_id="github_functionality", start_date=datetime(2022, 11, 27, 13), schedule_interval=timedelta(minutes=60), catchup=False,) as dag:
+with DAG(dag_id="github_functionality", start_date=datetime(2022, 12, 1, 14), schedule_interval=timedelta(minutes=60), catchup=False,) as dag:
 
     @task
     def get_all_organization():
@@ -218,6 +220,31 @@ with DAG(dag_id="github_functionality", start_date=datetime(2022, 11, 27, 13), s
 
     #endregion
 
+    #region labels ETL
+    @task
+    def extract_labels(data):
+        repo = data['repo']
+        owner = repo['owner']['login']
+        repo_name = repo['name']
+        labels = get_all_repo_labels(owner= owner, repo= repo_name)
+
+        return { "labels": labels, **data }
+    
+    @task
+    def transform_labels(data):
+        return data
+    
+    @task
+    def load_labels(data):
+        labels = data['labels']
+
+        for label in labels:
+            save_label_to_neo4j(label= label)
+        
+        return data
+    
+    #endregion
+
     #region commits ETL
     @task
     def extract_commits(data):
@@ -265,6 +292,10 @@ with DAG(dag_id="github_functionality", start_date=datetime(2022, 11, 27, 13), s
     issues = extract_issues.expand(data= repos)
     transform_issue = transform_issues.expand(data= issues)
     load_issue = load_issues.expand(data= transform_issue)
+
+    labels = extract_labels.expand(data= repos)
+    transform_label = transform_labels.expand(data= labels)
+    load_label = load_labels.expand(data= transform_label)
 
     # commits = extract_commits.expand(data= repos)
     # transform_comment = transform_commits.expand(data= commits)
