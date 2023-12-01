@@ -298,6 +298,8 @@ with DAG(dag_id="github_functionality", start_date=datetime(2022, 12, 1, 14), sc
     issues = extract_issues.expand(data= repos)
     transform_issue = transform_issues.expand(data= issues)
     load_issue = load_issues.expand(data= transform_issue)
+    load_contributors >> load_issue
+    load_label >> load_issue
 
     # commits = extract_commits.expand(data= repos)
     # transform_comment = transform_commits.expand(data= commits)
