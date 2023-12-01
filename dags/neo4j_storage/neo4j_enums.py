@@ -6,6 +6,7 @@ class Node(Enum):
     PullRequest = "PullRequest"
     Repository = "Repository"
     Issue = "Issue"
+    Label = "Label"
 
 
 class Relationship(Enum):
