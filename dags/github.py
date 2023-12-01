@@ -285,17 +285,19 @@ with DAG(dag_id="github_functionality", start_date=datetime(2022, 12, 1, 14), sc
     load_contributors = load_repo_contributors.expand(data= transform_contributors)
     load_repos >> load_contributors
 
+    labels = extract_labels.expand(data= repos)
+    transform_label = transform_labels.expand(data= labels)
+    load_label = load_labels.expand(data= transform_label)
+
     prs = extract_pull_requests.expand(data= repos)
     transform_prs = transform_pull_requests.expand(data= prs)
     load_prs = load_pull_requests.expand(data= transform_prs)
+    load_contributors >> load_prs
+    load_label >> load_prs
     
     issues = extract_issues.expand(data= repos)
     transform_issue = transform_issues.expand(data= issues)
     load_issue = load_issues.expand(data= transform_issue)
-
-    labels = extract_labels.expand(data= repos)
-    transform_label = transform_labels.expand(data= labels)
-    load_label = load_labels.expand(data= transform_label)
 
     # commits = extract_commits.expand(data= repos)
     # transform_comment = transform_commits.expand(data= commits)

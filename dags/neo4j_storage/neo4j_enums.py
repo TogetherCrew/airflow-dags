@@ -15,3 +15,4 @@ class Relationship(Enum):
     CREATED = "CREATED"
     ASSIGNED = "ASSIGNED"
     IS_REVIEWER = "IS_REVIEWER"
+    HAS_LABEL = "HAS_LABEL"
