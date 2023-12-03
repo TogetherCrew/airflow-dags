@@ -1,0 +1,2 @@
+- API for getting members of organizations seems doesn't work correctly, since returns very low members
+- Some commits do not have a commiter (commiter: None), which seems odd 
