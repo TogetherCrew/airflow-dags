@@ -7,6 +7,7 @@ class Node(Enum):
     Repository = "Repository"
     Issue = "Issue"
     Label = "Label"
+    Commit = "Commit"
 
 
 class Relationship(Enum):
@@ -16,3 +17,4 @@ class Relationship(Enum):
     ASSIGNED = "ASSIGNED"
     IS_REVIEWER = "IS_REVIEWER"
     HAS_LABEL = "HAS_LABEL"
+    COMMITTED = "COMMITTED"
