@@ -36,7 +36,8 @@ from neo4j_storage import (
     save_repo_contributors_to_neo4j,
     save_org_member_to_neo4j,
     save_issue_to_neo4j,
-    save_label_to_neo4j
+    save_label_to_neo4j,
+    save_commit_to_neo4j
 )
 
 with DAG(dag_id="github_functionality", start_date=datetime(2022, 12, 1, 14), schedule_interval=timedelta(minutes=60), catchup=False,) as dag:
@@ -261,6 +262,12 @@ with DAG(dag_id="github_functionality", start_date=datetime(2022, 12, 1, 14), sc
 
     @task
     def load_commits(data):
+        commits = data['commits']
+        repository_id = data['repo']['id']
+
+        for commit in commits:
+            save_commit_to_neo4j(commit= commit, repository_id= repository_id)
+
         return data
 
     #endregion
@@ -301,7 +308,7 @@ with DAG(dag_id="github_functionality", start_date=datetime(2022, 12, 1, 14), sc
     load_contributors >> load_issue
     load_label >> load_issue
 
-    # commits = extract_commits.expand(data= repos)
-    # transform_comment = transform_commits.expand(data= commits)
-    # load_comment = load_commits.expand(data= transform_comment)
+    commits = extract_commits.expand(data= repos)
+    transform_comment = transform_commits.expand(data= commits)
+    load_comment = load_commits.expand(data= transform_comment)
     
