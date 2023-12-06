@@ -1,6 +1,6 @@
 from .smart_proxy import get
 
-# Pull requests
+
 def fetch_pull_requests(owner: str, repo: str, page: int, per_page: int = 100):
     """
     Fetches the pull requests for a specific repo in a GitHub repository.
@@ -46,7 +46,7 @@ def get_all_pull_requests(owner: str, repo: str):
 
     return all_pull_requests
 
-# Pull Request Commits
+
 def fetch_pull_requests_commits(owner: str, repo: str, pull_number: int, page: int, per_page: int = 100):
     """
     Fetches the commits for a specific pull request in a GitHub repository.
@@ -92,7 +92,7 @@ def get_all_commits_of_pull_request(owner: str, repo: str, pull_number: int):
 
     return all_commits
 
-# Pull Request Comments
+
 def fetch_pull_request_comments(owner: str, repo: str, issue_number: int, page: int, per_page: int = 30):
     """
     Fetches the comments for a specific issue page by page.
@@ -128,7 +128,7 @@ def get_all_comments_of_pull_request(owner: str, repo: str, issue_number: int):
         current_page += 1
     return all_comments
 
-# Pull Request Review Comments
+
 def fetch_pull_request_review_comments(owner: str, repo: str, pull_number: int, page: int, per_page: int = 100):
     """
     Fetches the review comments for a specific pull request page by page.
@@ -164,7 +164,7 @@ def get_all_review_comments_of_pull_request(owner: str, repo: str, pull_number: 
         current_page += 1
     return all_comments
 
-# Pull Request Review Comment Reactions
+
 def fetch_review_comment_reactions(owner: str, repo: str, comment_id: int, page: int, per_page: int = 100):
     """
     Fetches the reactions for a specific pull request comment.
@@ -200,7 +200,7 @@ def get_all_reactions_of_review_comment(owner: str, repo: str, comment_id: int):
         current_page += 1
     return all_reactions
 
-# Pull Request Comment Reactions
+
 def fetch_comment_reactions(owner: str, repo: str, comment_id: int, page: int, per_page: int = 100):
     """
     Fetches the reactions for a specific issue comment.
