@@ -4,3 +4,4 @@ from .pull_requests import save_pull_request_to_neo4j
 from .issues import save_issue_to_neo4j
 from .labels import save_label_to_neo4j
 from .commits import save_commit_to_neo4j
+from .comments import save_review_comment_to_neo4j, save_comment_to_neo4j

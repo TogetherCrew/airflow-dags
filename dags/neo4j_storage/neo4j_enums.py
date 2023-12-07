@@ -8,7 +8,8 @@ class Node(Enum):
     Issue = "Issue"
     Label = "Label"
     Commit = "Commit"
-
+    Comment = "Comment"
+    ReviewComment = "ReviewComment"
 
 class Relationship(Enum):
     IS_MEMBER = "IS_MEMBER"
@@ -18,3 +19,4 @@ class Relationship(Enum):
     IS_REVIEWER = "IS_REVIEWER"
     HAS_LABEL = "HAS_LABEL"
     COMMITTED = "COMMITTED"
+    IS_ON = "IS_ON"
