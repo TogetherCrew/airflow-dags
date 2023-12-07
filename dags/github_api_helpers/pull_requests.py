@@ -237,3 +237,37 @@ def get_all_reactions_of_comment(owner: str, repo: str, comment_id: int):
         current_page += 1
     return all_reactions
 
+def fetch_pull_request_reviews(owner: str, repo: str, pull_number: int, page: int, per_page: int = 100):
+    """
+    Fetches the reviews for a specific pull request page by page.
+
+    :param owner: The owner of the repository.
+    :param repo: The name of the repository.
+    :param pull_number: The number of the pull request.
+    :param page: The page number of the results.
+    :param per_page: The number of results per page (default is 100).
+    :return: A list of reviews for the specified pull request page.
+    """
+    endpoint = f'https://api.github.com/repos/{owner}/{repo}/pulls/{pull_number}/reviews'
+    params = {"page": page, "per_page": per_page}
+    response = get(endpoint, params=params)
+    return response.json()
+
+def get_all_reviews_of_pull_request(owner: str, repo: str, pull_number: int):
+    """
+    Retrieves all reviews for a specific pull request.
+
+    :param owner: The owner of the repository.
+    :param repo: The name of the repository.
+    :param pull_number: The number of the pull request.
+    :return: A list of all reviews for the specified pull request.
+    """
+    all_reviews = []
+    current_page = 1
+    while True:
+        reviews = fetch_pull_request_reviews(owner, repo, pull_number, current_page)
+        if not reviews:  # Break the loop if no more reviews are found
+            break
+        all_reviews.extend(reviews)
+        current_page += 1
+    return all_reviews

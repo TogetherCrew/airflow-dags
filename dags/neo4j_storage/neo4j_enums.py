@@ -17,6 +17,7 @@ class Relationship(Enum):
     CREATED = "CREATED"
     ASSIGNED = "ASSIGNED"
     IS_REVIEWER = "IS_REVIEWER"
+    REVIEWED = "REVIEWED"
     HAS_LABEL = "HAS_LABEL"
     COMMITTED = "COMMITTED"
     IS_ON = "IS_ON"

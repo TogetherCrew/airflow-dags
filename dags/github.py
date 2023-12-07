@@ -27,6 +27,7 @@ from github_api_helpers import (
     get_all_org_repos, get_all_org_repos, 
     get_all_repo_issues_and_prs_comments,
     get_all_commits, fetch_org_details, 
+    get_all_reviews_of_pull_request,
     get_all_repo_review_comments,
     get_all_repo_contributors,
     get_all_org_members,
@@ -40,11 +41,12 @@ from neo4j_storage import (
     save_org_member_to_neo4j,
     save_comment_to_neo4j,
     save_commit_to_neo4j,
+    save_review_to_neo4j,
     save_issue_to_neo4j,
     save_label_to_neo4j,
 )
 
-with DAG(dag_id="github_functionality", start_date=datetime(2022, 12, 1, 14), schedule_interval=timedelta(minutes=60), catchup=False,) as dag:
+with DAG(dag_id="github_functionality", start_date=datetime(2022, 12, 1, 14), schedule_interval=timedelta(hours=6), catchup=False,) as dag:
 
     @task
     def get_all_organization():
@@ -167,6 +169,36 @@ with DAG(dag_id="github_functionality", start_date=datetime(2022, 12, 1, 14), sc
             save_pull_request_to_neo4j(pr= pr, repository_id= repository_id)
 
         return data
+    #endregion
+
+    #region pr review ETL
+    @task
+    def extract_pr_review(data):
+        repo = data['repo']
+        owner = repo['owner']['login']
+        repo_name = repo['name']
+        prs = data['prs']
+
+        pr_reviews = {}
+        for pr in prs:
+            reviews = get_all_reviews_of_pull_request(owner= owner, repo= repo_name, pull_number= pr.get('number', None))
+            pr_reviews[pr['id']] = reviews
+
+        return { "pr_reviews": pr_reviews, **data }
+    @task
+    def transform_pr_review(data):
+        return data
+    
+    @task
+    def load_pr_review(data):
+        pr_reviews = data['pr_reviews']
+
+        for pr_id, reviews in pr_reviews.items():
+            for review in reviews:
+                save_review_to_neo4j(pr_id= pr_id, review= review)
+
+        return data
+
     #endregion
 
     #region pr review comment ETL
@@ -371,6 +403,10 @@ with DAG(dag_id="github_functionality", start_date=datetime(2022, 12, 1, 14), sc
     load_issue = load_issues.expand(data= transform_issue)
     load_contributors >> load_issue
     load_label >> load_issue
+
+    pr_reviews = extract_pr_review.expand(data= prs)
+    transform_pr_review = transform_pr_review.expand(data= pr_reviews)
+    load_pr_review = load_pr_review.expand(data= transform_pr_review)
 
     pr_review_comments = extract_pr_review_comments.expand(data= prs)
     transform_pr_review_comments = transform_pr_review_comments.expand(data= pr_review_comments)

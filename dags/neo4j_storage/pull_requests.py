@@ -79,3 +79,24 @@ def save_pull_request_to_neo4j(pr: dict, repository_id: str):
                 requested_reviewers= requested_reviewers)
         )
     driver.close()
+
+def save_review_to_neo4j(pr_id: dict, review: dict):
+    neo4jConnection = Neo4jConnection()
+    driver = neo4jConnection.connect_neo4j()
+
+    author = review.pop('user', None)
+
+    with driver.session() as session:
+        session.execute_write(lambda tx: 
+            tx.run(f"""
+                MATCH (pr:{Node.PullRequest.value} {{id: $pr_id}})
+                WITH pr
+                MERGE (ghu:{Node.GitHubUser.value} {{id: $author.id}})
+                    SET ghu += $author, ghu.latestSavedAt = datetime()
+                WITH pr, ghu
+                MERGE (ghu)-[reviewed:{Relationship.REVIEWED.value}]->(pr)
+                    SET reviewed.latestSavedAt = datetime(), reviewed.state = $review.state
+            """, pr_id= int(pr_id), author= author, review= review)
+        )
+
+    driver.close()
