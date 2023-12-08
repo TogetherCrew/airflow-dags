@@ -17,83 +17,27 @@
 # under the License.
 """Example DAG demonstrating the usage of dynamic task mapping."""
 from __future__ import annotations
-
 from datetime import datetime, timedelta
-import requests
 
 from airflow import DAG
-from airflow.decorators import task, task_group
-import requests
-from neo4j import GraphDatabase
+from airflow.decorators import task
 
-from github_api_helpers import get_all_org_repos, get_all_org_repos, get_all_pull_requests, get_all_issues, get_all_commits, fetch_org_details
+from github_api_helpers import (
+    get_all_org_repos, get_all_org_repos, 
+    get_all_pull_requests, get_all_issues, 
+    get_all_commits, fetch_org_details, 
+    get_all_repo_contributors,
+    get_all_org_members
+)
+from neo4j_storage import (
+    save_orgs_to_neo4j, save_repos_to_neo4j, 
+    save_pull_requests_to_neo4j, 
+    save_repo_contributors_to_neo4j,
+    save_org_member_to_neo4j,
+    save_issue_to_neo4j
+)
 
-
-# Neo4j connection details
-uri = "bolt://host.docker.internal:7687"
-username = "neo4j"
-password = "neo4j123456"
-
-
-def save_orgs_to_neo4j(org: dict):
-
-    driver = GraphDatabase.driver(uri, auth=(username, password), database="neo4j")
-    
-    with driver.session() as session:
-        session.execute_write(lambda tx: 
-            tx.run("""
-                MERGE (go:GitHubOrganization {id: $org.id})
-                  ON CREATE SET go += $org
-                  ON MATCH SET go += $org
-            """, org=org)
-        )
-    driver.close()
-
-def save_repos_to_neo4j(repo: dict):
-
-    owner = repo.pop('owner', None)
-    repo.pop('permissions', None)
-    repo.pop('license', None)
-
-    driver = GraphDatabase.driver(uri, auth=(username, password), database="neo4j")
-    
-    with driver.session() as session:
-        session.execute_write(lambda tx: 
-            tx.run("""
-                MERGE (r:Repository {id: $repo.id})
-                  ON CREATE SET r += $repo
-                  ON MATCH SET r += $repo
-                WITH r
-                MATCH (go:GitHubOrganization {id: $owner.id})
-                WITH r, go
-                MERGE (r)-[rel:IS_WITHIN]->(go)
-                  ON CREATE SET rel.created_at = r.created_at, rel.lastSavedAt = datetime()
-                  ON MATCH SET rel.lastSavedAt = datetime()
-            """, repo=repo, owner=owner)
-        )
-    driver.close()
-
-def save_pull_requests_to_neo4j(pr: dict):
-    
-        driver = GraphDatabase.driver(uri, auth=(username, password), database="neo4j")
-        
-        with driver.session() as session:
-            session.execute_write(lambda tx: 
-                tx.run("""
-                    MERGE (pr:PullRequest {id: $pr.id})
-                    ON CREATE SET pr += $pr
-                    ON MATCH SET pr += $pr
-                    WITH pr
-                    MATCH (r:Repository {id: $repo.id})
-                    WITH pr, r
-                    MERGE (pr)-[io:IS_ON]->(r)
-                    ON CREATE SET io.created_at = pr.created_at, io.lastSavedAt = datetime()
-                    ON MATCH SET io.lastSavedAt = datetime()
-                """, pr=pr, repo={"id": "test"})
-            )
-        driver.close()
-
-with DAG(dag_id="github_functionality", start_date=datetime(2022, 11, 10, 12), schedule_interval=timedelta(minutes=60), catchup=False,) as dag:
+with DAG(dag_id="github_functionality", start_date=datetime(2022, 11, 27, 13), schedule_interval=timedelta(minutes=60), catchup=False,) as dag:
 
     @task
     def get_all_organization():
@@ -113,9 +57,10 @@ with DAG(dag_id="github_functionality", start_date=datetime(2022, 11, 10, 12), s
             "key": ""
         }
         
-        orgs = [toghether_crew_org, rndao_org]
+        orgs = [rndao_org, toghether_crew_org]
         return orgs
 
+    #region organization ETL
     @task
     def extract_github_organization(organization):
         organization_name = organization['name']
@@ -134,6 +79,32 @@ with DAG(dag_id="github_functionality", start_date=datetime(2022, 11, 10, 12), s
         save_orgs_to_neo4j(organization_info)
         return organization
 
+    #endregion
+    
+    #region organization members ETL
+    @task
+    def extract_github_organization_members(organization):
+        organization_name = organization['organization_basic']['name']
+        members = get_all_org_members(org= organization_name)
+
+        return { "organization_members": members, **organization }
+    @task
+    def transform_github_organization_members(data):
+        print("data: ", data)
+        return data
+    @task
+    def load_github_organization_members(data):
+        members = data['organization_members']
+        org_id = data['organization_info']['id']
+
+        for member in members:
+            save_org_member_to_neo4j(org_id= org_id, member= member)
+        
+        return data
+
+    #endregion
+
+    #region github repos ETL
     @task
     def extract_github_repos(organizations):
         all_repos = []
@@ -158,7 +129,9 @@ with DAG(dag_id="github_functionality", start_date=datetime(2022, 11, 10, 12), s
 
         save_repos_to_neo4j(repo)
         return repo
+    #endregion
 
+    #region pull requests ETL
     @task
     def extract_pull_requests(data):
         repo = data['repo']
@@ -166,7 +139,8 @@ with DAG(dag_id="github_functionality", start_date=datetime(2022, 11, 10, 12), s
         repo_name = repo['name']
 
         prs = get_all_pull_requests(owner= owner, repo= repo_name)
-        print("prs IN TASK: ", prs)
+        for pr in prs:
+            print("pr: ", pr, end="\n\n")
         
         new_data = { "prs": prs, **data }
         return new_data
@@ -179,59 +153,120 @@ with DAG(dag_id="github_functionality", start_date=datetime(2022, 11, 10, 12), s
     @task
     def load_pull_requests(data):
         print("prs IN REQUESTS: ", data)
+        prs = data['prs']
+        repository_id = data['repo']['id']
+        for pr in prs:
+            print("PR(pull-request): ", pr)
+            save_pull_requests_to_neo4j(pr= pr, repository_id= repository_id)
+
+        return data
+    #endregion
+
+    #region repo contributors ETL
+    @task
+    def extract_repo_contributors(data):
+        repo = data['repo']
+        repo_name = repo['name']
+        owner = repo['owner']['login']
+        contributors = get_all_repo_contributors(owner= owner, repo= repo_name)
+
+        return { "contributors": contributors, **data }
+    
+    @task 
+    def transform_repo_contributors(data):
+        print("contributors IN TRANSFORM: ", data)
+        return data
+    
+    @task
+    def load_repo_contributors(data):
+
+        contributors = data['contributors']
+        repository_id = data['repo']['id']
+
+        for contributor in contributors:
+            save_repo_contributors_to_neo4j(contributor= contributor, repository_id= repository_id)
+
         return data
 
+    #endregion
+
+    #region issues ETL
     @task
-    def extract_issue(repo):
+    def extract_issues(data):
+        repo = data['repo']
         owner = repo['owner']['login']
         repo_name = repo['name']
         issues = get_all_issues(owner= owner, repo= repo_name)
 
         print("issues IN TASK: ", issues)
-        return issues
+        return { "issues": issues, **data }
 
     @task
-    def transform_issue(issues):
-        return issues
+    def transform_issues(data):
+        return data
 
     @task
-    def load_issue(issues):
-        return issues
+    def load_issues(data):
 
+        issues = data['issues']
+        repository_id = data['repo']['id']
+
+        for issue in issues:
+            save_issue_to_neo4j(issue= issue, repository_id= repository_id)
+
+        return data
+
+    #endregion
+
+    #region commits ETL
     @task
-    def extract_commits(repo):
+    def extract_commits(data):
+        repo = data['repo']
         owner = repo['owner']['login']
         repo_name = repo['name']
         commits = get_all_commits(owner= owner, repo= repo_name)
 
-        return { "commits": commits }
+        return { "commits": commits, **data }
 
     @task
-    def transform_commits(commits):
-        return commits
+    def transform_commits(data):
+        return data
 
     @task
-    def load_commits(commits):
-        return commits
+    def load_commits(data):
+        return data
+
+    #endregion
 
     orgs = get_all_organization()
     orgs_info = extract_github_organization.expand(organization= orgs)
     transform_orgs = transform_github_organization.expand(organization= orgs_info)
     load_orgs = load_github_organization.expand(organization= transform_orgs)
 
+    orgs_members = extract_github_organization_members.expand(organization= orgs_info)
+    transform_orgs_members = transform_github_organization_members.expand(data= orgs_members)
+    load_orgs_members = load_github_organization_members.expand(data= transform_orgs_members)
+    load_orgs >> load_orgs_members
+
     repos = extract_github_repos(organizations= orgs_info)
     transform_repos = transform_github_repos.expand(repo= repos)
     load_repos = load_github_repos.expand(repo= transform_repos)
-    
-    # prs = extract_pull_requests.expand(data= repos)
-    # transform_prs = transform_pull_requests.expand(data= prs)
-    # load_prs = load_pull_requests.expand(data= transform_prs)
-    
-    # issues = extract_issue.expand(repo= repos)
-    # transform_issue = transform_issue.expand(issues= issues)
-    # load_issue = load_issue.expand(issues= transform_issue)
+    load_orgs >> load_repos
 
-    # commits = extract_commits.expand(repo= repos)
-    # transform_comment = transform_commits.expand(commits= commits)
-    # load_comment = load_commits.expand(commits= transform_comment)
+    contributors = extract_repo_contributors.expand(data= repos)
+    transform_contributors = transform_repo_contributors.expand(data= contributors)
+    load_contributors = load_repo_contributors.expand(data= transform_contributors)
+    load_repos >> load_contributors
+
+    prs = extract_pull_requests.expand(data= repos)
+    transform_prs = transform_pull_requests.expand(data= prs)
+    load_prs = load_pull_requests.expand(data= transform_prs)
+    
+    issues = extract_issues.expand(data= repos)
+    transform_issue = transform_issues.expand(data= issues)
+    load_issue = load_issues.expand(data= transform_issue)
+
+    # commits = extract_commits.expand(data= repos)
+    # transform_comment = transform_commits.expand(data= commits)
+    # load_comment = load_commits.expand(data= transform_comment)
     
