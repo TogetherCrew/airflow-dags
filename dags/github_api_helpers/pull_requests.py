@@ -237,6 +237,7 @@ def get_all_reactions_of_comment(owner: str, repo: str, comment_id: int):
         current_page += 1
     return all_reactions
 
+
 def fetch_pull_request_reviews(owner: str, repo: str, pull_number: int, page: int, per_page: int = 100):
     """
     Fetches the reviews for a specific pull request page by page.
@@ -271,3 +272,46 @@ def get_all_reviews_of_pull_request(owner: str, repo: str, pull_number: int):
         all_reviews.extend(reviews)
         current_page += 1
     return all_reviews
+
+
+def fetch_pull_request_files_page(owner: str, repo: str, pull_number: int, page: int, per_page: int = 30):
+    """
+    Fetches the files of a specific pull request in a GitHub repository.
+
+    :param owner: The owner of the repository.
+    :param repo: The name of the repository.
+    :param pull_number: The number of the pull request.
+    :param page: The page number of the results.
+    :param per_page: The number of results per page (default is 30).
+    :return: A list of files for the specified pull request.
+    """
+    endpoint = f'https://api.github.com/repos/{owner}/{repo}/pulls/{pull_number}/files'
+
+    params = {
+        "per_page": per_page,
+        "page": page
+    }
+    response = get(endpoint, params=params)
+    response_data = response.json()
+
+    return response_data
+
+def get_all_pull_request_files(owner: str, repo: str, pull_number: int):
+    """
+    Retrieves all files for a specified pull request in a GitHub repository.
+
+    :param owner: The owner of the repository.
+    :param repo: The name of the repository.
+    :param pull_number: The number of the pull request.
+    :return: A list of all files for the specified pull request.
+    """
+    files = []
+    page = 1
+    while True:
+        page_files = fetch_pull_request_files_page(owner, repo, pull_number, page)
+        if not page_files:
+            break
+        files.extend(page_files)
+        page += 1
+
+    return files
