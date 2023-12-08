@@ -1,5 +1,5 @@
-#
 # Licensed to the Apache Software Foundation (ASF) under one
+#
 # or more contributor license agreements.  See the NOTICE file
 # distributed with this work for additional information
 # regarding copyright ownership.  The ASF licenses this file
@@ -23,21 +23,30 @@ from airflow import DAG
 from airflow.decorators import task
 
 from github_api_helpers import (
-    get_all_org_repos, get_all_org_repos, 
     get_all_pull_requests, get_all_issues, 
+    get_all_org_repos, get_all_org_repos, 
+    get_all_repo_issues_and_prs_comments,
     get_all_commits, fetch_org_details, 
+    get_all_reviews_of_pull_request,
+    get_all_repo_review_comments,
     get_all_repo_contributors,
-    get_all_org_members
+    get_all_org_members,
+    get_all_repo_labels,
 )
 from neo4j_storage import (
     save_orgs_to_neo4j, save_repo_to_neo4j, 
-    save_pull_request_to_neo4j, 
     save_repo_contributors_to_neo4j,
+    save_review_comment_to_neo4j,
+    save_pull_request_to_neo4j, 
     save_org_member_to_neo4j,
-    save_issue_to_neo4j
+    save_comment_to_neo4j,
+    save_commit_to_neo4j,
+    save_review_to_neo4j,
+    save_issue_to_neo4j,
+    save_label_to_neo4j,
 )
 
-with DAG(dag_id="github_functionality", start_date=datetime(2022, 11, 27, 13), schedule_interval=timedelta(minutes=60), catchup=False,) as dag:
+with DAG(dag_id="github_functionality", start_date=datetime(2022, 12, 1, 14), schedule_interval=timedelta(hours=6), catchup=False,) as dag:
 
     @task
     def get_all_organization():
@@ -162,6 +171,96 @@ with DAG(dag_id="github_functionality", start_date=datetime(2022, 11, 27, 13), s
         return data
     #endregion
 
+    #region pr review ETL
+    @task
+    def extract_pr_review(data):
+        repo = data['repo']
+        owner = repo['owner']['login']
+        repo_name = repo['name']
+        prs = data['prs']
+
+        pr_reviews = {}
+        for pr in prs:
+            reviews = get_all_reviews_of_pull_request(owner= owner, repo= repo_name, pull_number= pr.get('number', None))
+            pr_reviews[pr['id']] = reviews
+
+        return { "pr_reviews": pr_reviews, **data }
+    @task
+    def transform_pr_review(data):
+        return data
+    
+    @task
+    def load_pr_review(data):
+        pr_reviews = data['pr_reviews']
+
+        for pr_id, reviews in pr_reviews.items():
+            for review in reviews:
+                save_review_to_neo4j(pr_id= pr_id, review= review)
+
+        return data
+
+    #endregion
+
+    #region pr review comment ETL
+
+    @task
+    def extract_pr_review_comments(data):
+        repo = data['repo']
+        owner = repo['owner']['login']
+        repo_name = repo['name']
+
+        review_comments = get_all_repo_review_comments(owner= owner, repo= repo_name)
+        for review_comment in review_comments:
+            print("review_comment: ", review_comment, end="\n\n")
+
+        return { "review_comments": review_comments, **data }
+
+    @task
+    def transform_pr_review_comments(data):
+        return data
+    
+    @task
+    def load_pr_review_comments(data):
+        review_comments = data['review_comments']
+        repository_id = data['repo']['id']
+
+        for review_comment in review_comments:
+            save_review_comment_to_neo4j(review_comment= review_comment, repository_id= repository_id)
+
+        return data
+
+    #endregion
+
+    #region pr & issue comments ETL
+    @task
+    def extract_pr_issue_comments(data):
+        repo = data['repo']
+        owner = repo['owner']['login']
+        repo_name = repo['name']
+
+        comments = get_all_repo_issues_and_prs_comments(owner= owner, repo= repo_name)
+        for comment in comments:
+            print("comment: ", comment, end="\n\n")
+
+        return { "comments": comments, **data }
+    
+    @task
+    def transform_pr_issue_comments(data):
+        return data
+    
+    @task
+    def load_pr_issue_comments(data):
+        comments = data['comments']
+        repository_id = data['repo']['id']
+
+        print("Len(comments): ", len(comments))
+        for comment in comments:
+            save_comment_to_neo4j(comment= comment, repository_id= repository_id)
+
+        return data
+
+    #endregion
+
     #region repo contributors ETL
     @task
     def extract_repo_contributors(data):
@@ -218,6 +317,31 @@ with DAG(dag_id="github_functionality", start_date=datetime(2022, 11, 27, 13), s
 
     #endregion
 
+    #region labels ETL
+    @task
+    def extract_labels(data):
+        repo = data['repo']
+        owner = repo['owner']['login']
+        repo_name = repo['name']
+        labels = get_all_repo_labels(owner= owner, repo= repo_name)
+
+        return { "labels": labels, **data }
+    
+    @task
+    def transform_labels(data):
+        return data
+    
+    @task
+    def load_labels(data):
+        labels = data['labels']
+
+        for label in labels:
+            save_label_to_neo4j(label= label)
+        
+        return data
+    
+    #endregion
+
     #region commits ETL
     @task
     def extract_commits(data):
@@ -234,6 +358,12 @@ with DAG(dag_id="github_functionality", start_date=datetime(2022, 11, 27, 13), s
 
     @task
     def load_commits(data):
+        commits = data['commits']
+        repository_id = data['repo']['id']
+
+        for commit in commits:
+            save_commit_to_neo4j(commit= commit, repository_id= repository_id)
+
         return data
 
     #endregion
@@ -258,15 +388,38 @@ with DAG(dag_id="github_functionality", start_date=datetime(2022, 11, 27, 13), s
     load_contributors = load_repo_contributors.expand(data= transform_contributors)
     load_repos >> load_contributors
 
+    labels = extract_labels.expand(data= repos)
+    transform_label = transform_labels.expand(data= labels)
+    load_label = load_labels.expand(data= transform_label)
+
     prs = extract_pull_requests.expand(data= repos)
     transform_prs = transform_pull_requests.expand(data= prs)
     load_prs = load_pull_requests.expand(data= transform_prs)
-    
+    load_contributors >> load_prs
+    load_label >> load_prs
+
     issues = extract_issues.expand(data= repos)
     transform_issue = transform_issues.expand(data= issues)
     load_issue = load_issues.expand(data= transform_issue)
+    load_contributors >> load_issue
+    load_label >> load_issue
 
-    # commits = extract_commits.expand(data= repos)
-    # transform_comment = transform_commits.expand(data= commits)
-    # load_comment = load_commits.expand(data= transform_comment)
+    pr_reviews = extract_pr_review.expand(data= prs)
+    transform_pr_review = transform_pr_review.expand(data= pr_reviews)
+    load_pr_review = load_pr_review.expand(data= transform_pr_review)
+
+    pr_review_comments = extract_pr_review_comments.expand(data= prs)
+    transform_pr_review_comments = transform_pr_review_comments.expand(data= pr_review_comments)
+    load_pr_review_comments = load_pr_review_comments.expand(data= transform_pr_review_comments)
+    load_prs >> load_pr_review_comments
+
+    pr_issue_comments = extract_pr_issue_comments.expand(data= prs)
+    transformed_pr_issue_comments = transform_pr_issue_comments.expand(data= pr_issue_comments)
+    loaded_pr_issue_comments = load_pr_issue_comments.expand(data= transformed_pr_issue_comments)
+    load_prs >> loaded_pr_issue_comments
+    load_issue >> loaded_pr_issue_comments
+
+    commits = extract_commits.expand(data= repos)
+    transform_comment = transform_commits.expand(data= commits)
+    load_comment = load_commits.expand(data= transform_comment)
     

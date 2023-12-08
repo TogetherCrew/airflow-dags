@@ -11,7 +11,6 @@ def save_pull_request_to_neo4j(pr: dict, repository_id: str):
     assignee = pr.pop('assignee', None)
     assignees = pr.pop('assignees', None)
     requested_reviewers = pr.pop('requested_reviewers', None)
-    # TODO: Do it after extracting labels
     labels = pr.pop('labels', None)
     cleaned_pr = remove_nested_collections(pr)
     
@@ -47,6 +46,16 @@ def save_pull_request_to_neo4j(pr: dict, repository_id: str):
             SET isreviewerghu.latestSavedAt = datetime()
     """
 
+    labels_query = f"""
+        WITH pr
+        UNWIND $labels as label
+        MERGE (lb:{Node.Label.value} {{id: label.id}})
+            SET lb += label, lb.latestSavedAt = datetime()
+        WITH pr, lb
+        MERGE (pr)-[haslb:{Relationship.HAS_LABEL.value}]->(lb)
+            SET haslb.latestSavedAt = datetime()
+    """
+
     with driver.session() as session:
         session.execute_write(lambda tx: 
             tx.run(f"""
@@ -63,7 +72,31 @@ def save_pull_request_to_neo4j(pr: dict, repository_id: str):
                 { assignee_query }
                 { assignees_query }
                 { requested_reviewers_query }
+                { labels_query  }
 
-            """, pr= cleaned_pr, repository_id= repository_id, repo_creator= repo_creator, assignee= assignee, assignees= assignees, requested_reviewers= requested_reviewers)
+            """, pr= cleaned_pr, repository_id= repository_id, repo_creator= repo_creator, 
+                assignee= assignee, assignees= assignees, labels= labels, 
+                requested_reviewers= requested_reviewers)
         )
+    driver.close()
+
+def save_review_to_neo4j(pr_id: dict, review: dict):
+    neo4jConnection = Neo4jConnection()
+    driver = neo4jConnection.connect_neo4j()
+
+    author = review.pop('user', None)
+
+    with driver.session() as session:
+        session.execute_write(lambda tx: 
+            tx.run(f"""
+                MATCH (pr:{Node.PullRequest.value} {{id: $pr_id}})
+                WITH pr
+                MERGE (ghu:{Node.GitHubUser.value} {{id: $author.id}})
+                    SET ghu += $author, ghu.latestSavedAt = datetime()
+                WITH pr, ghu
+                MERGE (ghu)-[reviewed:{Relationship.REVIEWED.value}]->(pr)
+                    SET reviewed.latestSavedAt = datetime(), reviewed.state = $review.state
+            """, pr_id= int(pr_id), author= author, review= review)
+        )
+
     driver.close()
