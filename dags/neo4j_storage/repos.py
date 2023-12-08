@@ -1,11 +1,11 @@
 from .neo4j_connection import Neo4jConnection
 from .neo4j_enums import Node, Relationship
+from .utils import flat_map
 
-def save_repos_to_neo4j(repo: dict):
+def save_repo_to_neo4j(repo: dict):
 
     owner = repo.pop('owner', None)
-    repo.pop('permissions', None)
-    repo.pop('license', None)
+    cleaned_repo = flat_map(repo)
 
     neo4jConnection = Neo4jConnection()
     driver = neo4jConnection.connect_neo4j()
@@ -20,7 +20,7 @@ def save_repos_to_neo4j(repo: dict):
                 WITH r, go
                 MERGE (r)-[rel:{Relationship.IS_WITHIN.value}]->(go)
                   SET rel.latestSavedAt = datetime()
-            """, repo=repo, owner=owner)
+            """, repo=cleaned_repo, owner=owner)
         )
     driver.close()
 

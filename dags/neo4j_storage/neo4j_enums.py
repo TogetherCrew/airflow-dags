@@ -12,3 +12,5 @@ class Relationship(Enum):
     IS_MEMBER = "IS_MEMBER"
     IS_WITHIN = "IS_WITHIN"
     CREATED = "CREATED"
+    ASSIGNED = "ASSIGNED"
+    IS_REVIEWER = "IS_REVIEWER"

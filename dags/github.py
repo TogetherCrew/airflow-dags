@@ -30,8 +30,8 @@ from github_api_helpers import (
     get_all_org_members
 )
 from neo4j_storage import (
-    save_orgs_to_neo4j, save_repos_to_neo4j, 
-    save_pull_requests_to_neo4j, 
+    save_orgs_to_neo4j, save_repo_to_neo4j, 
+    save_pull_request_to_neo4j, 
     save_repo_contributors_to_neo4j,
     save_org_member_to_neo4j,
     save_issue_to_neo4j
@@ -127,7 +127,7 @@ with DAG(dag_id="github_functionality", start_date=datetime(2022, 11, 27, 13), s
         repo = repo['repo']
         print("LOAD REPO: ", repo)
 
-        save_repos_to_neo4j(repo)
+        save_repo_to_neo4j(repo)
         return repo
     #endregion
 
@@ -157,7 +157,7 @@ with DAG(dag_id="github_functionality", start_date=datetime(2022, 11, 27, 13), s
         repository_id = data['repo']['id']
         for pr in prs:
             print("PR(pull-request): ", pr)
-            save_pull_requests_to_neo4j(pr= pr, repository_id= repository_id)
+            save_pull_request_to_neo4j(pr= pr, repository_id= repository_id)
 
         return data
     #endregion
