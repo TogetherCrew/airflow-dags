@@ -1,3 +1,6 @@
+import os
+
+from dotenv import load_dotenv
 from neo4j import GraphDatabase, Driver
 
 
@@ -12,11 +15,19 @@ class Neo4jConnection:
         return cls.instance
 
     def connect_neo4j(self) -> Driver:
+        load_dotenv()
+
+        protocol = os.getenv("NEO4J_PROTOCOL", "bolt")
+        host = os.getenv("NEO4J_HOST", "")
+        port = os.getenv("NEO4J_PORT", "")
+        user = os.getenv("NEO4J_USER", "")
+        password = os.getenv("NEO4J_PASSWORD", "")
+
+        neo4j_db = os.getenv("NEO4J_DB", "neo4j")
+
         # Neo4j connection details
-        uri = "bolt://host.docker.internal:7687"
-        username = "neo4j"
-        password = "neo4j123456"
+        uri = f"{protocol}://{host}:{port}"
 
         # Connect to the neo4j instance
-        driver = GraphDatabase.driver(uri, auth=(username, password), database="neo4j")
+        driver = GraphDatabase.driver(uri, auth=(user, password), database=neo4j_db)
         return driver
