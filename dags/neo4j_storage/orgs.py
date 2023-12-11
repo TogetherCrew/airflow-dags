@@ -1,5 +1,37 @@
 from .neo4j_connection import Neo4jConnection
 from .neo4j_enums import Node, Relationship
+from neo4j.time import DateTime as Neo4jDateTime
+
+def get_orgs_profile_from_neo4j():
+    neo4jConnection = Neo4jConnection()
+    driver = neo4jConnection.connect_neo4j()
+    
+    def do_cypher_tx(tx, cypher):
+        # TODO: should be refactored
+        result = tx.run(cypher)
+        values = [record for record in result]
+        
+        records = []
+        for value in values:
+            record = {}
+            for k, v in value[0].items():
+                if isinstance(v, Neo4jDateTime):
+                    record[k] = v.isoformat()
+                else:
+                    record[k] = v
+            records.append(record)
+
+        return records
+
+    with driver.session() as session:
+        orgs = session.execute_read(do_cypher_tx, f"""
+                MATCH (op:{Node.OrganizationProfile.value})
+                RETURN op
+            """
+        )
+    driver.close()
+    
+    return orgs
 
 def save_orgs_to_neo4j(org: dict):
 
