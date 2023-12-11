@@ -37,6 +37,7 @@ from neo4j_storage import (
     save_orgs_to_neo4j, save_repo_to_neo4j, 
     save_repo_contributors_to_neo4j,
     save_review_comment_to_neo4j,
+    get_orgs_profile_from_neo4j,
     save_pull_request_to_neo4j, 
     save_org_member_to_neo4j,
     save_comment_to_neo4j,
@@ -50,24 +51,25 @@ with DAG(dag_id="github_functionality", start_date=datetime(2022, 12, 1, 14), sc
 
     @task
     def get_all_organization():
-        # Get the list from the database
-        toghether_crew_org = {
-            "id": 1,
-            "name": "TogetherCrew",
-            "description": "TogetherCrew is a community of developers, designers, and creators who are passionate about building and learning together.",
-            "url": "",
-            "key": ""
-        }
-        rndao_org = {
-            "id": 2,
-            "name": "RnDAO",
-            "description": "RnDAO is a community of developers, designers, and creators who are passionate about building and learning together.",
-            "url": "",
-            "key": ""
-        }
-        
-        orgs = [rndao_org, toghether_crew_org]
+        orgs = get_orgs_profile_from_neo4j()
         return orgs
+
+        #! for testing 
+        # toghether_crew_org = {
+        #     "id": 1,
+        #     "name": "TogetherCrew",
+        #     "description": "TogetherCrew is a community of developers, designers, and creators who are passionate about building and learning together.",
+        #     "url": "",
+        #     "key": ""
+        # }
+        # rndao_org = {
+        #     "id": 2,
+        #     "name": "RnDAO",
+        #     "description": "RnDAO is a community of developers, designers, and creators who are passionate about building and learning together.",
+        #     "url": "",
+        #     "key": ""
+        # }
+        # orgs = [rndao_org, toghether_crew_org]
 
     #region organization ETL
     @task
