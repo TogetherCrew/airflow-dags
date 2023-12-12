@@ -11,6 +11,7 @@ class Node(Enum):
     Commit = "Commit"
     Comment = "Comment"
     ReviewComment = "ReviewComment"
+    File = "File"
 
 class Relationship(Enum):
     IS_MEMBER = "IS_MEMBER"
@@ -22,3 +23,4 @@ class Relationship(Enum):
     HAS_LABEL = "HAS_LABEL"
     COMMITTED = "COMMITTED"
     IS_ON = "IS_ON"
+    CHANGED = "CHANGED"

@@ -30,12 +30,16 @@ from github_api_helpers import (
     get_all_reviews_of_pull_request,
     get_all_repo_review_comments,
     get_all_repo_contributors,
+    get_all_pull_request_files,
     get_all_org_members,
     get_all_repo_labels,
+    fetch_commit_files,
 )
 from neo4j_storage import (
     save_orgs_to_neo4j, save_repo_to_neo4j, 
+    save_commit_files_changes_to_neo4j,
     save_repo_contributors_to_neo4j,
+    save_pr_files_changes_to_neo4j,
     save_review_comment_to_neo4j,
     get_orgs_profile_from_neo4j,
     save_pull_request_to_neo4j, 
@@ -171,6 +175,37 @@ with DAG(dag_id="github_functionality", start_date=datetime(2022, 12, 1, 14), sc
             save_pull_request_to_neo4j(pr= pr, repository_id= repository_id)
 
         return data
+    #endregion
+
+    #region pull request files changes ETL
+    @task
+    def extract_pull_request_files_changes(data):
+        repo = data['repo']
+        owner = repo['owner']['login']
+        repo_name = repo['name']
+        prs = data['prs']
+
+        pr_files_changes = {}
+        for pr in prs:
+            files_changes = get_all_pull_request_files(owner= owner, repo= repo_name, pull_number= pr.get('number', None))
+            pr_files_changes[pr['id']] = files_changes
+
+        return { "pr_files_changes": pr_files_changes, **data }
+    
+    @task
+    def transform_pull_request_files_changes(data):
+        return data
+    
+    @task
+    def load_pull_request_files_changes(data):
+        pr_files_changes = data['pr_files_changes']
+        repository_id = data['repo']['id']
+
+        for pr_id, files_changes in pr_files_changes.items():
+            save_pr_files_changes_to_neo4j(pr_id= pr_id, repository_id= repository_id, file_changes= files_changes)
+
+        return data
+    
     #endregion
 
     #region pr review ETL
@@ -370,6 +405,38 @@ with DAG(dag_id="github_functionality", start_date=datetime(2022, 12, 1, 14), sc
 
     #endregion
 
+    #region commits files changes ETL
+    @task
+    def extract_commits_files_changes(data):
+        repo = data['repo']
+        owner = repo['owner']['login']
+        repo_name = repo['name']
+        commits = data['commits']
+
+        commits_files_changes = {}
+        for commit in commits:
+            sha = commit['sha']
+            files_changes = fetch_commit_files(owner= owner, repo= repo_name, sha= sha)
+            commits_files_changes[sha] = files_changes
+
+        return { "commits_files_changes": commits_files_changes, **data }
+    
+    @task
+    def transform_commits_files_changes(data):
+        return data
+    
+    @task
+    def load_commits_files_changes(data):
+        commits_files_changes = data['commits_files_changes']
+        repository_id = data['repo']['id']
+
+        for sha, files_changes in commits_files_changes.items():
+            save_commit_files_changes_to_neo4j(commit_sha= sha, repository_id= repository_id, file_changes= files_changes)
+
+        return data
+    
+    #endregion
+
     orgs = get_all_organization()
     orgs_info = extract_github_organization.expand(organization= orgs)
     transform_orgs = transform_github_organization.expand(organization= orgs_info)
@@ -400,6 +467,10 @@ with DAG(dag_id="github_functionality", start_date=datetime(2022, 12, 1, 14), sc
     load_contributors >> load_prs
     load_label >> load_prs
 
+    pr_files_changes = extract_pull_request_files_changes.expand(data= prs)
+    transform_pr_files_changes = transform_pull_request_files_changes.expand(data= pr_files_changes)
+    load_pr_files_changes = load_pull_request_files_changes.expand(data= transform_pr_files_changes)
+
     issues = extract_issues.expand(data= repos)
     transform_issue = transform_issues.expand(data= issues)
     load_issue = load_issues.expand(data= transform_issue)
@@ -425,3 +496,8 @@ with DAG(dag_id="github_functionality", start_date=datetime(2022, 12, 1, 14), sc
     transform_comment = transform_commits.expand(data= commits)
     load_comment = load_commits.expand(data= transform_comment)
     
+    commits_files_changes = extract_commits_files_changes.expand(data= commits)
+    transform_commits_files_changes = transform_commits_files_changes.expand(data= commits_files_changes)
+    load_commits_files_changes = load_commits_files_changes.expand(data= transform_commits_files_changes)
+    load_comment >> load_commits_files_changes
+    load_pr_files_changes >> load_commits_files_changes

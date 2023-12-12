@@ -56,3 +56,18 @@ def fetch_commit_details(owner: str, repo: str, commit_sha: str):
     endpoint = f'https://api.github.com/repos/{owner}/{repo}/commits/{commit_sha}'
     response = get(endpoint)
     return response.json()
+
+def fetch_commit_files(owner: str, repo: str, sha: str):
+    """
+    Retrieves the files changed in a specific commit of a GitHub repository.
+
+    :param owner: The owner of the repository.
+    :param repo: The name of the repository.
+    :param sha: The SHA identifier of the commit.
+    :return: A list of files changed in the specified commit.
+    """
+    commit_details = fetch_commit_details(owner, repo, sha)
+    if 'files' in commit_details:
+        return commit_details['files']
+    else:
+        return []

@@ -33,3 +33,23 @@ def save_commit_to_neo4j(commit: dict, repository_id: str):
 
     driver.close()
 
+def save_commit_files_changes_to_neo4j(commit_sha: str, repository_id: str, file_changes: list):
+    
+    neo4jConnection = Neo4jConnection()
+    driver = neo4jConnection.connect_neo4j()
+
+    with driver.session() as session:
+        session.execute_write(lambda tx: 
+            tx.run(f"""
+                MATCH (repo:{Node.Repository.value} {{id: $repository_id}}), (c:{Node.Commit.value} {{sha: $commit_sha}})
+                WITH repo, c
+                UNWIND $file_changes AS file_change
+                MERGE (f:{Node.File.value} {{sha: file_change.sha, filename: file_change.filename}})
+                    SET f += file_change, f.latestSavedAt = datetime()
+                MERGE (c)-[fc:{Relationship.CHANGED.value}]->(f)
+                    SET fc.latestSavedAt = datetime()
+                MERGE (f)-[io:{Relationship.IS_ON.value}]->(repo)
+                    SET io.latestSavedAt = datetime()
+            """, commit_sha= commit_sha, repository_id= repository_id, file_changes= file_changes))
+
+    driver.close()
