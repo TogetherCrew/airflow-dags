@@ -274,7 +274,7 @@ def get_all_reviews_of_pull_request(owner: str, repo: str, pull_number: int):
     return all_reviews
 
 
-def fetch_pull_request_files_page(owner: str, repo: str, pull_number: int, page: int, per_page: int = 30):
+def fetch_pull_request_files_page(owner: str, repo: str, pull_number: int, page: int, per_page: int = 100):
     """
     Fetches the files of a specific pull request in a GitHub repository.
 
