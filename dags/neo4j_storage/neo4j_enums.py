@@ -1,6 +1,7 @@
 from enum import Enum
 
 class Node(Enum):
+    OrganizationProfile = "OrganizationProfile" # This node is created by the API, and we receive a list of organizations detail to extract data from
     GitHubOrganization = "GitHubOrganization"
     GitHubUser = "GitHubUser"
     PullRequest = "PullRequest"
