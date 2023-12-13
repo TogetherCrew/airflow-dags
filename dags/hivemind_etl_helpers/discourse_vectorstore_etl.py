@@ -27,20 +27,20 @@ def process_discourse_vectorstore(community_id: str) -> None:
 
     neo4j = Neo4jConnection()
 
-    # query = """
-    #     MATCH (f:DiscourseForum) -[:IS_WITHIN]->(c:Community {id: $communityId})
-    #     RETURN f.uuid as uuid, f.endpoint as endpoint
-    # """
-    # forums, _, _ = neo4j.neo4j_ops.neo4j_driver.execute_query(
-    #     query, communityId=community_id
-    # )
+    query = """
+        MATCH (f:DiscourseForum) -[:IS_WITHIN]->(c:Community {id: $communityId})
+        RETURN f.uuid as uuid, f.endpoint as endpoint
+    """
+    forums, _, _ = neo4j.neo4j_ops.neo4j_driver.execute_query(
+        query, communityId=community_id
+    )
 
-    forums = [
-        {
-            "uuid": "10392ca2-c721-4aba-a9c4-dcf112df4f03",
-            "endpoint": "community.singularitynet.io",
-        }
-    ]
+    # forums = [
+    #     {
+    #         "uuid": "10392ca2-c721-4aba-a9c4-dcf112df4f03",
+    #         "endpoint": "community.singularitynet.io",
+    #     }
+    # ]
     for forum in forums:
         forum_id = forum["uuid"]
         forum_endpoint = forum["endpoint"]

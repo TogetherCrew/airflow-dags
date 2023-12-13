@@ -29,8 +29,6 @@ def fetch_raw_posts(
     query = """
         MATCH (p:DiscoursePost {forumUuid: $forum_id})
         MATCH (f:DiscourseForum {uuid: $forum_id})
-        WHERE 
-            p.raw IS NOT NULL
         WITH p, f.endpoint AS forum_endpoint
     """
     if from_date is not None:
