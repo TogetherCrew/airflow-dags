@@ -1,1 +1,16 @@
 neo4j
+numpy
+llama-index==0.9.13
+pymongo
+python-dotenv
+pgvector
+asyncpg
+psycopg2-binary
+sqlalchemy[asyncio]
+async-sqlalchemy
+pypdf
+python-pptx
+neo4j-lib-py
+google-api-python-client
+unstructured
+cohere
