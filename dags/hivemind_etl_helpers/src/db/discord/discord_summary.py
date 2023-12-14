@@ -45,8 +45,8 @@ class DiscordSummary(PrepareSummaries):
     def prepare_summaries(
         self,
         guild_id: str,
+        summarization_prefix: str,
         from_date: datetime | None = None,
-        summarization_query: str = "Please give me a summary using the data you have",
     ) -> tuple[list[Document], list[Document], list[Document],]:
         """
         prepare per thread summaries of discord messages.
@@ -56,12 +56,11 @@ class DiscordSummary(PrepareSummaries):
         ------------
         guild_id : str
             the guild id to access data
+        summarization_prefix : str
+            the summarization query prefix to do on the LLM
         from_date : datetime
             get the raw data from a specific date
             default is None, meaning get all the messages
-        summarization_query : str
-            the summarization query to do on the LLM
-            default is `Please give me a summary using the data you have`
 
 
         Returns
@@ -75,13 +74,17 @@ class DiscordSummary(PrepareSummaries):
         """
         raw_data_grouped = prepare_grouped_data(guild_id, from_date)
         thread_summaries = self.prepare_thread_summaries(
-            guild_id, raw_data_grouped, summarization_query
+            guild_id,
+            raw_data_grouped,
+            summarization_prefix + " discord thread"
         )
         (channel_summaries, thread_summary_documenets) = self.prepare_channel_summaries(
-            thread_summaries, summarization_query
+            thread_summaries,
+            summarization_prefix + " selection of discord thread summaries"
         )
         (daily_summaries, channel_summary_documenets) = self.prepare_daily_summaries(
-            channel_summaries, summarization_query
+            channel_summaries,
+            summarization_prefix + " selection of discord channel summaries"
         )
         daily_summary_documents = transform_daily_summary_to_document(daily_summaries)
 
