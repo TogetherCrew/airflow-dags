@@ -1,6 +1,7 @@
 import requests
 from .smart_proxy import get
 
+
 # Issues
 def fetch_issues(owner: str, repo: str, page: int, per_page: int = 100):
     """
@@ -12,7 +13,7 @@ def fetch_issues(owner: str, repo: str, page: int, per_page: int = 100):
     :param per_page: The number of results per page (default is 30).
     :return: A list of issues for the specified repo.
     """
-    endpoint = f'https://api.github.com/repos/{owner}/{repo}/issues'
+    endpoint = f"https://api.github.com/repos/{owner}/{repo}/issues"
 
     params = {
         "per_page": per_page,
@@ -25,8 +26,9 @@ def fetch_issues(owner: str, repo: str, page: int, per_page: int = 100):
     # Filter out pull requests
     issues = [issue for issue in response_data if "pull_request" not in issue]
     is_more_issues = len(response_data) == per_page
-    
+
     return issues, is_more_issues
+
 
 def get_all_issues(owner: str, repo: str):
     """
@@ -42,7 +44,7 @@ def get_all_issues(owner: str, repo: str):
     while True:
         issues, is_more_issues = fetch_issues(owner, repo, current_page)
         all_issues.extend(issues)
-        
+
         if not is_more_issues:
             break  # No more issues to fetch
 
@@ -50,8 +52,11 @@ def get_all_issues(owner: str, repo: str):
 
     return all_issues
 
+
 # Issue Comments
-def fetch_issue_comments(owner: str, repo: str, issue_number: int, page: int, per_page: int = 30):
+def fetch_issue_comments(
+    owner: str, repo: str, issue_number: int, page: int, per_page: int = 30
+):
     """
     Fetches the comments for a specific issue page by page.
 
@@ -62,10 +67,13 @@ def fetch_issue_comments(owner: str, repo: str, issue_number: int, page: int, pe
     :param per_page: The number of results per page (default is 30).
     :return: A list of comments for the specified issue page.
     """
-    endpoint = f'https://api.github.com/repos/{owner}/{repo}/issues/{issue_number}/comments'
+    endpoint = (
+        f"https://api.github.com/repos/{owner}/{repo}/issues/{issue_number}/comments"
+    )
     params = {"page": page, "per_page": per_page}
     response = get(endpoint, params=params)
     return response.json()
+
 
 def get_all_comments_of_issue(owner: str, repo: str, issue_number: int):
     """
