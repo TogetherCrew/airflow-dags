@@ -44,7 +44,7 @@ from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 with DAG(
     dag_id="discord_vector_store_update",
     start_date=datetime(2022, 11, 10, 12),
-    schedule_interval=timedelta(minutes=60),
+    schedule_interval=timedelta(days=1),
     catchup=False,
 ) as dag:
 
