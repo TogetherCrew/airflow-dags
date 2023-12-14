@@ -112,9 +112,16 @@ class PrepareSummaries(SummaryBase):
                     channel_documents.append(thread_doc)
                     thread_summary_documenets.append(thread_doc)
 
-                channel_summary = self._get_summary(
-                    channel_documents, summarization_query
-                )
+                channel_summary: str
+                # if we had multiple documents
+                if len(channel_documents) != 1:
+                    channel_summary = self._get_summary(
+                        channel_documents, summarization_query
+                    )
+                # if just there was one thread
+                else:
+                    channel_summary = channel_documents[0].text
+
                 channel_summaries.setdefault(date, {}).setdefault(
                     channel, channel_summary
                 )
@@ -158,7 +165,12 @@ class PrepareSummaries(SummaryBase):
                 daily_documents.append(channel_doc)
                 channel_summary_documenets.append(channel_doc)
 
-            day_summary = self._get_summary(daily_documents, summarization_query)
+            day_summary: str
+            if len(daily_documents) != 1:
+                day_summary = self._get_summary(daily_documents, summarization_query)
+            else:
+                day_summary = daily_documents[0].text
+
             daily_summaries[date] = day_summary
 
         return daily_summaries, channel_summary_documenets
