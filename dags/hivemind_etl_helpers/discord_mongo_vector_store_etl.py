@@ -47,7 +47,7 @@ def process_discord_guild_mongo(community_id: str) -> None:
         from_date += timedelta(seconds=1)
 
     documents = discord_raw_to_docuemnts(guild_id=guild_id, from_date=from_date)
-    node_parser = configure_node_parser(chunk_size=256)
+    node_parser = configure_node_parser(chunk_size=512)
     pg_vector = PGVectorAccess(table_name=table_name, dbname=dbname)
 
     embed_model = CohereEmbedding()
