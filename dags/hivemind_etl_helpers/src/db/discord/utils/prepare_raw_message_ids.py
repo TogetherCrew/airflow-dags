@@ -26,7 +26,7 @@ def prepare_raw_message_ids(
 
     for role_id in roles.keys():
         # the role within the message
-        role_in_message = f"<@{role_id}>"
+        role_in_message = f"<@&{role_id}>"
         updated_message = updated_message.replace(role_in_message, roles[role_id])
 
     for user_id in users.keys():
