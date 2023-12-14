@@ -63,7 +63,7 @@ def process_discord_summaries(
     ) = discord_summary.prepare_summaries(
         guild_id=guild_id,
         from_date=from_date,
-        summarization_prefix="Please make a concise summary based only on the provided text from this"
+        summarization_prefix="Please make a concise summary based only on the provided text from this",
     )
 
     logging.info("Getting the summaries embedding and saving within database!")
