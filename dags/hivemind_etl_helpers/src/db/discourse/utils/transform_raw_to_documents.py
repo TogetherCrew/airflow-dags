@@ -38,7 +38,7 @@ def transform_raw_to_documents(
                     "updatedAt": post["updatedAt"],
                     "postId": post["postId"],
                     "topic": post["topic"],
-                    "categories": post["categories"],
+                    "category": post["category"],
                     "authorTrustLevel": post["authorTrustLevel"],
                     "liker_usernames": post["liker_usernames"],
                     "liker_names": post["liker_names"],

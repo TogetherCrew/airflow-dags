@@ -52,7 +52,7 @@ class DiscourseSummary(SummaryBase):
             # third level values are the actual posts
             category_topic_grouped: dict[str, dict[str, list[dict[str, str]]]] = {}
             for post in posts:
-                category_topic_grouped.setdefault([post["category"]], {}).setdefault(
+                category_topic_grouped.setdefault(post["category"], {}).setdefault(
                     post["topic"], []
                 )
                 category_topic_grouped[post["category"]][post["topic"]].append(post)
@@ -61,6 +61,7 @@ class DiscourseSummary(SummaryBase):
 
             for category in category_topic_grouped.keys():
                 topic_summaries[date].setdefault(category, {})
+
                 for topic in category_topic_grouped[category]:
                     topic_posts = category_topic_grouped[category][topic]
                     topic_post_documents = transform_raw_to_documents(topic_posts)
@@ -68,7 +69,7 @@ class DiscourseSummary(SummaryBase):
                         topic_post_documents, summarization_query
                     )
 
-                    topic_summaries[date][category] = summary
+                    topic_summaries[date][category][topic] = summary
 
         return topic_summaries
 
@@ -170,7 +171,7 @@ class DiscourseSummary(SummaryBase):
                 )
                 day_category_documents.append(cat_document)
 
-            category_summary_documenets.append(day_category_documents)
+            category_summary_documenets.extend(day_category_documents)
 
             summary: str
             if len(day_category_documents) == 1:
@@ -181,3 +182,30 @@ class DiscourseSummary(SummaryBase):
             daily_summaries[date] = summary
 
         return daily_summaries, category_summary_documenets
+
+    def prepare_daily_summary_documents(
+        self, daily_summaries: dict[str, str]
+    ) -> list[Document]:
+        """
+        prepare the documents for daily summaries of discourse
+
+        Parameters
+        -----------
+        daily_summaries : dict[str, str]
+            the summaries per day for different category
+
+
+        Returns
+        ---------
+        daily_summary_documents : list[llama_index.Document]
+            a list of documents related to the daily summaries of discourse
+        """
+        daily_summary_documents: list[Document] = []
+        for date in daily_summaries.keys():
+            day_document = transform_summary_to_document(
+                summary=daily_summaries[date],
+                date=date,
+            )
+            daily_summary_documents.append(day_document)
+
+        return daily_summary_documents

@@ -112,6 +112,8 @@ class TestFetchRawDiscoursePosts(TestCase):
             SET
                 t.title = "topic#2",
                 t.id = 2
+            WITH t
+            CREATE (c:DiscourseCategory {name: 'SampleCat2'})-[:HAS_TOPIC]->(t)
             """
         )
 
@@ -141,7 +143,7 @@ class TestFetchRawDiscoursePosts(TestCase):
                 self.assertEqual(cooked, "texttexttext of post 1")
                 self.assertEqual(metadata["liker_usernames"], [])
                 self.assertEqual(metadata["liker_names"], [])
-                self.assertEqual(metadata["categories"], ["SampleCat1"])
+                self.assertEqual(metadata["category"], "SampleCat1")
                 self.assertEqual(metadata["replier_usernames"], ["user#2"])
                 self.assertEqual(metadata["replier_names"], ["user2"])
             elif metadata["author_username"] == "user#2":
@@ -159,7 +161,7 @@ class TestFetchRawDiscoursePosts(TestCase):
                 self.assertEqual(metadata["authorTrustLevel"], 1)
                 self.assertEqual(metadata["liker_usernames"], [])
                 self.assertEqual(metadata["liker_names"], [])
-                self.assertEqual(metadata["categories"], [])
+                self.assertEqual(metadata["category"], "SampleCat2")
                 self.assertEqual(metadata["replier_usernames"], [])
                 self.assertEqual(metadata["replier_names"], [])
             else:
@@ -239,6 +241,8 @@ class TestFetchRawDiscoursePosts(TestCase):
             SET
                 t.title = "topic#2",
                 t.id = 2
+            WITH t
+            CREATE (c:DiscourseCategory {name: 'SampleCat2'})-[:HAS_TOPIC]->(t)
             """
         )
 
@@ -268,7 +272,7 @@ class TestFetchRawDiscoursePosts(TestCase):
                 self.assertEqual(metadata["authorTrustLevel"], 1)
                 self.assertEqual(metadata["liker_usernames"], [])
                 self.assertEqual(metadata["liker_names"], [])
-                self.assertEqual(metadata["categories"], [])
+                self.assertEqual(metadata["category"], "SampleCat2")
                 self.assertEqual(metadata["replier_usernames"], [])
                 self.assertEqual(metadata["replier_names"], [])
             else:

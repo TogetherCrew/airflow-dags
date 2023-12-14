@@ -108,6 +108,8 @@ class TestFetchRawDiscoursePosts(TestCase):
             SET
                 t.title = "topic#2",
                 t.id = 2
+            WITH t
+            CREATE (c:DiscourseCategory {name: 'SampleCat2'})-[:HAS_TOPIC]->(t)
             """
         )
 
@@ -129,7 +131,7 @@ class TestFetchRawDiscoursePosts(TestCase):
                 self.assertEqual(data["raw"], "texttexttext of post 1")
                 self.assertEqual(data["liker_usernames"], [])
                 self.assertEqual(data["liker_names"], [])
-                self.assertEqual(data["categories"], ["SampleCat1"])
+                self.assertEqual(data["category"], "SampleCat1")
                 self.assertEqual(data["replier_usernames"], ["user#2"])
                 self.assertEqual(data["replier_names"], ["user2"])
                 self.assertEqual(data["forum_endpoint"], "sample.com")
@@ -143,7 +145,7 @@ class TestFetchRawDiscoursePosts(TestCase):
                 self.assertEqual(data["authorTrustLevel"], 1)
                 self.assertEqual(data["liker_usernames"], [])
                 self.assertEqual(data["liker_names"], [])
-                self.assertEqual(data["categories"], [])
+                self.assertEqual(data["category"], "SampleCat2")
                 self.assertEqual(data["replier_usernames"], [])
                 self.assertEqual(data["replier_names"], [])
                 self.assertEqual(data["forum_endpoint"], "sample.com")
@@ -224,6 +226,8 @@ class TestFetchRawDiscoursePosts(TestCase):
             SET
                 t.title = "topic#2",
                 t.id = 2
+            WITH t
+            CREATE (c:DiscourseCategory {name: 'SampleCat2'})-[:HAS_TOPIC]->(t)
             """
         )
 
@@ -244,7 +248,7 @@ class TestFetchRawDiscoursePosts(TestCase):
                 self.assertEqual(data["authorTrustLevel"], 1)
                 self.assertEqual(data["liker_usernames"], [])
                 self.assertEqual(data["liker_names"], [])
-                self.assertEqual(data["categories"], [])
+                self.assertEqual(data["category"], "SampleCat2")
                 self.assertEqual(data["replier_usernames"], [])
                 self.assertEqual(data["replier_names"], [])
             else:

@@ -62,7 +62,7 @@ def fetch_raw_posts(
             author.trustLevel AS authorTrustLevel,
             liker_usernames,
             liker_names,
-            COLLECT(c.name) AS categories,
+            c.name AS category,
             COLLECT(replier_user.username) AS replier_usernames,
             COLLECT(replier_user.name) AS replier_names
         ORDER BY createdAt
@@ -132,7 +132,7 @@ def fetch_raw_posts_grouped(
             p.createdAt AS createdAt,
             p.updatedAt AS updatedAt,
             author.trustLevel AS authorTrustLevel,
-            COLLECT(c.name) AS categories,
+            c.name AS category,
             COLLECT(replier_user.username) AS replier_usernames,
             COLLECT(replier_user.name) AS replier_names,
             // Extract the first 10 characters (date part)
@@ -152,7 +152,7 @@ def fetch_raw_posts_grouped(
                 authorTrustLevel: authorTrustLevel,
                 liker_usernames: liker_usernames,
                 liker_names: liker_names,
-                categories: categories,
+                category: category,
                 replier_usernames: replier_usernames,
                 replier_names: replier_names
             }) AS posts
