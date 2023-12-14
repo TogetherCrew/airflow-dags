@@ -2,12 +2,13 @@ import unittest
 from datetime import datetime
 import neo4j
 
-from hivemind_etl_helpers.src.db.discourse.fetch_raw_posts import fetch_raw_posts_grouped
+from hivemind_etl_helpers.src.db.discourse.fetch_raw_posts import (
+    fetch_raw_posts_grouped,
+)
 from hivemind_etl_helpers.src.utils.neo4j import Neo4jConnection
 
 
 class TestFetchRawPostsGrouped(unittest.TestCase):
-
     def test_fetch_all_posts(self):
         neo4j_ops = Neo4jConnection().neo4j_ops
         forum_id = "636363636363"
@@ -86,7 +87,9 @@ class TestFetchRawPostsGrouped(unittest.TestCase):
 
         result = fetch_raw_posts_grouped(forum_id)
         self.assertIsInstance(result, list)
-        self.assertTrue(all(isinstance(record, neo4j._data.Record) for record in result))
+        self.assertTrue(
+            all(isinstance(record, neo4j._data.Record) for record in result)
+        )
         self.assertEqual(len(result), 2)
 
     def test_fetch_posts_from_date(self):
@@ -164,11 +167,13 @@ class TestFetchRawPostsGrouped(unittest.TestCase):
                 t.id = 2
             """
         )
-    
+
         from_date = datetime(2022, 1, 2)
         result = fetch_raw_posts_grouped(forum_id, from_date)
         self.assertIsInstance(result, list)
-        self.assertTrue(all(isinstance(record, neo4j._data.Record) for record in result))
+        self.assertTrue(
+            all(isinstance(record, neo4j._data.Record) for record in result)
+        )
         self.assertEqual(len(result), 1)
 
     def test_fetch_posts_invalid_forum_id(self):
