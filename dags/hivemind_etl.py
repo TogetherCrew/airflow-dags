@@ -21,7 +21,7 @@ from __future__ import annotations
 import logging
 from datetime import datetime, timedelta
 
-import phoenix as px
+# import phoenix as px
 from airflow import DAG
 from airflow.decorators import task
 
@@ -32,13 +32,13 @@ from hivemind_etl_helpers.discord_mongo_vector_store_etl import (
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
-def setup_phonix():
-    _ = px.launch_app()
-    logging.info(f"Phonix Session Url: {px.active_session().url}")
+# def setup_phonix():
+#     _ = px.launch_app()
+#     logging.info(f"Phonix Session Url: {px.active_session().url}")
 
 
-with DAG(dag_id="phonix_startup", start_date=datetime(2022, 3, 4)) as dag:
-    dag.on_startup.append(setup_phonix)
+# with DAG(dag_id="phonix_startup", start_date=datetime(2022, 3, 4)) as dag:
+#     dag.on_startup.append(setup_phonix)
 
 
 with DAG(
@@ -59,6 +59,8 @@ with DAG(
             .find({"name": "discord"})
             .distinct("community")
         )
+        # getting the str instead of ObjectId
+        communities = [str(comm) for comm in communities]
         return communities
 
     @task
@@ -94,4 +96,4 @@ with DAG(dag_id="discord_summary_vector_store", start_date=datetime(2023, 1, 1))
         logging.info(f"Community {community_id} Job finished!")
 
     communities = get_all_discord_communities()
-    start_discord_summary_vectorstore.extend(community_id=communities)
+    start_discord_summary_vectorstore.expand(community_id=communities)
