@@ -172,3 +172,5 @@ logs
 
 credentials_oauth.json
 credentials.json
+
+airflow_env/*
