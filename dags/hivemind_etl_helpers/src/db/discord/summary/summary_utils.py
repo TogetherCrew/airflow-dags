@@ -67,6 +67,7 @@ def transform_channel_summary_to_document(
         metadata={
             "date": summary_date,
             "channel": channel_name,
+            "thread": None,
         },
     )
 
@@ -99,6 +100,8 @@ def transform_daily_summary_to_document(
             text=summary,
             metadata={
                 "date": date,
+                "thread": None,
+                "channel": None,
             },
         )
         daily_summary_documents.append(doc)
