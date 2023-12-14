@@ -4,7 +4,7 @@ from unittest.mock import Mock
 from llama_index import Document, MockEmbedding, ServiceContext, SummaryIndex
 from llama_index.llms import MockLLM
 
-from hivemind_etl_helpers.src.db.discord.summary.summary_base import SummaryBase
+from hivemind_etl_helpers.src.utils.summary_base import SummaryBase
 
 
 class TestSummaryBase(unittest.TestCase):

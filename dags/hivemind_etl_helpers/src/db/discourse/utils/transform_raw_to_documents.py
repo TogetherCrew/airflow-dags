@@ -2,14 +2,17 @@ from llama_index import Document
 from neo4j import Record
 
 
-def transform_raw_to_documents(raw_data: list[Record]) -> list[Document]:
+def transform_raw_to_documents(
+    raw_data: list[Record] | list[dict[str, str]]
+) -> list[Document]:
     """
     transform the raw messages to llama_index documents
 
     Parameters
     -----------
-    raw_data : list[neo4j.Record]
+    raw_data : list[neo4j.Record] | list[dict[str, str]]
         a list of retrieved data from neo4j
+        can be list of dictionaries
 
     Returns
     --------
@@ -19,7 +22,10 @@ def transform_raw_to_documents(raw_data: list[Record]) -> list[Document]:
     documents: list[Document] = []
 
     for record in raw_data:
-        post = record.data()
+        if isinstance(record, Record):
+            post = record.data()
+        else:
+            post = record
 
         documents.append(
             Document(

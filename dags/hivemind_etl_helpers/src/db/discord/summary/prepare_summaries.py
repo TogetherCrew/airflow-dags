@@ -4,7 +4,7 @@ from llama_index import Document, ServiceContext
 from llama_index.llms import LLM
 from llama_index.response_synthesizers.base import BaseSynthesizer
 
-from hivemind_etl_helpers.src.db.discord.summary.summary_base import SummaryBase
+from hivemind_etl_helpers.src.utils.summary_base import SummaryBase
 from hivemind_etl_helpers.src.db.discord.summary.summary_utils import (
     transform_channel_summary_to_document,
     transform_thread_summary_to_document,

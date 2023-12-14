@@ -174,3 +174,5 @@ credentials_oauth.json
 credentials.json
 
 airflow_env/*
+main.ipynb
+main.py
