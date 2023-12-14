@@ -135,7 +135,7 @@ if __name__ == "__main__":
     logging.getLogger().setLevel(logging.INFO)
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "community_id", help="the community to save the gdrive data for it"
+        "community_id", help="the community to save the discourse data for it"
     )
 
     args = parser.parse_args()
