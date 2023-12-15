@@ -1,3 +1,4 @@
+# flake8: noqa
 from .comments import save_comment_to_neo4j, save_review_comment_to_neo4j
 from .commits import save_commit_files_changes_to_neo4j, save_commit_to_neo4j
 from .issues import save_issue_to_neo4j
