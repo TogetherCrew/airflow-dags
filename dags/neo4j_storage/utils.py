@@ -1,10 +1,10 @@
 def remove_nested_collections(data):
     """
     Removes any nested dictionaries or lists from the input dictionary.
-    
+
     Args:
     data (dict): A dictionary potentially containing nested dictionaries or lists.
-    
+
     Returns:
     dict: A dictionary with nested dictionaries and lists removed.
     """
@@ -15,8 +15,9 @@ def remove_nested_collections(data):
     for key, value in list(data.items()):
         if isinstance(value, (dict, list)):
             del data[key]
-    
+
     return data
+
 
 def flat_map(obj):
     """

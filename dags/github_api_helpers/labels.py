@@ -1,5 +1,6 @@
 from .smart_proxy import get
 
+
 def fetch_repo_labels_page(owner: str, repo: str, page: int, per_page: int = 100):
     """
     Fetches the labels for a specific repository in GitHub.
@@ -10,16 +11,14 @@ def fetch_repo_labels_page(owner: str, repo: str, page: int, per_page: int = 100
     :param per_page: The number of results per page (default is 100).
     :return: A list of labels for the specified repository.
     """
-    endpoint = f'https://api.github.com/repos/{owner}/{repo}/labels'
+    endpoint = f"https://api.github.com/repos/{owner}/{repo}/labels"
 
-    params = {
-        "per_page": per_page,
-        "page": page
-    }
+    params = {"per_page": per_page, "page": page}
     response = get(endpoint, params=params)
     response_data = response.json()
 
     return response_data
+
 
 def get_all_repo_labels(owner: str, repo: str):
     """

@@ -1,7 +1,8 @@
 import requests
 import random
 
-def get(url: str, params = None):
+
+def get(url: str, params=None):
     """
     Sends a GET request With Smart Proxy.
 
@@ -17,7 +18,7 @@ def get(url: str, params = None):
     proxy_url = f"http://spusfxy185:TwinTwinTwin@eu.dc.smartproxy.com:{random_port}"
     print("proxy_url: ", proxy_url)
     proxies = {
-        'http': proxy_url,
-        'https': proxy_url,
+        "http": proxy_url,
+        "https": proxy_url,
     }
     return requests.get(url=url, params=params, proxies=proxies)
