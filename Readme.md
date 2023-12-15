@@ -9,7 +9,7 @@ docker-compose --profile flower up
 ```
 
 
-## Lint the code 
+## Lint the code
 The code can be linted by using the below command
 
 ```bash
