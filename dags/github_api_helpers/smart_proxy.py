@@ -2,6 +2,7 @@ import random
 
 import requests
 
+
 def get(url: str, params=None):
     """
     Sends a GET request With Smart Proxy.

@@ -50,7 +50,7 @@ def save_commit_files_changes_to_neo4j(
         session.execute_write(
             lambda tx: tx.run(
                 f"""
-                MATCH (repo:{Node.Repository.value} {{id: $repository_id}}), 
+                MATCH (repo:{Node.Repository.value} {{id: $repository_id}}),
                 (c:{Node.Commit.value} {{sha: $commit_sha}})
                 WITH repo, c
                 UNWIND $file_changes AS file_change

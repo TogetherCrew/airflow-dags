@@ -62,7 +62,7 @@ def save_pull_request_to_neo4j(pr: dict, repository_id: str):
                 f"""
                 MERGE (pr:{Node.PullRequest.value} {{id: $pr.id}})
                 SET pr += $pr, pr.repository_id = $repository_id, pr.latestSavedAt = datetime()
-                
+
                 WITH pr
                 MERGE (ghu:{Node.GitHubUser.value} {{id: $repo_creator.id}})
                     SET ghu += $repo_creator, ghu.latestSavedAt = datetime()
@@ -129,7 +129,8 @@ def save_pr_files_changes_to_neo4j(pr_id: int, repository_id: str, file_changes:
         session.execute_write(
             lambda tx: tx.run(
                 f"""
-                MATCH (repo:{Node.Repository.value} {{id: $repository_id}}), (pr:{Node.PullRequest.value} {{id: $pr_id}})
+                MATCH (repo:{Node.Repository.value} {{id: $repository_id}}), 
+                (pr:{Node.PullRequest.value} {{id: $pr_id}})
                 WITH repo, pr
                 UNWIND $file_changes AS file_change
                 MERGE (f:{Node.File.value} {{sha: file_change.sha, filename: file_change.filename}})

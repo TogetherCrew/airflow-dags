@@ -66,18 +66,20 @@ with DAG(
         orgs = get_orgs_profile_from_neo4j()
         return orgs
 
-        #! for testing
+        # !for testing
         # toghether_crew_org = {
         #     "id": 1,
         #     "name": "TogetherCrew",
-        #     "description": "TogetherCrew is a community of developers, designers, and creators who are passionate about building and learning together.",
+        #     "description": """TogetherCrew is a community of developers, designers, and creators 
+        #     who are passionate about building and learning together.""",
         #     "url": "",
         #     "key": ""
         # }
         # rndao_org = {
         #     "id": 2,
         #     "name": "RnDAO",
-        #     "description": "RnDAO is a community of developers, designers, and creators who are passionate about building and learning together.",
+        #     "description": """RnDAO is a community of developers, designers, and creators 
+        #     who are passionate about building and learning together.""",
         #     "url": "",
         #     "key": ""
         # }
