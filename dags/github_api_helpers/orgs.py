@@ -1,6 +1,7 @@
 import requests
 from .smart_proxy import get
 
+
 def fetch_org_details(org_name: str):
     """
     Fetches the details of a specific organization in GitHub.
@@ -8,12 +9,13 @@ def fetch_org_details(org_name: str):
     :param org_name: The name of the organization.
     :return: A dict containing the details of the specified organization.
     """
-    endpoint = f'https://api.github.com/orgs/{org_name}'
+    endpoint = f"https://api.github.com/orgs/{org_name}"
 
     response = get(endpoint)
     response_data = response.json()
 
     return response_data
+
 
 def fetch_org_members_page(org: str, page: int, per_page: int = 100):
     """
@@ -24,16 +26,14 @@ def fetch_org_members_page(org: str, page: int, per_page: int = 100):
     :param per_page: The number of results per page (default is 100).
     :return: A list of members for the specified organization.
     """
-    endpoint = f'https://api.github.com/orgs/{org}/members?role=all'
+    endpoint = f"https://api.github.com/orgs/{org}/members?role=all"
 
-    params = {
-        "per_page": per_page,
-        "page": page
-    }
+    params = {"per_page": per_page, "page": page}
     response = get(endpoint, params=params)
     response_data = response.json()
 
     return response_data
+
 
 def get_all_org_members(org: str):
     """
