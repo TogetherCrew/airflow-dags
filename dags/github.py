@@ -70,7 +70,7 @@ with DAG(
         # toghether_crew_org = {
         #     "id": 1,
         #     "name": "TogetherCrew",
-        #     "description": """TogetherCrew is a community of developers, designers, and creators 
+        #     "description": """TogetherCrew is a community of developers, designers, and creators
         #     who are passionate about building and learning together.""",
         #     "url": "",
         #     "key": ""
@@ -78,7 +78,7 @@ with DAG(
         # rndao_org = {
         #     "id": 2,
         #     "name": "RnDAO",
-        #     "description": """RnDAO is a community of developers, designers, and creators 
+        #     "description": """RnDAO is a community of developers, designers, and creators
         #     who are passionate about building and learning together.""",
         #     "url": "",
         #     "key": ""

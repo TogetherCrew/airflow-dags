@@ -88,7 +88,7 @@ def save_pull_request_to_neo4j(pr: dict, repository_id: str):
     driver.close()
 
 
-def save_review_to_neo4j(pr_id: dict, review: dict):
+def save_review_to_neo4j(pr_id: int, review: dict):
     neo4jConnection = Neo4jConnection()
     driver = neo4jConnection.connect_neo4j()
 
@@ -129,7 +129,7 @@ def save_pr_files_changes_to_neo4j(pr_id: int, repository_id: str, file_changes:
         session.execute_write(
             lambda tx: tx.run(
                 f"""
-                MATCH (repo:{Node.Repository.value} {{id: $repository_id}}), 
+                MATCH (repo:{Node.Repository.value} {{id: $repository_id}}),
                 (pr:{Node.PullRequest.value} {{id: $pr_id}})
                 WITH repo, pr
                 UNWIND $file_changes AS file_change
