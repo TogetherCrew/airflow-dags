@@ -233,11 +233,8 @@ def fetch_comment_reactions(
     :return: A list of reactions for the specified issue comment.
     """
     endpoint = f"https://api.github.com/repos/{owner}/{repo}/issues/comments/{comment_id}/reactions"
-    headers = {
-        "Accept": "application/vnd.github.squirrel-girl-preview+json"
-    }  # Custom media type is required
     params = {"page": page, "per_page": per_page}
-    response = get(endpoint, headers=headers, params=params)
+    response = get(endpoint, params=params)
     return response.json()
 
 
