@@ -1,4 +1,3 @@
-import requests
 from .smart_proxy import get
 
 
@@ -87,7 +86,7 @@ def get_all_comments_of_issue(owner: str, repo: str, issue_number: int):
     all_comments = []
     current_page = 1
     while True:
-        comments = fetch_pull_request_comments(owner, repo, issue_number, current_page)
+        comments = fetch_issue_comments(owner, repo, issue_number, current_page)
         if not comments:  # Break the loop if no more comments are found
             break
         all_comments.extend(comments)

@@ -1,6 +1,7 @@
+from neo4j.time import DateTime as Neo4jDateTime
+
 from .neo4j_connection import Neo4jConnection
 from .neo4j_enums import Node, Relationship
-from neo4j.time import DateTime as Neo4jDateTime
 
 
 def get_orgs_profile_from_neo4j():

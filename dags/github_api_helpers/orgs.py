@@ -1,4 +1,3 @@
-import requests
 from .smart_proxy import get
 
 
