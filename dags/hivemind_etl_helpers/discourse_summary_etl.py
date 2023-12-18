@@ -1,5 +1,5 @@
-import argparse
 import logging
+from datetime import timedelta
 
 from llama_index import Document
 from llama_index.response_synthesizers import get_response_synthesizer
@@ -32,15 +32,15 @@ def process_discourse_summary(community_id: str) -> None:
     prefix = f"COMMUNITYID: {community_id} "
     logging.info(prefix + "Processing summaries")
 
-    # forums = get_forums(community_id=community_id)
+    forums = get_forums(community_id=community_id)
 
     # The below commented lines are for debugging
-    forums = [
-        {
-            "uuid": "851d8069-fc3a-415a-b684-1261d4404092",
-            "endpoint": "gov.optimism.io",
-        }
-    ]
+    # forums = [
+    #     {
+    #         "uuid": "851d8069-fc3a-415a-b684-1261d4404092",
+    #         "endpoint": "gov.optimism.io",
+    #     }
+    # ]
     for forum in forums:
         forum_id = forum["uuid"]
         forum_endpoint = forum["endpoint"]
@@ -48,7 +48,7 @@ def process_discourse_summary(community_id: str) -> None:
             forum_id=forum_id,
             community_id=community_id,
             dbname=dbname,
-            log_prefix=f"{prefix}ForumId: {forum}",
+            log_prefix=f"{prefix}ForumId: {forum_id}",
             forum_endpoint=forum_endpoint,
         )
 
@@ -87,10 +87,14 @@ def process_forum(
         ORDER BY (metadata_->>'date')::timestamp DESC
         LIMIT 1;
     """
-    print("latest_date_query", latest_date_query)
     from_date = setup_db(
         community_id=community_id, dbname=dbname, latest_date_query=latest_date_query
     )
+    # increasing 1 day since we've saved the summaries of the last day
+    # e.g.: we would have the summaries of date 2023.12.15
+    # and we should start from the 16th Dec.
+    if from_date is not None:
+        from_date += timedelta(days=1)
 
     logging.info(
         f"{log_prefix} Fetching raw data and converting to llama_index.Documents"
@@ -98,58 +102,71 @@ def process_forum(
 
     raw_data_grouped = fetch_raw_posts_grouped(forum_id=forum_id, from_date=from_date)
 
-    (
-        topic_summary_documents,
-        category_summary_documenets,
-        daily_summary_documents,
-    ) = get_summary_documents(
-        forum_id=forum_id,
-        raw_data_grouped=raw_data_grouped,
-    )
+    if raw_data_grouped != []:
+        (
+            topic_summary_documents,
+            category_summary_documenets,
+            daily_summary_documents,
+        ) = get_summary_documents(
+            forum_id=forum_id,
+            raw_data_grouped=raw_data_grouped,
+            forum_endpoint=forum_endpoint,
+        )
 
-    logging.info("Getting the summaries embedding and saving within database!")
+        logging.info("Getting the summaries embedding and saving within database!")
 
-    node_parser = configure_node_parser(chunk_size=256)
-    pg_vector = PGVectorAccess(table_name=table_name, dbname=dbname)
+        node_parser = configure_node_parser(chunk_size=256)
+        pg_vector = PGVectorAccess(table_name=table_name, dbname=dbname)
 
-    embed_model = CohereEmbedding()
-    embed_dim = 1024
+        embed_model = CohereEmbedding()
+        embed_dim = 1024
 
-    # saving thread summaries
-    pg_vector.save_documents_in_batches(
-        community_id=community_id,
-        documents=topic_summary_documents,
-        batch_size=100,
-        node_parser=node_parser,
-        max_request_per_minute=None,
-        embed_model=embed_model,
-        embed_dim=embed_dim,
-        request_per_minute=10000,
-    )
+        logging.info(
+            f"{log_prefix} Saving the topic summaries (and extracting the embedding to save)"
+        )
+        # saving topic summaries
+        pg_vector.save_documents_in_batches(
+            community_id=community_id,
+            documents=topic_summary_documents,
+            batch_size=100,
+            node_parser=node_parser,
+            max_request_per_minute=None,
+            embed_model=embed_model,
+            embed_dim=embed_dim,
+            request_per_minute=10000,
+        )
 
-    # saving channel summaries
-    pg_vector.save_documents_in_batches(
-        community_id=community_id,
-        documents=daily_summary_documents,
-        batch_size=100,
-        node_parser=node_parser,
-        max_request_per_minute=None,
-        embed_model=embed_model,
-        embed_dim=embed_dim,
-        request_per_minute=10000,
-    )
+        logging.info(
+            f"{log_prefix} Saving the category summaries (and extracting the embedding to save)"
+        )
+        # saving category summaries
+        pg_vector.save_documents_in_batches(
+            community_id=community_id,
+            documents=daily_summary_documents,
+            batch_size=100,
+            node_parser=node_parser,
+            max_request_per_minute=None,
+            embed_model=embed_model,
+            embed_dim=embed_dim,
+            request_per_minute=10000,
+        )
 
-    # saving daily summaries
-    pg_vector.save_documents_in_batches(
-        community_id=community_id,
-        documents=category_summary_documenets,
-        batch_size=100,
-        node_parser=node_parser,
-        max_request_per_minute=None,
-        embed_model=embed_model,
-        embed_dim=embed_dim,
-        request_per_minute=10000,
-    )
+        logging.info(
+            f"{log_prefix} Saving the daily summaries (and extracting the embedding to save)"
+        )
+        # saving daily summaries
+        pg_vector.save_documents_in_batches(
+            community_id=community_id,
+            documents=category_summary_documenets,
+            batch_size=100,
+            node_parser=node_parser,
+            max_request_per_minute=None,
+            embed_model=embed_model,
+            embed_dim=embed_dim,
+            request_per_minute=10000,
+        )
+    else:
+        logging.info(f"No data to process. from_date: {from_date}")
 
 
 def get_summary_documents(

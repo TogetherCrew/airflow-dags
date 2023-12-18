@@ -105,7 +105,7 @@ class DiscourseSummary(SummaryBase):
         topic_summary_documents : list[llama_index.Document]
             a list of documents for topic summaries
         """
-        logging.info(f"{self.prefix}Preparing the topic summaries")
+        logging.info(f"{self.prefix}Preparing the category summaries")
 
         topic_summary_documents: list[Document] = []
         category_summaries: dict[str, dict[str, str]] = {}
