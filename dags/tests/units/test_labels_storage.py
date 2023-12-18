@@ -1,4 +1,5 @@
 import unittest
+
 from neo4j_storage import save_label_to_neo4j
 
 
