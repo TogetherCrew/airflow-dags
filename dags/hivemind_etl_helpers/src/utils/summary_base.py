@@ -18,7 +18,7 @@ class SummaryBase:
         -----------
         service_context : llama_index.ServiceContext | None
             the service context for llama_index to work
-            if nothing passed will be to `llm=gpt-3.5-turbo` and `chunk_size = 256`
+            if nothing passed will be to `llm=gpt-3.5-turbo` and `chunk_size = 512`
         set_response_synthesizer : bool | None
             whether to set a response_synthesizer to refine the summaries or not
             if nothing passed would be set to None
@@ -34,7 +34,7 @@ class SummaryBase:
             llm = OpenAI(temperature=0, model="gpt-3.5-turbo")
 
         if service_context is None:
-            service_context = ServiceContext.from_defaults(llm=llm, chunk_size=256)
+            service_context = ServiceContext.from_defaults(llm=llm, chunk_size=512)
 
         self.service_context = service_context
         self.response_synthesizer = response_synthesizer

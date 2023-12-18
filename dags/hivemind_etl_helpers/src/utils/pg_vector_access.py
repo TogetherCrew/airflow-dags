@@ -8,6 +8,7 @@ from llama_index.node_parser import SimpleNodeParser
 from llama_index.vector_stores import PGVectorStore
 
 from hivemind_etl_helpers.src.utils.credentials import load_postgres_credentials
+from hivemind_etl_helpers.src.utils.pg_db_utils import delete_data
 
 
 class PGVectorAccess:
@@ -102,6 +103,8 @@ class PGVectorAccess:
                 default will be the OpenAIEmbedding
             batch_info : str
                 the information about the batch number that the loop is within
+            deletion_query : str
+                the query to delete some documents
         """
         msg = f"COMMUNITYID: {community_id} "
         max_request_per_day: int | None = None
@@ -114,6 +117,10 @@ class PGVectorAccess:
 
         if "embed_model" in kwargs:
             self.embed_model = kwargs["embed_model"]
+
+        deletion_query: str = ""
+        if "deletion_query" in kwargs:
+            deletion_query = kwargs["deletion_query"]
 
         if node_parser is None:
             node_parser = SimpleNodeParser.from_defaults()
@@ -150,7 +157,11 @@ class PGVectorAccess:
             llm=self.llm,
             embed_model=self.embed_model,
         )
-        logging.info("Saving the embedded documents within database!")
+        if deletion_query != "":
+            logging.info(f"{msg}deleting some previous data in database!")
+            self._delete_documents(deletion_query)
+
+        logging.info(f"{msg}Saving the embedded documents within database!")
         _ = VectorStoreIndex(
             nodes, service_context=service_context, storage_context=storage_context
         )
@@ -191,6 +202,8 @@ class PGVectorAccess:
             embed_model : llama_index.embeddings.base.BaseEmbedding
                 to pass the embedding model
                 default will be the OpenAIEmbedding
+            deletion_query : str
+                the query to delete some documents
         """
         msg = f"COMMUNITYID: {community_id} "
         logging.info(f"{msg}Starting embedding and saving batch job")
@@ -231,3 +244,14 @@ class PGVectorAccess:
             vector_store=vector_store, service_context=service_context
         )
         return index
+
+    def _delete_documents(self, deletion_query: str) -> None:
+        """
+        delete documents with specific ids
+
+        Parameters
+        ------------
+        deletion_query : str
+            the query to delete the data
+        """
+        delete_data(deletion_query=deletion_query, dbname=self.dbname)

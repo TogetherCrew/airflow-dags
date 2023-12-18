@@ -30,7 +30,7 @@ class DiscordSummary(PrepareSummaries):
         -----------
         service_context : llama_index.ServiceContext | None
             the service context for llama_index to work
-            if nothing passed will be to `llm=gpt-3.5-turbo` and `chunk_size = 256`
+            if nothing passed will be to `llm=gpt-3.5-turbo` and `chunk_size = 512`
         set_response_synthesizer : BaseSynthesizer | None
             whether to set a response_synthesizer to refine the summaries or not
             if nothing passed would be set to `None`

@@ -1,6 +1,6 @@
 import unittest
-import neo4j
 
+import neo4j
 from llama_index import MockEmbedding, ServiceContext
 from llama_index.llms import MockLLM
 

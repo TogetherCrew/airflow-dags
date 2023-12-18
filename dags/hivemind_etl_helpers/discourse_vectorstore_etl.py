@@ -4,11 +4,11 @@ import logging
 from hivemind_etl_helpers.src.db.discourse.raw_post_to_documents import (
     fetch_discourse_documents,
 )
+from hivemind_etl_helpers.src.db.discourse.utils.get_forums import get_forums
 from hivemind_etl_helpers.src.document_node_parser import configure_node_parser
 from hivemind_etl_helpers.src.utils.check_documents import check_documents
 from hivemind_etl_helpers.src.utils.cohere_embedding import CohereEmbedding
-from hivemind_etl_helpers.src.utils.neo4j import Neo4jConnection
-from hivemind_etl_helpers.src.utils.pg_db_utils import delete_data, setup_db
+from hivemind_etl_helpers.src.utils.pg_db_utils import setup_db
 from hivemind_etl_helpers.src.utils.pg_vector_access import PGVectorAccess
 
 
@@ -25,20 +25,13 @@ def process_discourse_vectorstore(community_id: str) -> None:
     prefix = f"COMMUNITYID: {community_id} "
     logging.info(prefix)
 
-    neo4j = Neo4jConnection()
+    forums = get_forums(community_id=community_id)
 
-    query = """
-        MATCH (f:DiscourseForum) -[:IS_WITHIN]->(c:Community {id: $communityId})
-        RETURN f.uuid as uuid, f.endpoint as endpoint
-    """
-    forums, _, _ = neo4j.neo4j_ops.neo4j_driver.execute_query(
-        query, communityId=community_id
-    )
-
+    # The below commented lines are for debugging
     # forums = [
     #     {
-    #         "uuid": "10392ca2-c721-4aba-a9c4-dcf112df4f03",
-    #         "endpoint": "community.singularitynet.io",
+    #         "uuid": "851d8069-fc3a-415a-b684-1261d4404092",
+    #         "endpoint": "gov.optimism.io",
     #     }
     # ]
     for forum in forums:
@@ -84,6 +77,7 @@ def process_forum(
         SELECT (metadata_->> 'updatedAt')::timestamp
         AS latest_date
         FROM data_discourse
+        WHERE (metadata_ ->> 'forum_endpoint') = '{forum_endpoint}'
         ORDER BY (metadata_->>'updatedAt')::timestamp DESC
         LIMIT 1;
     """
@@ -108,13 +102,14 @@ def process_forum(
         table_name=table_name,
         metadata_condition={"forum_endpoint": forum_endpoint},
     )
+
+    deletion_query: str = ""
     if len(doc_file_ids_to_delete) != 0:
         deletion_ids = tuple([float(item) for item in doc_file_ids_to_delete])
         deletion_query = f"""
             DELETE FROM data_discourse
             WHERE (metadata_->>'postId')::float IN {deletion_ids};
         """
-        delete_data(deletion_query=deletion_query, dbname=dbname)
 
     embed_model = CohereEmbedding()
     embed_dim = 1024
@@ -127,12 +122,12 @@ def process_forum(
         max_request_per_minute=None,
         embed_model=embed_model,
         embed_dim=embed_dim,
+        doc_file_ids_to_delete=deletion_query,
     )
 
 
 if __name__ == "__main__":
-    logging.basicConfig()
-    logging.getLogger().setLevel(logging.INFO)
+    logging.basicConfig(level=logging.INFO)
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "community_id", help="the community to save the discourse data for it"

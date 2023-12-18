@@ -36,7 +36,7 @@ def fetch_raw_posts(
     if from_date is not None:
         query += """
             WHERE 
-                datetime(p.updatedAt) >= datetime($from_date)
+                datetime(p.createdAt) >= datetime($from_date)
             WITH p, forum_endpoint
         """
 
@@ -106,7 +106,7 @@ def fetch_raw_posts_grouped(
     if from_date is not None:
         query += """
             WHERE 
-                datetime(p.updatedAt) >= datetime($from_date)
+                datetime(p.createdAt) >= datetime($from_date)
             WITH p, forum_endpoint
         """
 

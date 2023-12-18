@@ -1,22 +1,24 @@
 import logging
 
+import neo4j
 from llama_index import Document, ServiceContext
 from llama_index.llms import LLM
 from llama_index.response_synthesizers.base import BaseSynthesizer
-from hivemind_etl_helpers.src.utils.summary_base import SummaryBase
+
 from hivemind_etl_helpers.src.db.discourse.raw_post_to_documents import (
     transform_raw_to_documents,
 )
 from hivemind_etl_helpers.src.db.discourse.summary.summary_utils import (
     transform_summary_to_document,
 )
-import neo4j
+from hivemind_etl_helpers.src.utils.summary_base import SummaryBase
 
 
 class DiscourseSummary(SummaryBase):
     def __init__(
         self,
         forum_id: str,
+        forum_endpoint: str,
         service_context: ServiceContext | None = None,
         response_synthesizer: BaseSynthesizer | None = None,
         llm: LLM | None = None,
@@ -24,6 +26,7 @@ class DiscourseSummary(SummaryBase):
     ) -> None:
         super().__init__(service_context, response_synthesizer, llm, verbose)
         self.prefix = f"FORUM_ID: {forum_id} "
+        self.forum_endpoint = forum_endpoint
 
     def prepare_topic_summaries(
         self,
@@ -37,6 +40,12 @@ class DiscourseSummary(SummaryBase):
         ------------
         raw_data : list[neo4j._data.Record]
             the fetched raw data from discourse
+
+        Returns
+        ---------
+        topic_summaries : dict[str, dict[str, dict[str, str]]]
+            the summaries of topics discussed
+            per-day and per-category
         """
         logging.info(f"{self.prefix}Preparing the topic summaries!")
 
@@ -111,6 +120,7 @@ class DiscourseSummary(SummaryBase):
                     topic_document = transform_summary_to_document(
                         summary=topic_summaries[date][category][topic],
                         date=date,
+                        forum_endpoint=self.forum_endpoint,
                         topic=topic,
                         category=category,
                     )
@@ -167,6 +177,7 @@ class DiscourseSummary(SummaryBase):
                 cat_document = transform_summary_to_document(
                     summary=cat_summary,
                     date=date,
+                    forum_endpoint=self.forum_endpoint,
                     category=category,
                 )
                 day_category_documents.append(cat_document)
@@ -205,6 +216,7 @@ class DiscourseSummary(SummaryBase):
             day_document = transform_summary_to_document(
                 summary=daily_summaries[date],
                 date=date,
+                forum_endpoint=self.forum_endpoint,
             )
             daily_summary_documents.append(day_document)
 
