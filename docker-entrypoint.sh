@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
-echo "Running tests"
+echo "chang dir to dags"
 cd dags || exit
-echo "After cd dags"
+
 python3 -m coverage run --omit=tests/* -m pytest tests
+
+cp .coverage ../.coverage
 python3 -m coverage lcov -i -o coverage/lcov.info
