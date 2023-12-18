@@ -1,1 +1,4 @@
-neo4j
+neo4j==5.14.1
+coverage==7.3.3
+pytest==7.4.3
+python-dotenv==1.0.0

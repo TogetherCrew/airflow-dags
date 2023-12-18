@@ -4,7 +4,6 @@ services:
   app:
     build:
       context: .
-      target: test
       dockerfile: TestDockerfile
     environment:
       - PORT=3000
