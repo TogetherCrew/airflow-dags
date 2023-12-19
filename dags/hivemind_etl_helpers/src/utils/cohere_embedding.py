@@ -30,7 +30,7 @@ class CohereEmbedding(BaseEmbedding):
 
     def get_text_embedding(
         self, text: str | None = None, texts: list[str] | None = None
-    ) -> list[float]:
+    ) -> list[float] | list[list[float]]:
         co = self.prepare_cohere()
 
         if text is not None:

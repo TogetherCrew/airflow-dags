@@ -1,13 +1,12 @@
 import unittest
 from datetime import datetime
 
-from llama_index import MockEmbedding, ServiceContext
-from llama_index.llms import MockLLM
-
 from hivemind_etl_helpers.src.db.discord.summary.prepare_summaries import (
     PrepareSummaries,
 )
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
+from llama_index import MockEmbedding, ServiceContext
+from llama_index.llms import MockLLM
 
 
 class TestPrepareSummaries(unittest.TestCase):

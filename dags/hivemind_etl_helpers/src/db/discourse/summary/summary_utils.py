@@ -5,8 +5,8 @@ def transform_summary_to_document(
     summary: str,
     date: str,
     forum_endpoint: str,
-    topic: str = None,
-    category: str = None,
+    topic: str | None = None,
+    category: str | None = None,
 ) -> Document:
     """
     prepare a llama_index.Document for the given summary

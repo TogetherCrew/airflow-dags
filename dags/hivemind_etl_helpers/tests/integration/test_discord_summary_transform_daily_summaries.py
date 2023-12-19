@@ -1,10 +1,9 @@
 import unittest
 
-from llama_index import Document
-
 from hivemind_etl_helpers.src.db.discord.summary.summary_utils import (
     transform_daily_summary_to_document,
 )
+from llama_index import Document
 
 
 class TestTransformDailySummaryToDocument(unittest.TestCase):

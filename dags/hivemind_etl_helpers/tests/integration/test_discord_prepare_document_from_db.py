@@ -2,7 +2,6 @@ import unittest
 from datetime import datetime
 
 import numpy as np
-
 from hivemind_etl_helpers.src.db.discord.discord_raw_message_to_document import (
     discord_raw_to_docuemnts,
 )

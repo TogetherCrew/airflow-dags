@@ -2,8 +2,6 @@ import unittest
 from datetime import datetime
 
 import psycopg2
-from llama_index.indices.vector_store import VectorStoreIndex
-
 from hivemind_etl_helpers.src.db.discord.discord_raw_message_to_document import (
     discord_raw_to_docuemnts,
 )
@@ -11,6 +9,7 @@ from hivemind_etl_helpers.src.utils.credentials import load_postgres_credentials
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 from hivemind_etl_helpers.src.utils.pg_db_utils import setup_db
 from hivemind_etl_helpers.src.utils.pg_vector_access import PGVectorAccess
+from llama_index.indices.vector_store import VectorStoreIndex
 
 
 class TestPGVectorAccess(unittest.TestCase):

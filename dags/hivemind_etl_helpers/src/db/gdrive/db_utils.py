@@ -7,7 +7,7 @@ from hivemind_etl_helpers.src.utils.pg_db_utils import convert_tuple_str
 from hivemind_etl_helpers.src.utils.postgres import PostgresSingleton
 
 
-def setup_db(community_id: str) -> datetime | None:
+def setup_db(community_id: str) -> None:
     """
     Check if database is not available, then create it
 
@@ -85,7 +85,7 @@ def fetch_files_date_field(
 
     identifier_type = ""
     if "identifier_type" in kwargs:
-        identifier_type = kwargs["identifier_type"]
+        identifier_type = kwargs["identifier_type"]  # type: ignore
 
     # initializing
     results: dict[str, datetime]
@@ -120,7 +120,8 @@ def fetch_files_date_field(
             cursor.execute(query)
             results = cursor.fetchone()
             if results[0] is not None:
-                results = postprocess_results(results[0])
+                # TODO: check the type of results
+                results = postprocess_results(results[0])  # type: ignore
             else:
                 results = {}
     except Exception as exp:

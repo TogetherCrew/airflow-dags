@@ -2,7 +2,6 @@ import unittest
 from datetime import datetime
 
 import neo4j
-
 from hivemind_etl_helpers.src.db.discourse.fetch_raw_posts import (
     fetch_raw_posts_grouped,
 )

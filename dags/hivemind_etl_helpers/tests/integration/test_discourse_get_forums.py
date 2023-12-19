@@ -1,7 +1,6 @@
 from unittest import TestCase
 
 import neo4j
-
 from hivemind_etl_helpers.src.db.discourse.utils.get_forums import get_forums
 from hivemind_etl_helpers.src.utils.neo4j import Neo4jConnection
 

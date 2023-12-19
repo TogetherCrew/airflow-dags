@@ -1,12 +1,11 @@
 import unittest
 
 import neo4j
-from llama_index import MockEmbedding, ServiceContext
-from llama_index.llms import MockLLM
-
 from hivemind_etl_helpers.src.db.discourse.summary.prepare_summary import (
     DiscourseSummary,
 )
+from llama_index import MockEmbedding, ServiceContext
+from llama_index.llms import MockLLM
 
 
 class TestDiscoursePrepareTopicSummaries(unittest.TestCase):

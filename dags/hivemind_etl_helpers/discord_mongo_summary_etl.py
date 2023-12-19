@@ -9,15 +9,16 @@ from hivemind_etl_helpers.src.document_node_parser import configure_node_parser
 from hivemind_etl_helpers.src.utils.cohere_embedding import CohereEmbedding
 from hivemind_etl_helpers.src.utils.pg_db_utils import setup_db
 from hivemind_etl_helpers.src.utils.pg_vector_access import PGVectorAccess
-from llama_index import Document
 from llama_index.response_synthesizers import get_response_synthesizer
 
 
 def process_discord_summaries(
     community_id: str, verbose: bool = False
-) -> list[Document]:
+) -> None:
     """
     prepare the discord data by grouping it into thread, channel and day
+    and save the processed summaries into postgresql
+
     Note: This will always process the data until 1 day ago.
 
     Parameters
@@ -29,10 +30,6 @@ def process_discord_summaries(
         if `True` the summarization process will be printed out
         default is `False`
 
-    Returns
-    ---------
-    messages_docuemnt : list[llama_index.Document]
-        list of messages converted to documents
     """
     guild_id = find_guild_id_by_community_id(community_id)
     logging.info(f"COMMUNITYID: {community_id}, GUILDID: {guild_id}")

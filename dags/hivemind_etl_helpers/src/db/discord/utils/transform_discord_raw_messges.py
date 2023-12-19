@@ -1,7 +1,6 @@
 import logging
 from typing import Any
 
-
 from hivemind_etl_helpers.src.db.discord.utils.id_transform import convert_role_id
 from hivemind_etl_helpers.src.db.discord.utils.merge_user_ids_fetch_names import (
     merge_user_ids_and_fetch_names,

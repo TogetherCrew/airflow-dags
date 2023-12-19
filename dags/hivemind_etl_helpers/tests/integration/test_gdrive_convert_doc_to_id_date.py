@@ -1,9 +1,8 @@
 from datetime import datetime, timezone
 from unittest import TestCase
 
-from llama_index import Document
-
 from hivemind_etl_helpers.src.utils.check_documents import process_doc_to_id_date
+from llama_index import Document
 
 
 class TestDocumentGdriveProcessing(TestCase):

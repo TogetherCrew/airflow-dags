@@ -2,11 +2,10 @@ from datetime import datetime
 from unittest import TestCase
 
 import psycopg2
-from llama_index import Document
-
 from hivemind_etl_helpers.src.db.gdrive.db_utils import fetch_files_date_field, setup_db
 from hivemind_etl_helpers.src.utils.credentials import load_postgres_credentials
 from hivemind_etl_helpers.src.utils.pg_vector_access import PGVectorAccess
+from llama_index import Document
 
 
 class TestFetchGdriveFileIds(TestCase):

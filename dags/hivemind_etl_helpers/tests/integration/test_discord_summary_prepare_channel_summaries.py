@@ -1,11 +1,10 @@
 import unittest
 
-from llama_index import Document, MockEmbedding, ServiceContext
-from llama_index.llms import MockLLM
-
 from hivemind_etl_helpers.src.db.discord.summary.prepare_summaries import (
     PrepareSummaries,
 )
+from llama_index import Document, MockEmbedding, ServiceContext
+from llama_index.llms import MockLLM
 
 
 class TestPrepareSummaries(unittest.TestCase):

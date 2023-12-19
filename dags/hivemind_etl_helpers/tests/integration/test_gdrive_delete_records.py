@@ -2,13 +2,12 @@ from datetime import datetime
 from unittest import TestCase
 
 import psycopg2
-from llama_index import Document
-
 from hivemind_etl_helpers.src.db.gdrive.db_utils import setup_db
 from hivemind_etl_helpers.src.db.gdrive.delete_records import delete_records
 from hivemind_etl_helpers.src.utils.credentials import load_postgres_credentials
 from hivemind_etl_helpers.src.utils.pg_db_utils import convert_tuple_str
 from hivemind_etl_helpers.src.utils.pg_vector_access import PGVectorAccess
+from llama_index import Document
 
 
 class TestDeleteRecords(TestCase):
