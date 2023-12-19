@@ -15,7 +15,6 @@ class MongoSingleton:
         else:
             creds = load_mongo_credentials()
             connection_uri = config_mogno_creds(creds)
-            print(f"Mongo connection_uri, {connection_uri}")
             self.client = MongoClient(connection_uri)
             MongoSingleton.__instance = self
 
