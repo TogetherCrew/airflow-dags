@@ -1,6 +1,6 @@
 import unittest
 
-from neo4j_storage import save_label_to_neo4j
+from github.neo4j_storage import save_label_to_neo4j
 
 
 class TestSaveLabelToNeo4j(unittest.TestCase):

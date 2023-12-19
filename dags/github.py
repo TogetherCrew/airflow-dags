@@ -18,11 +18,12 @@
 """Example DAG demonstrating the usage of dynamic task mapping."""
 from __future__ import annotations
 
+import logging
 from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.decorators import task
-from github_api_helpers import (
+from github.github_api_helpers import (
     fetch_commit_files,
     fetch_org_details,
     get_all_commits,
@@ -37,7 +38,7 @@ from github_api_helpers import (
     get_all_repo_review_comments,
     get_all_reviews_of_pull_request,
 )
-from neo4j_storage import (
+from github.neo4j_storage import (
     get_orgs_profile_from_neo4j,
     save_comment_to_neo4j,
     save_commit_files_changes_to_neo4j,
@@ -88,6 +89,7 @@ with DAG(
     # region organization ETL
     @task
     def extract_github_organization(organization):
+        logging.info(f"All data from last stage: {organization}")
         organization_name = organization["name"]
         org_info = fetch_org_details(org_name=organization_name)
 
@@ -95,10 +97,12 @@ with DAG(
 
     @task
     def transform_github_organization(organization):
+        logging.info(f"All data from last stage: {organization}")
         return organization
 
     @task
     def load_github_organization(organization):
+        logging.info(f"All data from last stage: {organization}")
         organization_info = organization["organization_info"]
 
         save_orgs_to_neo4j(organization_info)
@@ -109,6 +113,7 @@ with DAG(
     # region organization members ETL
     @task
     def extract_github_organization_members(organization):
+        logging.info(f"All data from last stage: {organization}")
         organization_name = organization["organization_basic"]["name"]
         members = get_all_org_members(org=organization_name)
 
@@ -116,11 +121,12 @@ with DAG(
 
     @task
     def transform_github_organization_members(data):
-        print("data: ", data)
+        logging.info(f"All data from last stage: {data}")
         return data
 
     @task
     def load_github_organization_members(data):
+        logging.info(f"All data from last stage: {data}")
         members = data["organization_members"]
         org_id = data["organization_info"]["id"]
 
@@ -134,6 +140,7 @@ with DAG(
     # region github repos ETL
     @task
     def extract_github_repos(organizations):
+        logging.info(f"All data from last stage: {organizations}")
         all_repos = []
         for organization in organizations:
             repos = get_all_org_repos(
@@ -148,13 +155,14 @@ with DAG(
 
     @task
     def transform_github_repos(repo):
-        print("TRANSFORM REPO: ", repo)
+        logging.info(f"All data from last stage: {repo}")
+
         return repo
 
     @task
     def load_github_repos(repo):
+        logging.info(f"All data from last stage: {repo}")
         repo = repo["repo"]
-        print("LOAD REPO: ", repo)
 
         save_repo_to_neo4j(repo)
         return repo
@@ -164,6 +172,7 @@ with DAG(
     # region pull requests ETL
     @task
     def extract_pull_requests(data):
+        logging.info(f"All data from last stage: {data}")
         repo = data["repo"]
         owner = repo["owner"]["login"]
         repo_name = repo["name"]
@@ -177,12 +186,12 @@ with DAG(
 
     @task
     def transform_pull_requests(data):
-        print("prs IN TRANSFORM: ", data)
+        logging.info(f"All data from last stage: {data}")
         return data
 
     @task
     def load_pull_requests(data):
-        print("prs IN REQUESTS: ", data)
+        logging.info(f"All data from last stage: {data}")
         prs = data["prs"]
         repository_id = data["repo"]["id"]
         for pr in prs:
@@ -196,6 +205,7 @@ with DAG(
     # region pull request files changes ETL
     @task
     def extract_pull_request_files_changes(data):
+        logging.info(f"All data from last stage: {data}")
         repo = data["repo"]
         owner = repo["owner"]["login"]
         repo_name = repo["name"]
@@ -212,10 +222,12 @@ with DAG(
 
     @task
     def transform_pull_request_files_changes(data):
+        logging.info(f"All data from last stage: {data}")
         return data
 
     @task
     def load_pull_request_files_changes(data):
+        logging.info(f"All data from last stage: {data}")
         pr_files_changes = data["pr_files_changes"]
         repository_id = data["repo"]["id"]
 
@@ -231,6 +243,7 @@ with DAG(
     # region pr review ETL
     @task
     def extract_pr_review(data):
+        logging.info(f"All data from last stage: {data}")
         repo = data["repo"]
         owner = repo["owner"]["login"]
         repo_name = repo["name"]
@@ -247,10 +260,12 @@ with DAG(
 
     @task
     def transform_pr_review(data):
+        logging.info(f"All data from last stage: {data}")
         return data
 
     @task
     def load_pr_review(data):
+        logging.info(f"All data from last stage: {data}")
         pr_reviews = data["pr_reviews"]
 
         for pr_id, reviews in pr_reviews.items():
@@ -265,6 +280,7 @@ with DAG(
 
     @task
     def extract_pr_review_comments(data):
+        logging.info(f"All data from last stage: {data}")
         repo = data["repo"]
         owner = repo["owner"]["login"]
         repo_name = repo["name"]
@@ -277,10 +293,12 @@ with DAG(
 
     @task
     def transform_pr_review_comments(data):
+        logging.info(f"All data from last stage: {data}")
         return data
 
     @task
     def load_pr_review_comments(data):
+        logging.info(f"All data from last stage: {data}")
         review_comments = data["review_comments"]
         repository_id = data["repo"]["id"]
 
@@ -296,6 +314,7 @@ with DAG(
     # region pr & issue comments ETL
     @task
     def extract_pr_issue_comments(data):
+        logging.info(f"All data from last stage: {data}")
         repo = data["repo"]
         owner = repo["owner"]["login"]
         repo_name = repo["name"]
@@ -308,10 +327,12 @@ with DAG(
 
     @task
     def transform_pr_issue_comments(data):
+        logging.info(f"All data from last stage: {data}")
         return data
 
     @task
     def load_pr_issue_comments(data):
+        logging.info(f"All data from last stage: {data}")
         comments = data["comments"]
         repository_id = data["repo"]["id"]
 
@@ -326,6 +347,7 @@ with DAG(
     # region repo contributors ETL
     @task
     def extract_repo_contributors(data):
+        logging.info(f"All data from last stage: {data}")
         repo = data["repo"]
         repo_name = repo["name"]
         owner = repo["owner"]["login"]
@@ -335,11 +357,12 @@ with DAG(
 
     @task
     def transform_repo_contributors(data):
-        print("contributors IN TRANSFORM: ", data)
+        logging.info(f"All data from last stage: {data}")
         return data
 
     @task
     def load_repo_contributors(data):
+        logging.info(f"All data from last stage: {data}")
         contributors = data["contributors"]
         repository_id = data["repo"]["id"]
 
@@ -355,6 +378,7 @@ with DAG(
     # region issues ETL
     @task
     def extract_issues(data):
+        logging.info(f"All data from last stage: {data}")
         repo = data["repo"]
         owner = repo["owner"]["login"]
         repo_name = repo["name"]
@@ -365,10 +389,12 @@ with DAG(
 
     @task
     def transform_issues(data):
+        logging.info(f"All data from last stage: {data}")
         return data
 
     @task
     def load_issues(data):
+        logging.info(f"All data from last stage: {data}")
         issues = data["issues"]
         repository_id = data["repo"]["id"]
 
@@ -382,6 +408,7 @@ with DAG(
     # region labels ETL
     @task
     def extract_labels(data):
+        logging.info(f"All data from last stage: {data}")
         repo = data["repo"]
         owner = repo["owner"]["login"]
         repo_name = repo["name"]
@@ -391,10 +418,12 @@ with DAG(
 
     @task
     def transform_labels(data):
+        logging.info(f"All data from last stage: {data}")
         return data
 
     @task
     def load_labels(data):
+        logging.info(f"All data from last stage: {data}")
         labels = data["labels"]
 
         for label in labels:
@@ -407,6 +436,7 @@ with DAG(
     # region commits ETL
     @task
     def extract_commits(data):
+        logging.info(f"All data from last stage: {data}")
         repo = data["repo"]
         owner = repo["owner"]["login"]
         repo_name = repo["name"]
@@ -416,10 +446,12 @@ with DAG(
 
     @task
     def transform_commits(data):
+        logging.info(f"All data from last stage: {data}")
         return data
 
     @task
     def load_commits(data):
+        logging.info(f"All data from last stage: {data}")
         commits = data["commits"]
         repository_id = data["repo"]["id"]
 
@@ -433,6 +465,7 @@ with DAG(
     # region commits files changes ETL
     @task
     def extract_commits_files_changes(data):
+        logging.info(f"All data from last stage: {data}")
         repo = data["repo"]
         owner = repo["owner"]["login"]
         repo_name = repo["name"]
@@ -448,10 +481,12 @@ with DAG(
 
     @task
     def transform_commits_files_changes(data):
+        logging.info(f"All data from last stage: {data}")
         return data
 
     @task
     def load_commits_files_changes(data):
+        logging.info(f"All data from last stage: {data}")
         commits_files_changes = data["commits_files_changes"]
         repository_id = data["repo"]["id"]
 
