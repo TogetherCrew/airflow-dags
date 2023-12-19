@@ -7,3 +7,6 @@ RUN pip3 install -r requirements.txt
 FROM base AS test
 RUN chmod +x docker-entrypoint.sh
 CMD ["./docker-entrypoint.sh"]
+
+FROM base AS prod
+CMD ["echo", "aiflow dags should be running on airlfow container"]
