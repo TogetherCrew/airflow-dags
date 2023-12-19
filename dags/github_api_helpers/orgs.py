@@ -1,4 +1,5 @@
 import logging
+
 from .smart_proxy import get
 
 
@@ -34,7 +35,9 @@ def fetch_org_members_page(org: str, page: int, per_page: int = 100):
     response = get(endpoint, params=params)
     response_data = response.json()
 
-    logging.info(f"Found {len(response_data)} members for organization {org} on page {page}. Members: {response_data}")
+    logging.info(
+        f"Found {len(response_data)} members for organization {org} on page {page}. Members: {response_data}"
+    )
     return response_data
 
 
