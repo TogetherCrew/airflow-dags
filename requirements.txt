@@ -9,7 +9,7 @@ sqlalchemy[asyncio]
 async-sqlalchemy
 pypdf
 python-pptx
-neo4j-lib-py
+tc-neo4j-lib
 google-api-python-client
 unstructured
 cohere

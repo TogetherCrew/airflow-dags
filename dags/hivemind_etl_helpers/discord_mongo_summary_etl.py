@@ -12,9 +12,7 @@ from hivemind_etl_helpers.src.utils.pg_vector_access import PGVectorAccess
 from llama_index.response_synthesizers import get_response_synthesizer
 
 
-def process_discord_summaries(
-    community_id: str, verbose: bool = False
-) -> None:
+def process_discord_summaries(community_id: str, verbose: bool = False) -> None:
     """
     prepare the discord data by grouping it into thread, channel and day
     and save the processed summaries into postgresql
