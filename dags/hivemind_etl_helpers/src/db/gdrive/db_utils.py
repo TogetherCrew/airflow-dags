@@ -118,10 +118,9 @@ def fetch_files_date_field(
             query += ") AS distinct_results;"
 
             cursor.execute(query)
-            results = cursor.fetchone()
-            if results[0] is not None:
-                # TODO: check the type of results
-                results = postprocess_results(results[0])  # type: ignore
+            query_results = cursor.fetchone()
+            if query_results[0] is not None:
+                results = postprocess_results(query_results[0])
             else:
                 results = {}
     except Exception as exp:
