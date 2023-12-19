@@ -74,4 +74,4 @@ class CohereEmbedding(BaseEmbedding):
 
     async def _aget_query_embedding(self, query: str) -> list[float]:
         """The asynchronous version of _get_query_embedding."""
-        raise NotImplemented
+        raise NotImplementedError("Not implemented!")

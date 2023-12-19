@@ -1,10 +1,6 @@
 import logging
 from datetime import timedelta
 
-from llama_index import Document
-from llama_index.response_synthesizers import get_response_synthesizer
-from neo4j._data import Record
-
 from hivemind_etl_helpers.src.db.discourse.fetch_raw_posts import (
     fetch_raw_posts_grouped,
 )
@@ -13,11 +9,12 @@ from hivemind_etl_helpers.src.db.discourse.summary.prepare_summary import (
 )
 from hivemind_etl_helpers.src.db.discourse.utils.get_forums import get_forums
 from hivemind_etl_helpers.src.document_node_parser import configure_node_parser
-from hivemind_etl_helpers.src.utils.check_documents import check_documents
 from hivemind_etl_helpers.src.utils.cohere_embedding import CohereEmbedding
 from hivemind_etl_helpers.src.utils.pg_db_utils import setup_db
 from hivemind_etl_helpers.src.utils.pg_vector_access import PGVectorAccess
-
+from llama_index import Document
+from llama_index.response_synthesizers import get_response_synthesizer
+from neo4j._data import Record
 
 def process_discourse_summary(community_id: str) -> None:
     """

@@ -47,7 +47,7 @@ class TestPGVectorAccess(unittest.TestCase):
             {
                 "type": 0,
                 "author": "111",
-                "content": f"test_message1",
+                "content": "test_message1",
                 "user_mentions": [],
                 "role_mentions": [],
                 "reactions": [],

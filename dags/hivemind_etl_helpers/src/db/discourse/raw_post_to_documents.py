@@ -1,11 +1,10 @@
 from datetime import datetime
 
-from llama_index import Document
-
 from hivemind_etl_helpers.src.db.discourse.fetch_raw_posts import fetch_raw_posts
 from hivemind_etl_helpers.src.db.discourse.utils.transform_raw_to_documents import (
     transform_raw_to_documents,
 )
+from llama_index import Document
 
 
 def fetch_discourse_documents(

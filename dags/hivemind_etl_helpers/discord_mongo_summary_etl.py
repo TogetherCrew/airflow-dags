@@ -1,9 +1,6 @@
 import argparse
 import logging
 
-from llama_index import Document
-from llama_index.response_synthesizers import get_response_synthesizer
-
 from hivemind_etl_helpers.src.db.discord.discord_summary import DiscordSummary
 from hivemind_etl_helpers.src.db.discord.find_guild_id import (
     find_guild_id_by_community_id,
@@ -12,6 +9,8 @@ from hivemind_etl_helpers.src.document_node_parser import configure_node_parser
 from hivemind_etl_helpers.src.utils.cohere_embedding import CohereEmbedding
 from hivemind_etl_helpers.src.utils.pg_db_utils import setup_db
 from hivemind_etl_helpers.src.utils.pg_vector_access import PGVectorAccess
+from llama_index import Document
+from llama_index.response_synthesizers import get_response_synthesizer
 
 
 def process_discord_summaries(

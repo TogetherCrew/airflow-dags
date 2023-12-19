@@ -1,5 +1,5 @@
 from llama_index import Document, ServiceContext, SummaryIndex
-from llama_index.llms import LLM, MockLLM, OpenAI
+from llama_index.llms import LLM, OpenAI
 from llama_index.response_synthesizers.base import BaseSynthesizer
 
 

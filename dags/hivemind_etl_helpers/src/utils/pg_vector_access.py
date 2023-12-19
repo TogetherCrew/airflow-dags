@@ -1,14 +1,14 @@
 import logging
 import time
 
+from hivemind_etl_helpers.src.utils.credentials import load_postgres_credentials
+from hivemind_etl_helpers.src.utils.pg_db_utils import delete_data
 from llama_index import Document, MockEmbedding, ServiceContext, StorageContext
 from llama_index.embeddings import BaseEmbedding, OpenAIEmbedding
 from llama_index.indices.vector_store import VectorStoreIndex
 from llama_index.node_parser import SimpleNodeParser
 from llama_index.vector_stores import PGVectorStore
 
-from hivemind_etl_helpers.src.utils.credentials import load_postgres_credentials
-from hivemind_etl_helpers.src.utils.pg_db_utils import delete_data
 
 
 class PGVectorAccess:

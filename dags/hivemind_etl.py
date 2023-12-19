@@ -24,7 +24,6 @@ from datetime import datetime, timedelta
 # import phoenix as px
 from airflow import DAG
 from airflow.decorators import task
-
 from hivemind_etl_helpers.discord_mongo_summary_etl import process_discord_summaries
 from hivemind_etl_helpers.discord_mongo_vector_store_etl import (
     process_discord_guild_mongo,

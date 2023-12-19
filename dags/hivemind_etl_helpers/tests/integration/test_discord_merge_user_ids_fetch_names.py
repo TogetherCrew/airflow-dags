@@ -3,7 +3,6 @@ from datetime import datetime
 from uuid import uuid1
 
 import numpy as np
-
 from hivemind_etl_helpers.src.db.discord.utils.merge_user_ids_fetch_names import (
     merge_user_ids_and_fetch_names,
 )

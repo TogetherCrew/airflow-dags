@@ -1,11 +1,10 @@
 from datetime import datetime
 
-from llama_index import Document
-
 from hivemind_etl_helpers.src.db.discord.fetch_raw_messages import fetch_raw_messages
 from hivemind_etl_helpers.src.db.discord.utils.transform_discord_raw_messges import (
     transform_discord_raw_messages,
 )
+from llama_index import Document
 
 
 def discord_raw_to_docuemnts(

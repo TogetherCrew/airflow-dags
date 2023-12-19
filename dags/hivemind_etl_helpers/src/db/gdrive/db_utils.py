@@ -3,7 +3,6 @@ from datetime import datetime, timezone
 
 import psycopg2
 from dateutil import parser
-
 from hivemind_etl_helpers.src.utils.pg_db_utils import convert_tuple_str
 from hivemind_etl_helpers.src.utils.postgres import PostgresSingleton
 
@@ -26,8 +25,8 @@ def setup_db(community_id: str) -> datetime | None:
         cursor = connection.cursor()
         logging.info(f"Creating database community_{community_id}")
         cursor.execute(f"CREATE DATABASE community_{community_id};")
-        cursor.execute(f"CREATE EXTENSION IF NOT EXISTS vector;")
-    except psycopg2.errors.DuplicateDatabase as exp:
+        cursor.execute("CREATE EXTENSION IF NOT EXISTS vector;")
+    except psycopg2.errors.DuplicateDatabase as _:
         logging.info(f"database community_{community_id} previouly created!")
     except Exception as exp:
         logging.error(f"grive database initialization: {exp}")

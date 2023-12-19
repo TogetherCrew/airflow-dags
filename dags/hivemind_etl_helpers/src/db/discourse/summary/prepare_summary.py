@@ -1,10 +1,6 @@
 import logging
 
 import neo4j
-from llama_index import Document, ServiceContext
-from llama_index.llms import LLM
-from llama_index.response_synthesizers.base import BaseSynthesizer
-
 from hivemind_etl_helpers.src.db.discourse.raw_post_to_documents import (
     transform_raw_to_documents,
 )
@@ -12,6 +8,9 @@ from hivemind_etl_helpers.src.db.discourse.summary.summary_utils import (
     transform_summary_to_document,
 )
 from hivemind_etl_helpers.src.utils.summary_base import SummaryBase
+from llama_index import Document, ServiceContext
+from llama_index.llms import LLM
+from llama_index.response_synthesizers.base import BaseSynthesizer
 
 
 class DiscourseSummary(SummaryBase):

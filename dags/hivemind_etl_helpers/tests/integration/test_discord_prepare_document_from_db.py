@@ -23,7 +23,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
         data = {
             "type": 0,
             "author": "111",
-            "content": f"test_message1",
+            "content": "test_message1",
             "user_mentions": [],
             "role_mentions": [],
             "reactions": [],
@@ -41,7 +41,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
         data = {
             "type": 19,
             "author": "112",
-            "content": f"mentioning a person <@113>",
+            "content": "mentioning a person <@113>",
             "user_mentions": ["113", "114"],
             "role_mentions": [],
             "reactions": [],
@@ -59,7 +59,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
         data = {
             "type": 19,
             "author": "112",
-            "content": f"mentioning <@113> <@114> <@101>",
+            "content": "mentioning <@113> <@114> <@101>",
             "user_mentions": ["113", "114"],
             "role_mentions": ["101"],
             "reactions": [],
@@ -77,7 +77,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
         data = {
             "type": 0,
             "author": "111",
-            "content": f"test_message1 https://www.google.com",
+            "content": "test_message1 https://www.google.com",
             "user_mentions": [],
             "role_mentions": [],
             "reactions": [],
@@ -96,7 +96,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
         members_data = []
         member = {
             "discordId": "111",
-            "username": f"user1",
+            "username": "user1",
             "roles": [],
             "joinedAt": datetime(2023, 5, 1),
             "avatar": "sample_avatar1",
@@ -110,7 +110,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
         members_data.append(member)
         member = {
             "discordId": "112",
-            "username": f"user2",
+            "username": "user2",
             "roles": [],
             "joinedAt": datetime(2023, 5, 2),
             "avatar": "sample_avatar2",
@@ -124,7 +124,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
         members_data.append(member)
         member = {
             "discordId": "113",
-            "username": f"user3",
+            "username": "user3",
             "roles": [],
             "joinedAt": datetime(2023, 5, 2),
             "avatar": "sample_avatar3",
@@ -138,7 +138,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
         members_data.append(member)
         member = {
             "discordId": "114",
-            "username": f"user4",
+            "username": "user4",
             "roles": [],
             "joinedAt": datetime(2023, 5, 3),
             "avatar": "sample_avatar4",
@@ -155,7 +155,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
         client[guild_id]["roles"].insert_one(
             {
                 "roleId": "101",
-                "name": f"role1",
+                "name": "role1",
                 "color": 3066993,
                 "deletedAt": None,
             }

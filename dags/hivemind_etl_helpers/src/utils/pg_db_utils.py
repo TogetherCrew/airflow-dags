@@ -2,7 +2,6 @@ import logging
 from datetime import datetime
 
 import psycopg2
-
 from hivemind_etl_helpers.src.utils.postgres import PostgresSingleton
 
 
@@ -38,10 +37,10 @@ def setup_db(community_id: str, dbname: str, latest_date_query: str) -> datetime
         cursor = connection.cursor()
         logging.info(f"{msg}Creating database {dbname}")
         cursor.execute(f"CREATE DATABASE {dbname};")
-        cursor.execute(f"CREATE EXTENSION IF NOT EXISTS vector;")
+        cursor.execute("CREATE EXTENSION IF NOT EXISTS vector;")
         cursor.close()
         connection.close()
-    except psycopg2.errors.DuplicateDatabase as exp:
+    except psycopg2.errors.DuplicateDatabase:
         logging.info(f"{msg}Database already exist!")
         logging.info(f"{msg}Checking the latest saved message!")
         postgres.close_connection()
@@ -72,7 +71,7 @@ def get_latest_msg(community_id: str, dbname: str, latest_date_query: str):
                 logging.info(f"{msg}Latest processed message: {from_date}")
             else:
                 logging.info(f"{msg}No processed message, starting from the first!")
-        except psycopg2.errors.UndefinedTable as _:
+        except psycopg2.errors.UndefinedTable:
             logging.warning(f"{msg}No data to get the latest date")
 
     postgres.close_connection()
@@ -95,7 +94,7 @@ def delete_data(deletion_query: str, dbname) -> None:
         connection = postgres.get_connection()
         connection.autocommit = True
         with connection.cursor() as cursor:
-            logging.info(f"Deleting data from postgresql!")
+            logging.info("Deleting data from postgresql!")
             cursor.execute(deletion_query)
     except Exception as exp:
         logging.error(f"Database deletion error: {exp}")

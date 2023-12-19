@@ -1,7 +1,6 @@
 from datetime import datetime
 
 import neo4j
-
 from hivemind_etl_helpers.src.utils.neo4j import Neo4jConnection
 
 
@@ -35,7 +34,7 @@ def fetch_raw_posts(
     """
     if from_date is not None:
         query += """
-            WHERE 
+            WHERE
                 datetime(p.createdAt) >= datetime($from_date)
             WITH p, forum_endpoint
         """
@@ -105,7 +104,7 @@ def fetch_raw_posts_grouped(
     """
     if from_date is not None:
         query += """
-            WHERE 
+            WHERE
                 datetime(p.createdAt) >= datetime($from_date)
             WITH p, forum_endpoint
         """
@@ -114,7 +113,7 @@ def fetch_raw_posts_grouped(
         MATCH (author:DiscourseUser)-[:POSTED]->(p)
         WITH author, p, forum_endpoint
         OPTIONAL MATCH (u:DiscourseUser)-[:LIKED]->(p)
-        WITH 
+        WITH
             author,
             p,
             forum_endpoint,
@@ -137,7 +136,7 @@ def fetch_raw_posts_grouped(
             COLLECT(replier_user.name) AS replier_names,
             // Extract the first 10 characters (date part)
             substring(p.createdAt, 0, 10) AS date
-            
+
         RETURN
             date,
             COLLECT({

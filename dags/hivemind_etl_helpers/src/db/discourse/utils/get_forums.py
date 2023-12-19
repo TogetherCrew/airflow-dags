@@ -1,5 +1,4 @@
 import neo4j
-
 from hivemind_etl_helpers.src.utils.neo4j import Neo4jConnection
 
 

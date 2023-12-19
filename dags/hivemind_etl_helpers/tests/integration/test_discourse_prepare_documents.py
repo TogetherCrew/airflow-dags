@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime
 from unittest import TestCase
 
 from hivemind_etl_helpers.src.db.discourse.raw_post_to_documents import (

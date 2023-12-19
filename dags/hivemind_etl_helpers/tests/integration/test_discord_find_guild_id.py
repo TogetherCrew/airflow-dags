@@ -2,7 +2,6 @@ from datetime import datetime, timedelta
 from unittest import TestCase
 
 from bson import ObjectId
-
 from hivemind_etl_helpers.src.db.discord.find_guild_id import (
     find_guild_id_by_community_id,
 )
