@@ -23,7 +23,7 @@ from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.decorators import task
-from github_api_helpers import (
+from github.github_api_helpers import (
     fetch_commit_files,
     fetch_org_details,
     get_all_commits,
@@ -38,7 +38,7 @@ from github_api_helpers import (
     get_all_repo_review_comments,
     get_all_reviews_of_pull_request,
 )
-from neo4j_storage import (
+from github.neo4j_storage import (
     get_orgs_profile_from_neo4j,
     save_comment_to_neo4j,
     save_commit_files_changes_to_neo4j,
