@@ -53,13 +53,22 @@ class PrepareSummaries(SummaryBase):
         self.prefix = f"GUILDID: {guild_id} "
         logging.info(f"{self.prefix}Preparing the thread summaries")
 
+        total_call_count = 0
+        for date in raw_data_grouped.keys():
+            for channel in raw_data_grouped[date].keys():
+                total_call_count += len(raw_data_grouped[date][channel])
+
+        idx = 1
         thread_summaries: dict[str, dict[str, dict[str, str]]] = {}
         for date in raw_data_grouped.keys():
             for channel in raw_data_grouped[date].keys():
                 for thread in raw_data_grouped[date][channel].keys():
                     # raw messages of the thread
                     raw_msgs = raw_data_grouped[date][channel][thread]
-
+                    logging.info(
+                        f"{self.prefix} Summrizing threads {idx}/{total_call_count}"
+                    )
+                    idx += 1
                     messages_document = transform_discord_raw_messages(
                         guild_id=guild_id, messages=raw_msgs, exclude_metadata=True
                     )
@@ -96,9 +105,15 @@ class PrepareSummaries(SummaryBase):
         """
         logging.info(f"{self.prefix}Preparing the channel summaries")
 
+        total_call_count = 0
+        for date in thread_summaries.keys():
+            for channel in thread_summaries[date].keys():
+                total_call_count += len(thread_summaries[date][channel])
+
         thread_summary_documenets: list[Document] = []
         channel_summaries: dict[str, dict[str, str]] = {}
 
+        idx = 1
         for date in thread_summaries.keys():
             for channel in thread_summaries[date].keys():
                 channel_documents: list[Document] = []
@@ -111,6 +126,11 @@ class PrepareSummaries(SummaryBase):
                     )
                     channel_documents.append(thread_doc)
                     thread_summary_documenets.append(thread_doc)
+
+                logging.info(
+                    f"{self.prefix} Summrizing channels {idx}/{total_call_count}"
+                )
+                idx += 1
 
                 channel_summary: str
                 # if we had multiple documents
@@ -154,6 +174,9 @@ class PrepareSummaries(SummaryBase):
         channel_summary_documenets: list[Document] = []
         daily_summaries: dict[str, str] = {}
 
+        total_call_count = len(channel_summaries.keys())
+
+        idx = 1
         for date in channel_summaries.keys():
             daily_documents: list[Document] = []
             for channel in channel_summaries[date].keys():
@@ -164,6 +187,9 @@ class PrepareSummaries(SummaryBase):
                 )
                 daily_documents.append(channel_doc)
                 channel_summary_documenets.append(channel_doc)
+
+            logging.info(f"{self.prefix} Summrizing channels {idx}/{total_call_count}")
+            idx += 1
 
             day_summary: str
             if len(daily_documents) != 1:
