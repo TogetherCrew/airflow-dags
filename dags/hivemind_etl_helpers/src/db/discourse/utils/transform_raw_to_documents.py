@@ -3,7 +3,7 @@ from neo4j import Record
 
 
 def transform_raw_to_documents(
-    raw_data: list[Record] | list[dict[str, str]]
+    raw_data: list[Record] | list[dict[str, str]], exclude_metadata: bool = False
 ) -> list[Document]:
     """
     transform the raw messages to llama_index documents
@@ -13,6 +13,9 @@ def transform_raw_to_documents(
     raw_data : list[neo4j.Record] | list[dict[str, str]]
         a list of retrieved data from neo4j
         can be list of dictionaries
+    exclude_metadata : bool
+        `False` do not exclude any metadata
+        `True` exclude all metadata
 
     Returns
     --------
@@ -27,8 +30,10 @@ def transform_raw_to_documents(
         else:
             post = record
 
-        documents.append(
-            Document(
+        doc: Document
+
+        if not exclude_metadata:
+            doc = Document(
                 text=post["raw"],
                 metadata={
                     "author_name": post["author_name"],
@@ -46,6 +51,9 @@ def transform_raw_to_documents(
                     "replier_names": post["replier_names"],
                 },
             )
-        )
+        else:
+            doc = Document(text=post["raw"])
+
+        documents.append(doc)
 
     return documents

@@ -73,7 +73,9 @@ class DiscourseSummary(SummaryBase):
 
                 for topic in category_topic_grouped[category]:
                     topic_posts = category_topic_grouped[category][topic]
-                    topic_post_documents = transform_raw_to_documents(topic_posts)
+                    topic_post_documents = transform_raw_to_documents(
+                        topic_posts, exclude_metadata=True
+                    )
                     summary = self._get_summary(
                         topic_post_documents, summarization_query
                     )
