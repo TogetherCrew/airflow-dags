@@ -19,7 +19,9 @@ from hivemind_etl_helpers.src.db.discord.utils.prepare_reactions_id import (
 
 
 def transform_discord_raw_messages(
-    guild_id: str, messages: list[dict]
+    guild_id: str,
+    messages: list[dict],
+    exclude_metadata: bool = False,
 ) -> list[Document]:
     """
     transform the raw messages of discord to llama_index docuemnts
@@ -28,8 +30,13 @@ def transform_discord_raw_messages(
 
     Paramaters
     ------------
+    guild_id : str
+        the discord guild that messages are related to
     messages : list[dict]
         list of raw messages with their respective fields
+    exclude_metadata : bool
+        whether to have all metadata or have nothing
+        default is false meaning not to exclude any metadata
 
     Returns
     ---------
@@ -40,7 +47,9 @@ def transform_discord_raw_messages(
 
     for msg in messages:
         try:
-            doc = prepare_document(message=msg, guild_id=guild_id)
+            doc = prepare_document(
+                message=msg, guild_id=guild_id, exclude_metadata=exclude_metadata
+            )
             documents.append(doc)
         except Exception as exp:
             logging.error(
@@ -50,7 +59,11 @@ def transform_discord_raw_messages(
     return documents
 
 
-def prepare_document(message: dict[str, Any], guild_id: str) -> Document | None:
+def prepare_document(
+    message: dict[str, Any],
+    guild_id: str,
+    exclude_metadata: bool,
+) -> Document | None:
     """
     prepare the llama_index.Document based on single discord message
 
@@ -60,6 +73,8 @@ def prepare_document(message: dict[str, Any], guild_id: str) -> Document | None:
         the message of user in discord
     guild_id : str
         the guild id to access data
+    exclude_metadata : bool
+        whether to have all metadata (False) or have nothing (True)
 
 
     Returns
@@ -183,7 +198,12 @@ def prepare_document(message: dict[str, Any], guild_id: str) -> Document | None:
     if role_names != []:
         msg_meta_data["role_mentions"] = role_names
 
-    doc = Document(text=content_url_updated, metadata=msg_meta_data)
+    doc: Document
+    if not exclude_metadata:
+        doc = Document(text=content_url_updated, metadata=msg_meta_data)
+    else:
+        doc = Document(text=content_url_updated)
+
     return doc
 
 

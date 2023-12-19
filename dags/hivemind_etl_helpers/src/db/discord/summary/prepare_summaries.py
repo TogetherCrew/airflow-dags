@@ -61,7 +61,7 @@ class PrepareSummaries(SummaryBase):
                     raw_msgs = raw_data_grouped[date][channel][thread]
 
                     messages_document = transform_discord_raw_messages(
-                        guild_id=guild_id, messages=raw_msgs
+                        guild_id=guild_id, messages=raw_msgs, exclude_metadata=True
                     )
                     summary_response = self._get_summary(
                         messages_document, summarization_query
