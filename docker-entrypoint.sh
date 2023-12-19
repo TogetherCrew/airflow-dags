@@ -2,7 +2,7 @@
 echo "chang dir to dags"
 cd dags || exit
 
-python3 -m coverage run --omit=tests/* -m pytest tests
+python3 -m coverage run --omit=tests/* -m pytest .
 
 cp .coverage ../.coverage
 cd .. || exit
