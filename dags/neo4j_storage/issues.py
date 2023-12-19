@@ -2,27 +2,28 @@ from .neo4j_connection import Neo4jConnection
 from .neo4j_enums import Node, Relationship
 from .utils import remove_nested_collections
 
+
 def save_issue_to_neo4j(issue: dict, repository_id: str):
-    
     neo4jConnection = Neo4jConnection()
     driver = neo4jConnection.connect_neo4j()
 
-    issue_creator = issue.pop('user', None)
-    assignee = issue.pop('assignee', None)
-    assignees = issue.pop('assignees', None)
-    labels = issue.pop('labels', None)
+    issue_creator = issue.pop("user", None)
+    assignee = issue.pop("assignee", None)
+    assignees = issue.pop("assignees", None)
+    labels = issue.pop("labels", None)
     cleaned_issue = remove_nested_collections(issue)
-    
+
     if assignee:
-      assignee_query = f"""
+        assignee_query = f"""
             WITH is
             MERGE (ghu:{Node.GitHubUser.value} {{id: $assignee.id}})
                 SET ghu += $assignee, ghu.latestSavedAt = datetime()
             WITH is, ghu
             MERGE (is)-[assignghu:{Relationship.ASSIGNED.value}]->(ghu)
                 SET assignghu.latestSavedAt = datetime()
-        """ 
-    else: assignee_query = ""
+        """
+    else:
+        assignee_query = ""
 
     assignees_query = f"""
         WITH is
@@ -44,10 +45,10 @@ def save_issue_to_neo4j(issue: dict, repository_id: str):
             SET haslb.latestSavedAt = datetime()
     """
 
-
     with driver.session() as session:
-        session.execute_write(lambda tx: 
-            tx.run(f"""
+        session.execute_write(
+            lambda tx: tx.run(
+                f"""
                 MERGE (is:{Node.Issue.value} {{id: $issue.id}})
                 SET is += $issue, is.repository_id = $repository_id, is.latestSavedAt = datetime()
                 WITH is
@@ -60,7 +61,13 @@ def save_issue_to_neo4j(issue: dict, repository_id: str):
                 { assignee_query }
                 { assignees_query }
                 { labels_query }
-            """, issue= cleaned_issue, repository_id= repository_id, issue_creator= issue_creator,
-                labels= labels, assignee= assignee, assignees= assignees)
+            """,
+                issue=cleaned_issue,
+                repository_id=repository_id,
+                issue_creator=issue_creator,
+                labels=labels,
+                assignee=assignee,
+                assignees=assignees,
+            )
         )
     driver.close()

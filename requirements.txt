@@ -1,6 +1,5 @@
-neo4j
 numpy
-llama-index==0.9.13
+llama-index>=0.9.13, <1.0.0
 pymongo
 python-dotenv
 pgvector
@@ -14,3 +13,7 @@ neo4j-lib-py
 google-api-python-client
 unstructured
 cohere
+neo4j>=5.14.1, <6.0.0
+coverage>=7.3.3, <8.0.0
+pytest>=7.4.3, <8.0.0
+python-dotenv==1.0.0

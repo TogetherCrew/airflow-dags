@@ -1,7 +1,9 @@
 from enum import Enum
 
+
 class Node(Enum):
-    OrganizationProfile = "OrganizationProfile" # This node is created by the API, and we receive a list of organizations detail to extract data from
+    # This node is created by the API, and we receive a list of organizations detail to extract data from
+    OrganizationProfile = "OrganizationProfile"
     GitHubOrganization = "GitHubOrganization"
     GitHubUser = "GitHubUser"
     PullRequest = "PullRequest"
@@ -12,6 +14,7 @@ class Node(Enum):
     Comment = "Comment"
     ReviewComment = "ReviewComment"
     File = "File"
+
 
 class Relationship(Enum):
     IS_MEMBER = "IS_MEMBER"

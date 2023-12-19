@@ -2,15 +2,15 @@ from .neo4j_connection import Neo4jConnection
 from .neo4j_enums import Node, Relationship
 from .utils import flat_map
 
+
 def save_review_comment_to_neo4j(review_comment: dict, repository_id: str):
-    
     neo4jConnection = Neo4jConnection()
     driver = neo4jConnection.connect_neo4j()
 
-    user = review_comment.pop('user', None)
-    pull_request_number= review_comment.pop('pull_request_number', None)
+    user = review_comment.pop("user", None)
+    pull_request_number = review_comment.pop("pull_request_number", None)
     cleaned_review = flat_map(review_comment)
-    
+
     if pull_request_number:
         pull_request_query = f"""
             WITH rc
@@ -18,8 +18,8 @@ def save_review_comment_to_neo4j(review_comment: dict, repository_id: str):
             MERGE (rc)-[ra:{Relationship.IS_ON.value}]->(pr)
                 SET ra.latestSavedAt = datetime()
         """
-    else: pull_request_query = ""
-
+    else:
+        pull_request_query = ""
 
     if user:
         user_query = f"""
@@ -30,32 +30,39 @@ def save_review_comment_to_neo4j(review_comment: dict, repository_id: str):
             MERGE (ghu)-[ra:{Relationship.CREATED.value}]->(rc)
                 SET ra.latestSavedAt = datetime()
         """
-    else: user_query = ""
-
+    else:
+        user_query = ""
 
     with driver.session() as session:
-        session.execute_write(lambda tx: 
-            tx.run(f"""
+        session.execute_write(
+            lambda tx: tx.run(
+                f"""
                 MERGE (rc:{Node.ReviewComment.value} {{id: $review.id}})
                 SET rc += $review, rc.repository_id = $repository_id, rc.latestSavedAt = datetime()
 
                 { user_query }
                 { pull_request_query }
-            """, review= cleaned_review, repository_id= repository_id, user= user, pull_request_number= pull_request_number))
+            """,
+                review=cleaned_review,
+                repository_id=repository_id,
+                user=user,
+                pull_request_number=pull_request_number,
+            )
+        )
 
     driver.close()
 
+
 def save_comment_to_neo4j(comment: dict, repository_id: str):
-    
     neo4jConnection = Neo4jConnection()
     driver = neo4jConnection.connect_neo4j()
 
-    user = comment.pop('user', None)
-    type = comment.pop('type', None)
-    number= comment.pop('number', None)
+    user = comment.pop("user", None)
+    type = comment.pop("type", None)
+    number = comment.pop("number", None)
     cleaned_comment = flat_map(comment)
-    
-    if type == 'issue':
+
+    if type == "issue":
         issue_query = f"""
             WITH c
             MATCH (i:{Node.Issue.value} {{number: $number, repository_id: $repository_id}})
@@ -63,7 +70,7 @@ def save_comment_to_neo4j(comment: dict, repository_id: str):
             MERGE (c)-[ra:{Relationship.IS_ON.value}]->(i)
                 SET ra.latestSavedAt = datetime()
         """
-    if type == 'pull_request':
+    if type == "pull_request":
         issue_query = f"""
             WITH c
             MATCH (pr:{Node.PullRequest.value} {{number: $number, repository_id: $repository_id}})
@@ -81,17 +88,24 @@ def save_comment_to_neo4j(comment: dict, repository_id: str):
             MERGE (ghu)-[ra:{Relationship.CREATED.value}]->(c)
                 SET ra.latestSavedAt = datetime()
         """
-    else: user_query = ""
-
+    else:
+        user_query = ""
 
     with driver.session() as session:
-        session.execute_write(lambda tx: 
-            tx.run(f"""
+        session.execute_write(
+            lambda tx: tx.run(
+                f"""
                 MERGE (c:{Node.Comment.value} {{id: $comment.id}})
                 SET c += $comment, c.repository_id = $repository_id, c.latestSavedAt = datetime()
 
                 { user_query }
                 { issue_query }
-            """, comment= cleaned_comment, repository_id= int(repository_id), user= user, number= int(number)))
+            """,
+                comment=cleaned_comment,
+                repository_id=int(repository_id),
+                user=user,
+                number=int(number),
+            )
+        )
 
     driver.close()

@@ -1,7 +1,7 @@
 import os
 
 from dotenv import load_dotenv
-from neo4j import GraphDatabase, Driver
+from neo4j import Driver, GraphDatabase
 
 
 class Neo4jConnection:
