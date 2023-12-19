@@ -1,3 +1,4 @@
+import logging
 from .smart_proxy import get
 
 
@@ -16,6 +17,7 @@ def fetch_org_repos_page(org_name: str, page: int, per_page: int = 100):
     response = get(endpoint, params=params)
     response_data = response.json()
 
+    logging.info(f"Found {len(response_data)} repos for organization {org_name} on page {page}. Repos: {response_data}")
     return response_data
 
 
@@ -26,10 +28,12 @@ def get_all_org_repos(org_name: str):
     :param org_name: The name of the organization.
     :return: A list of repos for the specified organization.
     """
+    logging.info(f"Fetching all repos for organization {org_name}...")
     all_repos = []
     current_page = 1
 
     while True:
+        logging.info(f"Fetching page {current_page} of repos...")
         repos = fetch_org_repos_page(org_name, current_page)
 
         if not repos:
@@ -38,6 +42,7 @@ def get_all_org_repos(org_name: str):
         all_repos.extend(repos)
         current_page += 1
 
+    logging.info(f"Found a total of {len(all_repos)} repos for organization {org_name}.")
     return all_repos
 
 
@@ -57,6 +62,7 @@ def fetch_repo_contributors_page(owner: str, repo: str, page: int, per_page: int
     response = get(endpoint, params=params)
     response_data = response.json()
 
+    logging.info(f"Found {len(response_data)} contributors for {owner}/{repo} on page {page}. Contributors: {response_data}")
     return response_data
 
 
@@ -68,10 +74,12 @@ def get_all_repo_contributors(owner: str, repo: str):
     :param repo: The name of the repository.
     :return: A list of contributors for the specified repository.
     """
+    logging.info(f"Fetching all contributors for {owner}/{repo}...")
     all_contributors = []
     current_page = 1
 
     while True:
+        logging.info(f"Fetching page {current_page} of contributors...")
         contributors = fetch_repo_contributors_page(owner, repo, current_page)
 
         if not contributors:
@@ -80,4 +88,5 @@ def get_all_repo_contributors(owner: str, repo: str):
         all_contributors.extend(contributors)
         current_page += 1
 
+    logging.info(f"Found a total of {len(all_contributors)} contributors for {owner}/{repo}.")
     return all_contributors

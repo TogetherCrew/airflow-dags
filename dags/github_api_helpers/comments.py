@@ -1,3 +1,4 @@
+import logging
 from .smart_proxy import get
 
 
@@ -44,6 +45,7 @@ def fetch_repo_review_comments_page(
         )
     )
 
+    logging.info(f"Found {len(updated_response_data)} comments for {owner}/{repo} on page {page}. comments: {updated_response_data}")
     return updated_response_data
 
 
@@ -55,10 +57,12 @@ def get_all_repo_review_comments(owner: str, repo: str):
     :param repo: The name of the repository.
     :return: A list of all review comments for the specified repository.
     """
+    logging.info(f"Fetching all comments for {owner}/{repo}...")
     all_comments = []
     current_page = 1
 
     while True:
+        logging.info(f"Fetching page {current_page} of comments...")
         comments = fetch_repo_review_comments_page(owner, repo, current_page)
 
         if not comments:
@@ -67,6 +71,7 @@ def get_all_repo_review_comments(owner: str, repo: str):
         all_comments.extend(comments)
         current_page += 1
 
+    logging.info(f"Found a total of {len(all_comments)} comments for {owner}/{repo}.")
     return all_comments
 
 
@@ -112,6 +117,7 @@ def fetch_repo_issues_and_prs_comments_page(
         map(lambda x: {**x, **extract_type_from_comment_response(x)}, response_data)
     )
 
+    logging.info(f"Found {len(updated_response_data)} comments for {owner}/{repo} on page {page}. comments: {updated_response_data}")
     return updated_response_data
 
 
@@ -123,10 +129,12 @@ def get_all_repo_issues_and_prs_comments(owner: str, repo: str):
     :param repo: The name of the repository.
     :return: A list of all review comments for the specified repository.
     """
+    logging.info(f"Fetching all comments for {owner}/{repo}...")
     all_comments = []
     current_page = 1
 
     while True:
+        logging.info(f"Fetching page {current_page} of comments...")
         comments = fetch_repo_issues_and_prs_comments_page(owner, repo, current_page)
 
         if not comments:
@@ -135,4 +143,5 @@ def get_all_repo_issues_and_prs_comments(owner: str, repo: str):
         all_comments.extend(comments)
         current_page += 1
 
+    logging.info(f"Found a total of {len(all_comments)} comments for {owner}/{repo}.")
     return all_comments

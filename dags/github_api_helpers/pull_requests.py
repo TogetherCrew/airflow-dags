@@ -1,3 +1,4 @@
+import logging
 from .smart_proxy import get
 
 
@@ -21,6 +22,7 @@ def fetch_pull_requests(owner: str, repo: str, page: int, per_page: int = 100):
     response = get(endpoint, params=params)
     response_data = response.json()
 
+    logging.info(f"Found {len(response_data)} pull requests for {owner}/{repo} on page {page}. Pull requests: {response_data}")
     return response_data
 
 
@@ -33,10 +35,12 @@ def get_all_pull_requests(owner: str, repo: str):
     :param pull_number: The number of the pull request.
     :return: A list of all commits for the specified pull request.
     """
+    logging.info(f"Fetching all pull requests for {owner}/{repo}...")
     all_pull_requests = []
     current_page = 1
 
     while True:
+        logging.info(f"Fetching page {current_page} of pull requests...")
         pull_requests = fetch_pull_requests(owner, repo, current_page)
 
         if not pull_requests:
@@ -45,6 +49,7 @@ def get_all_pull_requests(owner: str, repo: str):
         all_pull_requests.extend(pull_requests)
         current_page += 1
 
+    logging.info(f"Found a total of {len(all_pull_requests)} pull requests for {owner}/{repo}.")
     return all_pull_requests
 
 
@@ -69,6 +74,7 @@ def fetch_pull_requests_commits(
     response = get(endpoint, params=params)
     response_data = response.json()
 
+    logging.info(f"Found {len(response_data)} commits for pull request {pull_number} on page {page}. Commits: {response_data}")
     return response_data
 
 
@@ -81,10 +87,12 @@ def get_all_commits_of_pull_request(owner: str, repo: str, pull_number: int):
     :param pull_number: The number of the pull request.
     :return: A list of all commits for the specified pull request.
     """
+    logging.info(f"Fetching all commits for pull request {pull_number}...")
     all_commits = []
     current_page = 1
 
     while True:
+        logging.info(f"Fetching page {current_page} of commits...")
         commits = fetch_pull_requests_commits(owner, repo, pull_number, current_page)
 
         if not commits:
@@ -93,6 +101,7 @@ def get_all_commits_of_pull_request(owner: str, repo: str, pull_number: int):
         all_commits.extend(commits)
         current_page += 1
 
+    logging.info(f"Found a total of {len(all_commits)} commits for pull request {pull_number}.")
     return all_commits
 
 
@@ -114,7 +123,10 @@ def fetch_pull_request_comments(
     )
     params = {"page": page, "per_page": per_page}
     response = get(endpoint, params=params)
-    return response.json()
+    response_data = response.json()
+
+    logging.info(f"Found {len(response_data)} comments for pull request {issue_number} on page {page}. Comments: {response_data}")
+    return response_data
 
 
 def get_all_comments_of_pull_request(owner: str, repo: str, issue_number: int):
@@ -126,14 +138,18 @@ def get_all_comments_of_pull_request(owner: str, repo: str, issue_number: int):
     :param issue_number: The number of the issue.
     :return: A list of all comments for the specified issue.
     """
+    logging.info(f"Fetching all comments for pull request {issue_number}...")
     all_comments = []
     current_page = 1
     while True:
+        logging.info(f"Fetching page {current_page} of comments...")
         comments = fetch_pull_request_comments(owner, repo, issue_number, current_page)
         if not comments:  # Break the loop if no more comments are found
             break
         all_comments.extend(comments)
         current_page += 1
+
+    logging.info(f"Found a total of {len(all_comments)} comments for pull request {issue_number}.")
     return all_comments
 
 
@@ -155,7 +171,10 @@ def fetch_pull_request_review_comments(
     )
     params = {"page": page, "per_page": per_page}
     response = get(endpoint, params=params)
-    return response.json()
+    response_data = response.json()
+
+    logging.info(f"Found {len(response_data)} review comments for pull request {pull_number} on page {page}. Comments: {response_data}")
+    return response_data
 
 
 def get_all_review_comments_of_pull_request(owner: str, repo: str, pull_number: int):
@@ -167,9 +186,11 @@ def get_all_review_comments_of_pull_request(owner: str, repo: str, pull_number: 
     :param pull_number: The number of the pull request.
     :return: A list of all review comments for the specified pull request.
     """
+    logging.info(f"Fetching all review comments for pull request {pull_number}...")
     all_comments = []
     current_page = 1
     while True:
+        logging.info(f"Fetching page {current_page} of review comments...")
         comments = fetch_pull_request_review_comments(
             owner, repo, pull_number, current_page
         )
@@ -177,6 +198,8 @@ def get_all_review_comments_of_pull_request(owner: str, repo: str, pull_number: 
             break
         all_comments.extend(comments)
         current_page += 1
+    
+    logging.info(f"Found a total of {len(all_comments)} review comments for pull request {pull_number}.")
     return all_comments
 
 
@@ -196,7 +219,10 @@ def fetch_review_comment_reactions(
     endpoint = f"https://api.github.com/repos/{owner}/{repo}/pulls/comments/{comment_id}/reactions"
     params = {"page": page, "per_page": per_page}
     response = get(endpoint, params=params)
-    return response.json()
+    response_data = response.json()
+
+    logging.info(f"Found {len(response_data)} reactions for review comment {comment_id} on page {page}. Reactions: {response_data}")
+    return response_data
 
 
 def get_all_reactions_of_review_comment(owner: str, repo: str, comment_id: int):
@@ -208,14 +234,18 @@ def get_all_reactions_of_review_comment(owner: str, repo: str, comment_id: int):
     :param comment_id: The ID of the comment.
     :return: A list of all reactions for the specified pull request comment.
     """
+    logging.info(f"Fetching all reactions for review comment {comment_id}...")
     all_reactions = []
     current_page = 1
     while True:
+        logging.info(f"Fetching page {current_page} of reactions...")
         reactions = fetch_comment_reactions(owner, repo, comment_id, current_page)
         if not reactions:  # Break the loop if no more reactions are found
             break
         all_reactions.extend(reactions)
         current_page += 1
+
+    logging.info(f"Found a total of {len(all_reactions)} reactions for review comment {comment_id}.")
     return all_reactions
 
 
@@ -235,7 +265,10 @@ def fetch_comment_reactions(
     endpoint = f"https://api.github.com/repos/{owner}/{repo}/issues/comments/{comment_id}/reactions"
     params = {"page": page, "per_page": per_page}
     response = get(endpoint, params=params)
-    return response.json()
+    response_data = response.json()
+
+    logging.info(f"Found {len(response_data)} reactions for comment {comment_id} on page {page}. Reactions: {response_data}")
+    return response_data
 
 
 def get_all_reactions_of_comment(owner: str, repo: str, comment_id: int):
@@ -247,14 +280,18 @@ def get_all_reactions_of_comment(owner: str, repo: str, comment_id: int):
     :param comment_id: The ID of the comment.
     :return: A list of all reactions for the specified issue comment.
     """
+    logging.info(f"Fetching all reactions for comment {comment_id}...")
     all_reactions = []
     current_page = 1
     while True:
+        logging.info(f"Fetching page {current_page} of reactions...")
         reactions = fetch_comment_reactions(owner, repo, comment_id, current_page)
         if not reactions:  # Break the loop if no more reactions are found
             break
         all_reactions.extend(reactions)
         current_page += 1
+    
+    logging.info(f"Found a total of {len(all_reactions)} reactions for comment {comment_id}.")
     return all_reactions
 
 
@@ -276,7 +313,10 @@ def fetch_pull_request_reviews(
     )
     params = {"page": page, "per_page": per_page}
     response = get(endpoint, params=params)
-    return response.json()
+    response_data = response.json()
+
+    logging.info(f"Found {len(response_data)} reviews for pull request {pull_number} on page {page}. Reviews: {response_data}")
+    return response_data
 
 
 def get_all_reviews_of_pull_request(owner: str, repo: str, pull_number: int):
@@ -288,14 +328,18 @@ def get_all_reviews_of_pull_request(owner: str, repo: str, pull_number: int):
     :param pull_number: The number of the pull request.
     :return: A list of all reviews for the specified pull request.
     """
+    logging.info(f"Fetching all reviews for pull request {pull_number}...")
     all_reviews = []
     current_page = 1
     while True:
+        logging.info(f"Fetching page {current_page} of reviews...")
         reviews = fetch_pull_request_reviews(owner, repo, pull_number, current_page)
         if not reviews:  # Break the loop if no more reviews are found
             break
         all_reviews.extend(reviews)
         current_page += 1
+    
+    logging.info(f"Found a total of {len(all_reviews)} reviews for pull request {pull_number}.")
     return all_reviews
 
 
@@ -318,6 +362,7 @@ def fetch_pull_request_files_page(
     response = get(endpoint, params=params)
     response_data = response.json()
 
+    logging.info(f"Found {len(response_data)} files for pull request {pull_number} on page {page}. Files: {response_data}")
     return response_data
 
 
@@ -330,13 +375,16 @@ def get_all_pull_request_files(owner: str, repo: str, pull_number: int):
     :param pull_number: The number of the pull request.
     :return: A list of all files for the specified pull request.
     """
+    logging.info(f"Fetching all files for pull request {pull_number}...")
     files = []
     page = 1
     while True:
+        logging.info(f"Fetching page {page} of files...")
         page_files = fetch_pull_request_files_page(owner, repo, pull_number, page)
         if not page_files:
             break
         files.extend(page_files)
         page += 1
 
+    logging.info(f"Found a total of {len(files)} files for pull request {pull_number}.")
     return files
