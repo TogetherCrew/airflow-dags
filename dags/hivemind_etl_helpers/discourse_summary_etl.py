@@ -16,6 +16,7 @@ from llama_index import Document
 from llama_index.response_synthesizers import get_response_synthesizer
 from neo4j._data import Record
 
+
 def process_discourse_summary(community_id: str) -> None:
     """
     process discourse messages and save the per-channel/per-topic/daily summaries into postgresql

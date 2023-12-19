@@ -26,7 +26,7 @@ def setup_db(community_id: str) -> datetime | None:
         logging.info(f"Creating database community_{community_id}")
         cursor.execute(f"CREATE DATABASE community_{community_id};")
         cursor.execute("CREATE EXTENSION IF NOT EXISTS vector;")
-    except psycopg2.errors.DuplicateDatabase as _:
+    except psycopg2.errors.DuplicateDatabase:
         logging.info(f"database community_{community_id} previouly created!")
     except Exception as exp:
         logging.error(f"grive database initialization: {exp}")

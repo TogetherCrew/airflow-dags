@@ -12,6 +12,7 @@ from llama_index import Document, ServiceContext
 from llama_index.llms import LLM
 from llama_index.response_synthesizers.base import BaseSynthesizer
 
+
 class PrepareSummaries(SummaryBase):
     def __init__(
         self,

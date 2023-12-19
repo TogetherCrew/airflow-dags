@@ -10,7 +10,6 @@ from llama_index.node_parser import SimpleNodeParser
 from llama_index.vector_stores import PGVectorStore
 
 
-
 class PGVectorAccess:
     def __init__(
         self, table_name: str, dbname: str | None = None, testing: bool = False
