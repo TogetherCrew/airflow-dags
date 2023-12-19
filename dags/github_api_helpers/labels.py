@@ -1,5 +1,6 @@
-from .smart_proxy import get
 import logging
+
+from .smart_proxy import get
 
 
 def fetch_repo_labels_page(owner: str, repo: str, page: int, per_page: int = 100):

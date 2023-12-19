@@ -1,6 +1,7 @@
 import logging
-import requests
 import random
+
+import requests
 
 
 def get(url: str, params=None):
