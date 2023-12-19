@@ -17,8 +17,8 @@
 # under the License.
 """Example DAG demonstrating the usage of dynamic task mapping."""
 from __future__ import annotations
-import logging
 
+import logging
 from datetime import datetime, timedelta
 
 from airflow import DAG
@@ -140,7 +140,7 @@ with DAG(
     # region github repos ETL
     @task
     def extract_github_repos(organizations):
-        logging.info(f"All data from last stage: {organization}")
+        logging.info(f"All data from last stage: {organizations}")
         all_repos = []
         for organization in organizations:
             repos = get_all_org_repos(
