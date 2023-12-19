@@ -1,6 +1,7 @@
 from .smart_proxy import get
 import logging
 
+
 def fetch_repo_labels_page(owner: str, repo: str, page: int, per_page: int = 100):
     """
     Fetches the labels for a specific repository in GitHub.
@@ -17,7 +18,9 @@ def fetch_repo_labels_page(owner: str, repo: str, page: int, per_page: int = 100
     response = get(endpoint, params=params)
     response_data = response.json()
 
-    logging.info(f"Found {len(response_data)} labels for {owner}/{repo} on page {page}. Labels: {response_data}")
+    logging.info(
+        f"Found {len(response_data)} labels for {owner}/{repo} on page {page}. Labels: {response_data}"
+    )
     return response_data
 
 

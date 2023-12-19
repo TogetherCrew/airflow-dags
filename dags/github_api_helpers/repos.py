@@ -17,7 +17,9 @@ def fetch_org_repos_page(org_name: str, page: int, per_page: int = 100):
     response = get(endpoint, params=params)
     response_data = response.json()
 
-    logging.info(f"Found {len(response_data)} repos for organization {org_name} on page {page}. Repos: {response_data}")
+    logging.info(
+        f"Found {len(response_data)} repos for organization {org_name} on page {page}. Repos: {response_data}"
+    )
     return response_data
 
 
@@ -42,7 +44,9 @@ def get_all_org_repos(org_name: str):
         all_repos.extend(repos)
         current_page += 1
 
-    logging.info(f"Found a total of {len(all_repos)} repos for organization {org_name}.")
+    logging.info(
+        f"Found a total of {len(all_repos)} repos for organization {org_name}."
+    )
     return all_repos
 
 
@@ -62,7 +66,9 @@ def fetch_repo_contributors_page(owner: str, repo: str, page: int, per_page: int
     response = get(endpoint, params=params)
     response_data = response.json()
 
-    logging.info(f"Found {len(response_data)} contributors for {owner}/{repo} on page {page}. Contributors: {response_data}")
+    logging.info(
+        f"Found {len(response_data)} contributors for {owner}/{repo} on page {page}. Contributors: {response_data}"
+    )
     return response_data
 
 
@@ -88,5 +94,7 @@ def get_all_repo_contributors(owner: str, repo: str):
         all_contributors.extend(contributors)
         current_page += 1
 
-    logging.info(f"Found a total of {len(all_contributors)} contributors for {owner}/{repo}.")
+    logging.info(
+        f"Found a total of {len(all_contributors)} contributors for {owner}/{repo}."
+    )
     return all_contributors

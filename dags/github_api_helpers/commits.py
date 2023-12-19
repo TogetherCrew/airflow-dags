@@ -18,7 +18,9 @@ def fetch_commits(owner: str, repo: str, page: int, per_page: int = 100):
     response = get(endpoint, params=params)
     response_data = response.json()
 
-    logging.info(f"Found {len(response_data)} commits for {owner}/{repo} on page {page}. Commits: {response_data}")
+    logging.info(
+        f"Found {len(response_data)} commits for {owner}/{repo} on page {page}. Commits: {response_data}"
+    )
     return response_data
 
 
@@ -61,7 +63,9 @@ def fetch_commit_details(owner: str, repo: str, commit_sha: str):
     response = get(endpoint)
     response_data = response.json()
 
-    logging.info(f"Found details for commit {commit_sha} of {owner}/{repo}: {response_data}")
+    logging.info(
+        f"Found details for commit {commit_sha} of {owner}/{repo}: {response_data}"
+    )
     return response_data
 
 
@@ -77,7 +81,9 @@ def fetch_commit_files(owner: str, repo: str, sha: str):
     logging.info(f"Fetching files changed in commit {sha} of {owner}/{repo}...")
     commit_details = fetch_commit_details(owner, repo, sha)
     if "files" in commit_details:
-        logging.info(f"Found {len(commit_details['files'])} files changed in commit {sha} of {owner}/{repo}.")
+        logging.info(
+            f"Found {len(commit_details['files'])} files changed in commit {sha} of {owner}/{repo}."
+        )
         return commit_details["files"]
     else:
         logging.info(f"No files changed in commit {sha} of {owner}/{repo}.")
