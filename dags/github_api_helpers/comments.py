@@ -46,9 +46,11 @@ def fetch_repo_review_comments_page(
         )
     )
 
-    logging.info(
-        f"Found {len(updated_response_data)} comments for {owner}/{repo} on page {page}. comments: {updated_response_data}"
-    )
+    msg = f"Found {len(updated_response_data)}"
+    msg += f" review comments for {owner}/{repo} on page {page}."
+    msg += f" comments: {updated_response_data}"
+    logging.info(msg)
+
     return updated_response_data
 
 
@@ -120,9 +122,11 @@ def fetch_repo_issues_and_prs_comments_page(
         map(lambda x: {**x, **extract_type_from_comment_response(x)}, response_data)
     )
 
-    logging.info(
-        f"Found {len(updated_response_data)} comments for {owner}/{repo} on page {page}. comments: {updated_response_data}"
-    )
+    msg = f"Found {len(updated_response_data)}"
+    msg += f" comments for {owner}/{repo} on page {page}."
+    msg += f" comments: {updated_response_data}"
+    logging.info(msg)
+
     return updated_response_data
 
 

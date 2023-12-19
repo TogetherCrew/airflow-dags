@@ -186,9 +186,11 @@ def fetch_pull_request_review_comments(
     response = get(endpoint, params=params)
     response_data = response.json()
 
-    logging.info(
-        f"Found {len(response_data)} review comments for pull request {pull_number} on page {page}. Comments: {response_data}"
-    )
+    msg = f"Found {len(response_data)} review comments"
+    msg += f"for pull request {pull_number} on page {page}."
+    msg += f"Comments: {response_data}"
+    logging.info(msg)
+
     return response_data
 
 
@@ -238,9 +240,11 @@ def fetch_review_comment_reactions(
     response = get(endpoint, params=params)
     response_data = response.json()
 
-    logging.info(
-        f"Found {len(response_data)} reactions for review comment {comment_id} on page {page}. Reactions: {response_data}"
-    )
+    msg = f"Found {len(response_data)} reactions"
+    msg += f"for review comment {comment_id} on page {page}."
+    msg += f"Reactions: {response_data}"
+    logging.info(msg)
+
     return response_data
 
 
