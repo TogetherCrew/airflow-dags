@@ -48,38 +48,31 @@ class DiscourseSummary(SummaryBase):
             per-day and per-category
         """
         logging.info(f"{self.prefix}Preparing the topic summaries!")
+        prepared_data = self._prepare_topic_summary_data(raw_data_grouped)
+
+        total_inner_loop_calls = 0
+        for date in prepared_data.keys():
+            for category in prepared_data[date].keys():
+                total_inner_loop_calls += len(prepared_data[date][category].keys())
 
         topic_summaries: dict[str, dict[str, dict[str, str]]] = {}
 
-        for record in raw_data_grouped:
-            date = record["date"]
-            posts = record["posts"]
-
-            # data preparation
-            # first level key: category
-            # second level key: topic
-            # third level values are the actual posts
-            category_topic_grouped: dict[str, dict[str, list[dict[str, str]]]] = {}
-            for post in posts:
-                category_topic_grouped.setdefault(post["category"], {}).setdefault(
-                    post["topic"], []
-                )
-                category_topic_grouped[post["category"]][post["topic"]].append(post)
-
-            topic_summaries.setdefault(date, {})
-
-            for category in category_topic_grouped.keys():
-                topic_summaries[date].setdefault(category, {})
-
-                for topic in category_topic_grouped[category]:
-                    topic_posts = category_topic_grouped[category][topic]
+        idx = 1
+        for date in prepared_data.keys():
+            for category in prepared_data[date].keys():
+                for topic in prepared_data[date][category].keys():
+                    topic_summaries.setdefault(date, {}).setdefault(category, {})
+                    logging.info(
+                        f"{self.prefix} Summarizing topics {idx}/{total_inner_loop_calls}"
+                    )
+                    idx += 1
+                    topic_posts = prepared_data[date][category][topic]
                     topic_post_documents = transform_raw_to_documents(
                         topic_posts, exclude_metadata=True
                     )
                     summary = self._get_summary(
                         topic_post_documents, summarization_query
                     )
-
                     topic_summaries[date][category][topic] = summary
 
         return topic_summaries
@@ -112,6 +105,11 @@ class DiscourseSummary(SummaryBase):
         topic_summary_documents: list[Document] = []
         category_summaries: dict[str, dict[str, str]] = {}
 
+        total_inner_loop_calls = 0
+        for date in topic_summaries:
+            total_inner_loop_calls += len(topic_summaries[date].keys())
+
+        idx = 1
         for date in topic_summaries:
             category_summaries.setdefault(date, {})
 
@@ -129,6 +127,10 @@ class DiscourseSummary(SummaryBase):
                     category_topic_summary_documents.append(topic_document)
 
                 topic_summary_documents.extend(category_topic_summary_documents)
+                logging.info(
+                    f"{self.prefix} Summarizing categories {idx}/{total_inner_loop_calls}"
+                )
+                idx += 1
 
                 # if there was just one topic
                 # the summary of the topic would be the summary of the category
@@ -168,9 +170,11 @@ class DiscourseSummary(SummaryBase):
         """
         logging.info(f"{self.prefix}Preparing the daily summaries")
 
+        total_inner_loop_calls = len(category_summaries.keys())
         daily_summaries: dict[str, str] = {}
         category_summary_documenets: list[Document] = []
 
+        idx = 1
         for date in category_summaries.keys():
             day_category_documents: list[Document] = []
 
@@ -186,6 +190,10 @@ class DiscourseSummary(SummaryBase):
 
             category_summary_documenets.extend(day_category_documents)
 
+            logging.info(
+                f"{self.prefix} Summarizing Daily {idx}/{total_inner_loop_calls}"
+            )
+            idx += 1
             summary: str
             if len(day_category_documents) == 1:
                 summary = day_category_documents[0].text
@@ -223,3 +231,37 @@ class DiscourseSummary(SummaryBase):
             daily_summary_documents.append(day_document)
 
         return daily_summary_documents
+
+    def _prepare_topic_summary_data(
+        self,
+        raw_data_grouped: list[neo4j._data.Record],
+    ) -> dict[str, dict[str, dict[str, list[dict[str, str]]]]]:
+        """
+        prepare the data for creation of topic summaries
+
+        Parameters
+        ------------
+        raw_data : list[neo4j._data.Record]
+            the fetched raw data from discourse
+
+        Returns
+        ---------
+        prepared_data : dict[str, dict[str, dict[str, list[dict[str, str]]]]]
+            keys level 1 are date
+            keys level 2 are category
+            keys level 3 are topic
+            and values level 3 are posts as a list of list[dict[str, str]]
+        """
+        prepared_data: dict[str, dict[str, dict[str, list[dict[str, str]]]]] = {}
+
+        for record in raw_data_grouped:
+            date = record["date"]
+            posts = record["posts"]
+
+            for post in posts:
+                prepared_data.setdefault(date, {}).setdefault(
+                    post["category"], {}
+                ).setdefault(post["topic"], [])
+                prepared_data[date][post["category"]][post["topic"]].append(post)
+
+        return prepared_data
