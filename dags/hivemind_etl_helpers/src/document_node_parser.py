@@ -7,7 +7,7 @@ from llama_index.utils import globals_helper
 
 
 def configure_node_parser(
-    chunk_size: int = 256, chunk_overlap: int = 20, **kwargs
+    chunk_size: int, chunk_overlap: int = 20, **kwargs
 ) -> SimpleNodeParser:
     """
     Create SimpleNodeParser from documents

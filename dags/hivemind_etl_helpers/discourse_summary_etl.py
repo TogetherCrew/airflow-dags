@@ -10,6 +10,7 @@ from hivemind_etl_helpers.src.db.discourse.summary.prepare_summary import (
 from hivemind_etl_helpers.src.db.discourse.utils.get_forums import get_forums
 from hivemind_etl_helpers.src.document_node_parser import configure_node_parser
 from hivemind_etl_helpers.src.utils.cohere_embedding import CohereEmbedding
+from hivemind_etl_helpers.src.utils.load_llm_params import load_model_hyperparams
 from hivemind_etl_helpers.src.utils.pg_db_utils import setup_db
 from hivemind_etl_helpers.src.utils.pg_vector_access import PGVectorAccess
 from llama_index import Document
@@ -75,6 +76,7 @@ def process_forum(
     forum_endpoint : str
         the DiscourseForum endpoint for document checking
     """
+    chunk_size, embedding_dim = load_model_hyperparams()
     table_name = "discourse_summary"
 
     latest_date_query = f"""
@@ -113,11 +115,10 @@ def process_forum(
 
         logging.info("Getting the summaries embedding and saving within database!")
 
-        node_parser = configure_node_parser(chunk_size=256)
+        node_parser = configure_node_parser(chunk_size=chunk_size)
         pg_vector = PGVectorAccess(table_name=table_name, dbname=dbname)
 
         embed_model = CohereEmbedding()
-        embed_dim = 1024
 
         logging.info(
             f"{log_prefix} Saving the topic summaries (and extracting the embedding to save)"
@@ -130,7 +131,7 @@ def process_forum(
             node_parser=node_parser,
             max_request_per_minute=None,
             embed_model=embed_model,
-            embed_dim=embed_dim,
+            embed_dim=embedding_dim,
             request_per_minute=10000,
         )
 
@@ -145,7 +146,7 @@ def process_forum(
             node_parser=node_parser,
             max_request_per_minute=None,
             embed_model=embed_model,
-            embed_dim=embed_dim,
+            embed_dim=embedding_dim,
             request_per_minute=10000,
         )
 
@@ -160,7 +161,7 @@ def process_forum(
             node_parser=node_parser,
             max_request_per_minute=None,
             embed_model=embed_model,
-            embed_dim=embed_dim,
+            embed_dim=embedding_dim,
             request_per_minute=10000,
         )
     else:

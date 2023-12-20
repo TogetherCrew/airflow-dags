@@ -7,6 +7,7 @@ from hivemind_etl_helpers.src.db.discord.find_guild_id import (
 )
 from hivemind_etl_helpers.src.document_node_parser import configure_node_parser
 from hivemind_etl_helpers.src.utils.cohere_embedding import CohereEmbedding
+from hivemind_etl_helpers.src.utils.load_llm_params import load_model_hyperparams
 from hivemind_etl_helpers.src.utils.pg_db_utils import setup_db
 from hivemind_etl_helpers.src.utils.pg_vector_access import PGVectorAccess
 from llama_index.response_synthesizers import get_response_synthesizer
@@ -27,8 +28,8 @@ def process_discord_summaries(community_id: str, verbose: bool = False) -> None:
         verbose the process of summarization or not
         if `True` the summarization process will be printed out
         default is `False`
-
     """
+    chunk_size, embedding_dim = load_model_hyperparams()
     guild_id = find_guild_id_by_community_id(community_id)
     logging.info(f"COMMUNITYID: {community_id}, GUILDID: {guild_id}")
     table_name = "discord_summary"
@@ -62,11 +63,10 @@ def process_discord_summaries(community_id: str, verbose: bool = False) -> None:
 
     logging.info("Getting the summaries embedding and saving within database!")
 
-    node_parser = configure_node_parser(chunk_size=256)
+    node_parser = configure_node_parser(chunk_size=chunk_size)
     pg_vector = PGVectorAccess(table_name=table_name, dbname=dbname)
 
     embed_model = CohereEmbedding()
-    embed_dim = 1024
 
     # saving thread summaries
     pg_vector.save_documents_in_batches(
@@ -76,7 +76,7 @@ def process_discord_summaries(community_id: str, verbose: bool = False) -> None:
         node_parser=node_parser,
         max_request_per_minute=None,
         embed_model=embed_model,
-        embed_dim=embed_dim,
+        embed_dim=embedding_dim,
         request_per_minute=10000,
     )
 
@@ -88,7 +88,7 @@ def process_discord_summaries(community_id: str, verbose: bool = False) -> None:
         node_parser=node_parser,
         max_request_per_minute=None,
         embed_model=embed_model,
-        embed_dim=embed_dim,
+        embed_dim=embedding_dim,
         request_per_minute=10000,
     )
 
@@ -100,7 +100,7 @@ def process_discord_summaries(community_id: str, verbose: bool = False) -> None:
         node_parser=node_parser,
         max_request_per_minute=None,
         embed_model=embed_model,
-        embed_dim=embed_dim,
+        embed_dim=embedding_dim,
         request_per_minute=10000,
     )
 

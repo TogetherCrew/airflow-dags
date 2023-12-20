@@ -8,6 +8,7 @@ from hivemind_etl_helpers.src.db.discourse.utils.get_forums import get_forums
 from hivemind_etl_helpers.src.document_node_parser import configure_node_parser
 from hivemind_etl_helpers.src.utils.check_documents import check_documents
 from hivemind_etl_helpers.src.utils.cohere_embedding import CohereEmbedding
+from hivemind_etl_helpers.src.utils.load_llm_params import load_model_hyperparams
 from hivemind_etl_helpers.src.utils.pg_db_utils import setup_db
 from hivemind_etl_helpers.src.utils.pg_vector_access import PGVectorAccess
 
@@ -71,6 +72,7 @@ def process_forum(
     forum_endpoint : str
         the DiscourseForum endpoint for document checking
     """
+    chunk_size, embedding_dim = load_model_hyperparams()
     table_name = "discourse"
 
     latest_date_query = f"""
@@ -90,7 +92,7 @@ def process_forum(
     )
     documents = fetch_discourse_documents(forum_id=forum_id, from_date=from_date)
 
-    node_parser = configure_node_parser(chunk_size=512)
+    node_parser = configure_node_parser(chunk_size=chunk_size)
     pg_vector = PGVectorAccess(table_name=table_name, dbname=dbname)
 
     documents, doc_file_ids_to_delete = check_documents(
@@ -112,7 +114,6 @@ def process_forum(
         """
 
     embed_model = CohereEmbedding()
-    embed_dim = 1024
 
     pg_vector.save_documents_in_batches(
         community_id=community_id,
@@ -121,7 +122,7 @@ def process_forum(
         node_parser=node_parser,
         max_request_per_minute=None,
         embed_model=embed_model,
-        embed_dim=embed_dim,
+        embed_dim=embedding_dim,
         doc_file_ids_to_delete=deletion_query,
     )
 
