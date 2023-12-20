@@ -30,7 +30,7 @@ class CohereEmbedding(BaseEmbedding):
 
     def get_text_embedding(
         self, text: str | None = None, texts: list[str] | None = None
-    ) -> list[float]:
+    ) -> list[float] | list[list[float]]:
         co = self.prepare_cohere()
 
         if text is not None:
@@ -62,16 +62,16 @@ class CohereEmbedding(BaseEmbedding):
         Can be overridden for batch queries.
 
         """
-        return self.get_text_embedding(texts=texts)
+        return self.get_text_embedding(texts=texts)  # type: ignore
 
     def _get_text_embedding(self, text: str) -> list[float]:
         """Get text embedding."""
-        return self.get_text_embedding(text=text)
+        return self.get_text_embedding(text=text)  # type: ignore
 
     def _get_query_embedding(self, query: str) -> list[float]:
         """Get query embedding."""
-        return self.get_text_embedding(text=query)
+        return self.get_text_embedding(text=query)  # type: ignore
 
     async def _aget_query_embedding(self, query: str) -> list[float]:
         """The asynchronous version of _get_query_embedding."""
-        raise NotImplemented
+        raise NotImplementedError("Not implemented!")

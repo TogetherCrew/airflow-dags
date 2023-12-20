@@ -55,6 +55,7 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 cover/
+coverage
 
 # Translations
 *.mo
@@ -174,3 +175,5 @@ credentials_oauth.json
 credentials.json
 
 airflow_env/*
+main.ipynb
+main.py

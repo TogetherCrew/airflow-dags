@@ -7,7 +7,6 @@ from hivemind_etl_helpers.src.db.gdrive.retrieve_documents import (
     retrieve_folder_documents,
 )
 from hivemind_etl_helpers.src.document_node_parser import configure_node_parser
-from hivemind_etl_helpers.src.global_helpers import REQUEST_PER_DAY, REQUEST_PER_MINUTE
 from hivemind_etl_helpers.src.utils.check_documents import check_documents
 from hivemind_etl_helpers.src.utils.cohere_embedding import CohereEmbedding
 from hivemind_etl_helpers.src.utils.pg_vector_access import PGVectorAccess

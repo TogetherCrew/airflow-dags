@@ -2,9 +2,8 @@ import logging
 from datetime import datetime, timezone
 
 from dateutil import parser
-from llama_index import Document
-
 from hivemind_etl_helpers.src.db.gdrive.db_utils import fetch_files_date_field
+from llama_index import Document
 
 
 def check_documents(

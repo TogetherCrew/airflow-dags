@@ -24,13 +24,13 @@ from datetime import datetime, timedelta
 # import phoenix as px
 from airflow import DAG
 from airflow.decorators import task
-
 from hivemind_etl_helpers.discord_mongo_summary_etl import process_discord_summaries
 from hivemind_etl_helpers.discord_mongo_vector_store_etl import (
     process_discord_guild_mongo,
 )
-from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
-
+from hivemind_etl_helpers.src.utils.get_mongo_discord_communities import (
+    get_all_discord_communities,
+)
 
 # def setup_phonix():
 #     _ = px.launch_app()
@@ -49,18 +49,11 @@ with DAG(
 ) as dag:
 
     @task
-    def get_all_discord_communities() -> list[str]:
+    def get_discord_communities() -> list[str]:
         """
         Getting all communities having discord from database
         """
-        mongo = MongoSingleton.get_instance()
-        communities = (
-            mongo.client["Core"]["platforms"]
-            .find({"name": "discord"})
-            .distinct("community")
-        )
-        # getting the str instead of ObjectId
-        communities = [str(comm) for comm in communities]
+        communities = get_all_discord_communities()
         return communities
 
     @task
@@ -69,7 +62,7 @@ with DAG(
         process_discord_guild_mongo(community_id=community_id)
         logging.info(f"Community {community_id} Job finished!")
 
-    communities = get_all_discord_communities()
+    communities = get_discord_communities()
     # `start_discord_vectorstore` will be called multiple times
     # with the length of the list
     start_discord_vectorstore.expand(community_id=communities)
@@ -77,16 +70,13 @@ with DAG(
 with DAG(dag_id="discord_summary_vector_store", start_date=datetime(2023, 1, 1)) as dag:
 
     @task
-    def get_all_discord_communities() -> list[str]:
+    def get_mongo_discord_communities() -> list[str]:
         """
         Getting all communities having discord from database
+        this function is the same with `get_discord_communities`
+        we just changed the name for the pylint
         """
-        mongo = MongoSingleton.get_instance()
-        communities = (
-            mongo.client["Core"]["platforms"]
-            .find({"name": "discord"})
-            .distinct("community")
-        )
+        communities = get_all_discord_communities()
         return communities
 
     @task
@@ -95,5 +85,5 @@ with DAG(dag_id="discord_summary_vector_store", start_date=datetime(2023, 1, 1))
         process_discord_summaries(community_id=community_id, verbose=False)
         logging.info(f"Community {community_id} Job finished!")
 
-    communities = get_all_discord_communities()
+    communities = get_mongo_discord_communities()
     start_discord_summary_vectorstore.expand(community_id=communities)

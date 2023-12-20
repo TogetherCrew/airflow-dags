@@ -1,5 +1,4 @@
 from urllib.parse import urlparse
-from uuid import uuid1
 
 
 def extract_urls(text: str) -> list[str]:

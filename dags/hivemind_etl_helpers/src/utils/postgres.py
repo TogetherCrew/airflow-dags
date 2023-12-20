@@ -1,5 +1,4 @@
 import psycopg2
-
 from hivemind_etl_helpers.src.utils.credentials import load_postgres_credentials
 
 

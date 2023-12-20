@@ -3,12 +3,11 @@ from datetime import datetime, timezone
 
 import psycopg2
 from dateutil import parser
-
 from hivemind_etl_helpers.src.utils.pg_db_utils import convert_tuple_str
 from hivemind_etl_helpers.src.utils.postgres import PostgresSingleton
 
 
-def setup_db(community_id: str) -> datetime | None:
+def setup_db(community_id: str) -> None:
     """
     Check if database is not available, then create it
 
@@ -26,8 +25,8 @@ def setup_db(community_id: str) -> datetime | None:
         cursor = connection.cursor()
         logging.info(f"Creating database community_{community_id}")
         cursor.execute(f"CREATE DATABASE community_{community_id};")
-        cursor.execute(f"CREATE EXTENSION IF NOT EXISTS vector;")
-    except psycopg2.errors.DuplicateDatabase as exp:
+        cursor.execute("CREATE EXTENSION IF NOT EXISTS vector;")
+    except psycopg2.errors.DuplicateDatabase:
         logging.info(f"database community_{community_id} previouly created!")
     except Exception as exp:
         logging.error(f"grive database initialization: {exp}")
@@ -86,7 +85,7 @@ def fetch_files_date_field(
 
     identifier_type = ""
     if "identifier_type" in kwargs:
-        identifier_type = kwargs["identifier_type"]
+        identifier_type = kwargs["identifier_type"]  # type: ignore
 
     # initializing
     results: dict[str, datetime]
@@ -119,9 +118,9 @@ def fetch_files_date_field(
             query += ") AS distinct_results;"
 
             cursor.execute(query)
-            results = cursor.fetchone()
-            if results[0] is not None:
-                results = postprocess_results(results[0])
+            query_results = cursor.fetchone()
+            if query_results[0] is not None:
+                results = postprocess_results(query_results[0])
             else:
                 results = {}
     except Exception as exp:

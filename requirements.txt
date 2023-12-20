@@ -1,6 +1,5 @@
-neo4j
 numpy
-llama-index==0.9.13
+llama-index>=0.9.13, <1.0.0
 pymongo
 python-dotenv
 pgvector
@@ -8,9 +7,12 @@ asyncpg
 psycopg2-binary
 sqlalchemy[asyncio]
 async-sqlalchemy
-pypdf
 python-pptx
-neo4j-lib-py
+tc-neo4j-lib
 google-api-python-client
 unstructured
 cohere
+neo4j>=5.14.1, <6.0.0
+coverage>=7.3.3, <8.0.0
+pytest>=7.4.3, <8.0.0
+python-dotenv==1.0.0

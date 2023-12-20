@@ -1,9 +1,5 @@
 from datetime import datetime
 
-from llama_index import Document, ServiceContext
-from llama_index.llms import LLM
-from llama_index.response_synthesizers.base import BaseSynthesizer
-
 from hivemind_etl_helpers.src.db.discord.summary.prepare_grouped_data import (
     prepare_grouped_data,
 )
@@ -13,6 +9,9 @@ from hivemind_etl_helpers.src.db.discord.summary.prepare_summaries import (
 from hivemind_etl_helpers.src.db.discord.summary.summary_utils import (
     transform_daily_summary_to_document,
 )
+from llama_index import Document, ServiceContext
+from llama_index.llms import LLM
+from llama_index.response_synthesizers.base import BaseSynthesizer
 
 
 class DiscordSummary(PrepareSummaries):
@@ -30,7 +29,7 @@ class DiscordSummary(PrepareSummaries):
         -----------
         service_context : llama_index.ServiceContext | None
             the service context for llama_index to work
-            if nothing passed will be to `llm=gpt-3.5-turbo` and `chunk_size = 256`
+            if nothing passed will be to `llm=gpt-3.5-turbo` and `chunk_size = 512`
         set_response_synthesizer : BaseSynthesizer | None
             whether to set a response_synthesizer to refine the summaries or not
             if nothing passed would be set to `None`
