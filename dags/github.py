@@ -85,6 +85,7 @@ with DAG(
         #     "key": ""
         # }
         # orgs = [rndao_org, toghether_crew_org]
+        # return orgs
 
     # region organization ETL
     @task
@@ -147,7 +148,6 @@ with DAG(
                 org_name=organization["organization_basic"]["name"]
             )
             repos = list(map(lambda repo: {"repo": repo, **organization}, repos))
-            print("len-repos: ", len(repos))
 
             all_repos.extend(repos)
 
@@ -178,9 +178,6 @@ with DAG(
         repo_name = repo["name"]
 
         prs = get_all_pull_requests(owner=owner, repo=repo_name)
-        for pr in prs:
-            print("pr: ", pr, end="\n\n")
-
         new_data = {"prs": prs, **data}
         return new_data
 
@@ -195,7 +192,6 @@ with DAG(
         prs = data["prs"]
         repository_id = data["repo"]["id"]
         for pr in prs:
-            print("PR(pull-request): ", pr)
             save_pull_request_to_neo4j(pr=pr, repository_id=repository_id)
 
         return data
@@ -286,9 +282,6 @@ with DAG(
         repo_name = repo["name"]
 
         review_comments = get_all_repo_review_comments(owner=owner, repo=repo_name)
-        for review_comment in review_comments:
-            print("review_comment: ", review_comment, end="\n\n")
-
         return {"review_comments": review_comments, **data}
 
     @task
@@ -320,9 +313,6 @@ with DAG(
         repo_name = repo["name"]
 
         comments = get_all_repo_issues_and_prs_comments(owner=owner, repo=repo_name)
-        for comment in comments:
-            print("comment: ", comment, end="\n\n")
-
         return {"comments": comments, **data}
 
     @task
@@ -336,7 +326,6 @@ with DAG(
         comments = data["comments"]
         repository_id = data["repo"]["id"]
 
-        print("Len(comments): ", len(comments))
         for comment in comments:
             save_comment_to_neo4j(comment=comment, repository_id=repository_id)
 
@@ -384,7 +373,6 @@ with DAG(
         repo_name = repo["name"]
         issues = get_all_issues(owner=owner, repo=repo_name)
 
-        print("issues IN TASK: ", issues)
         return {"issues": issues, **data}
 
     @task
