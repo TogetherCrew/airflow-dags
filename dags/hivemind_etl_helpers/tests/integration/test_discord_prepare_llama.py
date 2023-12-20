@@ -57,7 +57,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
         data = {
             "type": 19,
             "author": "112",
-            "content": "mentioning <@113> <@114> <@101>",
+            "content": "mentioning <@113> <@114> <@&101>",
             "user_mentions": ["113", "114"],
             "role_mentions": ["101"],
             "reactions": [],

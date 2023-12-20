@@ -17,9 +17,13 @@ class TestDiscoursePrepareDailySummaries(unittest.TestCase):
     def test_prepare_daily_summaries_empty_data(self):
         self.setUp()
         forum_id = "12121221212"
+        forum_endpoint = "sample_endpoint"
 
         prepare_summaries = DiscourseSummary(
-            service_context=self.service_context, llm=self.mock_llm, forum_id=forum_id
+            service_context=self.service_context,
+            llm=self.mock_llm,
+            forum_id=forum_id,
+            forum_endpoint=forum_endpoint,
         )
 
         summaries, docs = prepare_summaries.prepare_daily_summaries(
@@ -33,9 +37,13 @@ class TestDiscoursePrepareDailySummaries(unittest.TestCase):
     def test_prepare_daily_summaries_some_data(self):
         self.setUp()
         forum_id = "12121221212"
+        forum_endpoint = "sample_endpoint"
 
         prepare_summaries = DiscourseSummary(
-            service_context=self.service_context, llm=self.mock_llm, forum_id=forum_id
+            service_context=self.service_context,
+            llm=self.mock_llm,
+            forum_id=forum_id,
+            forum_endpoint=forum_endpoint,
         )
 
         category_summaries = {
@@ -69,9 +77,13 @@ class TestDiscoursePrepareDailySummaries(unittest.TestCase):
     def test_prepare_daily_summaries_some_data_check_documents(self):
         self.setUp()
         forum_id = "12121221212"
+        forum_endpoint = "sample_endpoint"
 
         prepare_summaries = DiscourseSummary(
-            service_context=self.service_context, llm=self.mock_llm, forum_id=forum_id
+            service_context=self.service_context,
+            llm=self.mock_llm,
+            forum_id=forum_id,
+            forum_endpoint=forum_endpoint,
         )
 
         category_summaries = {

@@ -23,9 +23,18 @@ class TestTransformDailySummaryToDocument(unittest.TestCase):
 
         # Expected output documents
         expected_documents = [
-            Document(text="Summary 1", metadata={"date": "2023-01-01"}),
-            Document(text="Summary 2", metadata={"date": "2023-01-02"}),
-            Document(text="Summary 3", metadata={"date": "2023-01-03"}),
+            Document(
+                text="Summary 1",
+                metadata={"date": "2023-01-01", "channel": None, "thread": None},
+            ),
+            Document(
+                text="Summary 2",
+                metadata={"date": "2023-01-02", "channel": None, "thread": None},
+            ),
+            Document(
+                text="Summary 3",
+                metadata={"date": "2023-01-03", "channel": None, "thread": None},
+            ),
         ]
 
         # Transform and get result

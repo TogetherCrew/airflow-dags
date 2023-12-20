@@ -27,7 +27,7 @@ class TestDiscordGroupedDataPreparation(TestCase):
             thread_summary_docs,
             channel_summary_docs,
             day_summary_docs,
-        ) = discord_summary.prepare_summaries(guild_id)
+        ) = discord_summary.prepare_summaries(guild_id, summarization_prefix="")
 
         self.assertEqual(thread_summary_docs, [])
         self.assertEqual(channel_summary_docs, [])
@@ -47,7 +47,9 @@ class TestDiscordGroupedDataPreparation(TestCase):
             thread_summary_docs,
             channel_summary_docs,
             day_summary_docs,
-        ) = discord_summary.prepare_summaries(guild_id, from_date=from_date)
+        ) = discord_summary.prepare_summaries(
+            guild_id, from_date=from_date, summarization_prefix=""
+        )
 
         self.assertEqual(thread_summary_docs, [])
         self.assertEqual(channel_summary_docs, [])
@@ -133,7 +135,9 @@ class TestDiscordGroupedDataPreparation(TestCase):
             thread_summary_docs,
             channel_summary_docs,
             day_summary_docs,
-        ) = discord_summary.prepare_summaries(guild_id, from_date=from_date)
+        ) = discord_summary.prepare_summaries(
+            guild_id, from_date=from_date, summarization_prefix=""
+        )
 
         # we had 2 days with 3 channels of each 1 thread
         self.assertEqual(len(thread_summary_docs), 6)
@@ -233,7 +237,9 @@ class TestDiscordGroupedDataPreparation(TestCase):
             thread_summary_docs,
             channel_summary_docs,
             day_summary_docs,
-        ) = discord_summary.prepare_summaries(guild_id, from_date=from_date)
+        ) = discord_summary.prepare_summaries(
+            guild_id, from_date=from_date, summarization_prefix=""
+        )
 
         self.assertEqual(thread_summary_docs, [])
         self.assertEqual(channel_summary_docs, [])

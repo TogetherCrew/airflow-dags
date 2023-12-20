@@ -7,7 +7,7 @@ from hivemind_etl_helpers.src.db.discord.utils.prepare_raw_message_ids import (
 
 class TestPrepareRawMessage(unittest.TestCase):
     def test_normal_raw_message_preparation(self):
-        msg_content = "Hello <@1234> and <@4321>"
+        msg_content = "Hello <@&1234> and <@4321>"
         roles_mention = {
             "1234": "Everyone",
         }

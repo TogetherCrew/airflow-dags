@@ -48,7 +48,7 @@ class TestDeleteRecords(TestCase):
         no error should be raised
         """
         community_id = "1234"
-        table_name = "data_gdrive"
+        table_name = "gdrive"
 
         self.setUpDB(community_id=community_id)
         self.delete_previous_data(table_name)
@@ -66,7 +66,7 @@ class TestDeleteRecords(TestCase):
         no error should be raised
         """
         community_id = "1234"
-        table_name = "data_gdrive"
+        table_name = "gdrive"
 
         self.setUpDB(community_id=community_id)
         self.delete_previous_data(table_name)
@@ -88,9 +88,7 @@ class TestDeleteRecords(TestCase):
                 },
             )
         ]
-        pg_vector.save_documents(
-            documents,
-        )
+        pg_vector.save_documents(community_id, documents)
 
         delete_records(
             db_name=f"community_{community_id}",
@@ -105,7 +103,7 @@ class TestDeleteRecords(TestCase):
         no error should be raised
         """
         community_id = "1234"
-        table_name = "data_gdrive"
+        table_name = "gdrive"
 
         self.setUpDB(community_id=community_id)
         self.delete_previous_data(table_name)
@@ -137,9 +135,7 @@ class TestDeleteRecords(TestCase):
                 },
             ),
         ]
-        pg_vector.save_documents(
-            documents,
-        )
+        pg_vector.save_documents(community_id, documents)
 
         delete_records(
             db_name=f"community_{community_id}",
@@ -154,7 +150,7 @@ class TestDeleteRecords(TestCase):
         no error should be raised
         """
         community_id = "1234"
-        table_name = "data_gdrive"
+        table_name = "gdrive"
 
         self.setUpDB(community_id=community_id)
         self.delete_previous_data(table_name)
@@ -186,9 +182,7 @@ class TestDeleteRecords(TestCase):
                 },
             ),
         ]
-        pg_vector.save_documents(
-            documents,
-        )
+        pg_vector.save_documents(community_id, documents)
 
         # delete_records(
         #     db_name=f"community_{community_id}",
