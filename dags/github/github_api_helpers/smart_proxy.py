@@ -3,6 +3,7 @@ import random
 import requests
 from requests import Response
 
+
 class UniqueRandomNumbers:
     _instance = None
 
@@ -30,6 +31,7 @@ class UniqueRandomNumbers:
     def reset(self):
         self.numbers = self.original_numbers.copy()
         random.shuffle(self.numbers)
+
 
 def get(url: str, params=None) -> Response:
     """
@@ -60,13 +62,17 @@ def get(url: str, params=None) -> Response:
             if response.status_code == 200:
                 return response
             else:
-                logging.error(f"Failed to get {url} with status code {response.status_code}")
+                logging.error(
+                    f"Failed to get {url} with status code {response.status_code}"
+                )
                 logging.error(f"Response: {response.text}")
-        
+
         except requests.exceptions.HTTPError as http_err:
-            logging.error(f'HTTP error occurred، Failed to get {url} with error: {http_err}')
+            logging.error(
+                f"HTTP error occurred، Failed to get {url} with error: {http_err}"
+            )
         except Exception as err:
-            logging.error(f'Some error occurred during getting {url}, error: {err}')
+            logging.error(f"Some error occurred during getting {url}, error: {err}")
 
         attempt += 1
 
