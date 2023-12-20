@@ -7,7 +7,6 @@ asyncpg
 psycopg2-binary
 sqlalchemy[asyncio]
 async-sqlalchemy
-pypdf>=3.17.3
 python-pptx
 tc-neo4j-lib
 google-api-python-client
