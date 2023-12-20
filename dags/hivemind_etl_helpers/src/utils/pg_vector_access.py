@@ -2,6 +2,7 @@ import logging
 import time
 
 from hivemind_etl_helpers.src.utils.credentials import load_postgres_credentials
+from hivemind_etl_helpers.src.utils.load_llm_params import load_model_hyperparams
 from hivemind_etl_helpers.src.utils.pg_db_utils import delete_data
 from llama_index import Document, MockEmbedding, ServiceContext, StorageContext
 from llama_index.embeddings import BaseEmbedding, OpenAIEmbedding
@@ -228,9 +229,10 @@ class PGVectorAccess:
         **kwargs :
             embed_dim : int
                 to configure the embedding dimension
-                default is set to be 1024 which is cohere embedding dimension
         """
-        embed_dim: int = 1024
+        _, embedding_dim = load_model_hyperparams()
+
+        embed_dim: int = embedding_dim
         if "embed_dim" in kwargs:
             embed_dim = kwargs["embed_dim"]
 
