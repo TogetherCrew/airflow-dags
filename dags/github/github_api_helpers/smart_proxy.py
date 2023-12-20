@@ -11,11 +11,13 @@ class UniqueRandomNumbers:
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super(UniqueRandomNumbers, cls).__new__(cls)
-            cls._instance.original_numbers = list(range(20001, 29981))
-            cls._instance.numbers = cls._instance.original_numbers.copy()
-            random.shuffle(cls._instance.numbers)
-            cls._instance.counter = 0
         return cls._instance
+    
+    def __init__(self):
+        self.original_numbers = list(range(20001, 29981))
+        self.numbers = self.original_numbers.copy()
+        random.shuffle(self.numbers)
+        self.counter = 0
 
     def get_unique_number(self):
         # ! This is a sample code to limit the number of requests per specific time period
