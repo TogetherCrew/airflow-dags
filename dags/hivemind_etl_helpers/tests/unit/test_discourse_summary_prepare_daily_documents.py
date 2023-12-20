@@ -17,9 +17,13 @@ class TestDiscoursePrepareDailySummaryDocuments(unittest.TestCase):
     def test_prepare_documents_empty_input(self):
         self.setUp()
         forum_id = "12121221212"
+        forum_endpoint = "sample_endpoint"
 
         prepare_summaries = DiscourseSummary(
-            service_context=self.service_context, llm=self.mock_llm, forum_id=forum_id
+            service_context=self.service_context,
+            llm=self.mock_llm,
+            forum_id=forum_id,
+            forum_endpoint=forum_endpoint,
         )
 
         docs = prepare_summaries.prepare_daily_summary_documents(daily_summaries={})
@@ -29,9 +33,13 @@ class TestDiscoursePrepareDailySummaryDocuments(unittest.TestCase):
     def test_prepare_documents_some_inputs(self):
         self.setUp()
         forum_id = "12121221212"
+        forum_endpoint = "sample_endpoint"
 
         prepare_summaries = DiscourseSummary(
-            service_context=self.service_context, llm=self.mock_llm, forum_id=forum_id
+            service_context=self.service_context,
+            llm=self.mock_llm,
+            forum_id=forum_id,
+            forum_endpoint=forum_endpoint,
         )
 
         daily_summaries = {

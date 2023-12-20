@@ -18,9 +18,13 @@ class TestDiscoursePrepareTopicSummaries(unittest.TestCase):
     def test_prepare_topic_summaries_empty_data(self):
         self.setUp()
         forum_id = "12121221212"
+        forum_endpoint = "sample_endpoint"
 
         prepare_summaries = DiscourseSummary(
-            service_context=self.service_context, llm=self.mock_llm, forum_id=forum_id
+            service_context=self.service_context,
+            llm=self.mock_llm,
+            forum_id=forum_id,
+            forum_endpoint=forum_endpoint,
         )
 
         summaries = prepare_summaries.prepare_topic_summaries(
