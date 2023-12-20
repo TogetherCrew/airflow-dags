@@ -12,7 +12,7 @@ class UniqueRandomNumbers:
         if cls._instance is None:
             cls._instance = super(UniqueRandomNumbers, cls).__new__(cls)
         return cls._instance
-    
+
     def __init__(self):
         self.original_numbers = list(range(20001, 29981))
         self.numbers = self.original_numbers.copy()
