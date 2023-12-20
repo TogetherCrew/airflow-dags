@@ -22,6 +22,8 @@ services:
       - POSTGRES_USER=root
       - POSTGRES_PASS=pass
       - POSTGRES_PORT=5432
+      - CHUNK_SIZE=512
+      - EMBEDDING_DIM=1024
     volumes:
       - ./coverage:/project/coverage
     depends_on:
