@@ -2,8 +2,8 @@ from datetime import datetime
 from unittest import TestCase
 
 from hivemind_etl_helpers.src.db.discord.discord_summary import DiscordSummary
-from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 from hivemind_etl_helpers.src.utils.load_llm_params import load_model_hyperparams
+from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 from llama_index import Document, MockEmbedding, ServiceContext
 from llama_index.llms import MockLLM
 
@@ -13,7 +13,9 @@ class TestDiscordGroupedDataPreparation(TestCase):
         self.mock_llm = MockLLM()
         chunk_size, embedding_dim = load_model_hyperparams()
         self.service_context = ServiceContext.from_defaults(
-            llm=MockLLM(), chunk_size=256, embed_model=MockEmbedding(embed_dim=1024)
+            llm=MockLLM(),
+            chunk_size=chunk_size,
+            embed_model=MockEmbedding(embed_dim=embedding_dim),
         )
 
     def test_empty_data_prepare_without_per_date(self):
