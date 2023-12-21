@@ -170,3 +170,10 @@ cython_debug/
 
 # Logs
 logs
+
+credentials_oauth.json
+credentials.json
+
+airflow_env/*
+main.ipynb
+main.py

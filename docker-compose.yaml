@@ -50,7 +50,7 @@ x-airflow-common:
   # In order to add custom dependencies or upgrade provider packages you can use your extended image.
   # Comment the image line, place your Dockerfile in the directory where you placed the docker-compose.yaml
   # and uncomment the "build" line below, Then run `docker-compose build` to build the images.
-  image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.7.3}
+  image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.7.3-python3.11}
   # build: .
   environment:
     &airflow-common-env
@@ -72,7 +72,7 @@ x-airflow-common:
     # WARNING: Use _PIP_ADDITIONAL_REQUIREMENTS option ONLY for a quick checks
     # for other purpose (development, test and especially production usage) build/extend Airflow image.
     # _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
-    _PIP_ADDITIONAL_REQUIREMENTS: neo4j
+    _PIP_ADDITIONAL_REQUIREMENTS: numpy llama-index==0.9.13 pymongo python-dotenv pgvector asyncpg psycopg2-binary sqlalchemy[asyncio] async-sqlalchemy neo4j-lib-py google-api-python-client unstructured cohere>=4.37,<5 neo4j
     NEO4J_PROTOCOL: bolt
     NEO4J_HOST: neo4j
     NEO4J_PORT: 7687
@@ -95,13 +95,17 @@ x-airflow-common:
 
 services:
   postgres:
-    image: postgres:13
+    image: ankane/pgvector
+    ports:
+      - 5432:5432
+    expose:
+      - 5432:5432
     environment:
       POSTGRES_USER: airflow
       POSTGRES_PASSWORD: airflow
       POSTGRES_DB: airflow
-    volumes:
-      - postgres-db-volume:/var/lib/postgresql/data
+    # volumes:
+    #   - postgres-db-volume:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "airflow"]
       interval: 10s
@@ -120,6 +124,23 @@ services:
       retries: 50
       start_period: 30s
     restart: always
+
+  mongo:
+    image: "mongo:6.0.8"
+    ports:
+      - 27018:27017
+    expose:
+      - 27017:27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=pass
+    healthcheck:
+      test: echo 'db.stats().ok' | mongosh localhost:27017/test --quiet
+      interval: 60s
+      timeout: 10s
+      retries: 2
+      start_period: 40s
+
 
   neo4j:
     image: "neo4j:5.9.0"
