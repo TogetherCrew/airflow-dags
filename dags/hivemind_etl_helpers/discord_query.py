@@ -1,11 +1,10 @@
-from llama_index import QueryBundle
-from llama_index.vector_stores import ExactMatchFilter, FilterCondition, MetadataFilters
-
 from hivemind_etl_helpers.src.retrievers.forum_summary_retriever import (
     ForumBasedSummaryRetriever,
 )
 from hivemind_etl_helpers.src.utils.cohere_embedding import CohereEmbedding
 from hivemind_etl_helpers.src.utils.pg_vector_access import PGVectorAccess
+from llama_index import QueryBundle
+from llama_index.vector_stores import ExactMatchFilter, FilterCondition, MetadataFilters
 
 
 def query_discord(

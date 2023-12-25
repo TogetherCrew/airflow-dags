@@ -3,12 +3,11 @@ from functools import partial
 from unittest import TestCase
 from unittest.mock import MagicMock
 
-from dateutil import parser
-from llama_index import Document, MockEmbedding, ServiceContext, VectorStoreIndex
-
 from dags.hivemind_etl_helpers.src.retrievers.forum_summary_retriever import (
     ForumBasedSummaryRetriever,
 )
+from dateutil import parser
+from llama_index import Document, MockEmbedding, ServiceContext, VectorStoreIndex
 
 
 class TestDiscordSummaryRetriever(TestCase):
