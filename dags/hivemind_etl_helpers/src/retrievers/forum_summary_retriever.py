@@ -11,6 +11,7 @@ class ForumBasedSummaryRetriever(BaseSummarySearch):
     ) -> None:
         """
         the class for forum based data like discord and discourse
+        by default CohereEmbedding will be used.
         """
         super().__init__(table_name, dbname, embedding_model=embedding_model)
 
