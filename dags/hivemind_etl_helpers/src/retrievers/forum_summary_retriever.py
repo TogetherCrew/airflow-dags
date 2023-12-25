@@ -1,6 +1,6 @@
-from llama_index.embeddings import BaseEmbedding
-from hivemind_etl_helpers.src.utils.cohere_embedding import CohereEmbedding
 from hivemind_etl_helpers.src.retrievers.summary_retriever_base import BaseSummarySearch
+from hivemind_etl_helpers.src.utils.cohere_embedding import CohereEmbedding
+from llama_index.embeddings import BaseEmbedding
 
 
 class ForumBasedSummaryRetriever(BaseSummarySearch):
