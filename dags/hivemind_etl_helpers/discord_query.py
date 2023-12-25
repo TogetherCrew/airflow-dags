@@ -49,10 +49,12 @@ def query_discord(
     day_filters: list[ExactMatchFilter] = []
 
     for channel in channel_names:
-        channel_filters.append(ExactMatchFilter(key="channel", value=channel))
+        channel_updated = channel.replace("'", "''")
+        channel_filters.append(ExactMatchFilter(key="channel", value=channel_updated))
 
     for thread in thread_names:
-        thread_filters.append(ExactMatchFilter(key="thread", value=thread))
+        thread_updated = thread.replace("'", "''")
+        thread_filters.append(ExactMatchFilter(key="thread", value=thread_updated))
 
     for day in days:
         day_filters.append(ExactMatchFilter(key="date", value=day))
@@ -97,7 +99,7 @@ def query_discord_auto_filter(
     response : str
         the LLM response given the query
     """
-    table_name = "discord"
+    table_name = "discord_summary"
     dbname = f"community_{community_id}"
 
     discord_retriever = ForumBasedSummaryRetriever(table_name=table_name, dbname=dbname)
@@ -115,6 +117,6 @@ def query_discord_auto_filter(
         query=query,
         thread_names=threads,
         channel_names=channels,
-        days=dates
+        days=dates,
     )
     return response

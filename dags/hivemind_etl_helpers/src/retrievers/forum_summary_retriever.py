@@ -1,4 +1,5 @@
 from llama_index.embeddings import BaseEmbedding
+from hivemind_etl_helpers.src.utils.cohere_embedding import CohereEmbedding
 from hivemind_etl_helpers.src.retrievers.summary_retriever_base import BaseSummarySearch
 
 
@@ -7,7 +8,7 @@ class ForumBasedSummaryRetriever(BaseSummarySearch):
         self,
         table_name: str,
         dbname: str,
-        embedding_model: BaseEmbedding,
+        embedding_model: BaseEmbedding | CohereEmbedding = CohereEmbedding(),
     ) -> None:
         """
         the class for forum based data like discord and discourse
