@@ -1,6 +1,7 @@
 import logging
-from dateutil import parser
 from datetime import timedelta
+
+from dateutil import parser
 
 
 def process_dates(dates: list[str], d: int) -> list[str]:

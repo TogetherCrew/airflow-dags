@@ -24,4 +24,11 @@ def load_hyperparams() -> tuple[int, int, int]:
     k2 = os.getenv("K2_RETRIEVER_SEARCH")
     d = os.getenv("D_RETRIEVER_SEARCH")
 
+    if k1 is None:
+        raise ValueError("No `K1_RETRIEVER_SEARCH` available in .env file!")
+    if k2 is None:
+        raise ValueError("No `K2_RETRIEVER_SEARCH` available in .env file!")
+    if d is None:
+        raise ValueError("No `D_RETRIEVER_SEARCH` available in .env file!")
+
     return int(k1), int(k2), int(d)
