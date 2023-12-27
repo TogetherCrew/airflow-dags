@@ -1,6 +1,8 @@
 from hivemind_etl_helpers.src.retrievers.forum_summary_retriever import (
     ForumBasedSummaryRetriever,
 )
+from hivemind_etl_helpers.src.retrievers.process_dates import process_dates
+from hivemind_etl_helpers.src.retrievers.utils.load_hyperparams import load_hyperparams
 from hivemind_etl_helpers.src.utils.cohere_embedding import CohereEmbedding
 from hivemind_etl_helpers.src.utils.pg_vector_access import PGVectorAccess
 from llama_index import QueryBundle
@@ -13,6 +15,7 @@ def query_discord(
     thread_names: list[str],
     channel_names: list[str],
     days: list[str],
+    similarity_top_k: int | None = None,
 ) -> str:
     """
     query the discord database using filters given
@@ -30,12 +33,18 @@ def query_discord(
         the given channels to search for
     days : list[str]
         the given days to search for
+    similarity_top_k : int | None
+        the k similar results to use when querying the data
+        if `None` will load from `.env` file
 
     Returns
     ---------
     response : str
         the LLM response given the query
     """
+    if similarity_top_k is None:
+        _, similarity_top_k, _ = load_hyperparams()
+
     table_name = "discord"
     dbname = f"community_{community_id}"
 
@@ -65,7 +74,9 @@ def query_discord(
 
     filters = MetadataFilters(filters=all_filters, condition=FilterCondition.OR)
 
-    query_engine = index.as_query_engine(filters=filters)
+    query_engine = index.as_query_engine(
+        filters=filters, similarity_top_k=similarity_top_k
+    )
 
     query_bundle = QueryBundle(
         query_str=query, embedding=CohereEmbedding().get_text_embedding(text=query)
@@ -78,7 +89,8 @@ def query_discord(
 def query_discord_auto_filter(
     community_id: str,
     query: str,
-    similarity_top_k: int = 20,
+    similarity_top_k: int | None = None,
+    d: int | None = None,
 ) -> str:
     """
     get the query results and do the filtering automatically.
@@ -91,6 +103,13 @@ def query_discord_auto_filter(
         the discord guild data to query
     query : str
         the query (question) of the user
+    similarity_top_k : int | None
+        the value for the initial summary search
+        to get the `k2` count simliar nodes
+        if `None`, then would read from `.env`
+    d : int
+        this would make the secondary search (`query_discord`)
+        to be done on the `metadata.date - d` to `metadata.date + d`
 
 
     Returns
@@ -100,6 +119,11 @@ def query_discord_auto_filter(
     """
     table_name = "discord_summary"
     dbname = f"community_{community_id}"
+
+    if d is None:
+        _, _, d = load_hyperparams()
+    if similarity_top_k is None:
+        similarity_top_k, _, _ = load_hyperparams()
 
     discord_retriever = ForumBasedSummaryRetriever(table_name=table_name, dbname=dbname)
 
@@ -111,11 +135,13 @@ def query_discord_auto_filter(
         similarity_top_k=similarity_top_k,
     )
 
+    dates_modified = process_dates(dates, d)
+
     response = query_discord(
         community_id=community_id,
         query=query,
         thread_names=threads,
         channel_names=channels,
-        days=dates,
+        days=dates_modified,
     )
     return response
