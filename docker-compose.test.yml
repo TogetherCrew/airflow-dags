@@ -24,6 +24,9 @@ services:
       - POSTGRES_PORT=5432
       - CHUNK_SIZE=512
       - EMBEDDING_DIM=1024
+      - K1_RETRIEVER_SEARCH=20
+      - K2_RETRIEVER_SEARCH=5
+      - D_RETRIEVER_SEARCH=7
     volumes:
       - ./coverage:/project/coverage
     depends_on:
