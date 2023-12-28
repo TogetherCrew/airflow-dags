@@ -5,11 +5,11 @@ import psycopg2
 from hivemind_etl_helpers.src.db.discord.discord_raw_message_to_document import (
     discord_raw_to_docuemnts,
 )
-from tc_hivemind_backend.db.credentials import load_postgres_credentials
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
-from tc_hivemind_backend.db.pg_db_utils import setup_db
 from hivemind_etl_helpers.src.utils.pg_vector_access import PGVectorAccess
 from llama_index.indices.vector_store import VectorStoreIndex
+from tc_hivemind_backend.db.credentials import load_postgres_credentials
+from tc_hivemind_backend.db.pg_db_utils import setup_db
 
 
 class TestPGVectorAccess(unittest.TestCase):

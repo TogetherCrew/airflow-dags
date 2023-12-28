@@ -1,14 +1,14 @@
 import logging
 import time
 
-from tc_hivemind_backend.db.credentials import load_postgres_credentials
-from tc_hivemind_backend.db.utils.model_hyperparams import load_model_hyperparams
-from tc_hivemind_backend.db.utils.delete_data import delete_data
 from llama_index import Document, MockEmbedding, ServiceContext, StorageContext
 from llama_index.embeddings import BaseEmbedding, OpenAIEmbedding
 from llama_index.indices.vector_store import VectorStoreIndex
 from llama_index.node_parser import SimpleNodeParser
 from llama_index.vector_stores import PGVectorStore
+from tc_hivemind_backend.db.credentials import load_postgres_credentials
+from tc_hivemind_backend.db.utils.delete_data import delete_data
+from tc_hivemind_backend.db.utils.model_hyperparams import load_model_hyperparams
 
 
 class PGVectorAccess:
