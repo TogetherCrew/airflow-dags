@@ -6,7 +6,7 @@ from hivemind_etl_helpers.src.db.discord.find_guild_id import (
     find_guild_id_by_community_id,
 )
 from hivemind_etl_helpers.src.document_node_parser import configure_node_parser
-from hivemind_etl_helpers.src.utils.pg_vector_access import PGVectorAccess
+from tc_hivemind_backend.pg_vector_access import PGVectorAccess
 from llama_index.response_synthesizers import get_response_synthesizer
 from tc_hivemind_backend.db.pg_db_utils import setup_db
 from tc_hivemind_backend.db.utils.model_hyperparams import load_model_hyperparams

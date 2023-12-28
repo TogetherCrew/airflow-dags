@@ -3,7 +3,7 @@ from unittest import TestCase
 
 import psycopg2
 from hivemind_etl_helpers.src.db.gdrive.db_utils import fetch_files_date_field, setup_db
-from hivemind_etl_helpers.src.utils.pg_vector_access import PGVectorAccess
+from tc_hivemind_backend.pg_vector_access import PGVectorAccess
 from llama_index import Document
 from tc_hivemind_backend.db.credentials import load_postgres_credentials
 

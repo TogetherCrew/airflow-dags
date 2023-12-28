@@ -9,7 +9,7 @@ from hivemind_etl_helpers.src.db.discourse.summary.prepare_summary import (
 )
 from hivemind_etl_helpers.src.db.discourse.utils.get_forums import get_forums
 from hivemind_etl_helpers.src.document_node_parser import configure_node_parser
-from hivemind_etl_helpers.src.utils.pg_vector_access import PGVectorAccess
+from tc_hivemind_backend.pg_vector_access import PGVectorAccess
 from llama_index import Document
 from llama_index.response_synthesizers import get_response_synthesizer
 from neo4j._data import Record
