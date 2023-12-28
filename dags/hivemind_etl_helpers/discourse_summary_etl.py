@@ -9,13 +9,13 @@ from hivemind_etl_helpers.src.db.discourse.summary.prepare_summary import (
 )
 from hivemind_etl_helpers.src.db.discourse.utils.get_forums import get_forums
 from hivemind_etl_helpers.src.document_node_parser import configure_node_parser
-from tc_hivemind_backend.pg_vector_access import PGVectorAccess
 from llama_index import Document
 from llama_index.response_synthesizers import get_response_synthesizer
 from neo4j._data import Record
 from tc_hivemind_backend.db.pg_db_utils import setup_db
 from tc_hivemind_backend.db.utils.model_hyperparams import load_model_hyperparams
 from tc_hivemind_backend.embeddings.cohere import CohereEmbedding
+from tc_hivemind_backend.pg_vector_access import PGVectorAccess
 
 
 def process_discourse_summary(community_id: str) -> None:
