@@ -1,7 +1,7 @@
 import os
 import unittest
 
-from hivemind_etl_helpers.src.utils.load_llm_params import load_model_hyperparams
+from tc_hivemind_backend.db.utils.model_hyperparams import load_model_hyperparams
 
 
 class TestLoadModelHyperparams(unittest.TestCase):

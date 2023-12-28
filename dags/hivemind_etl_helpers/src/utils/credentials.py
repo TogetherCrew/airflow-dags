@@ -27,27 +27,3 @@ def load_mongo_credentials() -> dict[str, str]:
     mongo_creds["port"] = os.getenv("MONGODB_PORT", "")
 
     return mongo_creds
-
-
-def load_postgres_credentials() -> dict[str, str]:
-    """
-    load postgres credentials into a dictionary
-
-    Returns
-    ---------
-    credentials : dict[str, str]
-        a dictionary containing
-        `host`, `password`, `user`, `port`, and `db_name` as keys
-        and values are the values for the credentials
-    """
-    load_dotenv()
-
-    credentials: dict[str, str] = {}
-
-    credentials["host"] = os.getenv("POSTGRES_HOST", "")
-    credentials["password"] = os.getenv("POSTGRES_PASS", "")
-    credentials["user"] = os.getenv("POSTGRES_USER", "")
-    credentials["port"] = os.getenv("POSTGRES_PORT", "")
-    credentials["db_name"] = os.getenv("POSTGRES_DBNAME", "")
-
-    return credentials

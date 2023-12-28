@@ -4,7 +4,7 @@ from unittest import TestCase
 import psycopg2
 from hivemind_etl_helpers.src.db.gdrive.db_utils import setup_db
 from hivemind_etl_helpers.src.utils.check_documents import check_documents
-from hivemind_etl_helpers.src.utils.credentials import load_postgres_credentials
+from tc_hivemind_backend.db.credentials import load_postgres_credentials
 from hivemind_etl_helpers.src.utils.pg_vector_access import PGVectorAccess
 from llama_index import Document
 

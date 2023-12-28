@@ -3,8 +3,8 @@ from datetime import datetime, timezone
 
 import psycopg2
 from dateutil import parser
-from hivemind_etl_helpers.src.utils.pg_db_utils import convert_tuple_str
-from hivemind_etl_helpers.src.utils.postgres import PostgresSingleton
+from tc_hivemind_backend.db.pg_db_utils import convert_tuple_str
+from tc_hivemind_backend.db.postgresql import PostgresSingleton
 
 
 def setup_db(community_id: str) -> None:

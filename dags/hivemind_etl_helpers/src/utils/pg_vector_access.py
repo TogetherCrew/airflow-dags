@@ -1,9 +1,9 @@
 import logging
 import time
 
-from hivemind_etl_helpers.src.utils.credentials import load_postgres_credentials
-from hivemind_etl_helpers.src.utils.load_llm_params import load_model_hyperparams
-from hivemind_etl_helpers.src.utils.pg_db_utils import delete_data
+from tc_hivemind_backend.db.credentials import load_postgres_credentials
+from tc_hivemind_backend.db.utils.model_hyperparams import load_model_hyperparams
+from tc_hivemind_backend.db.utils.delete_data import delete_data
 from llama_index import Document, MockEmbedding, ServiceContext, StorageContext
 from llama_index.embeddings import BaseEmbedding, OpenAIEmbedding
 from llama_index.indices.vector_store import VectorStoreIndex

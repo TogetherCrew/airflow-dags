@@ -2,7 +2,7 @@ from datetime import datetime
 from unittest import TestCase
 
 from hivemind_etl_helpers.src.db.discord.discord_summary import DiscordSummary
-from hivemind_etl_helpers.src.utils.load_llm_params import load_model_hyperparams
+from tc_hivemind_backend.db.utils.model_hyperparams import load_model_hyperparams
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 from llama_index import Document, MockEmbedding, ServiceContext
 from llama_index.llms import MockLLM
