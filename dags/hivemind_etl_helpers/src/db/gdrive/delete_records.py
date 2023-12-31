@@ -1,6 +1,6 @@
 import logging
 
-from hivemind_etl_helpers.src.utils.pg_db_utils import convert_tuple_str
+from tc_hivemind_backend.db.pg_db_utils import convert_tuple_str
 from tc_hivemind_backend.db.postgresql import PostgresSingleton
 
 
