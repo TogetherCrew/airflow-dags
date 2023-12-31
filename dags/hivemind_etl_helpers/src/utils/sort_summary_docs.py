@@ -1,5 +1,6 @@
-from llama_index import Document
 from datetime import datetime
+
+from llama_index import Document
 
 
 def sort_summaries_daily(
@@ -27,11 +28,9 @@ def sort_summaries_daily(
     # Combine all documents into a single list
     all_docs = level1_docs + level2_docs + daily_docs
 
-    # # Define a custom sorting key function based on the date in metadata
-    # def get_date(doc: Document):
-    #     return datetime.strptime(doc.metadata['date'], '%Y-%m-%d')
-
-    get_date = lambda doc: datetime.strptime(doc.metadata["date"], "%Y-%m-%d")
+    # Define a custom sorting key function based on the date in metadata
+    def get_date(doc: Document):
+        return datetime.strptime(doc.metadata["date"], "%Y-%m-%d")
 
     # Sort the documents based on the custom key
     docs_sorted = sorted(all_docs, key=get_date)

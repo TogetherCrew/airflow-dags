@@ -1,7 +1,7 @@
 import unittest
-from llama_index import Document
 
 from hivemind_etl_helpers.src.utils.sort_summary_docs import sort_summaries_daily
+from llama_index import Document
 
 
 class TestSortSummariesDaily(unittest.TestCase):
