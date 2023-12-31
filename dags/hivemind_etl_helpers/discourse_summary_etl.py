@@ -13,6 +13,7 @@ from hivemind_etl_helpers.src.utils.cohere_embedding import CohereEmbedding
 from hivemind_etl_helpers.src.utils.load_llm_params import load_model_hyperparams
 from hivemind_etl_helpers.src.utils.pg_db_utils import setup_db
 from hivemind_etl_helpers.src.utils.pg_vector_access import PGVectorAccess
+from hivemind_etl_helpers.src.utils.sort_summary_docs import sort_summaries_daily
 from llama_index import Document
 from llama_index.response_synthesizers import get_response_synthesizer
 from neo4j._data import Record
@@ -79,17 +80,26 @@ def process_forum(
     chunk_size, embedding_dim = load_model_hyperparams()
     table_name = "discourse_summary"
 
+    # getting the query of latest date
     latest_date_query = f"""
-        SELECT (metadata_->> 'date')::timestamp
-        AS latest_date
+        SELECT (metadata_->> 'date')::timestamp AS latest_date
         FROM data_{table_name}
         WHERE (metadata_ ->> 'forum_endpoint') = '{forum_endpoint}'
+        AND (metadata_ ->> 'channel' IS NULL AND metadata_ ->> 'thread' IS NULL)
         ORDER BY (metadata_->>'date')::timestamp DESC
         LIMIT 1;
     """
     from_date = setup_db(
         community_id=community_id, dbname=dbname, latest_date_query=latest_date_query
     )
+
+    # deleting any in-complete saved summaries
+    deletion_query = f"""
+        DELETE FROM data_{table_name}
+        WHERE (metadata_ ->> 'forum_endpoint') = '{forum_endpoint}'
+        AND (metadata_ ->> 'date')::timestamp > '{from_date.strftime("%Y-%m-%d")}';
+    """
+
     # increasing 1 day since we've saved the summaries of the last day
     # e.g.: we would have the summaries of date 2023.12.15
     # and we should start from the 16th Dec.
@@ -113,56 +123,31 @@ def process_forum(
             forum_endpoint=forum_endpoint,
         )
 
-        logging.info("Getting the summaries embedding and saving within database!")
-
         node_parser = configure_node_parser(chunk_size=chunk_size)
         pg_vector = PGVectorAccess(table_name=table_name, dbname=dbname)
 
         embed_model = CohereEmbedding()
 
-        logging.info(
-            f"{log_prefix} Saving the topic summaries (and extracting the embedding to save)"
-        )
-        # saving topic summaries
-        pg_vector.save_documents_in_batches(
-            community_id=community_id,
-            documents=topic_summary_documents,
-            batch_size=100,
-            node_parser=node_parser,
-            max_request_per_minute=None,
-            embed_model=embed_model,
-            embed_dim=embedding_dim,
-            request_per_minute=10000,
+        sorted_daily_docs = sort_summaries_daily(
+            level1_docs=topic_summary_documents,
+            level2_docs=category_summary_documenets,
+            daily_docs=daily_summary_documents,
         )
 
         logging.info(
-            f"{log_prefix} Saving the category summaries (and extracting the embedding to save)"
-        )
-        # saving category summaries
-        pg_vector.save_documents_in_batches(
-            community_id=community_id,
-            documents=daily_summary_documents,
-            batch_size=100,
-            node_parser=node_parser,
-            max_request_per_minute=None,
-            embed_model=embed_model,
-            embed_dim=embedding_dim,
-            request_per_minute=10000,
+            f"{log_prefix} Saving discourse summaries (extracting the embedding and saving)"
         )
 
-        logging.info(
-            f"{log_prefix} Saving the daily summaries (and extracting the embedding to save)"
-        )
-        # saving daily summaries
         pg_vector.save_documents_in_batches(
             community_id=community_id,
-            documents=category_summary_documenets,
+            documents=sorted_daily_docs,
             batch_size=100,
             node_parser=node_parser,
             max_request_per_minute=None,
             embed_model=embed_model,
             embed_dim=embedding_dim,
             request_per_minute=10000,
+            deletion_query=deletion_query,
         )
     else:
         logging.info(f"No data to process. from_date: {from_date}")
