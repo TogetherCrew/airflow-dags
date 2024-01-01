@@ -93,12 +93,15 @@ def process_forum(
         community_id=community_id, dbname=dbname, latest_date_query=latest_date_query
     )
 
-    # deleting any in-complete saved summaries
-    deletion_query = f"""
-        DELETE FROM data_{table_name}
-        WHERE (metadata_ ->> 'forum_endpoint') = '{forum_endpoint}'
-        AND (metadata_ ->> 'date')::timestamp > '{from_date.strftime("%Y-%m-%d")}';
-    """
+    if from_date is not None:
+        # deleting any in-complete saved summaries
+        deletion_query = f"""
+            DELETE FROM data_{table_name}
+            WHERE (metadata_ ->> 'forum_endpoint') = '{forum_endpoint}'
+            AND (metadata_ ->> 'date')::timestamp > '{from_date.strftime("%Y-%m-%d")}';
+        """
+    else:
+        deletion_query = ""
 
     # increasing 1 day since we've saved the summaries of the last day
     # e.g.: we would have the summaries of date 2023.12.15

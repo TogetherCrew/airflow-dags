@@ -1,5 +1,6 @@
 import argparse
 import logging
+from datetime import timedelta
 
 from hivemind_etl_helpers.src.db.discord.discord_summary import DiscordSummary
 from hivemind_etl_helpers.src.db.discord.find_guild_id import (
@@ -47,11 +48,15 @@ def process_discord_summaries(community_id: str, verbose: bool = False) -> None:
     from_date = setup_db(
         community_id=community_id, dbname=dbname, latest_date_query=latest_date_query
     )
-    # deleting any in-complete saved summaries (meaning for threads or channels)
-    deletion_query = f"""
-        DELETE FROM data_{table_name}
-        WHERE (metadata_ ->> 'date')::timestamp > '{from_date.strftime("%Y-%m-%d")}';
-    """
+    if from_date is not None:
+        # deleting any in-complete saved summaries (meaning for threads or channels)
+        deletion_query = f"""
+            DELETE FROM data_{table_name}
+            WHERE (metadata_ ->> 'date')::timestamp > '{from_date.strftime("%Y-%m-%d")}';
+        """
+        from_date += timedelta(days=1)
+    else:
+        deletion_query = ""
 
     discord_summary = DiscordSummary(
         response_synthesizer=get_response_synthesizer(response_mode="tree_summarize"),
