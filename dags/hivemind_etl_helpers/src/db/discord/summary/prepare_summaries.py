@@ -187,7 +187,7 @@ class PrepareSummaries(SummaryBase):
                 daily_documents.append(channel_doc)
                 channel_summary_documenets.append(channel_doc)
 
-            logging.info(f"{self.prefix} Summrizing channels {idx}/{total_call_count}")
+            logging.info(f"{self.prefix} Summrizing daily {idx}/{total_call_count}")
             idx += 1
 
             day_summary: str

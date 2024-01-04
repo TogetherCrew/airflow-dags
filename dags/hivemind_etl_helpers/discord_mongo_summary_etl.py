@@ -1,5 +1,6 @@
 import argparse
 import logging
+from datetime import timedelta
 
 from hivemind_etl_helpers.src.db.discord.discord_summary import DiscordSummary
 from hivemind_etl_helpers.src.db.discord.find_guild_id import (
@@ -10,6 +11,7 @@ from hivemind_etl_helpers.src.utils.cohere_embedding import CohereEmbedding
 from hivemind_etl_helpers.src.utils.load_llm_params import load_model_hyperparams
 from hivemind_etl_helpers.src.utils.pg_db_utils import setup_db
 from hivemind_etl_helpers.src.utils.pg_vector_access import PGVectorAccess
+from hivemind_etl_helpers.src.utils.sort_summary_docs import sort_summaries_daily
 from llama_index.response_synthesizers import get_response_synthesizer
 
 
@@ -39,12 +41,22 @@ def process_discord_summaries(community_id: str, verbose: bool = False) -> None:
             SELECT (metadata_->> 'date')::timestamp
             AS latest_date
             FROM data_{table_name}
+            WHERE  (metadata_ ->> 'channel' IS NULL AND metadata_ ->> 'thread' IS NULL)
             ORDER BY (metadata_->>'date')::timestamp DESC
             LIMIT 1;
     """
     from_date = setup_db(
         community_id=community_id, dbname=dbname, latest_date_query=latest_date_query
     )
+    if from_date is not None:
+        # deleting any in-complete saved summaries (meaning for threads or channels)
+        deletion_query = f"""
+            DELETE FROM data_{table_name}
+            WHERE (metadata_ ->> 'date')::timestamp > '{from_date.strftime("%Y-%m-%d")}';
+        """
+        from_date += timedelta(days=1)
+    else:
+        deletion_query = ""
 
     discord_summary = DiscordSummary(
         response_synthesizer=get_response_synthesizer(response_mode="tree_summarize"),
@@ -63,45 +75,29 @@ def process_discord_summaries(community_id: str, verbose: bool = False) -> None:
 
     logging.info("Getting the summaries embedding and saving within database!")
 
+    # sorting the summaries per date
+    # this is to assure in case of server break, we could continue from the previous date
+    docs_daily_sorted = sort_summaries_daily(
+        level1_docs=thread_summaries_documents,
+        level2_docs=channel_summary_documenets,
+        daily_docs=daily_summary_documenets,
+    )
+
     node_parser = configure_node_parser(chunk_size=chunk_size)
     pg_vector = PGVectorAccess(table_name=table_name, dbname=dbname)
 
     embed_model = CohereEmbedding()
 
-    # saving thread summaries
     pg_vector.save_documents_in_batches(
         community_id=community_id,
-        documents=thread_summaries_documents,
+        documents=docs_daily_sorted,
         batch_size=100,
         node_parser=node_parser,
         max_request_per_minute=None,
         embed_model=embed_model,
         embed_dim=embedding_dim,
         request_per_minute=10000,
-    )
-
-    # saving daily summaries
-    pg_vector.save_documents_in_batches(
-        community_id=community_id,
-        documents=daily_summary_documenets,
-        batch_size=100,
-        node_parser=node_parser,
-        max_request_per_minute=None,
-        embed_model=embed_model,
-        embed_dim=embedding_dim,
-        request_per_minute=10000,
-    )
-
-    # saving channel summaries
-    pg_vector.save_documents_in_batches(
-        community_id=community_id,
-        documents=channel_summary_documenets,
-        batch_size=100,
-        node_parser=node_parser,
-        max_request_per_minute=None,
-        embed_model=embed_model,
-        embed_dim=embedding_dim,
-        request_per_minute=10000,
+        deletion_query=deletion_query,
     )
 
 
