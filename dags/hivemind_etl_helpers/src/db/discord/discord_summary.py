@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 
 from hivemind_etl_helpers.src.db.discord.summary.prepare_grouped_data import (
@@ -72,18 +73,32 @@ class DiscordSummary(PrepareSummaries):
             list of daily summaries converted to llama_index documents
         """
         raw_data_grouped = prepare_grouped_data(guild_id, from_date)
-        thread_summaries = self.prepare_thread_summaries(
-            guild_id, raw_data_grouped, summarization_prefix + " discord thread"
-        )
-        (channel_summaries, thread_summary_documenets) = self.prepare_channel_summaries(
-            thread_summaries,
-            summarization_prefix + " selection of discord thread summaries",
-        )
-        (daily_summaries, channel_summary_documenets) = self.prepare_daily_summaries(
-            channel_summaries,
-            summarization_prefix + " selection of discord channel summaries",
-        )
-        daily_summary_documents = transform_daily_summary_to_document(daily_summaries)
+        if raw_data_grouped != {}:
+            thread_summaries = self.prepare_thread_summaries(
+                guild_id, raw_data_grouped, summarization_prefix + " discord thread"
+            )
+            (
+                channel_summaries,
+                thread_summary_documenets,
+            ) = self.prepare_channel_summaries(
+                thread_summaries,
+                summarization_prefix + " selection of discord thread summaries",
+            )
+            (
+                daily_summaries,
+                channel_summary_documenets,
+            ) = self.prepare_daily_summaries(
+                channel_summaries,
+                summarization_prefix + " selection of discord channel summaries",
+            )
+            daily_summary_documents = transform_daily_summary_to_document(
+                daily_summaries
+            )
+        else:
+            logging.info(f"No data received after the data: {from_date}")
+            thread_summary_documenets = []
+            channel_summary_documenets = []
+            daily_summary_documents = []
 
         return (
             thread_summary_documenets,
