@@ -1,7 +1,7 @@
 import logging
 
-from hivemind_etl_helpers.src.utils.pg_db_utils import convert_tuple_str
-from hivemind_etl_helpers.src.utils.postgres import PostgresSingleton
+from tc_hivemind_backend.db.pg_db_utils import convert_tuple_str
+from tc_hivemind_backend.db.postgresql import PostgresSingleton
 
 
 def delete_records(db_name: str, table_name: str, metadata_file_id: list[str]) -> None:
