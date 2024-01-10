@@ -1,12 +1,2 @@
-# It's recommended that we use `bullseye` for Python (alpine isn't suitable as it conflcts with numpy)
-FROM python:3.10-bullseye AS base
-WORKDIR /project
-COPY . .
-RUN pip3 install -r requirements.txt
-
-FROM base AS test
-RUN chmod +x docker-entrypoint.sh
-CMD ["./docker-entrypoint.sh"]
-
-FROM base AS prod
-CMD ["echo", "aiflow dags should be running on airlfow container"]
+FROM apache/airflow:2.7.3-python3.11
+RUN pip install --no-cache-dir --user numpy llama-index==0.9.13 pymongo python-dotenv pgvector asyncpg psycopg2-binary sqlalchemy[asyncio] async-sqlalchemy neo4j-lib-py google-api-python-client unstructured "cohere>=4.37,<5" neo4j
