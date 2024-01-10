@@ -4,5 +4,6 @@ COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir --user -r requirements.txt
 
 FROM base AS test
+COPY docker-entrypoint.sh docker-entrypoint.sh
 RUN chmod +x docker-entrypoint.sh
 CMD ["./docker-entrypoint.sh"]
