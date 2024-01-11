@@ -28,10 +28,8 @@ def fetch_raw_messages(guild_id: str, from_date: datetime | None = None) -> list
             client[guild_id]["rawinfos"]
             .find(
                 {
-                    "$and": [
-                        {"createdDate": {"$gte": from_date}},
-                        {"isGeneratedByWebhook": False},
-                    ],
+                    "createdDate": {"$gte": from_date},
+                    "isGeneratedByWebhook": False,
                 }
             )
             .sort("createdDate", 1)
@@ -135,3 +133,19 @@ def fetch_raw_msg_grouped(
     raw_messages_grouped = list(cursor)
 
     return raw_messages_grouped
+
+def fetch_channels(guild_id: str):
+    """
+    fetch the channels from modules that we wanted to process
+
+    Parameters
+    -----------
+    guild_id : str
+        the guild to have its channels
+
+    Returns
+    ---------
+    channels : list[str]
+        the channels to fetch data from
+    """
+    pass
