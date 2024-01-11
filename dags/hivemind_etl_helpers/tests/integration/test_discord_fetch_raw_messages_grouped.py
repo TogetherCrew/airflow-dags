@@ -1,7 +1,7 @@
-from bson import ObjectId
 from datetime import datetime, timedelta
 from unittest import TestCase
 
+from bson import ObjectId
 from hivemind_etl_helpers.src.db.discord.fetch_raw_messages import fetch_raw_msg_grouped
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 

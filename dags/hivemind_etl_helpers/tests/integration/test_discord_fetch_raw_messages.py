@@ -1,8 +1,8 @@
 import unittest
 from datetime import datetime, timedelta
-from bson import ObjectId
 
 import numpy as np
+from bson import ObjectId
 from hivemind_etl_helpers.src.db.discord.fetch_raw_messages import fetch_raw_messages
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 

@@ -1,9 +1,9 @@
-from unittest import TestCase
-from bson import ObjectId
-
 from datetime import datetime, timedelta
-from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
+from unittest import TestCase
+
+from bson import ObjectId
 from hivemind_etl_helpers.src.db.discord.fetch_raw_messages import fetch_channels
+from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
 class TestDiscordFetchModulesChannels(TestCase):
