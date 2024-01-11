@@ -1,6 +1,7 @@
 import unittest
-from datetime import datetime
+from datetime import datetime, timedelta
 
+from bson import ObjectId
 import psycopg2
 from hivemind_etl_helpers.src.db.discord.discord_raw_message_to_document import (
     discord_raw_to_docuemnts,
@@ -35,9 +36,85 @@ class TestPGVectorAccess(unittest.TestCase):
             port=creds["port"],
         )
 
+    def setup_mongo_information(
+        self,
+        channels: list[str],
+        create_modules: bool = True,
+        create_platform: bool = True,
+        guild_id: str = "1234",
+    ):
+        client = MongoSingleton.get_instance().client
+
+        community_id = ObjectId("9f59dd4f38f3474accdc8f24")
+        platform_id = ObjectId("063a2a74282db2c00fbc2428")
+
+        client["Module"].drop_collection("modules")
+        client["Core"].drop_collection("platforms")
+
+        if create_modules:
+            data = {
+                "name": "hivemind",
+                "communityId": community_id,
+                "options": {
+                    "platforms": [
+                        {
+                            "platformId": platform_id,
+                            "options": {
+                                "channels": channels,
+                                "roles": ["role_id"],
+                                "users": ["user_id"],
+                            },
+                        }
+                    ]
+                },
+            }
+            client["Module"]["modules"].insert_one(data)
+
+        if create_platform:
+            client["Core"]["platforms"].insert_one(
+                {
+                    "_id": platform_id,
+                    "name": "discord",
+                    "metadata": {
+                        "action": {
+                            "INT_THR": 1,
+                            "UW_DEG_THR": 1,
+                            "PAUSED_T_THR": 1,
+                            "CON_T_THR": 4,
+                            "CON_O_THR": 3,
+                            "EDGE_STR_THR": 5,
+                            "UW_THR_DEG_THR": 5,
+                            "VITAL_T_THR": 4,
+                            "VITAL_O_THR": 3,
+                            "STILL_T_THR": 2,
+                            "STILL_O_THR": 2,
+                            "DROP_H_THR": 2,
+                            "DROP_I_THR": 1,
+                        },
+                        "window": {"period_size": 7, "step_size": 1},
+                        "id": guild_id,
+                        "isInProgress": False,
+                        "period": datetime.now() - timedelta(days=35),
+                        "icon": "some_icon_hash",
+                        "selectedChannels": channels,
+                        "name": "GuildName",
+                    },
+                    "community": community_id,
+                    "disconnectedAt": None,
+                    "connectedAt": datetime.now(),
+                    "createdAt": datetime.now(),
+                    "updatedAt": datetime.now(),
+                }
+            )
+
     def _create_and_save_doc(self, table: str, guild_id: str, dbname: str):
         client = MongoSingleton.get_instance().client
         dbname = f"guild_{guild_id}"
+        channels = ["111111", "22222"]
+        self.setup_mongo_information(
+            channels=channels,
+            guild_id=guild_id,
+        )
 
         client[guild_id].drop_collection("rawinfos")
         client[guild_id].drop_collection("guildmembers")
@@ -53,7 +130,7 @@ class TestPGVectorAccess(unittest.TestCase):
                 "replied_user": None,
                 "createdDate": datetime(2023, 5, 1),
                 "messageId": "100000000",
-                "channelId": "9000000001",
+                "channelId": channels[0],
                 "channelName": "channel1",
                 "threadId": None,
                 "threadName": None,
@@ -74,7 +151,7 @@ class TestPGVectorAccess(unittest.TestCase):
             }
         )
 
-        documents = discord_raw_to_docuemnts(guild_id="1234")
+        documents = discord_raw_to_docuemnts(guild_id=guild_id)
         self.setUpDB(dbname=dbname, table_name=table)
         cursor = self.postgres_conn.cursor()
         cursor.execute(f"DROP TABLE IF EXISTS data_{table};")
