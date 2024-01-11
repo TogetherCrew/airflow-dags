@@ -1,25 +1,101 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from unittest import TestCase
 
+from bson import ObjectId
 from hivemind_etl_helpers.src.db.discord.discord_summary import DiscordSummary
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 from llama_index import Document, MockEmbedding, ServiceContext
 from llama_index.llms import MockLLM
-from tc_hivemind_backend.db.utils.model_hyperparams import load_model_hyperparams
 
 
 class TestDiscordGroupedDataPreparation(TestCase):
     def setUp(self):
         self.mock_llm = MockLLM()
-        chunk_size, embedding_dim = load_model_hyperparams()
         self.service_context = ServiceContext.from_defaults(
             llm=MockLLM(),
-            chunk_size=chunk_size,
-            embed_model=MockEmbedding(embed_dim=embedding_dim),
+            chunk_size=512,
+            embed_model=MockEmbedding(embed_dim=1024),
         )
 
+    def setup_db(
+        self,
+        channels: list[str],
+        create_modules: bool = True,
+        create_platform: bool = True,
+        guild_id: str = "1234",
+    ):
+        client = MongoSingleton.get_instance().client
+
+        community_id = ObjectId("9f59dd4f38f3474accdc8f24")
+        platform_id = ObjectId("063a2a74282db2c00fbc2428")
+
+        client["Module"].drop_collection("modules")
+        client["Core"].drop_collection("platforms")
+
+        if create_modules:
+            data = {
+                "name": "hivemind",
+                "communityId": community_id,
+                "options": {
+                    "platforms": [
+                        {
+                            "platformId": platform_id,
+                            "options": {
+                                "channels": channels,
+                                "roles": ["role_id"],
+                                "users": ["user_id"],
+                            },
+                        }
+                    ]
+                },
+            }
+            client["Module"]["modules"].insert_one(data)
+
+        if create_platform:
+            client["Core"]["platforms"].insert_one(
+                {
+                    "_id": platform_id,
+                    "name": "discord",
+                    "metadata": {
+                        "action": {
+                            "INT_THR": 1,
+                            "UW_DEG_THR": 1,
+                            "PAUSED_T_THR": 1,
+                            "CON_T_THR": 4,
+                            "CON_O_THR": 3,
+                            "EDGE_STR_THR": 5,
+                            "UW_THR_DEG_THR": 5,
+                            "VITAL_T_THR": 4,
+                            "VITAL_O_THR": 3,
+                            "STILL_T_THR": 2,
+                            "STILL_O_THR": 2,
+                            "DROP_H_THR": 2,
+                            "DROP_I_THR": 1,
+                        },
+                        "window": {"period_size": 7, "step_size": 1},
+                        "id": guild_id,
+                        "isInProgress": False,
+                        "period": datetime.now() - timedelta(days=35),
+                        "icon": "some_icon_hash",
+                        "selectedChannels": channels,
+                        "name": "GuildName",
+                    },
+                    "community": community_id,
+                    "disconnectedAt": None,
+                    "connectedAt": datetime.now(),
+                    "createdAt": datetime.now(),
+                    "updatedAt": datetime.now(),
+                }
+            )
+
     def test_empty_data_prepare_without_per_date(self):
+        channels = ["111111", "22222"]
         guild_id = "1234"
+        self.setup_db(
+            channels=channels,
+            guild_id=guild_id,
+        )
+
         client = MongoSingleton.get_instance().client
         client[guild_id].drop_collection("rawinfos")
         self.setUp()
@@ -38,7 +114,13 @@ class TestDiscordGroupedDataPreparation(TestCase):
         self.assertEqual(day_summary_docs, [])
 
     def test_empty_data_prepare_with_from_date(self):
+        channels = ["111111", "22222"]
         guild_id = "1234"
+        self.setup_db(
+            channels=channels,
+            guild_id=guild_id,
+        )
+
         client = MongoSingleton.get_instance().client
         client[guild_id].drop_collection("rawinfos")
         from_date = datetime(2023, 8, 1)
@@ -60,7 +142,13 @@ class TestDiscordGroupedDataPreparation(TestCase):
         self.assertEqual(day_summary_docs, [])
 
     def test_some_data_prepare_with_from_date(self):
+        channels = ["111111", "22222"]
         guild_id = "1234"
+        self.setup_db(
+            channels=channels,
+            guild_id=guild_id,
+        )
+
         client = MongoSingleton.get_instance().client
         client[guild_id].drop_collection("rawinfos")
         from_date = datetime(2023, 8, 1)
@@ -79,7 +167,7 @@ class TestDiscordGroupedDataPreparation(TestCase):
                     2023, 10, i + 1
                 ),  # Different dates in October 2023
                 "messageId": f"11111{i}",
-                "channelId": "12454123",
+                "channelId": channels[i % len(channels)],
                 "channelName": "general",
                 "threadId": None,
                 "threadName": "Something",
@@ -100,7 +188,7 @@ class TestDiscordGroupedDataPreparation(TestCase):
                     2023, 10, i + 1
                 ),  # Different dates in October 2023
                 "messageId": f"11111{i}",
-                "channelId": "12454123",
+                "channelId": channels[i % len(channels)],
                 "channelName": "writing",
                 "threadId": "123443211",
                 "threadName": "Available",
@@ -121,7 +209,7 @@ class TestDiscordGroupedDataPreparation(TestCase):
                     2023, 10, i + 1
                 ),  # Different dates in October 2023
                 "messageId": f"11111{i}",
-                "channelId": "12454123",
+                "channelId": channels[i % len(channels)],
                 "channelName": "reading",
                 "threadId": None,
                 "threadName": None,
@@ -162,7 +250,13 @@ class TestDiscordGroupedDataPreparation(TestCase):
         """
         should return no data as we're getting them after the specific date
         """
+        channels = ["111111", "22222"]
         guild_id = "1234"
+        self.setup_db(
+            channels=channels,
+            guild_id=guild_id,
+        )
+
         client = MongoSingleton.get_instance().client
         client[guild_id].drop_collection("rawinfos")
         from_date = datetime(2023, 11, 1)
@@ -181,7 +275,7 @@ class TestDiscordGroupedDataPreparation(TestCase):
                     2023, 10, i + 1
                 ),  # Different dates in October 2023
                 "messageId": f"11111{i}",
-                "channelId": "12454123",
+                "channelId": channels[i % len(channels)],
                 "channelName": "general",
                 "threadId": None,
                 "threadName": "Something",
@@ -202,7 +296,7 @@ class TestDiscordGroupedDataPreparation(TestCase):
                     2023, 10, i + 1
                 ),  # Different dates in October 2023
                 "messageId": f"11111{i}",
-                "channelId": "12454123",
+                "channelId": channels[i % len(channels)],
                 "channelName": "writing",
                 "threadId": "123443211",
                 "threadName": "Available",
@@ -223,7 +317,7 @@ class TestDiscordGroupedDataPreparation(TestCase):
                     2023, 10, i + 1
                 ),  # Different dates in October 2023
                 "messageId": f"11111{i}",
-                "channelId": "12454123",
+                "channelId": channels[i % len(channels)],
                 "channelName": "reading",
                 "threadId": None,
                 "threadName": None,
