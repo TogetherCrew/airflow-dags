@@ -4,7 +4,7 @@ function ver() {
   printf "%04d%04d%04d%04d" "${1//./ }"
 }
 airflow_version=$(AIRFLOW__LOGGING__LOGGING_LEVEL=INFO && gosu airflow airflow version)
-airflow_version_comparable=$(ver ${airflow_version})
+airflow_version_comparable=$(ver "${airflow_version}")
 min_airflow_version=2.2.0
 min_airflow_version_comparable=$(ver "${min_airflow_version}")
 if (( airflow_version_comparable < min_airflow_version_comparable )); then
