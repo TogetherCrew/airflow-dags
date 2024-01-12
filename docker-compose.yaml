@@ -48,13 +48,14 @@ version: '3.8'
 
 x-airflow-common:
   &airflow-common
-  build: .
+  build:
+    context: .
+    target: prod
   env_file:
     &airflow-common-env
     - ./.env.airflow
   volumes:
     - ./dags:/opt/airflow/dags:ro
-    - ./airflow-init.sh:/airflow-init.sh:ro
     - airflow_logs:/opt/airflow/logs
     - airflow_config:/opt/airflow/config
     - airflow_plugins:/opt/airflow/plugins
