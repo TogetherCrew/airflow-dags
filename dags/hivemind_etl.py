@@ -20,6 +20,8 @@ from __future__ import annotations
 
 import logging
 from datetime import datetime, timedelta
+from dotenv import load_dotenv
+
 
 # import phoenix as px
 from airflow import DAG
@@ -58,6 +60,7 @@ with DAG(
 
     @task
     def start_discord_vectorstore(community_id: str):
+        load_dotenv()
         logging.info(f"Working on community, {community_id}")
         process_discord_guild_mongo(community_id=community_id)
         logging.info(f"Community {community_id} Job finished!")
@@ -81,6 +84,7 @@ with DAG(dag_id="discord_summary_vector_store", start_date=datetime(2023, 1, 1))
 
     @task
     def start_discord_summary_vectorstore(community_id: str):
+        load_dotenv()
         logging.info(f"Working on community, {community_id}")
         process_discord_summaries(community_id=community_id, verbose=False)
         logging.info(f"Community {community_id} Job finished!")
