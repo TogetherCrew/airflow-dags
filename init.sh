@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function ver() {
-  printf "%04d%04d%04d%04d" "${1//./ }"
+  printf "%04d" "${1//./ }"
 }
 airflow_version=$(AIRFLOW__LOGGING__LOGGING_LEVEL=INFO && gosu airflow airflow version)
 airflow_version_comparable=$(ver "${airflow_version}")
