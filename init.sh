@@ -3,6 +3,7 @@
 function ver() {
   printf "%04d" "${1//./ }"
 }
+# shellcheck disable=SC2034
 airflow_version=$(AIRFLOW__LOGGING__LOGGING_LEVEL=INFO && gosu airflow airflow version)
 airflow_version_comparable=$(ver "${airflow_version}")
 min_airflow_version=2.2.0
