@@ -22,16 +22,17 @@ def fetch_raw_messages(guild_id: str, from_date: datetime | None = None) -> list
     """
     client = MongoSingleton.get_instance().get_client()
 
+    channels = fetch_channels(guild_id=guild_id)
+
     raw_messages: list[dict]
     if from_date is not None:
         cursor = (
             client[guild_id]["rawinfos"]
             .find(
                 {
-                    "$and": [
-                        {"createdDate": {"$gte": from_date}},
-                        {"isGeneratedByWebhook": False},
-                    ],
+                    "createdDate": {"$gte": from_date},
+                    "isGeneratedByWebhook": False,
+                    "channelId": {"$in": channels},
                 }
             )
             .sort("createdDate", 1)
@@ -40,7 +41,12 @@ def fetch_raw_messages(guild_id: str, from_date: datetime | None = None) -> list
     else:
         cursor = (
             client[guild_id]["rawinfos"]
-            .find({"isGeneratedByWebhook": False})
+            .find(
+                {
+                    "isGeneratedByWebhook": False,
+                    "channelId": {"$in": channels},
+                }
+            )
             .sort("createdDate", 1)
         )
         raw_messages = list(cursor)
@@ -82,6 +88,8 @@ def fetch_raw_msg_grouped(
     """
     client = MongoSingleton.get_instance().client
 
+    channels = fetch_channels(guild_id)
+
     # the pipeline to apply through mongodb
     pipeline: list[dict] = []
 
@@ -89,27 +97,20 @@ def fetch_raw_msg_grouped(
         pipeline.append(
             {
                 "$match": {
-                    "$and": [
-                        {
-                            "createdDate": {
-                                "$gte": from_date,
-                                "$lt": datetime.now().replace(
-                                    hour=0, minute=0, second=0, microsecond=0
-                                ),
-                            }
-                        },
-                        {"isGeneratedByWebhook": False},
-                    ]
+                    "createdDate": {
+                        "$gte": from_date,
+                        "$lt": datetime.now().replace(
+                            hour=0, minute=0, second=0, microsecond=0
+                        ),
+                    },
+                    "isGeneratedByWebhook": False,
+                    "channelId": {"$in": channels},
                 }
             },
         )
     else:
         pipeline.append(
-            {
-                "$match": {
-                    "isGeneratedByWebhook": False,
-                }
-            },
+            {"$match": {"isGeneratedByWebhook": False, "channelId": {"$in": channels}}},
         )
 
     # sorting
@@ -135,3 +136,46 @@ def fetch_raw_msg_grouped(
     raw_messages_grouped = list(cursor)
 
     return raw_messages_grouped
+
+
+def fetch_channels(guild_id: str):
+    """
+    fetch the channels from modules that we wanted to process
+
+    Parameters
+    -----------
+    guild_id : str
+        the guild to have its channels
+
+    Returns
+    ---------
+    channels : list[str]
+        the channels to fetch data from
+    """
+    client = MongoSingleton.get_instance().client
+    platform = client["Core"]["platforms"].find_one(
+        {"name": "discord", "metadata.id": guild_id},
+        {
+            "_id": 1,
+            "community": 1,
+        },
+    )
+
+    if platform is None:
+        raise ValueError(f"No platform with given guild_id: {guild_id} available!")
+
+    result = client["Module"]["modules"].find_one(
+        {
+            "communityId": platform["community"],
+            "options.platforms.platformId": platform["_id"],
+        },
+        {"_id": 0, "options.platforms.$": 1},
+    )
+
+    channels: list[str]
+    if result is not None:
+        channels = result["options"]["platforms"][0]["options"]["channels"]
+    else:
+        raise ValueError("No modules set for this community!")
+
+    return channels
