@@ -1,12 +1,11 @@
-# It's recommended that we use `bullseye` for Python (alpine isn't suitable as it conflcts with numpy)
-FROM python:3.10-bullseye AS base
+FROM apache/airflow:2.7.3-python3.11 AS prod
+# WORKDIR /opt/airflow
+COPY requirements.txt requirements.txt
+RUN pip install --no-cache-dir --user -r requirements.txt
+
+FROM python:3.11-bullseye AS test
 WORKDIR /project
 COPY . .
-RUN pip3 install -r requirements.txt
-
-FROM base AS test
+RUN pip install -r requirements.txt
 RUN chmod +x docker-entrypoint.sh
 CMD ["./docker-entrypoint.sh"]
-
-FROM base AS prod
-CMD ["echo", "aiflow dags should be running on airlfow container"]

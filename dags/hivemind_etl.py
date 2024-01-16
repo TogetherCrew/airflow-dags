@@ -24,6 +24,7 @@ from datetime import datetime, timedelta
 # import phoenix as px
 from airflow import DAG
 from airflow.decorators import task
+from dotenv import load_dotenv
 from hivemind_etl_helpers.discord_mongo_summary_etl import process_discord_summaries
 from hivemind_etl_helpers.discord_mongo_vector_store_etl import (
     process_discord_guild_mongo,
@@ -58,6 +59,7 @@ with DAG(
 
     @task
     def start_discord_vectorstore(community_id: str):
+        load_dotenv()
         logging.info(f"Working on community, {community_id}")
         process_discord_guild_mongo(community_id=community_id)
         logging.info(f"Community {community_id} Job finished!")
@@ -81,6 +83,7 @@ with DAG(dag_id="discord_summary_vector_store", start_date=datetime(2023, 1, 1))
 
     @task
     def start_discord_summary_vectorstore(community_id: str):
+        load_dotenv()
         logging.info(f"Working on community, {community_id}")
         process_discord_summaries(community_id=community_id, verbose=False)
         logging.info(f"Community {community_id} Job finished!")
