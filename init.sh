@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function ver() {
-  printf "%04d" "${1//./ }"
+  LC_NUMERIC="en_US.UTF-8" printf "%04d" "${1//./ }"
 }
 # shellcheck disable=SC2034
 airflow_version=$(AIRFLOW__LOGGING__LOGGING_LEVEL=INFO && gosu airflow airflow version)
