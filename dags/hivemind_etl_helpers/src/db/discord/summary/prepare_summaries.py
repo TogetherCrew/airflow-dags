@@ -106,8 +106,7 @@ class PrepareSummaries(SummaryBase):
 
         total_call_count = 0
         for date in thread_summaries.keys():
-            for channel in thread_summaries[date].keys():
-                total_call_count += len(thread_summaries[date][channel])
+            total_call_count += len(thread_summaries[date].keys())
 
         thread_summary_documenets: list[Document] = []
         channel_summaries: dict[str, dict[str, str]] = {}
