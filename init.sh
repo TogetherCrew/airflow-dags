@@ -1,7 +1,9 @@
 #!/bin/bash
 
 function ver() {
-  LC_NUMERIC="en_US.UTF-8" printf "%04d" "${1//./ }"
+  local version=$1
+  IFS='.' read -r major minor patch <<< "$version"
+  printf "%04d%04d%04d" "${major:-0}" "${minor:-0}" "${patch:-0}"
 }
 # shellcheck disable=SC2034
 airflow_version=$(AIRFLOW__LOGGING__LOGGING_LEVEL=INFO && gosu airflow airflow version)
