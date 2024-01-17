@@ -33,17 +33,9 @@ from hivemind_etl_helpers.src.utils.get_mongo_discord_communities import (
     get_all_discord_communities,
 )
 
-# def setup_phonix():
-#     _ = px.launch_app()
-#     logging.info(f"Phonix Session Url: {px.active_session().url}")
-
-
-# with DAG(dag_id="phonix_startup", start_date=datetime(2022, 3, 4)) as dag:
-#     dag.on_startup.append(setup_phonix)
-
 
 with DAG(
-    dag_id="discord_vector_store_update",
+    dag_id="hivemind_discord_vector_store_update",
     start_date=datetime(2022, 11, 10, 12),
     schedule_interval=timedelta(days=1),
     catchup=False,
@@ -69,7 +61,7 @@ with DAG(
     # with the length of the list
     start_discord_vectorstore.expand(community_id=communities)
 
-with DAG(dag_id="discord_summary_vector_store", start_date=datetime(2023, 1, 1)) as dag:
+with DAG(dag_id="hivemind_discord_summary_vector_store", start_date=datetime(2023, 1, 1)) as dag:
 
     @task
     def get_mongo_discord_communities() -> list[str]:
