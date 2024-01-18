@@ -2,7 +2,9 @@ from datetime import datetime, timedelta
 from unittest import TestCase
 
 from bson import ObjectId
-from hivemind_etl_helpers.src.db.discord.fetch_raw_messages import fetch_channels
+from hivemind_etl_helpers.src.db.discord.fetch_raw_messages import (
+    fetch_channels_and_from_date,
+)
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
@@ -30,6 +32,7 @@ class TestDiscordFetchModulesChannels(TestCase):
                     "platforms": [
                         {
                             "platformId": platform_id,
+                            "fromDate": datetime(2024, 1, 1),
                             "options": {
                                 "channels": channels,
                                 "roles": ["role_id"],
@@ -79,7 +82,7 @@ class TestDiscordFetchModulesChannels(TestCase):
             )
 
     def test_fetch_channels(self):
-        guild_id = "1234"
+        guild_id = "12345"
         channels = ["111111", "22222"]
         self.setup_db(
             create_modules=True,
@@ -87,12 +90,14 @@ class TestDiscordFetchModulesChannels(TestCase):
             guild_id=guild_id,
             channels=channels,
         )
-        channels = fetch_channels(guild_id="1234")
+        channels, from_date = fetch_channels_and_from_date(guild_id="1234")
 
         self.assertEqual(channels, channels)
+        self.assertIsInstance(from_date, datetime)
+        self.assertEqual(from_date, datetime(2024, 1, 1))
 
     def test_fetch_channels_no_modules_available(self):
-        guild_id = "1234"
+        guild_id = "12345"
         channels = ["111111", "22222"]
         self.setup_db(
             create_modules=False,
@@ -101,10 +106,10 @@ class TestDiscordFetchModulesChannels(TestCase):
             channels=channels,
         )
         with self.assertRaises(ValueError):
-            _ = fetch_channels(guild_id="1234")
+            _ = fetch_channels_and_from_date(guild_id="1234")
 
     def test_fetch_channels_no_platform_available(self):
-        guild_id = "1234"
+        guild_id = "12345"
         channels = ["111111", "22222"]
         self.setup_db(
             create_modules=True,
@@ -114,4 +119,4 @@ class TestDiscordFetchModulesChannels(TestCase):
         )
 
         with self.assertRaises(ValueError):
-            _ = fetch_channels(guild_id="1234")
+            _ = fetch_channels_and_from_date(guild_id="1234")
