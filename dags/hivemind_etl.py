@@ -19,7 +19,7 @@
 from __future__ import annotations
 
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime
 
 # import phoenix as px
 from airflow import DAG
@@ -44,8 +44,8 @@ from hivemind_etl_helpers.src.utils.get_mongo_discord_communities import (
 
 with DAG(
     dag_id="discord_vector_store_update",
-    start_date=datetime(2022, 11, 10, 12),
-    schedule_interval=timedelta(days=1),
+    start_date=datetime(2024, 1, 1),
+    schedule_interval="0 2 * * *",
     catchup=False,
 ) as dag:
 
@@ -69,7 +69,11 @@ with DAG(
     # with the length of the list
     start_discord_vectorstore.expand(community_id=communities)
 
-with DAG(dag_id="discord_summary_vector_store", start_date=datetime(2023, 1, 1)) as dag:
+with DAG(
+    dag_id="discord_summary_vector_store",
+    start_date=datetime(2024, 1, 1),
+    schedule_interval="0 2 * * *",
+) as dag:
 
     @task
     def get_mongo_discord_communities() -> list[str]:
