@@ -32,6 +32,7 @@ from hivemind_etl_helpers.discord_mongo_vector_store_etl import (
 from hivemind_etl_helpers.src.utils.get_mongo_discord_communities import (
     get_all_discord_communities,
 )
+from traceloop.sdk import Traceloop
 
 # def setup_phonix():
 #     _ = px.launch_app()
@@ -54,6 +55,7 @@ with DAG(
         """
         Getting all communities having discord from database
         """
+        setup_traceloop()
         communities = get_all_discord_communities()
         return communities
 
@@ -82,6 +84,7 @@ with DAG(
         this function is the same with `get_discord_communities`
         we just changed the name for the pylint
         """
+        setup_traceloop()
         communities = get_all_discord_communities()
         return communities
 
@@ -94,3 +97,7 @@ with DAG(
 
     communities = get_mongo_discord_communities()
     start_discord_summary_vectorstore.expand(community_id=communities)
+
+
+def setup_traceloop():
+    Traceloop.init()
