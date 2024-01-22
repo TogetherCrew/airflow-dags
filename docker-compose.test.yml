@@ -26,6 +26,7 @@ services:
       - EMBEDDING_DIM=1024
       - OPENAI_API_KEY=some_credentials
       - COHERE_API_KEY=some_credentials
+      - TRACELOOP_BASE_URL=some_url
     volumes:
       - ./coverage:/project/coverage
     depends_on:
