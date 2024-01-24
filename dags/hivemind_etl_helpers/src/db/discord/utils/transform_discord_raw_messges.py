@@ -159,7 +159,7 @@ def prepare_document(
         "date": message["createdDate"].strftime("%Y-%m-%d %H:%M:%S"),
         "author_username": author_name[0],
         # always including the thread_name, if `None`, then it was a channel message
-        "thread_name": message["threadName"]
+        "thread_name": message["threadName"],
     }
     if author_global_name[0] is not None:
         msg_meta_data["author_global_name"] = author_global_name[0]
@@ -199,7 +199,7 @@ def prepare_document(
 
     doc: Document
     if not exclude_metadata:
-        content_url_updated += "." 
+        content_url_updated += "."
         doc = Document(text=content_url_updated, metadata=msg_meta_data)
         doc.excluded_embed_metadata_keys = [
             "channel",
