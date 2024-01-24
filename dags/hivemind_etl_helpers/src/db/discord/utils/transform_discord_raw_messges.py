@@ -158,6 +158,8 @@ def prepare_document(
         "channel": message["channelName"],
         "date": message["createdDate"].strftime("%Y-%m-%d %H:%M:%S"),
         "author_username": author_name[0],
+        # always including the thread_name, if `None`, then it was a channel message
+        "thread_name": message["threadName"]
     }
     if author_global_name[0] is not None:
         msg_meta_data["author_global_name"] = author_global_name[0]
@@ -185,8 +187,6 @@ def prepare_document(
             msg_meta_data["reactors_nicknames"] = reactors_nickname
     if url_reference != {}:
         msg_meta_data["url_reference"] = url_reference
-    if message["threadName"] is not None:
-        msg_meta_data["thread_name"] = message["threadName"]
 
     if replier_name is not None:
         msg_meta_data["replier_username"] = replier_name[0]
@@ -199,7 +199,43 @@ def prepare_document(
 
     doc: Document
     if not exclude_metadata:
+        content_url_updated += "." 
         doc = Document(text=content_url_updated, metadata=msg_meta_data)
+        doc.excluded_embed_metadata_keys = [
+            "channel",
+            "date",
+            "author_username",
+            "author_global_name",
+            "author_nickname",
+            "mention_usernames",
+            "mention_global_names",
+            "mention_nicknames",
+            "reactors_username",
+            "reactors_global_name",
+            "reactors_nicknames",
+            "thread_name",
+            "url_reference",
+            "replier_username",
+            "replier_global_name",
+            "replier_nickname",
+            "role_mentions",
+        ]
+        doc.excluded_llm_metadata_keys = [
+            "author_global_name",
+            "author_nickname",
+            "mention_usernames",
+            "mention_global_names",
+            "mention_nicknames",
+            "reactors_username",
+            "reactors_global_name",
+            "reactors_nicknames",
+            "thread_name",
+            "url_reference",
+            "replier_username",
+            "replier_global_name",
+            "replier_nickname",
+            "role_mentions",
+        ]
     else:
         doc = Document(text=content_url_updated)
 
