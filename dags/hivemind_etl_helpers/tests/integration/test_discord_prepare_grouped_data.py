@@ -32,6 +32,7 @@ class TestDiscordGroupedDataPreparation(TestCase):
                     "platforms": [
                         {
                             "platformId": platform_id,
+                            "fromDate": datetime(2023, 10, 1),
                             "options": {
                                 "channels": channels,
                                 "roles": ["role_id"],
