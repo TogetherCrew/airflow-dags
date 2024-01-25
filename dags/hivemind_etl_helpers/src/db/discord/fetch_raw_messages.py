@@ -30,6 +30,7 @@ def fetch_raw_messages(guild_id: str, from_date: datetime | None = None) -> list
             client[guild_id]["rawinfos"]
             .find(
                 {
+                    "type": {"$ne": 18},
                     "createdDate": {"$gte": from_date},
                     "isGeneratedByWebhook": False,
                     "channelId": {"$in": channels},
@@ -43,6 +44,7 @@ def fetch_raw_messages(guild_id: str, from_date: datetime | None = None) -> list
             client[guild_id]["rawinfos"]
             .find(
                 {
+                    "type": {"$ne": 18},
                     "isGeneratedByWebhook": False,
                     "channelId": {"$in": channels},
                     "createdDate": {"$gte": from_date_modules},
@@ -98,6 +100,7 @@ def fetch_raw_msg_grouped(
         pipeline.append(
             {
                 "$match": {
+                    "type": {"$ne": 18},
                     "createdDate": {
                         "$gte": from_date,
                         "$lt": datetime.now().replace(
@@ -113,6 +116,7 @@ def fetch_raw_msg_grouped(
         pipeline.append(
             {
                 "$match": {
+                    "type": {"$ne": 18},
                     "createdDate": {
                         "$gte": from_date_modules,
                         "$lt": datetime.now().replace(
