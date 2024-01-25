@@ -33,6 +33,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
                     "platforms": [
                         {
                             "platformId": platform_id,
+                            "fromDate": datetime(2023, 1, 1),
                             "options": {
                                 "channels": channels,
                                 "roles": ["role_id"],
