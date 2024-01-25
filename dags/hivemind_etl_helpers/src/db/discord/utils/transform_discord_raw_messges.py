@@ -1,6 +1,11 @@
 import logging
 from typing import Any
 
+from hivemind_etl_helpers.src.db.discord.utils.content_parser import (
+    check_no_content_only_links,
+    remove_empty_str,
+    remove_none_from_list,
+)
 from hivemind_etl_helpers.src.db.discord.utils.id_transform import convert_role_id
 from hivemind_etl_helpers.src.db.discord.utils.merge_user_ids_fetch_names import (
     merge_user_ids_and_fetch_names,
@@ -158,6 +163,8 @@ def prepare_document(
         "channel": message["channelName"],
         "date": message["createdDate"].strftime("%Y-%m-%d %H:%M:%S"),
         "author_username": author_name[0],
+        # always including the thread_name, if `None`, then it was a channel message
+        "thread_name": message["threadName"],
     }
     if author_global_name[0] is not None:
         msg_meta_data["author_global_name"] = author_global_name[0]
@@ -185,8 +192,6 @@ def prepare_document(
             msg_meta_data["reactors_nicknames"] = reactors_nickname
     if url_reference != {}:
         msg_meta_data["url_reference"] = url_reference
-    if message["threadName"] is not None:
-        msg_meta_data["thread_name"] = message["threadName"]
 
     if replier_name is not None:
         msg_meta_data["replier_username"] = replier_name[0]
@@ -197,43 +202,49 @@ def prepare_document(
     if role_names != []:
         msg_meta_data["role_mentions"] = role_names
 
+    if content_url_updated == "":
+        raise ValueError("Message with Empty content!")
+
+    if check_no_content_only_links(content_url_updated):
+        raise ValueError("Message just did have urls")
+
     doc: Document
     if not exclude_metadata:
         doc = Document(text=content_url_updated, metadata=msg_meta_data)
+        doc.excluded_embed_metadata_keys = [
+            "channel",
+            "date",
+            "author_username",
+            "author_global_name",
+            "author_nickname",
+            "mention_usernames",
+            "mention_global_names",
+            "mention_nicknames",
+            "reactors_username",
+            "reactors_global_name",
+            "reactors_nicknames",
+            "thread_name",
+            "url_reference",
+            "replier_username",
+            "replier_global_name",
+            "replier_nickname",
+            "role_mentions",
+        ]
+        doc.excluded_llm_metadata_keys = [
+            "mention_usernames",
+            "mention_global_names",
+            "mention_nicknames",
+            "reactors_username",
+            "reactors_global_name",
+            "reactors_nicknames",
+            "thread_name",
+            "url_reference",
+            "replier_username",
+            "replier_global_name",
+            "replier_nickname",
+            "role_mentions",
+        ]
     else:
         doc = Document(text=content_url_updated)
 
     return doc
-
-
-def remove_empty_str(data: list[str]):
-    """
-    a utility function to remove the empty string from a list
-
-    Parameters
-    -----------
-    data : list[str]
-        a list with string values
-    """
-    while "" in data:
-        data.remove("")
-
-    return data
-
-
-def remove_none_from_list(data: list[str | None]) -> list[str]:
-    """
-    remove the `None` values from a list
-
-    Parameters
-    -----------
-    data : list[str | None]
-        the list of data to process
-
-    Returns
-    --------
-    data_processed : list[str]
-        the data just removed the `None` values
-    """
-    data_processed = [value for value in data if value is not None]
-    return data_processed

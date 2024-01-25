@@ -82,7 +82,7 @@ class TestDiscordFetchModulesChannels(TestCase):
             )
 
     def test_fetch_channels(self):
-        guild_id = "12345"
+        guild_id = "1234"
         channels = ["111111", "22222"]
         self.setup_db(
             create_modules=True,

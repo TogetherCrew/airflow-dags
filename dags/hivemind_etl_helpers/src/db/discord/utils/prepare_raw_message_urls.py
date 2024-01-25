@@ -1,27 +1,4 @@
-from urllib.parse import urlparse
-
-
-def extract_urls(text: str) -> list[str]:
-    """
-    extract the urls within the text and just return the urls
-
-    Parameters
-    ------------
-    text : str
-        the raw text
-
-    Returns
-    ---------
-    urls : list[str]
-        the list of urls within the text
-    """
-    urls = []
-    words = text.split()
-    for word in words:
-        parsed_url = urlparse(word)
-        if parsed_url.scheme and parsed_url.netloc:
-            urls.append(parsed_url.scheme + "://" + parsed_url.netloc + parsed_url.path)
-    return urls
+from urlextract import URLExtract
 
 
 def prepare_raw_message_urls(message: str) -> tuple[str, dict[str, str]]:
@@ -42,7 +19,7 @@ def prepare_raw_message_urls(message: str) -> tuple[str, dict[str, str]]:
         the url reference dict that keys are reference name
         and values are the actual url
     """
-    msg_urls = extract_urls(message)
+    msg_urls = URLExtract().find_urls(message)
 
     references: dict[str, str] = {}
 

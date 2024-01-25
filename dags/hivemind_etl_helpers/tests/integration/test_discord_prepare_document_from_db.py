@@ -33,6 +33,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
                     "platforms": [
                         {
                             "platformId": platform_id,
+                            "fromDate": datetime(2023, 1, 1),
                             "options": {
                                 "channels": channels,
                                 "roles": ["role_id"],
@@ -265,6 +266,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
             "date": datetime(2023, 5, 1).strftime("%Y-%m-%d %H:%M:%S"),
             "author_username": "user1",
             "author_global_name": "user1_GlobalName",
+            "thread_name": None,
         }
 
         expected_metadata_1 = {
@@ -277,6 +279,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
             "mention_nicknames": ["user3_nickname"],
             "replier_username": "user4",
             "replier_global_name": "user4_GlobalName",
+            "thread_name": None,
         }
 
         expected_metadata_2 = {
@@ -299,8 +302,9 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
             "author_username": "user1",
             "author_global_name": "user1_GlobalName",
             "url_reference": {"[URL0]": "https://www.google.com"},
+            "thread_name": None,
         }
-        print(documents[3].metadata)
+        print(documents[0].text)
         self.assertDictEqual(documents[0].metadata, expected_metadata_0)
         self.assertDictEqual(documents[1].metadata, expected_metadata_1)
         self.assertDictEqual(documents[2].metadata, expected_metadata_2)

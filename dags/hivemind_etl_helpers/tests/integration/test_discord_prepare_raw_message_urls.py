@@ -22,12 +22,23 @@ class TestRawMessagUrlExtraction(unittest.TestCase):
         self.assertEqual(msg_updated, "Here you can have a look [URL0]")
         self.assertEqual(url_reference, {"[URL0]": "https://google.com"})
 
-    def test_normal_messag_multiple_url(self):
+    def test_normal_message_multiple_url(self):
         msg = "Here you can have a look https://google.com https://example.com"
 
         msg_updated, url_reference = prepare_raw_message_urls(msg)
 
         self.assertEqual(msg_updated, "Here you can have a look [URL0] [URL1]")
+        self.assertEqual(
+            url_reference,
+            {"[URL0]": "https://google.com", "[URL1]": "https://example.com"},
+        )
+
+    def test_message_multiple_url_wrappend(self):
+        msg = "Here you can have a look <https://google.com> <https://example.com>"
+
+        msg_updated, url_reference = prepare_raw_message_urls(msg)
+
+        self.assertEqual(msg_updated, "Here you can have a look <[URL0]> <[URL1]>")
         self.assertEqual(
             url_reference,
             {"[URL0]": "https://google.com", "[URL1]": "https://example.com"},

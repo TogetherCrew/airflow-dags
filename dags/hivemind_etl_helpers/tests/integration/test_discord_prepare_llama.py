@@ -168,6 +168,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
             "author_username": "user1",
             "author_global_name": "user1_GlobalName",
             "author_nickname": "user1_nickname",
+            "thread_name": None,
         }
 
         expected_metadata_1 = {
@@ -179,6 +180,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
             "mention_global_names": ["user3_GlobalName", "user4_GlobalName"],
             "replier_username": "user4",
             "replier_global_name": "user4_GlobalName",
+            "thread_name": None,
         }
 
         expected_metadata_2 = {
@@ -201,6 +203,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
             "author_global_name": "user1_GlobalName",
             "author_nickname": "user1_nickname",
             "url_reference": {"[URL0]": "https://www.google.com"},
+            "thread_name": None,
         }
 
         self.assertDictEqual(documents[0].metadata, expected_metadata_0)
