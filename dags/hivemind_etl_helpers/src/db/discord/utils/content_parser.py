@@ -16,7 +16,7 @@ def remove_empty_str(data: list[str]):
     return data
 
 
-def check_no_content_only_links(content: str, link_pattern: str = r"\[URL\d\]") -> str:
+def check_no_content_only_links(content: str, link_pattern: str = r"\[URL\d\]") -> bool:
     """
     check if there's just links in the function and there's no content written
 
@@ -26,7 +26,7 @@ def check_no_content_only_links(content: str, link_pattern: str = r"\[URL\d\]") 
         the message content
     link_pattern : str
         the pattern of link
-        default pattern is for links which is `[URL\d]`
+        default pattern is for links which is "`[URL\d]`"
 
     Returns
     --------

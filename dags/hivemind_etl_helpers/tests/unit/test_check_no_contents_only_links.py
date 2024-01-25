@@ -1,4 +1,5 @@
 import unittest
+
 from hivemind_etl_helpers.src.db.discord.utils.content_parser import (
     check_no_content_only_links,
 )

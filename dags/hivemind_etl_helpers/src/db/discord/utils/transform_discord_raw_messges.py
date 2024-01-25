@@ -1,6 +1,11 @@
 import logging
 from typing import Any
 
+from hivemind_etl_helpers.src.db.discord.utils.content_parser import (
+    remove_empty_str,
+    check_no_content_only_links,
+    remove_none_from_list,
+)
 from hivemind_etl_helpers.src.db.discord.utils.id_transform import convert_role_id
 from hivemind_etl_helpers.src.db.discord.utils.merge_user_ids_fetch_names import (
     merge_user_ids_and_fetch_names,
@@ -13,11 +18,6 @@ from hivemind_etl_helpers.src.db.discord.utils.prepare_raw_message_urls import (
 )
 from hivemind_etl_helpers.src.db.discord.utils.prepare_reactions_id import (
     prepare_raction_ids,
-)
-from hivemind_etl_helpers.src.db.discord.utils.content_parser import (
-    remove_empty_str,
-    check_no_content_only_links,
-    remove_none_from_list,
 )
 from llama_index import Document
 

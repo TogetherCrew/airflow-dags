@@ -1,8 +1,6 @@
 import unittest
 
-from hivemind_etl_helpers.src.db.discord.utils.content_parser import (
-    remove_empty_str,
-)
+from hivemind_etl_helpers.src.db.discord.utils.content_parser import remove_empty_str
 
 
 class TestRemoveEmptyStr(unittest.TestCase):
