@@ -210,7 +210,6 @@ def prepare_document(
 
     doc: Document
     if not exclude_metadata:
-        content_url_updated += "."
         doc = Document(text=content_url_updated, metadata=msg_meta_data)
         doc.excluded_embed_metadata_keys = [
             "channel",
