@@ -14,6 +14,11 @@ from hivemind_etl_helpers.src.db.discord.utils.prepare_raw_message_urls import (
 from hivemind_etl_helpers.src.db.discord.utils.prepare_reactions_id import (
     prepare_raction_ids,
 )
+from hivemind_etl_helpers.src.db.discord.utils.content_parser import (
+    remove_empty_str,
+    check_no_content_only_links,
+    remove_none_from_list,
+)
 from llama_index import Document
 
 
@@ -197,6 +202,12 @@ def prepare_document(
     if role_names != []:
         msg_meta_data["role_mentions"] = role_names
 
+    if content_url_updated == "":
+        raise ValueError("Message with Empty content!")
+
+    if check_no_content_only_links(content_url_updated):
+        raise ValueError("Message just did have urls")
+
     doc: Document
     if not exclude_metadata:
         content_url_updated += "."
@@ -240,36 +251,3 @@ def prepare_document(
         doc = Document(text=content_url_updated)
 
     return doc
-
-
-def remove_empty_str(data: list[str]):
-    """
-    a utility function to remove the empty string from a list
-
-    Parameters
-    -----------
-    data : list[str]
-        a list with string values
-    """
-    while "" in data:
-        data.remove("")
-
-    return data
-
-
-def remove_none_from_list(data: list[str | None]) -> list[str]:
-    """
-    remove the `None` values from a list
-
-    Parameters
-    -----------
-    data : list[str | None]
-        the list of data to process
-
-    Returns
-    --------
-    data_processed : list[str]
-        the data just removed the `None` values
-    """
-    data_processed = [value for value in data if value is not None]
-    return data_processed
