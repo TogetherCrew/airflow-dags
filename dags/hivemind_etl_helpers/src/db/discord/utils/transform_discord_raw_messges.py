@@ -2,8 +2,8 @@ import logging
 from typing import Any
 
 from hivemind_etl_helpers.src.db.discord.utils.content_parser import (
-    remove_empty_str,
     check_no_content_only_links,
+    remove_empty_str,
     remove_none_from_list,
 )
 from hivemind_etl_helpers.src.db.discord.utils.id_transform import convert_role_id

@@ -26,7 +26,7 @@ def check_no_content_only_links(content: str, link_pattern: str = r"\[URL\d\]") 
         the message content
     link_pattern : str
         the pattern of link
-        default pattern is for links which is "`[URL\d]`"
+        default pattern is for links like `[URL0]`, or `[URL1]`, etc
 
     Returns
     --------
