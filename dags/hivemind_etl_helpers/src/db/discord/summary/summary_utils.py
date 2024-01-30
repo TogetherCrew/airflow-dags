@@ -34,6 +34,7 @@ def transform_thread_summary_to_document(
             "thread": thread_name,
             "channel": thread_channel,
         },
+        excluded_embed_metadata_keys=["date", "thread", "channel"],
     )
 
     return thread_summary_document
@@ -69,6 +70,7 @@ def transform_channel_summary_to_document(
             "channel": channel_name,
             "thread": None,
         },
+        excluded_embed_metadata_keys=["date", "thread", "channel"],
     )
 
     return channel_summary_document
@@ -103,6 +105,7 @@ def transform_daily_summary_to_document(
                 "thread": None,
                 "channel": None,
             },
+            excluded_embed_metadata_keys=["date", "thread", "channel"],
         )
         daily_summary_documents.append(doc)
 
