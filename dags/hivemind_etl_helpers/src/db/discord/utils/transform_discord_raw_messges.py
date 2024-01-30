@@ -231,6 +231,8 @@ def prepare_document(
             "role_mentions",
         ]
         doc.excluded_llm_metadata_keys = [
+            "author_nickname",
+            "author_global_name",
             "mention_usernames",
             "mention_global_names",
             "mention_nicknames",
