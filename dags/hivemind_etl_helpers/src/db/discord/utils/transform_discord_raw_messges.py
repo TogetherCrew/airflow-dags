@@ -164,7 +164,7 @@ def prepare_document(
         "date": message["createdDate"].strftime("%Y-%m-%d %H:%M:%S"),
         "author_username": author_name[0],
         # always including the thread_name, if `None`, then it was a channel message
-        "thread_name": message["threadName"],
+        "thread": message["threadName"],
     }
     if author_global_name[0] is not None:
         msg_meta_data["author_global_name"] = author_global_name[0]
@@ -223,7 +223,7 @@ def prepare_document(
             "reactors_username",
             "reactors_global_name",
             "reactors_nicknames",
-            "thread_name",
+            "thread",
             "url_reference",
             "replier_username",
             "replier_global_name",
@@ -239,7 +239,7 @@ def prepare_document(
             "reactors_username",
             "reactors_global_name",
             "reactors_nicknames",
-            "thread_name",
+            "thread",
             "url_reference",
             "replier_username",
             "replier_global_name",
