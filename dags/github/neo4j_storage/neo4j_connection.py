@@ -30,4 +30,5 @@ class Neo4jConnection:
 
         # Connect to the neo4j instance
         driver = GraphDatabase.driver(uri, auth=(user, password), database=neo4j_db)
+        driver.verify_connectivity()
         return driver
