@@ -2,18 +2,18 @@ from datetime import datetime
 
 import neo4j
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
-from dags.hivemind_etl_helpers.src.db.github.schema import GitHubIssue
+from dags.hivemind_etl_helpers.src.db.github.schema import GitHubPullRequest
 
 
-def fetch_issues_raw(
+def fetch_raw_pull_requests(
     repository_id: list[int],
     from_date: datetime | None = None,
 ) -> list[neo4j._data.Record]:
     """
-    fetch raw issues from data dump in neo4j
+    fetch pull requests from neo4j data dump
 
     Parameters
-    ------------
+    -----------
     repository_id : list[int]
         a list of repository id to fetch their issues
     from_date : datetime | None
@@ -23,31 +23,35 @@ def fetch_issues_raw(
     Returns
     --------
     raw_records : list[neo4j._data.Record]
-        list of neo4j records as the extracted issues
+        list of neo4j records as the extracted pull requests
     """
     neo4j_connection = Neo4jConnection()
     neo4j_driver = neo4j_connection.connect_neo4j()
-    query = """MATCH (i:Issue)
-        WHERE 
-        i.repository_id IN $repoIds
+
+    # TODO: Update query when `Issue` relation was made.
+    # We would need to add the issues related to a PR
+    query = """
+        MATCH (pr:PullRequest)
+        MATCH (repo:Repository {id: pr.repository_id})
+        WHERE
+            pr.repository_id IN $repoIds
     """
+
     if from_date is not None:
-        query += "AND datetime(i.created_at) >= datetime($from_date)"
+        query += "AND datetime(pr.created_at) >= datetime($from_date)"
 
     query += """
-        MATCH (repo:Repository {id: i.repository_id})
-        RETURN
-            i.title as title,
-            i.body as text,
-            i.state as state,
-            i.state_reason as state_reason,
-            i.created_at as created_at,
-            i.updated_at as updated_at,
-            i.closed_at as closed_at,
-            i.latestSavedAt as latest_saved_at,
-            i.html_url as url,
-            i.repository_id as repository_id,
-            repo.full_name as repository_name
+    RETURN
+        pr.repository_id as repository_id,
+        repo.full_name as repository_name,
+        pr.issue_url as issue_url,
+        pr.created_at as created_at,
+        pr.title as title,
+        pr.id as id,
+        pr.closed_at as closed_at,
+        pr.merged_at as merged_at,
+        pr.state as state,
+        pr.html_url as url
     """
 
     def _exec_query(tx, repoIds, from_date):
@@ -64,15 +68,15 @@ def fetch_issues_raw(
     return raw_records
 
 
-def fetch_issues(
+def fetch_pull_requests(
     repository_id: list[int],
     from_date: datetime | None = None,
-) -> list[GitHubIssue]:
+) -> list[GitHubPullRequest]:
     """
-    fetch issues from data dump in neo4j
+    fetch pull requests from neo4j data dump
 
     Parameters
-    ------------
+    -----------
     repository_id : list[int]
         a list of repository id to fetch their issues
     from_date : datetime | None
@@ -81,14 +85,14 @@ def fetch_issues(
 
     Returns
     --------
-    github_issues : list[GitHubIssue]
-        list of neo4j records as the extracted issues
+    github_prs : list[GitHubPullRequest]
+        a list of github pull requests extracted from neo4j
     """
-    records = fetch_issues_raw(repository_id, from_date)
+    records = fetch_pull_requests(repository_id, from_date)
 
-    github_issues: list[GitHubIssue] = []
+    github_prs: list[GitHubPullRequest] = []
     for record in records:
-        issue = GitHubIssue.from_dict(record)
-        github_issues.append(issue)
+        issue = GitHubPullRequest.from_dict(record)
+        github_prs.append(issue)
 
-    return github_issues
+    return github_prs
