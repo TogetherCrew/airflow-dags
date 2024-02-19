@@ -15,9 +15,9 @@ def fetch_raw_pull_requests(
     Parameters
     -----------
     repository_id : list[int]
-        a list of repository id to fetch their issues
+        a list of repository id to fetch their pull requests
     from_date : datetime | None
-        get the issues form a specific date that they were created
+        get the pull requests form a specific date that they were created
         defualt is `None`, meaning to apply no filtering on data
 
     Returns
@@ -55,7 +55,7 @@ def fetch_raw_pull_requests(
     """
 
     def _exec_query(tx, repoIds, from_date):
-        result = tx.run(query, repoIds=repoIds, from_date=from_date)
+        result = tx.run(query, repoIds=repoIds, fromDate=from_date)
         return list(result)
 
     with neo4j_driver.session() as session:
@@ -78,9 +78,9 @@ def fetch_pull_requests(
     Parameters
     -----------
     repository_id : list[int]
-        a list of repository id to fetch their issues
+        a list of repository id to fetch their pull requests
     from_date : datetime | None
-        get the issues form a specific date that they were created
+        get the pull requests form a specific date that they were created
         defualt is `None`, meaning to apply no filtering on data
 
     Returns

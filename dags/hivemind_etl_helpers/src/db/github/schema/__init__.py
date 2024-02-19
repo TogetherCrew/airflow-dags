@@ -1,3 +1,4 @@
 # flake8: noqa
-from .github_issue import GitHubIssue
-from .github_pull_request import GitHubPullRequest
+from .issue import GitHubIssue
+from .pull_request import GitHubPullRequest
+from .comment import GitHubComment
