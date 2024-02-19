@@ -24,7 +24,7 @@ class GitHubIssue:
         self.repository_name = repository_name
 
     @classmethod
-    def from_dict(cls, issue: dict[str, str | None]) -> "GitHubIssue":
+    def from_dict(cls, issue: dict[str, str | int]) -> "GitHubIssue":
         return cls(
             issue["title"],
             issue["text"],
@@ -38,7 +38,7 @@ class GitHubIssue:
             issue["repository_name"],
         )
 
-    def to_dict(self) -> dict[str | None]:
+    def to_dict(self) -> dict[str, str | int]:
         return {
             "title": self.title,
             "text": self.text,

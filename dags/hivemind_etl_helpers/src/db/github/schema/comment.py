@@ -29,7 +29,7 @@ class GitHubComment:
         self.reactions = reactions
 
     @classmethod
-    def from_dict(cls, pr_data: dict[str, str | None]) -> "GitHubComment":
+    def from_dict(cls, pr_data: dict[str, int | str | dict[str, int]]) -> "GitHubComment":
         # TODO: Update these when data got updated
         return cls(
             id=pr_data["id"],
@@ -44,7 +44,7 @@ class GitHubComment:
             reactions=pr_data["reactions"],
         )
 
-    def to_dict(self) -> dict[str | None]:
+    def to_dict(self) -> dict[str, int | str | dict[str, int]]:
         return {
             "id": self.id,
             "repository_name": self.repository_name,

@@ -5,7 +5,7 @@ from github.neo4j_storage.neo4j_connection import Neo4jConnection
 from dags.hivemind_etl_helpers.src.db.github.schema import GitHubIssue
 
 
-def fetch_issues_raw(
+def fetch_raw_issues(
     repository_id: list[int],
     from_date: datetime | None = None,
 ) -> list[neo4j._data.Record]:
@@ -84,7 +84,7 @@ def fetch_issues(
     github_issues : list[GitHubIssue]
         list of neo4j records as the extracted issues
     """
-    records = fetch_issues_raw(repository_id, from_date)
+    records = fetch_raw_issues(repository_id, from_date)
 
     github_issues: list[GitHubIssue] = []
     for record in records:

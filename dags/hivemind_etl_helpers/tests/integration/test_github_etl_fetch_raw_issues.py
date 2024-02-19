@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
 from dags.hivemind_etl_helpers.src.db.github.fetch_raw_data.issues import (
-    fetch_issues_raw,
+    fetch_raw_issues,
 )
 
 
@@ -16,12 +16,12 @@ class TestGithubETLFetchRawIssues(TestCase):
 
     def test_get_empty_results_no_from_date(self):
         repository_ids = [123, 124]
-        issues = fetch_issues_raw(repository_id=repository_ids, from_date=None)
+        issues = fetch_raw_issues(repository_id=repository_ids, from_date=None)
         self.assertEqual(issues, [])
 
     def test_get_empty_results(self):
         repository_ids = [123, 124]
-        issues = fetch_issues_raw(
+        issues = fetch_raw_issues(
             repository_id=repository_ids, from_date=datetime(2024, 1, 1)
         )
         self.assertEqual(issues, [])
@@ -62,7 +62,7 @@ class TestGithubETLFetchRawIssues(TestCase):
             )
 
         repository_ids = [123]
-        issues = fetch_issues_raw(
+        issues = fetch_raw_issues(
             repository_id=repository_ids, from_date=datetime(2024, 1, 1)
         )
 
