@@ -24,7 +24,7 @@ class GitHubPullRequest:
         self.url = url
 
     @classmethod
-    def from_dict(cls, pr_data: dict[str, str | None]) -> "GitHubPullRequest":
+    def from_dict(cls, pr_data: dict[str, int | str | None]) -> "GitHubPullRequest":
         return cls(
             pr_data["repository_id"],
             pr_data["repository_name"],
@@ -38,7 +38,7 @@ class GitHubPullRequest:
             pr_data["url"],
         )
 
-    def to_dict(self) -> dict[str | None]:
+    def to_dict(self) -> dict[str, int | str | None]:
         return {
             "repository_id": self.repository_id,
             "repository_name": self.repository_name,
