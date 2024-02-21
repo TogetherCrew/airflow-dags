@@ -31,7 +31,7 @@ class TestGithubETLFetchRawComments(TestCase):
             session.execute_write(
                 lambda tx: tx.run(
                     """
-                    CREATE (c:Comment)
+                    CREATE (c:Comment)<-[:CREATED]-(:GitHubUser {login: "author #1"})
                     SET
                         c.id = 111,
                         c.created_at = "2024-02-06T10:23:50Z",
@@ -94,7 +94,7 @@ class TestGithubETLFetchRawComments(TestCase):
             session.execute_write(
                 lambda tx: tx.run(
                     """
-                    CREATE (c:Comment)
+                    CREATE (c:Comment)<-[:CREATED]-(:GitHubUser {login: "author #1"})
                     SET
                         c.id = 111,
                         c.created_at = "2024-02-06T10:23:50Z",

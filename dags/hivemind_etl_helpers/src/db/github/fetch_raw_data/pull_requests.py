@@ -31,7 +31,7 @@ def fetch_raw_pull_requests(
     # TODO: Update query when `Issue` relation was made.
     # We would need to add the issues related to a PR
     query = """
-        MATCH (pr:PullRequest)
+        MATCH (pr:PullRequest)<-[:CREATED]-(user:GitHubUser)
         MATCH (repo:Repository {id: pr.repository_id})
         WHERE
             pr.repository_id IN $repoIds
@@ -42,6 +42,7 @@ def fetch_raw_pull_requests(
 
     query += """
     RETURN
+        user.login as author_name,
         pr.repository_id as repository_id,
         repo.full_name as repository_name,
         pr.issue_url as issue_url,
@@ -51,7 +52,8 @@ def fetch_raw_pull_requests(
         pr.closed_at as closed_at,
         pr.merged_at as merged_at,
         pr.state as state,
-        pr.html_url as url
+        pr.html_url as url,
+        pr.latestSavedAt as latest_saved_at,
     """
 
     def _exec_query(tx, repoIds, from_date):

@@ -29,7 +29,7 @@ class TestFetchRawCommits(TestCase):
             session.execute_write(
                 lambda tx: tx.run(
                     """
-                    CREATE (co:Commit)
+                    CREATE (co:Commit)<-[:COMMITED]-(user:GitHubUser {login: "author #1"})
                         SET
                             co.`commit.author.name` = "Author#1",
                             co.`commit.message` = "Issue #1 is resolved!",
@@ -52,7 +52,7 @@ class TestFetchRawCommits(TestCase):
         )
 
         self.assertEqual(len(commits), 1)
-        self.assertEqual(commits[0]["author"], "Author#1")
+        self.assertEqual(commits[0]["author_name"], "author #1")
         self.assertEqual(commits[0]["message"], "Issue #1 is resolved!")
         self.assertEqual(
             commits[0]["api_url"], "https://api.sample_url_for_commit.html"
@@ -70,7 +70,7 @@ class TestFetchRawCommits(TestCase):
             session.execute_write(
                 lambda tx: tx.run(
                     """
-                    CREATE (co:Commit)
+                    CREATE (co:Commit)<-[:COMMITED]-(user:GitHubUser {login: "author #1"})
                         SET
                             co.`commit.author.name` = "Author#1",
                             co.`commit.message` = "Issue #1 is resolved!",
@@ -94,7 +94,7 @@ class TestFetchRawCommits(TestCase):
         )
 
         self.assertEqual(len(commits), 1)
-        self.assertEqual(commits[0]["author"], "Author#1")
+        self.assertEqual(commits[0]["author_name"], "author #1")
         self.assertEqual(commits[0]["message"], "Issue #1 is resolved!")
         self.assertEqual(
             commits[0]["api_url"], "https://api.sample_url_for_commit.html"

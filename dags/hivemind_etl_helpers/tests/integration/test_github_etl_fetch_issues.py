@@ -29,7 +29,7 @@ class TestGithubETLFetchIssues(TestCase):
             session.execute_write(
                 lambda tx: tx.run(
                     """
-                    CREATE (i:Issue)
+                    CREATE (i:Issue)<-[:CREATED]-(:GitHubUser {login: "author #1"})
                     SET
                         i.state_reason = "completed",
                         i.body = "explanation of some sample issue",
@@ -81,7 +81,7 @@ class TestGithubETLFetchIssues(TestCase):
             session.execute_write(
                 lambda tx: tx.run(
                     """
-                    CREATE (i:Issue)
+                    CREATE (i:Issue)<-[:CREATED]-(:GitHubUser {login: "author #1"})
                     SET
                         i.state_reason = "completed",
                         i.body = "explanation of some sample issue",
@@ -106,7 +106,7 @@ class TestGithubETLFetchIssues(TestCase):
                         i.timeline_url = "https://api.github.com/repos/GitHub/some_repo/issues/1/timeline",
                         i.node_id = "some_id"
                     
-                    CREATE (i2:Issue)
+                    CREATE (i2:Issue)<-[:CREATED]-(:GitHubUser {login: "author #2"})
                     SET
                         i2.state_reason = "completed",
                         i2.body = "explanation of some sample issue 2",
@@ -143,6 +143,7 @@ class TestGithubETLFetchIssues(TestCase):
 
         self.assertEqual(len(issues), 2)
         self.assertEqual(issues[0].title, "some sample title")
+        self.assertEqual(issues[0].author_name, "author #1")
         self.assertEqual(issues[0].text, "explanation of some sample issue")
         self.assertEqual(issues[0].state, "closed")
         self.assertEqual(issues[0].state_reason, "completed")
@@ -154,6 +155,7 @@ class TestGithubETLFetchIssues(TestCase):
         self.assertEqual(issues[0].repository_name, "Org/SampleRepo")
 
         self.assertEqual(issues[1].title, "some sample title 2")
+        self.assertEqual(issues[1].author_name, "author #2")
         self.assertEqual(issues[1].text, "explanation of some sample issue 2")
         self.assertEqual(issues[1].state, "closed")
         self.assertEqual(issues[1].state_reason, "completed")
@@ -169,7 +171,7 @@ class TestGithubETLFetchIssues(TestCase):
             session.execute_write(
                 lambda tx: tx.run(
                     """
-                    CREATE (i:Issue)
+                    CREATE (i:Issue)<-[:CREATED]-(:GitHubUser {login: "author #1"})
                     SET
                         i.state_reason = "completed",
                         i.body = "explanation of some sample issue",
@@ -194,7 +196,7 @@ class TestGithubETLFetchIssues(TestCase):
                         i.timeline_url = "https://api.github.com/repos/GitHub/some_repo/issues/1/timeline",
                         i.node_id = "some_id"
                     
-                    CREATE (i2:Issue)
+                    CREATE (i2:Issue)<-[:CREATED]-(:GitHubUser {login: "author #2"})
                     SET
                         i2.state_reason = "completed",
                         i2.body = "explanation of some sample issue 2",
@@ -232,6 +234,7 @@ class TestGithubETLFetchIssues(TestCase):
         self.assertEqual(len(issues), 1)
 
         self.assertEqual(issues[0].title, "some sample title 2")
+        self.assertEqual(issues[0].author_name, "author #2")
         self.assertEqual(issues[0].text, "explanation of some sample issue 2")
         self.assertEqual(issues[0].state, "closed")
         self.assertEqual(issues[0].state_reason, "completed")

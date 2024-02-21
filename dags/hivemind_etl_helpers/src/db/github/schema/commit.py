@@ -1,7 +1,7 @@
 class GitHubCommit:
     def __init__(
         self,
-        author: str,
+        author_name: str,
         message: str,
         api_url: str,
         html_url: str,
@@ -10,14 +10,14 @@ class GitHubCommit:
         sha: str,
         latest_saved_at: str,
         created_at: str,
-        verification: dict[str, str],
+        verification: str,
     ) -> None:
         """
         GitHub commit data serialized into a class.
         The verification is a dictionary with keys as the verification type
         and values as the corresponding verification status.
         """
-        self.author = author
+        self.author_name = author_name
         self.message = message
         self.api_url = api_url
         self.html_url = html_url
@@ -32,7 +32,7 @@ class GitHubCommit:
     def from_dict(cls, data: dict[str, str | int]) -> "GitHubCommit":
         # TODO: Update these when data gets updated
         return cls(
-            author=data["author"],
+            author_name=data["author_name"],
             message=data["message"],
             api_url=data["api_url"],
             html_url=data["html_url"],
@@ -46,7 +46,7 @@ class GitHubCommit:
 
     def to_dict(self) -> dict[str, str | int]:
         return {
-            "author": self.author,
+            "author_name": self.author_name,
             "message": self.message,
             "api_url": self.api_url,
             "html_url": self.html_url,

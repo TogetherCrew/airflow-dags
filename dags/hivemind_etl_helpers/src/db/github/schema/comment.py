@@ -1,6 +1,7 @@
 class GitHubComment:
     def __init__(
         self,
+        author_name: str,
         id: int,
         repository_name: str,
         url: list[str],
@@ -17,6 +18,7 @@ class GitHubComment:
         the ractions is a dictionary with keys as
         the emoji name and values the count of the reaction
         """
+        self.author_name = author_name
         self.id = id
         self.repository_name = repository_name
         self.created_at = created_at
@@ -29,25 +31,25 @@ class GitHubComment:
         self.reactions = reactions
 
     @classmethod
-    def from_dict(
-        cls, pr_data: dict[str, int | str | dict[str, int]]
-    ) -> "GitHubComment":
+    def from_dict(cls, data: dict[str, int | str | dict[str, int]]) -> "GitHubComment":
         # TODO: Update these when data got updated
         return cls(
-            id=pr_data["id"],
-            repository_name=pr_data["repository_name"],
-            url=pr_data["url"],
-            created_at=pr_data["created_at"],
-            updated_at=pr_data["updated_at"],
-            related_title=pr_data["related_title"],
-            related_node=pr_data["related_node"],
-            text=pr_data["text"],
-            latest_saved_at=pr_data["latest_saved_at"],
-            reactions=pr_data["reactions"],
+            author_name=data["author_name"],
+            id=data["id"],
+            repository_name=data["repository_name"],
+            url=data["url"],
+            created_at=data["created_at"],
+            updated_at=data["updated_at"],
+            related_title=data["related_title"],
+            related_node=data["related_node"],
+            text=data["text"],
+            latest_saved_at=data["latest_saved_at"],
+            reactions=data["reactions"],
         )
 
     def to_dict(self) -> dict[str, int | str | dict[str, int]]:
         return {
+            "author_name": self.author_name,
             "id": self.id,
             "repository_name": self.repository_name,
             "url": self.url,

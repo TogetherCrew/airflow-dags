@@ -31,7 +31,7 @@ class TestGithubETLFetchComments(TestCase):
             session.execute_write(
                 lambda tx: tx.run(
                     """
-                    CREATE (c:Comment)
+                    CREATE (c:Comment)<-[:CREATED]-(user:GitHubUser {login: "author #1"})
                     SET
                         c.id = 111,
                         c.created_at = "2024-02-06T10:23:50Z",
@@ -64,6 +64,7 @@ class TestGithubETLFetchComments(TestCase):
 
         self.assertEqual(len(comments), 1)
         self.assertEqual(comments[0].id, 111)
+        self.assertEqual(comments[0].author_name, "author #1")
         self.assertEqual(comments[0].repository_name, "Org/SampleRepo")
         self.assertEqual(comments[0].url, "https://www.someurl.com")
         self.assertEqual(comments[0].created_at, "2024-02-06T10:23:50Z")
@@ -90,7 +91,7 @@ class TestGithubETLFetchComments(TestCase):
             session.execute_write(
                 lambda tx: tx.run(
                     """
-                    CREATE (c:Comment)
+                    CREATE (c:Comment)<-[:CREATED]-(:GitHubUser {login: "author #1"})
                     SET
                         c.id = 111,
                         c.created_at = "2024-02-06T10:23:50Z",
@@ -109,7 +110,7 @@ class TestGithubETLFetchComments(TestCase):
                         c.`reactions.-1` = 0,
                         c.`reactions.total_count` = 5
 
-                    CREATE (c2:Comment)
+                    CREATE (c2:Comment)<-[:CREATED]-(:GitHubUser {login: "author #2"})
                     SET
                         c2.id = 112,
                         c2.created_at = "2023-02-06T10:23:50Z",
@@ -128,8 +129,10 @@ class TestGithubETLFetchComments(TestCase):
                         c2.`reactions.-1` = 0,
                         c2.`reactions.total_count` = 5
 
-                    CREATE (pr:PullRequest)<-[:IS_ON]-(c2)
+                    CREATE (pr:PullRequest)<-[:IS_ON]-(c)
                         SET pr.title = "sample pr title"
+                    CREATE (pr2:PullRequest)<-[:IS_ON]-(c2)
+                        SET pr2.title = "sample pr title 2"
                     CREATE (repo:Repository {id: 123, full_name: "Org/SampleRepo"})
                     """
                 )
@@ -143,6 +146,7 @@ class TestGithubETLFetchComments(TestCase):
 
         self.assertEqual(len(comments), 1)
         self.assertEqual(comments[0].id, 111)
+        self.assertEqual(comments[0].author_name, "author #1")
         self.assertEqual(comments[0].repository_name, "Org/SampleRepo")
         self.assertEqual(comments[0].url, "https://www.someurl.com")
         self.assertEqual(comments[0].created_at, "2024-02-06T10:23:50Z")

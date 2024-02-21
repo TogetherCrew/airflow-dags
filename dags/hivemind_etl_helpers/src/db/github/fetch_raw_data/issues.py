@@ -27,7 +27,7 @@ def fetch_raw_issues(
     """
     neo4j_connection = Neo4jConnection()
     neo4j_driver = neo4j_connection.connect_neo4j()
-    query = """MATCH (i:Issue)
+    query = """MATCH (i:Issue)<-[:CREATED]-(user:GitHubUser)
         WHERE 
         i.repository_id IN $repoIds
     """
@@ -37,6 +37,7 @@ def fetch_raw_issues(
     query += """
         MATCH (repo:Repository {id: i.repository_id})
         RETURN
+            user.login as author_name,
             i.title as title,
             i.body as text,
             i.state as state,

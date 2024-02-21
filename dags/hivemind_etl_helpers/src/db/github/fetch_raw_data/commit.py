@@ -27,7 +27,7 @@ def fetch_raw_commits(
     """
     neo4j_connection = Neo4jConnection()
     neo4j_driver = neo4j_connection.connect_neo4j()
-    query = """MATCH (co:Commit)
+    query = """MATCH (co:Commit)<-[:COMMITED]-(user:GitHubUser)
         WHERE
         co.repository_id IN $repoIds
     """
@@ -37,7 +37,7 @@ def fetch_raw_commits(
     query += """
         MATCH (repo:Repository {id: co.repository_id})
         RETURN
-            co.`commit.author.name` as author,
+            user.login as author_name,
             co.`commit.message` as message,
             co.`commit.url` as api_url,
             co.`parents.0.html_url` as html_url,

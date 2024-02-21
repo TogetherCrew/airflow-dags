@@ -29,7 +29,7 @@ def fetch_raw_comments(
     neo4j_driver = neo4j_connection.connect_neo4j()
 
     query = """
-        MATCH (c:Comment)
+        MATCH (c:Comment)<-[:CREATED]-(user:GitHubUser)
         MATCH (c)-[:IS_ON]->(info:PullRequest|Issue)
         MATCH (repo:Repository {id: c.repository_id})
         WHERE c.repository_id IN $repoIds
@@ -40,6 +40,7 @@ def fetch_raw_comments(
 
     query += """
     RETURN
+        user.login as author_name,
         c.id AS id,
         c.created_at AS created_at,
         c.updated_at AS updated_at,

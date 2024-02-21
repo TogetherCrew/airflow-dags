@@ -31,7 +31,7 @@ class TestGithubETLFetchRawIssues(TestCase):
             session.execute_write(
                 lambda tx: tx.run(
                     """
-                    CREATE (i:Issue)
+                    CREATE (i:Issue)<-[:CREATED]-(:GitHubUser {login: "author #1"})
                     SET
                         i.state_reason = "completed",
                         i.body = "explanation of some sample issue",
@@ -68,6 +68,7 @@ class TestGithubETLFetchRawIssues(TestCase):
 
         self.assertEqual(len(issues), 1)
         self.assertEqual(issues[0]["title"], "some sample title")
+        self.assertEqual(issues[0]["author_name"], "author #1")
         self.assertEqual(issues[0]["text"], "explanation of some sample issue")
         self.assertEqual(issues[0]["state"], "closed")
         self.assertEqual(issues[0]["state_reason"], "completed")
