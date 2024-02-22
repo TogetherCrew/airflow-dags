@@ -3,7 +3,7 @@ from datetime import datetime
 
 from llama_index import Document
 from hivemind_etl_helpers.src.db.github.transform.pull_requests import transform_prs
-from hivemind_etl_helpers.src.db.github.schema import GitHubPullRequest
+from hivemind_etl_helpers.src.db.github.utils.schema import GitHubPullRequest
 
 
 class TestGithubTransformPRs(TestCase):
@@ -50,6 +50,7 @@ class TestGithubTransformPRs(TestCase):
                 "latest_saved_at": datetime(2023, 12, 1, 1).strftime(
                     "%Y-%m-%dT%H:%M:%SZ"
                 ),
+                "type": "pull_request",
             },
         )
 
@@ -121,6 +122,7 @@ class TestGithubTransformPRs(TestCase):
                 "latest_saved_at": datetime(2023, 12, 1, 1).strftime(
                     "%Y-%m-%dT%H:%M:%SZ"
                 ),
+                "type": "pull_request",
             },
         )
 
@@ -140,6 +142,7 @@ class TestGithubTransformPRs(TestCase):
                 "latest_saved_at": datetime(2023, 12, 2, 1).strftime(
                     "%Y-%m-%dT%H:%M:%SZ"
                 ),
+                "type": "pull_request",
             },
         )
 
@@ -159,5 +162,6 @@ class TestGithubTransformPRs(TestCase):
                 "latest_saved_at": datetime(2023, 12, 3, 1).strftime(
                     "%Y-%m-%dT%H:%M:%SZ"
                 ),
+                "type": "pull_request",
             },
         )

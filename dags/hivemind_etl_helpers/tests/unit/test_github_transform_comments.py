@@ -3,7 +3,7 @@ from datetime import datetime
 
 from llama_index import Document
 from hivemind_etl_helpers.src.db.github.transform.comments import transform_comments
-from hivemind_etl_helpers.src.db.github.schema import GitHubComment
+from hivemind_etl_helpers.src.db.github.utils.schema import GitHubComment
 
 
 class TestGithubTransformcomComments(TestCase):
@@ -68,6 +68,7 @@ class TestGithubTransformcomComments(TestCase):
                     "minus1": 0,
                     "total_count": 0,
                 },
+                "type": "comment",
             },
         )
 
@@ -175,6 +176,7 @@ class TestGithubTransformcomComments(TestCase):
                     "minus1": 0,
                     "total_count": 0,
                 },
+                "type": "comment",
             },
         )
 
@@ -203,6 +205,7 @@ class TestGithubTransformcomComments(TestCase):
                     "minus1": 0,
                     "total_count": 3,
                 },
+                "type": "comment",
             },
         )
 
@@ -231,5 +234,6 @@ class TestGithubTransformcomComments(TestCase):
                     "minus1": 0,
                     "total_count": 2,
                 },
+                "type": "comment",
             },
         )

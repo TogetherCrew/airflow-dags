@@ -65,6 +65,7 @@ class TestGithubETLFetchIssues(TestCase):
         )
 
         self.assertEqual(len(issues), 1)
+        self.assertEqual(issues[0].id, 21200001)
         self.assertEqual(issues[0].title, "some sample title")
         self.assertEqual(issues[0].text, "explanation of some sample issue")
         self.assertEqual(issues[0].state, "closed")
@@ -124,7 +125,7 @@ class TestGithubETLFetchIssues(TestCase):
                         i2.html_url = "https://github.com/GitHub/some_repo/issues/2",
                         i2.comments_url = "https://api.github.com/repos/GitHub/some_repo/issues/2/comments",
                         i2.repository_id = 123,
-                        i2.id = 21200001,
+                        i2.id = 21200002,
                         i2.repository_url = "https://api.github.com/repos/GitHub/some_repo",
                         i2.state = "closed",
                         i2.locked = false,
@@ -142,6 +143,7 @@ class TestGithubETLFetchIssues(TestCase):
         )
 
         self.assertEqual(len(issues), 2)
+        self.assertEqual(issues[0].id, 21200001)
         self.assertEqual(issues[0].title, "some sample title")
         self.assertEqual(issues[0].author_name, "author #1")
         self.assertEqual(issues[0].text, "explanation of some sample issue")
@@ -154,6 +156,7 @@ class TestGithubETLFetchIssues(TestCase):
         self.assertEqual(issues[0].repository_id, 123)
         self.assertEqual(issues[0].repository_name, "Org/SampleRepo")
 
+        self.assertEqual(issues[1].id, 21200002)
         self.assertEqual(issues[1].title, "some sample title 2")
         self.assertEqual(issues[1].author_name, "author #2")
         self.assertEqual(issues[1].text, "explanation of some sample issue 2")
@@ -214,7 +217,7 @@ class TestGithubETLFetchIssues(TestCase):
                         i2.html_url = "https://github.com/GitHub/some_repo/issues/2",
                         i2.comments_url = "https://api.github.com/repos/GitHub/some_repo/issues/2/comments",
                         i2.repository_id = 123,
-                        i2.id = 21200001,
+                        i2.id = 21200002,
                         i2.repository_url = "https://api.github.com/repos/GitHub/some_repo",
                         i2.state = "closed",
                         i2.locked = false,
@@ -233,6 +236,7 @@ class TestGithubETLFetchIssues(TestCase):
 
         self.assertEqual(len(issues), 1)
 
+        self.assertEqual(issues[0].id, 21200002)
         self.assertEqual(issues[0].title, "some sample title 2")
         self.assertEqual(issues[0].author_name, "author #2")
         self.assertEqual(issues[0].text, "explanation of some sample issue 2")

@@ -32,7 +32,7 @@ def transform_issues(data: list[GitHubIssue]) -> list[Document]:
             text=sample.title,
             metadata=metadata,
             excluded_embed_metadata_keys=exclude_embed_metadata,
-            excluded_llm_metadata_keys=["url", "repository_id"],
+            excluded_llm_metadata_keys=["url", "repository_id", "id"],
         )
         transformed_issues.append(document)
 

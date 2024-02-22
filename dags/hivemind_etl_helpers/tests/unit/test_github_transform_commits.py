@@ -3,7 +3,7 @@ from datetime import datetime
 
 from llama_index import Document
 from hivemind_etl_helpers.src.db.github.transform.commits import transform_commits
-from hivemind_etl_helpers.src.db.github.schema import GitHubCommit
+from hivemind_etl_helpers.src.db.github.utils.schema import GitHubCommit
 
 
 class TestGithubTransformCommits(TestCase):
@@ -46,6 +46,7 @@ class TestGithubTransformCommits(TestCase):
                 "repository_id": 123,
                 "repository_name": "SampleRepo",
                 "verification": "valid",
+                "type": "commit",
             },
         )
 
@@ -109,6 +110,7 @@ class TestGithubTransformCommits(TestCase):
                 "repository_id": 123,
                 "repository_name": "SampleRepo",
                 "verification": "valid",
+                "type": "commit",
             },
         )
 
@@ -126,6 +128,7 @@ class TestGithubTransformCommits(TestCase):
                 "repository_id": 123,
                 "repository_name": "SampleRepo",
                 "verification": "valid",
+                "type": "commit",
             },
         )
 
@@ -143,5 +146,6 @@ class TestGithubTransformCommits(TestCase):
                 "repository_id": 126,
                 "repository_name": "SampleRepo#6",
                 "verification": "unsigned",
+                "type": "commit",
             },
         )

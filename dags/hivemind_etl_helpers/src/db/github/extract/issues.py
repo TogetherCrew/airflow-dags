@@ -38,6 +38,7 @@ def fetch_raw_issues(
         MATCH (repo:Repository {id: i.repository_id})
         RETURN
             user.login as author_name,
+            i.id as id,
             i.title as title,
             i.body as text,
             i.state as state,

@@ -1,6 +1,7 @@
 class GitHubIssue:
     def __init__(
         self,
+        id: int,
         author_name: str,
         title: str,
         text: str,
@@ -13,6 +14,7 @@ class GitHubIssue:
         repository_id: str,
         repository_name: str,
     ) -> None:
+        self.id = id
         self.author_name = author_name
         self.title = title
         self.text = text
@@ -28,21 +30,23 @@ class GitHubIssue:
     @classmethod
     def from_dict(cls, issue: dict[str, str | int]) -> "GitHubIssue":
         return cls(
-            issue["author_name"],
-            issue["title"],
-            issue["text"],
-            issue["state"],
-            issue["state_reason"],
-            issue["created_at"],
-            issue["updated_at"],
-            issue["latest_saved_at"],
-            issue["url"],
-            issue["repository_id"],
-            issue["repository_name"],
+            id=issue["id"],
+            author_name=issue["author_name"],
+            title=issue["title"],
+            text=issue["text"],
+            state=issue["state"],
+            state_reason=issue["state_reason"],
+            created_at=issue["created_at"],
+            updated_at=issue["updated_at"],
+            latest_saved_at=issue["latest_saved_at"],
+            url=issue["url"],
+            repository_id=issue["repository_id"],
+            repository_name=issue["repository_name"],
         )
 
     def to_dict(self) -> dict[str, str | int]:
         return {
+            "id": self.id,
             "author_name": self.author_name,
             "title": self.title,
             "text": self.text,

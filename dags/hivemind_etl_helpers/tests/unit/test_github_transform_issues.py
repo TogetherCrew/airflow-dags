@@ -3,7 +3,7 @@ from datetime import datetime
 
 from llama_index import Document
 from hivemind_etl_helpers.src.db.github.transform.issues import transform_issues
-from hivemind_etl_helpers.src.db.github.schema import GitHubIssue
+from hivemind_etl_helpers.src.db.github.utils.schema import GitHubIssue
 
 
 class TestGithubTransformIssues(TestCase):
@@ -14,6 +14,7 @@ class TestGithubTransformIssues(TestCase):
     def test_github_single_document(self):
         input_data = [
             GitHubIssue(
+                id=1,
                 author_name="author #1",
                 title="sample title",
                 text="sample text",
@@ -36,6 +37,7 @@ class TestGithubTransformIssues(TestCase):
         self.assertEqual(
             documents[0].metadata,
             {
+                "id": 1,
                 "author_name": "author #1",
                 "text": "sample text",
                 "state": "open",
@@ -48,12 +50,14 @@ class TestGithubTransformIssues(TestCase):
                 "url": "https://github.com/repo/issue/1",
                 "repository_id": 123,
                 "repository_name": "SampleRepo",
+                "type": "issue",
             },
         )
 
     def test_multiple_documents(self):
         input_data = [
             GitHubIssue(
+                id=1,
                 author_name="author #1",
                 title="sample title #1",
                 text="sample text #1",
@@ -67,6 +71,7 @@ class TestGithubTransformIssues(TestCase):
                 repository_name="SampleRepo",
             ),
             GitHubIssue(
+                id=2,
                 author_name="author #2",
                 title="sample title #2",
                 text="sample text #2",
@@ -80,6 +85,7 @@ class TestGithubTransformIssues(TestCase):
                 repository_name="SampleRepo",
             ),
             GitHubIssue(
+                id=3,
                 author_name="author #3",
                 title="sample title #3",
                 text="sample text #3",
@@ -103,6 +109,7 @@ class TestGithubTransformIssues(TestCase):
         self.assertEqual(
             documents[0].metadata,
             {
+                "id": 1,
                 "author_name": "author #1",
                 "text": "sample text #1",
                 "state": "open",
@@ -115,12 +122,14 @@ class TestGithubTransformIssues(TestCase):
                 "url": "https://github.com/repo/issue/1",
                 "repository_id": 123,
                 "repository_name": "SampleRepo",
+                "type": "issue",
             },
         )
 
         self.assertEqual(
             documents[1].metadata,
             {
+                "id": 2,
                 "author_name": "author #2",
                 "text": "sample text #2",
                 "state": "open",
@@ -133,12 +142,14 @@ class TestGithubTransformIssues(TestCase):
                 "url": "https://github.com/repo/issue/2",
                 "repository_id": 123,
                 "repository_name": "SampleRepo",
+                "type": "issue",
             },
         )
 
         self.assertEqual(
             documents[2].metadata,
             {
+                "id": 3,
                 "author_name": "author #3",
                 "text": "sample text #3",
                 "state": "open",
@@ -151,5 +162,6 @@ class TestGithubTransformIssues(TestCase):
                 "url": "https://github.com/repo/issue/3",
                 "repository_id": 125,
                 "repository_name": "SampleRepo#5",
+                "type": "issue",
             },
         )

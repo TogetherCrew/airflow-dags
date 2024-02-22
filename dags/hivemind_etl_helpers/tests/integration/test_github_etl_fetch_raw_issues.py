@@ -67,6 +67,7 @@ class TestGithubETLFetchRawIssues(TestCase):
         )
 
         self.assertEqual(len(issues), 1)
+        self.assertEqual(issues[0]["id"], 21200001)
         self.assertEqual(issues[0]["title"], "some sample title")
         self.assertEqual(issues[0]["author_name"], "author #1")
         self.assertEqual(issues[0]["text"], "explanation of some sample issue")
