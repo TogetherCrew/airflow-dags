@@ -58,4 +58,5 @@ class GitHubPullRequest:
             "state": self.state,
             "url": self.url,
             "latest_saved_at": self.latest_saved_at,
+            "type": "pull_request",
         }

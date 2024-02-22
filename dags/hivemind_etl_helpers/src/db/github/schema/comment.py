@@ -60,4 +60,5 @@ class GitHubComment:
             "text": self.text,
             "latest_saved_at": self.latest_saved_at,
             "reactions": self.reactions,
+            "type": "comment",
         }

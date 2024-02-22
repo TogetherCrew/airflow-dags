@@ -54,4 +54,5 @@ class GitHubIssue:
             "url": self.url,
             "repository_id": self.repository_id,
             "repository_name": self.repository_name,
+            "type": "issue",
         }

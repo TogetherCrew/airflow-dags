@@ -56,4 +56,5 @@ class GitHubCommit:
             "latest_saved_at": self.latest_saved_at,
             "created_at": self.created_at,
             "verification": self.verification,
+            "type": "commit",
         }
