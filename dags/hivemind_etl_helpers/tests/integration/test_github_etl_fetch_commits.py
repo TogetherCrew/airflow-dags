@@ -2,7 +2,7 @@ from datetime import datetime
 from unittest import TestCase
 
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
-from hivemind_etl_helpers.src.db.github.fetch_raw_data import fetch_commits
+from hivemind_etl_helpers.src.db.github.extract import fetch_commits
 
 
 class TestFetchCommits(TestCase):

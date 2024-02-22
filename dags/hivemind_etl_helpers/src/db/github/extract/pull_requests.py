@@ -38,7 +38,7 @@ def fetch_raw_pull_requests(
     """
 
     if from_date is not None:
-        query += "AND datetime(pr.created_at) >= datetime($from_date)"
+        query += "AND datetime(pr.created_at) >= datetime($fromDate)"
 
     query += """
     RETURN
@@ -53,7 +53,7 @@ def fetch_raw_pull_requests(
         pr.merged_at as merged_at,
         pr.state as state,
         pr.html_url as url,
-        pr.latestSavedAt as latest_saved_at,
+        pr.latestSavedAt as latest_saved_at
     """
 
     def _exec_query(tx, repoIds, from_date):
@@ -90,7 +90,7 @@ def fetch_pull_requests(
     github_prs : list[GitHubPullRequest]
         a list of github pull requests extracted from neo4j
     """
-    records = fetch_pull_requests(repository_id, from_date)
+    records = fetch_raw_pull_requests(repository_id, from_date)
 
     github_prs: list[GitHubPullRequest] = []
     for record in records:
