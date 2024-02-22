@@ -2,7 +2,7 @@ from datetime import datetime
 
 import neo4j
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
-from dags.hivemind_etl_helpers.src.db.github.schema import GitHubIssue
+from dags.hivemind_etl_helpers.src.db.github.utils.schema import GitHubIssue
 
 
 def fetch_raw_issues(

@@ -1,5 +1,5 @@
 from llama_index import Document
-from dags.hivemind_etl_helpers.src.db.github.schema import GitHubIssue
+from dags.hivemind_etl_helpers.src.db.github.utils.schema import GitHubIssue
 
 
 def transform_issues(data: list[GitHubIssue]) -> list[Document]:

@@ -1,5 +1,5 @@
 from llama_index import Document
-from dags.hivemind_etl_helpers.src.db.github.schema import GitHubPullRequest
+from dags.hivemind_etl_helpers.src.db.github.utils.schema import GitHubPullRequest
 
 
 def transform_prs(data: list[GitHubPullRequest]) -> list[Document]:
