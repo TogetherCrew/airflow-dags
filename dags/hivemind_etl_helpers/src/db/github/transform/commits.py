@@ -1,5 +1,5 @@
 from llama_index import Document
-from dags.hivemind_etl_helpers.src.db.github.utils.schema import GitHubCommit
+from hivemind_etl_helpers.src.db.github.utils.schema import GitHubCommit
 
 
 def transform_commits(data: list[GitHubCommit]) -> list[Document]:

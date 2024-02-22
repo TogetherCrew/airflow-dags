@@ -32,14 +32,7 @@ from hivemind_etl_helpers.discord_mongo_vector_store_etl import (
 from hivemind_etl_helpers.src.utils.get_mongo_discord_communities import (
     get_all_discord_communities,
 )
-
-# def setup_phonix():
-#     _ = px.launch_app()
-#     logging.info(f"Phonix Session Url: {px.active_session().url}")
-
-
-# with DAG(dag_id="phonix_startup", start_date=datetime(2022, 3, 4)) as dag:
-#     dag.on_startup.append(setup_phonix)
+from hivemind_etl_helpers.github_etl import process_github_vectorstore
 
 
 with DAG(
@@ -94,3 +87,21 @@ with DAG(
 
     communities = get_mongo_discord_communities()
     start_discord_summary_vectorstore.expand(community_id=communities)
+
+
+with DAG(
+    dag_id="github_vector_store",
+    start_date=datetime(2024, 2, 21),
+    schedule_interval="0 2 * * *",
+) as dag:
+    
+    def get_github_communities() -> list[str]:
+        return ["test_github"]
+    
+    @task
+    def process_github_community(community_id: str):
+        logging.info(f"Starting Github ETL | community_id: {community_id}")
+        process_github_vectorstore(community_id=community_id)
+
+    communities = get_github_communities()
+    process_github_community.expand(community_id=communities)

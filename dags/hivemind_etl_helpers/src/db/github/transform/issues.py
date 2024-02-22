@@ -1,5 +1,5 @@
 from llama_index import Document
-from dags.hivemind_etl_helpers.src.db.github.utils.schema import GitHubIssue
+from hivemind_etl_helpers.src.db.github.utils.schema import GitHubIssue
 
 
 def transform_issues(data: list[GitHubIssue]) -> list[Document]:
@@ -26,6 +26,10 @@ def transform_issues(data: list[GitHubIssue]) -> list[Document]:
         # including the first issue comment for embedding
         # as it can be an explanation to the issue
         exclude_embed_metadata.remove("text")
+
+        print(f"sample.title: {sample.title}")
+        print("exclude_embed_metadata", exclude_embed_metadata)
+        print("--")
 
         # title of the issue is the text for document
         document = Document(

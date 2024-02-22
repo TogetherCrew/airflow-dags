@@ -2,7 +2,7 @@ from datetime import datetime
 from unittest import TestCase
 
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
-from dags.hivemind_etl_helpers.src.db.github.extract.issues import (
+from hivemind_etl_helpers.src.db.github.extract.issues import (
     fetch_raw_issues,
 )
 
