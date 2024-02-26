@@ -156,6 +156,9 @@ def postprocess_results(results: list[dict[str, str]]) -> dict[str, datetime]:
 
     for r in results:
         for key, value in r.items():
-            results_updated[key] = parser.parse(value).replace(tzinfo=timezone.utc)
+            if value is not None:
+                results_updated[key] = parser.parse(value).replace(tzinfo=timezone.utc)
+            else:
+                results_updated[key] = None
 
     return results_updated

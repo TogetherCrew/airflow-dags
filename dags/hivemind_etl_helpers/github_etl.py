@@ -13,7 +13,10 @@ from hivemind_etl_helpers.src.db.github.transform import (
     transform_issues,
     transform_prs,
 )
-from hivemind_etl_helpers.src.db.github.load import load_documents_into_pg_database
+from hivemind_etl_helpers.src.db.github.load import (
+    load_documents_into_pg_database,
+    PrepareDeletion,
+)
 from tc_hivemind_backend.db.pg_db_utils import setup_db
 
 
@@ -46,25 +49,29 @@ def process_github_vectorstore(community_id: str) -> None:
 
     # TRANSFORM
     # llama-index documents
-    logging.info(f"{prefix}Transforming comments!")
+    logging.debug(f"{prefix}Transforming comments!")
     docs_comment = transform_comments(github_comments)
-    logging.info(f"{prefix}Transforming commits!")
+    logging.debug(f"{prefix}Transforming commits!")
     docs_commit = transform_commits(github_commits)
-    logging.info(f"{prefix}Transforming issues!")
+    logging.debug(f"{prefix}Transforming issues!")
     docs_issue = transform_issues(github_issues)
-    logging.info(f"{prefix}Transforming pull requests!")
+    logging.debug(f"{prefix}Transforming pull requests!")
     docs_prs = transform_prs(github_prs)
 
-    # TODO: Check for document updates
-    # TODO: replace some if updated
+    all_documents: list[Document] = docs_commit.copy()
+    delete_docs = PrepareDeletion(community_id)
+    docs_to_save, deletion_query = delete_docs.prepare(
+        pr_documents=docs_prs,
+        issue_documents=docs_issue,
+        comment_documents=docs_comment,
+    )
+    all_documents.extend(docs_to_save)
 
-    all_documents: list[Document] = []
-    all_documents.extend(docs_comment)
-    all_documents.extend(docs_commit)
-    all_documents.extend(docs_issue)
-    all_documents.extend(docs_prs)
+    logging.debug(f"{len(all_documents)} prepared to be saved!")
+    if len(all_documents) == 0:
+        logging.info("No new documents to save!")
 
-    logging.info(f"documents count to save: {len(all_documents)}")
+    logging.info(f"deletion_query: {deletion_query}")
 
     # LOAD
     logging.info(f"{prefix}Setting up database")
@@ -74,8 +81,5 @@ def process_github_vectorstore(community_id: str) -> None:
         documents=all_documents,
         community_id=community_id,
         table_name=table_name,
+        deletion_query=deletion_query,
     )
-
-
-if __name__ == "__main__":
-    process_github_vectorstore(community_id="test_github")

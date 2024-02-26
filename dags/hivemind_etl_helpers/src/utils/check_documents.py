@@ -77,7 +77,10 @@ def check_documents(
             modified_at_db = files_db[str(id)]
 
             # if the retrieved data had a newer date
-            if modified_at_db < modified_at:
+            # the inequality is for edge cases like `None`
+            if (modified_at_db is None and modified_at is not None) or (
+                modified_at_db < modified_at
+            ):
                 doc_file_ids_to_delete.append(str(id))
                 documents_to_save.append(doc)
             else:
@@ -119,6 +122,9 @@ def process_doc_to_id_date(
     for doc in documents:
         file_id = doc.metadata[identifier]
         modified_at = doc.metadata[date_field]
-        data[file_id] = parser.parse(modified_at).replace(tzinfo=timezone.utc)
+        if modified_at is not None:
+            data[file_id] = parser.parse(modified_at).replace(tzinfo=timezone.utc)
+        else:
+            data[file_id] = None
 
     return data

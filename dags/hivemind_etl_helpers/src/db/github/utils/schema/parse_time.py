@@ -25,7 +25,10 @@ def parse_date_variables(date: datetime | str) -> str:
             second=date.second,
         ).strftime(DATE_FORMAT)
     else:
-        logging.warning(f"date is in format {type(date)} and cannot be parsed!")
+        logging.warning(
+            f"date is in format {type(date)} and cannot be parsed! "
+            "The return value would be the same value."
+        )
         date_parsed = date
 
     return date_parsed

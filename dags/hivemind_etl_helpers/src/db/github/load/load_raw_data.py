@@ -1,10 +1,7 @@
 import logging
-
 from llama_index import Document
 
 from hivemind_etl_helpers.src.document_node_parser import configure_node_parser
-from hivemind_etl_helpers.src.utils.check_documents import check_documents
-from tc_hivemind_backend.db.pg_db_utils import setup_db
 from tc_hivemind_backend.db.utils.model_hyperparams import load_model_hyperparams
 from tc_hivemind_backend.embeddings.cohere import CohereEmbedding
 from tc_hivemind_backend.pg_vector_access import PGVectorAccess
@@ -34,6 +31,8 @@ def load_documents_into_pg_database(
         db_name : str
             the database name to save the contents
             for default it is `"community_{community_id}"`
+        deletion_query : str
+            a query to delete some documents
     """
     chunk_size, embedding_dim = load_model_hyperparams()
     dbname = kwargs.get("db_name", f"community_{community_id}")
@@ -52,4 +51,5 @@ def load_documents_into_pg_database(
         embed_model=embed_model,
         embed_dim=embedding_dim,
         request_per_minute=10000,
+        deletion_query=kwargs.get("deletion_query", ""),
     )
