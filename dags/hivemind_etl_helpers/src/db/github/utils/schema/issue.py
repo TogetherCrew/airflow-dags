@@ -25,19 +25,15 @@ class GitHubIssue:
         self.text = text
         self.state = state
         self.state_reason = state_reason
-        self.created_at = created_at
-        self.updated_at = updated_at
-        self.latest_saved_at = latest_saved_at
+        self.created_at = parse_date_variables(created_at)
+        self.updated_at = parse_date_variables(updated_at)
+        self.latest_saved_at = parse_date_variables(latest_saved_at)
         self.url = url
         self.repository_id = repository_id
         self.repository_name = repository_name
 
     @classmethod
     def from_dict(cls, issue: dict[str, str | int]) -> "GitHubIssue":
-        created_at = parse_date_variables(issue["created_at"])
-        updated_at = parse_date_variables(issue["updated_at"])
-        latest_saved_at = parse_date_variables(issue["latest_saved_at"])
-
         return cls(
             id=issue["id"],
             author_name=issue["author_name"],
@@ -45,9 +41,9 @@ class GitHubIssue:
             text=issue["text"],
             state=issue["state"],
             state_reason=issue["state_reason"],
-            created_at=created_at,
-            updated_at=updated_at,
-            latest_saved_at=latest_saved_at,
+            created_at=issue["created_at"],
+            updated_at=issue["updated_at"],
+            latest_saved_at=issue["latest_saved_at"],
             url=issue["url"],
             repository_id=issue["repository_id"],
             repository_name=issue["repository_name"],

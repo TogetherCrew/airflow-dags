@@ -41,15 +41,13 @@ class TestGithubTransformPRs(TestCase):
                 "repository_id": 123,
                 "repository_name": "SampleRepo",
                 "issue_url": "https://api.github.com/repo/issue/1",
-                "created_at": datetime(2023, 11, 1).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "created_at": "2023-11-01 00:00:00",
+                "latest_saved_at": "2023-12-01 01:00:00",
                 "id": 1,
                 "closed_at": None,
                 "merged_at": None,
                 "state": "open",
                 "url": "https://github.com/repo/pull/1",
-                "latest_saved_at": datetime(2023, 12, 1, 1).strftime(
-                    "%Y-%m-%dT%H:%M:%SZ"
-                ),
                 "type": "pull_request",
             },
         )
@@ -113,15 +111,13 @@ class TestGithubTransformPRs(TestCase):
                 "repository_id": 123,
                 "repository_name": "SampleRepo",
                 "issue_url": "https://api.github.com/repo/issue/1",
-                "created_at": datetime(2023, 11, 1).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "created_at": "2023-11-01 00:00:00",
+                "latest_saved_at": "2023-12-01 01:00:00",
                 "id": 1,
                 "closed_at": None,
                 "merged_at": None,
                 "state": "open",
                 "url": "https://github.com/repo/pull/1",
-                "latest_saved_at": datetime(2023, 12, 1, 1).strftime(
-                    "%Y-%m-%dT%H:%M:%SZ"
-                ),
                 "type": "pull_request",
             },
         )
@@ -133,15 +129,13 @@ class TestGithubTransformPRs(TestCase):
                 "repository_id": 123,
                 "repository_name": "SampleRepo",
                 "issue_url": "https://api.github.com/repo/issue/2",
-                "created_at": datetime(2023, 11, 2).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "created_at": "2023-11-02 00:00:00",
+                "latest_saved_at": "2023-12-02 01:00:00",
                 "id": 2,
                 "closed_at": None,
                 "merged_at": None,
                 "state": "open",
                 "url": "https://github.com/repo/pull/2",
-                "latest_saved_at": datetime(2023, 12, 2, 1).strftime(
-                    "%Y-%m-%dT%H:%M:%SZ"
-                ),
                 "type": "pull_request",
             },
         )
@@ -153,15 +147,13 @@ class TestGithubTransformPRs(TestCase):
                 "repository_id": 125,
                 "repository_name": "SampleRepo#5",
                 "issue_url": "https://api.github.com/repo/issue/3",
-                "created_at": datetime(2023, 11, 3).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "created_at": "2023-11-03 00:00:00",
+                "latest_saved_at": "2023-12-03 01:00:00",
                 "id": 3,
                 "closed_at": None,
                 "merged_at": None,
                 "state": "open",
                 "url": "https://github.com/repo/pull/3",
-                "latest_saved_at": datetime(2023, 12, 3, 1).strftime(
-                    "%Y-%m-%dT%H:%M:%SZ"
-                ),
                 "type": "pull_request",
             },
         )

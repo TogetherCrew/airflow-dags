@@ -37,10 +37,8 @@ class TestGithubTransformCommits(TestCase):
             {
                 "author_name": "author #1",
                 "sha": "sha#1000000",
-                "created_at": datetime(2023, 11, 1).strftime("%Y-%m-%dT%H:%M:%SZ"),
-                "latest_saved_at": datetime(2023, 12, 1, 1).strftime(
-                    "%Y-%m-%dT%H:%M:%SZ"
-                ),
+                "created_at": "2023-11-01 00:00:00",
+                "latest_saved_at": "2023-12-01 01:00:00",
                 "html_url": "https://github.com/repo/commit/1",
                 "api_url": "https://api.github.com/repo/commit/1",
                 "repository_id": 123,
@@ -101,10 +99,8 @@ class TestGithubTransformCommits(TestCase):
             {
                 "author_name": "author #1",
                 "sha": "sha#1000000",
-                "created_at": datetime(2023, 11, 1).strftime("%Y-%m-%dT%H:%M:%SZ"),
-                "latest_saved_at": datetime(2023, 12, 1, 1).strftime(
-                    "%Y-%m-%dT%H:%M:%SZ"
-                ),
+                "created_at": "2023-11-01 00:00:00",
+                "latest_saved_at": "2023-12-01 01:00:00",
                 "html_url": "https://github.com/repo/commit/1",
                 "api_url": "https://api.github.com/repo/commit/1",
                 "repository_id": 123,
@@ -119,10 +115,8 @@ class TestGithubTransformCommits(TestCase):
             {
                 "author_name": "author #2",
                 "sha": "sha#1000001",
-                "created_at": datetime(2023, 11, 2).strftime("%Y-%m-%dT%H:%M:%SZ"),
-                "latest_saved_at": datetime(2023, 12, 2, 1).strftime(
-                    "%Y-%m-%dT%H:%M:%SZ"
-                ),
+                "created_at": "2023-11-02 00:00:00",
+                "latest_saved_at": "2023-12-02 01:00:00",
                 "html_url": "https://github.com/repo/commit/2",
                 "api_url": "https://api.github.com/repo/commit/2",
                 "repository_id": 123,
@@ -137,10 +131,8 @@ class TestGithubTransformCommits(TestCase):
             {
                 "author_name": "author #3",
                 "sha": "sha#1000002",
-                "created_at": datetime(2023, 11, 3).strftime("%Y-%m-%dT%H:%M:%SZ"),
-                "latest_saved_at": datetime(2023, 12, 3, 1).strftime(
-                    "%Y-%m-%dT%H:%M:%SZ"
-                ),
+                "created_at": "2023-11-03 00:00:00",
+                "latest_saved_at": "2023-12-03 01:00:00",
                 "html_url": "https://github.com/repo/commit/3",
                 "api_url": "https://api.github.com/repo/commit/3",
                 "repository_id": 126,

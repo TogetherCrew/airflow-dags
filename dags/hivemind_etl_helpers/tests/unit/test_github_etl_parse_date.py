@@ -4,7 +4,7 @@ import logging
 from neo4j.time import DateTime
 from hivemind_etl_helpers.src.db.github.utils.schema.parse_time import (
     parse_date_variables,
-)  # Import your function here
+)
 
 
 class TestParseDateVariables(unittest.TestCase):

@@ -23,35 +23,30 @@ class GitHubPullRequest:
         self.repository_id = repository_id
         self.repository_name = repository_name
         self.issue_url = issue_url
-        self.created_at = created_at
+        self.created_at = parse_date_variables(created_at)
         self.title = title
         self.id = id
-        self.closed_at = closed_at
-        self.merged_at = merged_at
+        self.closed_at = parse_date_variables(closed_at)
+        self.merged_at = parse_date_variables(merged_at)
         self.state = state
         self.url = url
-        self.latest_saved_at = latest_saved_at
+        self.latest_saved_at = parse_date_variables(latest_saved_at)
 
     @classmethod
     def from_dict(cls, data: dict[str, int | str | None]) -> "GitHubPullRequest":
-        created_at = parse_date_variables(data["created_at"])
-        latest_saved_at = parse_date_variables(data["latest_saved_at"])
-        closed_at = parse_date_variables(data["closed_at"])
-        merged_at = parse_date_variables(data["merged_at"])
-
         return cls(
             author_name=data["author_name"],
             repository_id=data["repository_id"],
             repository_name=data["repository_name"],
             issue_url=data["issue_url"],
-            created_at=created_at,
+            created_at=data["created_at"],
             title=data["title"],
             id=data["id"],
-            closed_at=closed_at,
-            merged_at=merged_at,
+            closed_at=data["closed_at"],
+            merged_at=data["merged_at"],
             state=data["state"],
             url=data["url"],
-            latest_saved_at=latest_saved_at,
+            latest_saved_at=data["latest_saved_at"],
         )
 
     def to_dict(self) -> dict[str, int | str | None]:

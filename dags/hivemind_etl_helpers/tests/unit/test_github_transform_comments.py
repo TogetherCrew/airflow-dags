@@ -50,13 +50,11 @@ class TestGithubTransformcomComments(TestCase):
                 "id": 1,
                 "repository_name": "SampleRepo",
                 "url": "https://github.com/repo/comment/1",
-                "created_at": datetime(2023, 11, 1).strftime("%Y-%m-%dT%H:%M:%SZ"),
-                "updated_at": datetime(2023, 11, 1, 1).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "created_at": "2023-11-01 00:00:00",
+                "updated_at": "2023-11-01 01:00:00",
                 "related_title": "Fix item 1",
                 "related_node": "PullRequest",
-                "latest_saved_at": datetime(2023, 12, 1, 1).strftime(
-                    "%Y-%m-%dT%H:%M:%SZ"
-                ),
+                "latest_saved_at": "2023-12-01 01:00:00",
                 "reactions": {
                     "hooray": 0,
                     "eyes": 0,
@@ -158,13 +156,11 @@ class TestGithubTransformcomComments(TestCase):
                 "id": 1,
                 "repository_name": "SampleRepo",
                 "url": "https://github.com/repo/comment/1",
-                "created_at": datetime(2023, 11, 1).strftime("%Y-%m-%dT%H:%M:%SZ"),
-                "updated_at": datetime(2023, 11, 1, 1).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "created_at": "2023-11-01 00:00:00",
+                "updated_at": "2023-11-01 01:00:00",
                 "related_title": "Fix item 1",
                 "related_node": "PullRequest",
-                "latest_saved_at": datetime(2023, 12, 1, 1).strftime(
-                    "%Y-%m-%dT%H:%M:%SZ"
-                ),
+                "latest_saved_at": "2023-12-01 01:00:00",
                 "reactions": {
                     "hooray": 0,
                     "eyes": 0,
@@ -187,13 +183,11 @@ class TestGithubTransformcomComments(TestCase):
                 "id": 2,
                 "repository_name": "SampleRepo",
                 "url": "https://github.com/repo/comment/2",
-                "created_at": datetime(2023, 11, 2).strftime("%Y-%m-%dT%H:%M:%SZ"),
-                "updated_at": datetime(2023, 11, 2, 1).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "created_at": "2023-11-02 00:00:00",
+                "updated_at": "2023-11-02 01:00:00",
                 "related_title": "Problem on item 2",
                 "related_node": "Issue",
-                "latest_saved_at": datetime(2023, 12, 2, 1).strftime(
-                    "%Y-%m-%dT%H:%M:%SZ"
-                ),
+                "latest_saved_at": "2023-12-02 01:00:00",
                 "reactions": {
                     "hooray": 0,
                     "eyes": 0,
@@ -216,13 +210,11 @@ class TestGithubTransformcomComments(TestCase):
                 "id": 3,
                 "repository_name": "SampleRepo#6",
                 "url": "https://github.com/repo/comment/3",
-                "created_at": datetime(2023, 11, 3).strftime("%Y-%m-%dT%H:%M:%SZ"),
-                "updated_at": datetime(2023, 11, 3, 1).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "created_at": "2023-11-03 00:00:00",
+                "updated_at": "2023-11-03 01:00:00",
                 "related_title": "Fix item 2",
                 "related_node": "PullRequest",
-                "latest_saved_at": datetime(2023, 12, 3, 1).strftime(
-                    "%Y-%m-%dT%H:%M:%SZ"
-                ),
+                "latest_saved_at": "2023-12-03 01:00:00",
                 "reactions": {
                     "hooray": 1,
                     "eyes": 1,

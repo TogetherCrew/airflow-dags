@@ -42,11 +42,9 @@ class TestGithubTransformIssues(TestCase):
                 "text": "sample text",
                 "state": "open",
                 "state_reason": None,
-                "created_at": datetime(2023, 11, 1).strftime("%Y-%m-%dT%H:%M:%SZ"),
-                "updated_at": datetime(2023, 11, 1, 1).strftime("%Y-%m-%dT%H:%M:%SZ"),
-                "latest_saved_at": datetime(2023, 12, 1, 1).strftime(
-                    "%Y-%m-%dT%H:%M:%SZ"
-                ),
+                "created_at": "2023-11-01 00:00:00",
+                "updated_at": "2023-11-01 01:00:00",
+                "latest_saved_at": "2023-12-01 01:00:00",
                 "url": "https://github.com/repo/issue/1",
                 "repository_id": 123,
                 "repository_name": "SampleRepo",
@@ -114,11 +112,9 @@ class TestGithubTransformIssues(TestCase):
                 "text": "sample text #1",
                 "state": "open",
                 "state_reason": None,
-                "created_at": datetime(2023, 11, 1).strftime("%Y-%m-%dT%H:%M:%SZ"),
-                "updated_at": datetime(2023, 11, 1, 1).strftime("%Y-%m-%dT%H:%M:%SZ"),
-                "latest_saved_at": datetime(2023, 12, 1, 1).strftime(
-                    "%Y-%m-%dT%H:%M:%SZ"
-                ),
+                "created_at": "2023-11-01 00:00:00",
+                "updated_at": "2023-11-01 01:00:00",
+                "latest_saved_at": "2023-12-01 01:00:00",
                 "url": "https://github.com/repo/issue/1",
                 "repository_id": 123,
                 "repository_name": "SampleRepo",
@@ -134,11 +130,9 @@ class TestGithubTransformIssues(TestCase):
                 "text": "sample text #2",
                 "state": "open",
                 "state_reason": None,
-                "created_at": datetime(2023, 11, 2).strftime("%Y-%m-%dT%H:%M:%SZ"),
-                "updated_at": datetime(2023, 11, 2, 1).strftime("%Y-%m-%dT%H:%M:%SZ"),
-                "latest_saved_at": datetime(2023, 12, 2, 1).strftime(
-                    "%Y-%m-%dT%H:%M:%SZ"
-                ),
+                "created_at": "2023-11-02 00:00:00",
+                "updated_at": "2023-11-02 01:00:00",
+                "latest_saved_at": "2023-12-02 01:00:00",
                 "url": "https://github.com/repo/issue/2",
                 "repository_id": 123,
                 "repository_name": "SampleRepo",
@@ -154,11 +148,9 @@ class TestGithubTransformIssues(TestCase):
                 "text": "sample text #3",
                 "state": "open",
                 "state_reason": None,
-                "created_at": datetime(2023, 11, 3).strftime("%Y-%m-%dT%H:%M:%SZ"),
-                "updated_at": datetime(2023, 11, 3, 1).strftime("%Y-%m-%dT%H:%M:%SZ"),
-                "latest_saved_at": datetime(2023, 12, 3, 1).strftime(
-                    "%Y-%m-%dT%H:%M:%SZ"
-                ),
+                "created_at": "2023-11-03 00:00:00",
+                "updated_at": "2023-11-03 01:00:00",
+                "latest_saved_at": "2023-12-03 01:00:00",
                 "url": "https://github.com/repo/issue/3",
                 "repository_id": 125,
                 "repository_name": "SampleRepo#5",

@@ -59,8 +59,8 @@ class TestFetchCommits(TestCase):
         self.assertEqual(commits[0].repository_id, 123)
         self.assertEqual(commits[0].repository_name, "Org/SampleRepo")
         self.assertEqual(commits[0].sha, "sha#1111")
-        self.assertEqual(commits[0].latest_saved_at, "2024-02-06T10:23:50Z")
-        self.assertEqual(commits[0].created_at, "2024-01-01T10:23:50Z")
+        self.assertEqual(commits[0].latest_saved_at, "2024-02-06 10:23:50")
+        self.assertEqual(commits[0].created_at, "2024-01-01 10:23:50")
         self.assertEqual(commits[0].verification, "valid")
 
     def test_get_single_commit_single_repo_with_from_date(self):
@@ -99,8 +99,8 @@ class TestFetchCommits(TestCase):
         self.assertEqual(commits[0].repository_id, 123)
         self.assertEqual(commits[0].repository_name, "Org/SampleRepo2")
         self.assertEqual(commits[0].sha, "sha#1111")
-        self.assertEqual(commits[0].latest_saved_at, "2024-02-06T10:23:50Z")
-        self.assertEqual(commits[0].created_at, "2024-01-01T10:23:50Z")
+        self.assertEqual(commits[0].latest_saved_at, "2024-02-06 10:23:50")
+        self.assertEqual(commits[0].created_at, "2024-01-01 10:23:50")
         self.assertEqual(commits[0].verification, "invalid")
 
     def test_get_multiple_commit_multi_repo_with_from_date_filter(self):
@@ -164,6 +164,6 @@ class TestFetchCommits(TestCase):
         self.assertEqual(commits[0].repository_id, 123)
         self.assertEqual(commits[0].repository_name, "Org/SampleRepo2")
         self.assertEqual(commits[0].sha, "sha#1111")
-        self.assertEqual(commits[0].latest_saved_at, "2024-02-06T10:23:50Z")
-        self.assertEqual(commits[0].created_at, "2024-01-01T10:23:50Z")
+        self.assertEqual(commits[0].latest_saved_at, "2024-02-06 10:23:50")
+        self.assertEqual(commits[0].created_at, "2024-01-01 10:23:50")
         self.assertEqual(commits[0].verification, "invalid")
