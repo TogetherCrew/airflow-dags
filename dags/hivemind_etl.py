@@ -94,10 +94,10 @@ with DAG(
     start_date=datetime(2024, 2, 21),
     schedule_interval="0 2 * * *",
 ) as dag:
-    
+
     def get_github_communities() -> list[str]:
         return ["test_github"]
-    
+
     @task
     def process_github_community(community_id: str):
         logging.info(f"Starting Github ETL | community_id: {community_id}")

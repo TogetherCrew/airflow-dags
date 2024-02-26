@@ -1,3 +1,8 @@
+from hivemind_etl_helpers.src.db.github.utils.schema.parse_time import (
+    parse_date_variables,
+)
+
+
 class GitHubIssue:
     def __init__(
         self,
@@ -29,6 +34,10 @@ class GitHubIssue:
 
     @classmethod
     def from_dict(cls, issue: dict[str, str | int]) -> "GitHubIssue":
+        created_at = parse_date_variables(issue["created_at"])
+        updated_at = parse_date_variables(issue["updated_at"])
+        latest_saved_at = parse_date_variables(issue["latest_saved_at"])
+
         return cls(
             id=issue["id"],
             author_name=issue["author_name"],
@@ -36,9 +45,9 @@ class GitHubIssue:
             text=issue["text"],
             state=issue["state"],
             state_reason=issue["state_reason"],
-            created_at=issue["created_at"],
-            updated_at=issue["updated_at"],
-            latest_saved_at=issue["latest_saved_at"],
+            created_at=created_at,
+            updated_at=updated_at,
+            latest_saved_at=latest_saved_at,
             url=issue["url"],
             repository_id=issue["repository_id"],
             repository_name=issue["repository_name"],

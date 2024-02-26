@@ -1,3 +1,8 @@
+from hivemind_etl_helpers.src.db.github.utils.schema.parse_time import (
+    parse_date_variables,
+)
+
+
 class GitHubPullRequest:
     def __init__(
         self,
@@ -28,20 +33,25 @@ class GitHubPullRequest:
         self.latest_saved_at = latest_saved_at
 
     @classmethod
-    def from_dict(cls, pr_data: dict[str, int | str | None]) -> "GitHubPullRequest":
+    def from_dict(cls, data: dict[str, int | str | None]) -> "GitHubPullRequest":
+        created_at = parse_date_variables(data["created_at"])
+        latest_saved_at = parse_date_variables(data["latest_saved_at"])
+        closed_at = parse_date_variables(data["closed_at"])
+        merged_at = parse_date_variables(data["merged_at"])
+
         return cls(
-            pr_data["author_name"],
-            pr_data["repository_id"],
-            pr_data["repository_name"],
-            pr_data["issue_url"],
-            pr_data["created_at"],
-            pr_data["title"],
-            pr_data["id"],
-            pr_data["closed_at"],
-            pr_data["merged_at"],
-            pr_data["state"],
-            pr_data["url"],
-            pr_data["latest_saved_at"],
+            author_name=data["author_name"],
+            repository_id=data["repository_id"],
+            repository_name=data["repository_name"],
+            issue_url=data["issue_url"],
+            created_at=created_at,
+            title=data["title"],
+            id=data["id"],
+            closed_at=closed_at,
+            merged_at=merged_at,
+            state=data["state"],
+            url=data["url"],
+            latest_saved_at=latest_saved_at,
         )
 
     def to_dict(self) -> dict[str, int | str | None]:

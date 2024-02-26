@@ -19,6 +19,7 @@ from hivemind_etl_helpers.src.db.discord.utils.prepare_raw_message_urls import (
 from hivemind_etl_helpers.src.db.discord.utils.prepare_reactions_id import (
     prepare_raction_ids,
 )
+from hivemind_etl_helpers.src.db.globals import DATE_FORMAT
 from llama_index import Document
 
 
@@ -161,7 +162,7 @@ def prepare_document(
 
     msg_meta_data = {
         "channel": message["channelName"],
-        "date": message["createdDate"].strftime("%Y-%m-%d %H:%M:%S"),
+        "date": message["createdDate"].strftime(DATE_FORMAT),
         "author_username": author_name[0],
         # always including the thread_name, if `None`, then it was a channel message
         "thread": message["threadName"],

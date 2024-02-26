@@ -46,26 +46,25 @@ def process_github_vectorstore(community_id: str) -> None:
 
     # TRANSFORM
     # llama-index documents
-    # logging.info(f"{prefix}Transforming comments!")
-    # docs_comment = transform_comments(github_comments)
-    # logging.info(f"{prefix}Transforming commits!")
-    # docs_commit = transform_commits(github_commits)
+    logging.info(f"{prefix}Transforming comments!")
+    docs_comment = transform_comments(github_comments)
+    logging.info(f"{prefix}Transforming commits!")
+    docs_commit = transform_commits(github_commits)
     logging.info(f"{prefix}Transforming issues!")
     docs_issue = transform_issues(github_issues)
-    # logging.info(f"{prefix}Transforming pull requests!")
-    # docs_prs = transform_prs(github_prs)
+    logging.info(f"{prefix}Transforming pull requests!")
+    docs_prs = transform_prs(github_prs)
 
     # TODO: Check for document updates
     # TODO: replace some if updated
 
     all_documents: list[Document] = []
-    # all_documents.extend(docs_comment)
-    # all_documents.extend(docs_commit)
+    all_documents.extend(docs_comment)
+    all_documents.extend(docs_commit)
     all_documents.extend(docs_issue)
-    # all_documents.extend(docs_prs)
+    all_documents.extend(docs_prs)
 
-    logging.info(f"len(all_documents): {len(all_documents)}")
-
+    logging.info(f"documents count to save: {len(all_documents)}")
 
     # LOAD
     logging.info(f"{prefix}Setting up database")
@@ -74,8 +73,9 @@ def process_github_vectorstore(community_id: str) -> None:
     load_documents_into_pg_database(
         documents=all_documents,
         community_id=community_id,
-        table_name=table_name,   
+        table_name=table_name,
     )
+
 
 if __name__ == "__main__":
     process_github_vectorstore(community_id="test_github")

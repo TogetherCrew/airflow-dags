@@ -23,20 +23,20 @@ def transform_issues(data: list[GitHubIssue]) -> list[Document]:
         del metadata["title"]
 
         exclude_embed_metadata = list(metadata.keys())
+
+        # NOTE: the text can be very long causing the
+        # metadata longer than chunk size (so we're skipping it)
+
         # including the first issue comment for embedding
         # as it can be an explanation to the issue
-        exclude_embed_metadata.remove("text")
-
-        print(f"sample.title: {sample.title}")
-        print("exclude_embed_metadata", exclude_embed_metadata)
-        print("--")
+        # exclude_embed_metadata.remove("text")
 
         # title of the issue is the text for document
         document = Document(
             text=sample.title,
             metadata=metadata,
             excluded_embed_metadata_keys=exclude_embed_metadata,
-            excluded_llm_metadata_keys=["url", "repository_id", "id"],
+            excluded_llm_metadata_keys=["url", "repository_id", "id", "text"],
         )
         transformed_issues.append(document)
 
