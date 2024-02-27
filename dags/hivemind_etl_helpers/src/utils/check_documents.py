@@ -75,9 +75,6 @@ def check_documents(
         if str(id) in files_db.keys():
             # the modified at of the document in db
             modified_at_db = files_db[str(id)]
-            logging.info(
-                f"id: {id} | modified_at_db: {modified_at_db}, modified_at: {modified_at}"
-            )
 
             # if the retrieved data had a newer date
             if modified_at is not None and (
