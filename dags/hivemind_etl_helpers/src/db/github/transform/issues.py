@@ -2,7 +2,7 @@ from llama_index import Document
 from hivemind_etl_helpers.src.db.github.schema import GitHubIssue
 
 
-def transform_issues(data: list[GitHubIssue]) -> list[Document]:
+def transform_issues(data: list[GitHubIssue]) -> tuple[list[Document], list[Document]]:
     """
     transform the github issues data to a list of llama_index documents
 
@@ -15,21 +15,17 @@ def transform_issues(data: list[GitHubIssue]) -> list[Document]:
     ---------
     transformed_issues : list[llama_index.Document]
         a list of llama index documents to be saved
+    transformed_issue_comments : list[llama_index.Document]
+        the first comment of issues
     """
     transformed_issues: list[Document] = []
+    transformed_issue_comments: list[Document] = []
 
     for sample in data:
         metadata = sample.to_dict()
         del metadata["title"]
 
         exclude_embed_metadata = list(metadata.keys())
-
-        # NOTE: the text can be very long causing the
-        # metadata longer than chunk size (so we're skipping it)
-
-        # including the first issue comment for embedding
-        # as it can be an explanation to the issue
-        # exclude_embed_metadata.remove("text")
 
         # title of the issue is the text for document
         document = Document(
@@ -39,5 +35,47 @@ def transform_issues(data: list[GitHubIssue]) -> list[Document]:
             excluded_llm_metadata_keys=["url", "repository_id", "id", "text"],
         )
         transformed_issues.append(document)
+        # if the first comment if issue had some text
+        if sample.text is not None:
+            issue_first_comment = transform_comment_of_issue(sample)
+            transformed_issue_comments.append(issue_first_comment)
 
-    return transformed_issues
+    return transformed_issues, transformed_issue_comments
+
+
+def transform_comment_of_issue(data: GitHubIssue) -> Document:
+    """
+    the first comment of a issue can be long, so it might not be fitted
+    into metadata (avoiding metadata longer than chunk size error).
+    So we're preparing the comment into another document
+
+    Parameters
+    ------------
+    data : GitHubIssue
+        the related github issue having the first comment within it
+
+    Returns
+    ---------
+    document : llama_index.Document
+        the comment document within the github issue
+    """
+    metadata = {
+        "author_name": data.author_name,
+        "id": int(f"{data.id}000"),  # comments of issues
+        "repository_name": data.repository_name,
+        "url": data.url,
+        "created_at": data.created_at,
+        "updated_at": data.updated_at,
+        "related_node": "Issue",
+        "related_title": data.title,
+        "latest_saved_at": data.latest_saved_at,
+        "reactions": {},
+        "type": "comment",
+    }
+    document = Document(
+        text=data.text,
+        metadata=metadata,
+        excluded_embed_metadata_keys=list(metadata.keys()),
+        excluded_llm_metadata_keys=["id", "url", "reactions"],
+    )
+    return document

@@ -54,16 +54,19 @@ def process_github_vectorstore(community_id: str) -> None:
     logging.debug(f"{prefix}Transforming commits!")
     docs_commit = transform_commits(github_commits)
     logging.debug(f"{prefix}Transforming issues!")
-    docs_issue = transform_issues(github_issues)
+    docs_issue, docs_issue_comments = transform_issues(github_issues)
     logging.debug(f"{prefix}Transforming pull requests!")
     docs_prs = transform_prs(github_prs)
 
+    # there's no update on commits
     all_documents: list[Document] = docs_commit.copy()
+
+    # checking for updates on prs, issues, and comments
     delete_docs = PrepareDeletion(community_id)
     docs_to_save, deletion_query = delete_docs.prepare(
         pr_documents=docs_prs,
         issue_documents=docs_issue,
-        comment_documents=docs_comment,
+        comment_documents=docs_comment + docs_issue_comments,
     )
     all_documents.extend(docs_to_save)
 
