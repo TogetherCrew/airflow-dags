@@ -3,7 +3,7 @@ from datetime import datetime
 
 from llama_index import Document
 from hivemind_etl_helpers.src.db.github.transform.pull_requests import transform_prs
-from hivemind_etl_helpers.src.db.github.utils.schema import GitHubPullRequest
+from hivemind_etl_helpers.src.db.github.schema import GitHubPullRequest
 
 
 class TestGithubTransformPRs(TestCase):

@@ -3,7 +3,7 @@ from datetime import datetime
 
 from llama_index import Document
 from hivemind_etl_helpers.src.db.github.transform.comments import transform_comments
-from hivemind_etl_helpers.src.db.github.utils.schema import GitHubComment
+from hivemind_etl_helpers.src.db.github.schema import GitHubComment
 
 
 class TestGithubTransformcomComments(TestCase):

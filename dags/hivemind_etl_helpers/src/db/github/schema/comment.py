@@ -1,4 +1,4 @@
-from hivemind_etl_helpers.src.db.github.utils.schema.parse_time import (
+from hivemind_etl_helpers.src.db.github.schema.utils import (
     parse_date_variables,
 )
 

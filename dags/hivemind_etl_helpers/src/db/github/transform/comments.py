@@ -1,5 +1,5 @@
 from llama_index import Document
-from hivemind_etl_helpers.src.db.github.utils.schema import GitHubComment
+from hivemind_etl_helpers.src.db.github.schema import GitHubComment
 
 
 def transform_comments(data: list[GitHubComment]) -> list[Document]:
