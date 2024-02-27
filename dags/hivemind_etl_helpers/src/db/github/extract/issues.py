@@ -32,7 +32,7 @@ def fetch_raw_issues(
         i.repository_id IN $repoIds
     """
     if from_date is not None:
-        query += "AND datetime(i.created_at) >= datetime($from_date)"
+        query += "AND datetime(i.updated_at) >= datetime($from_date)"
 
     query += """
         MATCH (repo:Repository {id: i.repository_id})

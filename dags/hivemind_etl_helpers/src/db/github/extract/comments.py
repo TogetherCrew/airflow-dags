@@ -36,7 +36,7 @@ def fetch_raw_comments(
     """
 
     if from_date is not None:
-        query += "AND datetime(c.created_at) >= datetime($fromDate)"
+        query += "AND datetime(c.updated_at) >= datetime($fromDate)"
 
     query += """
     RETURN
@@ -62,7 +62,7 @@ def fetch_raw_comments(
             minus1: c.`reactions.-1`,
             total_count: c.`reactions.total_count`
         } AS reactions
-    ORDER BY created_at
+    ORDER BY datetime(created_at)
     """
 
     def _exec_query(tx, repoIds, from_date):
