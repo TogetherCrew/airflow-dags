@@ -75,11 +75,14 @@ def check_documents(
         if str(id) in files_db.keys():
             # the modified at of the document in db
             modified_at_db = files_db[str(id)]
+            logging.info(
+                f"id: {id} | modified_at_db: {modified_at_db}, modified_at: {modified_at}"
+            )
 
             # if the retrieved data had a newer date
-            # the inequality is for edge cases like `None`
-            if (modified_at_db is None and modified_at is not None) or (
-                modified_at_db < modified_at
+            if modified_at is not None and (
+                (modified_at_db is None and modified_at is not None)
+                or (modified_at_db < modified_at)
             ):
                 doc_file_ids_to_delete.append(str(id))
                 documents_to_save.append(doc)
