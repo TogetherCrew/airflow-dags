@@ -68,34 +68,25 @@ class PrepareDeletion:
     ) -> tuple[list[Document], list[str]]:
         documents = issue_documents + comment_documents
 
-        docs_to_save, doc_file_ids_to_delete = check_documents(
-            documents,
-            community_id=self.community_id,
-            identifier="id",
-            table_name="github",
-            date_field="updated_at",
-            identifier_type="::integer",
+        docs_to_save, doc_file_ids_to_delete = self._check_documents(
+            documents, identifier="id", date_field="updated_at", identifier_type="::text",
         )
-
         return docs_to_save, doc_file_ids_to_delete
 
     def _delete_pr_document(
         self, pr_docs: list[Document]
     ) -> tuple[list[Document], list[str]]:
-        docs_merged, docs_merged_pr_ids_to_delete = check_documents(
+        
+        docs_merged, docs_merged_pr_ids_to_delete = self._check_documents(
             pr_docs,
-            community_id=self.community_id,
             identifier="id",
-            table_name="github",
             date_field="merged_at",
             identifier_type="::integer",
         )
 
-        docs_closed, docs_closed_file_ids_to_delete = check_documents(
+        docs_closed, docs_closed_file_ids_to_delete = self._check_documents(
             pr_docs,
-            community_id=self.community_id,
             identifier="id",
-            table_name="github",
             date_field="closed_at",
             identifier_type="::integer",
         )
@@ -103,10 +94,30 @@ class PrepareDeletion:
         doc_file_ids_to_delete = set(
             docs_merged_pr_ids_to_delete + docs_closed_file_ids_to_delete
         )
-        # documents_to_save = docs_merged + docs_closed
         documents_to_save = self._get_unique_docs(docs_merged, docs_closed, "id")
 
         return documents_to_save, list(doc_file_ids_to_delete)
+    
+    def _check_documents(
+            self,
+            documents: list[Document],
+            identifier: str,
+            date_field: str,
+            identifier_type: str,
+        ) -> tuple[list[Document], list[str]]:
+        """
+        a wrapper class for checking previous documents
+        """
+        docs_to_save, doc_ids_to_delete = check_documents(
+            documents,
+            community_id=self.community_id,
+            identifier=identifier,
+            table_name="github",
+            date_field=date_field,
+            identifier_type=identifier_type,
+        )
+
+        return docs_to_save, doc_ids_to_delete
 
     def _create_deletion_query(
         self,
@@ -116,11 +127,11 @@ class PrepareDeletion:
             deletion_ids = f"({doc_ids_to_delete[0]})"
         else:
             # issues and comments
-            deletion_ids = tuple([int(item) for item in doc_ids_to_delete])
+            deletion_ids = tuple([f"{item}" for item in doc_ids_to_delete])
 
         deletion_query = f"""
             DELETE FROM data_github
-            WHERE (metadata_->>'id')::integer IN {deletion_ids}
+            WHERE (metadata_->>'id')::text IN {deletion_ids};
         """
         return deletion_query
 

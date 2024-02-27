@@ -54,6 +54,7 @@ def fetch_raw_pull_requests(
         pr.state as state,
         pr.html_url as url,
         pr.latestSavedAt as latest_saved_at
+    ORDER BY datetime(created_at)
     """
 
     def _exec_query(tx, repoIds, from_date):

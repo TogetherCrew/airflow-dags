@@ -62,6 +62,7 @@ def fetch_raw_comments(
             minus1: c.`reactions.-1`,
             total_count: c.`reactions.total_count`
         } AS reactions
+    ORDER BY created_at
     """
 
     def _exec_query(tx, repoIds, from_date):

@@ -35,11 +35,24 @@ def process_github_vectorstore(community_id: str) -> None:
 
     table_name = "github"
 
+    logging.info(f"{prefix}Setting up database")
+    latest_date_query = f"""
+            SELECT (metadata_->> 'created_at')::timestamp
+            AS latest_date
+            FROM data_{table_name}
+            ORDER BY (metadata_->>'created_at')::timestamp DESC
+            LIMIT 1;
+    """
+    # TODO: Fetch repositoryIds and from_date from mongodb (GitHub hivemind modules setting)
+    # TODO: Update the from_date based on previously saved data
+    # BUG: Still issues with the from_date fetching; the postgres seems not to be able to connect.
+    from_date = setup_db(community_id=community_id, dbname=dbname, latest_date_query=latest_date_query)
+    logging.info(f"Fetching data from date: {from_date}")
+
     repository_ids = [
         634791780,
         635638754,
     ]
-    from_date = None
 
     # EXTRACT
     github_comments = fetch_comments(repository_id=repository_ids, from_date=from_date)
@@ -77,8 +90,6 @@ def process_github_vectorstore(community_id: str) -> None:
     logging.info(f"deletion_query: {deletion_query}")
 
     # LOAD
-    logging.info(f"{prefix}Setting up database")
-    setup_db(community_id=community_id, dbname=dbname)
     logging.info(f"{prefix}Loading data into postgres db")
     load_documents_into_pg_database(
         documents=all_documents,

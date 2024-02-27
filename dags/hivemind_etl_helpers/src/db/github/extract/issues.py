@@ -50,6 +50,7 @@ def fetch_raw_issues(
             i.html_url as url,
             i.repository_id as repository_id,
             repo.full_name as repository_name
+        ORDER BY datetime(created_at)
     """
 
     def _exec_query(tx, repoIds, from_date):

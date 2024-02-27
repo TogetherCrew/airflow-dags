@@ -95,7 +95,12 @@ def fetch_files_date_field(
     connection.autocommit = True
     try:
         # preparing for the database query
-        ids_string = convert_tuple_str(file_ids)
+        if "text" in identifier_type:
+            ids_string = tuple([f"{item}" for item in file_ids])
+        elif "integer" in identifier_type:
+            ids_string = tuple([int(item) for item in file_ids])
+        else:
+            ids_string = convert_tuple_str(file_ids)        
 
         with connection.cursor() as cursor:
             query = f"""

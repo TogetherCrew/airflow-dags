@@ -47,6 +47,7 @@ def fetch_raw_commits(
             co.latestSavedAt as latest_saved_at,
             co.`commit.author.date` as created_at,
             co.`commit.verification.reason` as verification
+        ORDER BY created_at
     """
 
     def _exec_query(tx, repoIds, from_date):
