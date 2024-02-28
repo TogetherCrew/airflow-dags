@@ -98,9 +98,14 @@ def fetch_files_date_field(
         if "text" in identifier_type:
             ids_string = tuple([f"{item}" for item in file_ids])
         elif "integer" in identifier_type:
-            ids_string = tuple([int(item) for item in file_ids])
+            if len(file_ids) != 1:
+                ids_string = tuple([int(item) for item in file_ids])
+            else:
+                # the tuple would add a semi colon in case of length 1 to string
+                # so we're making sure that won't happen
+                ids_string = f"({int(file_ids[0])})"
         else:
-            ids_string = convert_tuple_str(file_ids)        
+            ids_string = convert_tuple_str(file_ids)
 
         with connection.cursor() as cursor:
             query = f"""
