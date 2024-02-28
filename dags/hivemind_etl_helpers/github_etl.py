@@ -1,5 +1,6 @@
 import logging
 from llama_index import Document
+from dotenv import load_dotenv
 
 from hivemind_etl_helpers.src.db.github.extract import (
     fetch_comments,
@@ -29,6 +30,7 @@ def process_github_vectorstore(community_id: str) -> None:
     community_id : str
         the community to save github's data
     """
+    load_dotenv()
     dbname = f"community_{community_id}"
     prefix = f"COMMUNITYID: {community_id} "
     logging.info(prefix)
@@ -46,8 +48,14 @@ def process_github_vectorstore(community_id: str) -> None:
     # TODO: Fetch repositoryIds and from_date from mongodb (GitHub hivemind modules setting)
     # TODO: Update the from_date based on previously saved data
     # BUG: Still issues with the from_date fetching; the postgres seems not to be able to connect.
-    from_date = setup_db(community_id=community_id, dbname=dbname, latest_date_query=latest_date_query)
+    from_date = setup_db(
+        community_id=community_id,
+        dbname=dbname,
+        latest_date_query=latest_date_query
+    )
+    # from_date = None
     logging.info(f"Fetching data from date: {from_date}")
+    
 
     repository_ids = [
         634791780,
