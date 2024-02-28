@@ -195,4 +195,3 @@ class TestGithubETLFetchRawComments(TestCase):
         self.assertEqual(prs[2].state, "open")
         self.assertEqual(prs[2].title, "sample title #2")
         self.assertEqual(prs[2].issue_url, "https://api.github.com/issues/2")
-
