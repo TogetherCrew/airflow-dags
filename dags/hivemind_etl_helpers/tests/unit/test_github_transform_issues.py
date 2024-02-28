@@ -61,7 +61,7 @@ class TestGithubTransformIssues(TestCase):
             issue_comment_docs[0].metadata,
             {
                 "author_name": "author #1",
-                "id": 1000,
+                "id": 111,
                 "repository_name": "SampleRepo",
                 "url": "https://github.com/repo/issue/1",
                 "created_at": "2023-11-01 00:00:00",
@@ -77,7 +77,7 @@ class TestGithubTransformIssues(TestCase):
     def test_multiple_documents(self):
         input_data = [
             GitHubIssue(
-                id=1,
+                id=1234567899,
                 author_name="author #1",
                 title="sample title #1",
                 text="sample text #1",
@@ -91,7 +91,7 @@ class TestGithubTransformIssues(TestCase):
                 repository_name="SampleRepo",
             ),
             GitHubIssue(
-                id=2,
+                id=2234567899,
                 author_name="author #2",
                 title="sample title #2",
                 text="sample text #2",
@@ -105,7 +105,7 @@ class TestGithubTransformIssues(TestCase):
                 repository_name="SampleRepo",
             ),
             GitHubIssue(
-                id=3,
+                id=3234567899,
                 author_name="author #3",
                 title="sample title #3",
                 text="sample text #3",
@@ -129,7 +129,7 @@ class TestGithubTransformIssues(TestCase):
         self.assertEqual(
             documents[0].metadata,
             {
-                "id": 1,
+                "id": 1234567899,
                 "author_name": "author #1",
                 "text": "sample text #1",
                 "state": "open",
@@ -147,7 +147,7 @@ class TestGithubTransformIssues(TestCase):
         self.assertEqual(
             documents[1].metadata,
             {
-                "id": 2,
+                "id": 2234567899,
                 "author_name": "author #2",
                 "text": "sample text #2",
                 "state": "open",
@@ -165,7 +165,7 @@ class TestGithubTransformIssues(TestCase):
         self.assertEqual(
             documents[2].metadata,
             {
-                "id": 3,
+                "id": 3234567899,
                 "author_name": "author #3",
                 "text": "sample text #3",
                 "state": "open",
@@ -193,7 +193,7 @@ class TestGithubTransformIssues(TestCase):
             issue_comment_docs[0].metadata,
             {
                 "author_name": "author #1",
-                "id": 1000,
+                "id": 1114567899,
                 "repository_name": "SampleRepo",
                 "url": "https://github.com/repo/issue/1",
                 "created_at": "2023-11-01 00:00:00",
@@ -210,7 +210,7 @@ class TestGithubTransformIssues(TestCase):
             issue_comment_docs[1].metadata,
             {
                 "author_name": "author #2",
-                "id": 2000,
+                "id": 1114567899,
                 "repository_name": "SampleRepo",
                 "url": "https://github.com/repo/issue/2",
                 "created_at": "2023-11-02 00:00:00",
@@ -227,7 +227,7 @@ class TestGithubTransformIssues(TestCase):
             issue_comment_docs[2].metadata,
             {
                 "author_name": "author #3",
-                "id": 3000,
+                "id": 1114567899,
                 "repository_name": "SampleRepo#5",
                 "url": "https://github.com/repo/issue/3",
                 "created_at": "2023-11-03 00:00:00",

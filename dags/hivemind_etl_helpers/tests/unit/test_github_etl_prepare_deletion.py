@@ -46,7 +46,7 @@ class TestPrepareDeletion(unittest.TestCase):
         # Check if deletion query is as expected
         expected_query = """
             DELETE FROM data_github
-            WHERE (metadata_->>'id')::integer IN (2, 3, 1)
+            WHERE (metadata_->>'id')::integer IN (2, 3, 1);
         """
         self.assertEqual(deletion_query.strip(), expected_query.strip())
 
@@ -117,7 +117,7 @@ class TestPrepareDeletion(unittest.TestCase):
         # Check if deletion query is as expected
         expected_query = """
             DELETE FROM data_github
-            WHERE (metadata_->>'id')::integer IN (1, 2, 3)
+            WHERE (metadata_->>'id')::integer IN (1, 2, 3);
         """
         self.assertEqual(deletion_query.strip(), expected_query.strip())
 
