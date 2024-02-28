@@ -59,7 +59,7 @@ def transform_comment_of_issue(data: GitHubIssue) -> Document:
     document : llama_index.Document
         the comment document within the github issue
     """
-    # since there's no way we could have the 
+    # since there's no way we could have the
     # first comment's id, we're creating one manually
     # note: no ids before had 9 in front of them
     # so this id would be unique

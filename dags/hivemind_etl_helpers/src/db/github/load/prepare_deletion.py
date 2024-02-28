@@ -69,14 +69,16 @@ class PrepareDeletion:
         documents = issue_documents + comment_documents
 
         docs_to_save, doc_file_ids_to_delete = self._check_documents(
-            documents, identifier="id", date_field="updated_at", identifier_type="::text",
+            documents,
+            identifier="id",
+            date_field="updated_at",
+            identifier_type="::text",
         )
         return docs_to_save, doc_file_ids_to_delete
 
     def _delete_pr_document(
         self, pr_docs: list[Document]
     ) -> tuple[list[Document], list[str]]:
-        
         docs_merged, docs_merged_pr_ids_to_delete = self._check_documents(
             pr_docs,
             identifier="id",
@@ -97,14 +99,14 @@ class PrepareDeletion:
         documents_to_save = self._get_unique_docs(docs_merged, docs_closed, "id")
 
         return documents_to_save, list(doc_file_ids_to_delete)
-    
+
     def _check_documents(
-            self,
-            documents: list[Document],
-            identifier: str,
-            date_field: str,
-            identifier_type: str,
-        ) -> tuple[list[Document], list[str]]:
+        self,
+        documents: list[Document],
+        identifier: str,
+        date_field: str,
+        identifier_type: str,
+    ) -> tuple[list[Document], list[str]]:
         """
         a wrapper class for checking previous documents
         """
@@ -131,7 +133,7 @@ class PrepareDeletion:
 
         deletion_query = f"""
             DELETE FROM data_github
-            WHERE (metadata_->>'id')::text IN {deletion_ids};
+            WHERE (metadata_->>'id')::integer IN {deletion_ids};
         """
         return deletion_query
 
