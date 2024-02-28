@@ -33,18 +33,18 @@ class GitHubPullRequest:
     @classmethod
     def from_dict(cls, data: dict[str, int | str | None]) -> "GitHubPullRequest":
         return cls(
-            author_name=data["author_name"],
-            repository_id=data["repository_id"],
-            repository_name=data["repository_name"],
-            issue_url=data["issue_url"],
-            created_at=data["created_at"],
-            title=data["title"],
-            id=data["id"],
-            closed_at=data["closed_at"],
-            merged_at=data["merged_at"],
-            state=data["state"],
-            url=data["url"],
-            latest_saved_at=data["latest_saved_at"],
+            author_name=data["author_name"],  # type: ignore
+            repository_id=data["repository_id"],  # type: ignore
+            repository_name=data["repository_name"],  # type: ignore
+            issue_url=data["issue_url"],  # type: ignore
+            created_at=data["created_at"],  # type: ignore
+            title=data["title"],  # type: ignore
+            id=data["id"],  # type: ignore
+            closed_at=data["closed_at"],  # type: ignore
+            merged_at=data["merged_at"],  # type: ignore
+            state=data["state"],  # type: ignore
+            url=data["url"],  # type: ignore
+            latest_saved_at=data["latest_saved_at"],  # type: ignore
         )
 
     def to_dict(self) -> dict[str, int | str | None]:

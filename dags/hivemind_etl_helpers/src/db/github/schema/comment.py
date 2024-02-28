@@ -7,7 +7,7 @@ class GitHubComment:
         author_name: str,
         id: int,
         repository_name: str,
-        url: list[str],
+        url: str,
         created_at: str,
         updated_at: str | None,
         related_title: str,
@@ -37,17 +37,17 @@ class GitHubComment:
     def from_dict(cls, data: dict[str, int | str | dict[str, int]]) -> "GitHubComment":
         # TODO: Update these when data got updated
         return cls(
-            author_name=data["author_name"],
-            id=data["id"],
-            repository_name=data["repository_name"],
-            url=data["url"],
-            created_at=data["created_at"],
-            updated_at=data["updated_at"],
-            related_title=data["related_title"],
-            related_node=data["related_node"],
-            text=data["text"],
-            latest_saved_at=data["latest_saved_at"],
-            reactions=data["reactions"],
+            author_name=data["author_name"],  # type: ignore
+            id=data["id"],  # type: ignore
+            repository_name=data["repository_name"],  # type: ignore
+            url=data["url"],  # type: ignore
+            created_at=data["created_at"],  # type: ignore
+            updated_at=data["updated_at"],  # type: ignore
+            related_title=data["related_title"],  # type: ignore
+            related_node=data["related_node"],  # type: ignore
+            text=data["text"],  # type: ignore
+            latest_saved_at=data["latest_saved_at"],  # type: ignore
+            reactions=data["reactions"],  # type: ignore
         )
 
     def to_dict(self) -> dict[str, int | str | dict[str, int]]:

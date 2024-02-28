@@ -131,7 +131,7 @@ class TestFetchCommits(TestCase):
                             co2.latestSavedAt = "2023-02-06T10:23:50Z",
                             co2.`commit.author.date` = "2023-01-01T10:23:50Z",
                             co2.`commit.verification.reason` = "invalid"
-                    
+
                     CREATE (co3:Commit)<-[:COMMITED]-(:GitHubUser {login: "author #3"})
                         SET
                             co3.`commit.author.name` = "Author#3",

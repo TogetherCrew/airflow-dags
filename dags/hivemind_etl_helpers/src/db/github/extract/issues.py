@@ -28,7 +28,7 @@ def fetch_raw_issues(
     neo4j_connection = Neo4jConnection()
     neo4j_driver = neo4j_connection.connect_neo4j()
     query = """MATCH (i:Issue)<-[:CREATED]-(user:GitHubUser)
-        WHERE 
+        WHERE
         i.repository_id IN $repoIds
     """
     if from_date is not None:

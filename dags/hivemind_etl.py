@@ -34,7 +34,6 @@ from hivemind_etl_helpers.src.utils.get_mongo_discord_communities import (
     get_all_discord_communities,
 )
 
-
 with DAG(
     dag_id="discord_vector_store_update",
     start_date=datetime(2024, 1, 1),

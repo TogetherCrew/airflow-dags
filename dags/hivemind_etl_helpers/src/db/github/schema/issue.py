@@ -33,21 +33,21 @@ class GitHubIssue:
     @classmethod
     def from_dict(cls, issue: dict[str, str | int]) -> "GitHubIssue":
         return cls(
-            id=issue["id"],
-            author_name=issue["author_name"],
-            title=issue["title"],
-            text=issue["text"],
-            state=issue["state"],
-            state_reason=issue["state_reason"],
-            created_at=issue["created_at"],
-            updated_at=issue["updated_at"],
-            latest_saved_at=issue["latest_saved_at"],
-            url=issue["url"],
-            repository_id=issue["repository_id"],
-            repository_name=issue["repository_name"],
+            id=issue["id"],  # type: ignore
+            author_name=issue["author_name"],  # type: ignore
+            title=issue["title"],  # type: ignore
+            text=issue["text"],  # type: ignore
+            state=issue["state"],  # type: ignore
+            state_reason=issue["state_reason"],  # type: ignore
+            created_at=issue["created_at"],  # type: ignore
+            updated_at=issue["updated_at"],  # type: ignore
+            latest_saved_at=issue["latest_saved_at"],  # type: ignore
+            url=issue["url"],  # type: ignore
+            repository_id=issue["repository_id"],  # type: ignore
+            repository_name=issue["repository_name"],  # type: ignore
         )
 
-    def to_dict(self) -> dict[str, str | int]:
+    def to_dict(self) -> dict[str, str | int | None]:
         return {
             "id": self.id,
             "author_name": self.author_name,

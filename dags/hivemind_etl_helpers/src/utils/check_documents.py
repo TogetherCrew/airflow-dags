@@ -96,7 +96,7 @@ def check_documents(
 
 def process_doc_to_id_date(
     documents: list[Document], identifier: str, date_field: str
-) -> dict[str, datetime]:
+) -> dict[str, datetime | None]:
     """
     process documents into a dictionary of their
     `identifier` as key and `date_field` field as values (extracted from metadata)
@@ -118,7 +118,7 @@ def process_doc_to_id_date(
         and modified date of the data as datetime object
     """
     # first fetch the documents' modified at
-    data: dict[str, datetime] = {}
+    data: dict[str, datetime | None] = {}
     for doc in documents:
         file_id = doc.metadata[identifier]
         modified_at = doc.metadata[date_field]

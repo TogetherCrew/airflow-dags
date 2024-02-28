@@ -35,16 +35,16 @@ class GitHubCommit:
     def from_dict(cls, data: dict[str, str | int]) -> "GitHubCommit":
         # TODO: Update these when data gets updated
         return cls(
-            author_name=data["author_name"],
-            message=data["message"],
-            api_url=data["api_url"],
-            html_url=data["html_url"],
-            repository_id=data["repository_id"],
-            repository_name=data["repository_name"],
-            sha=data["sha"],
-            latest_saved_at=data["latest_saved_at"],
-            created_at=data["created_at"],
-            verification=data["verification"],
+            author_name=data["author_name"],  # type: ignore
+            message=data["message"],  # type: ignore
+            api_url=data["api_url"],  # type: ignore
+            html_url=data["html_url"],  # type: ignore
+            repository_id=data["repository_id"],  # type: ignore
+            repository_name=data["repository_name"],  # type: ignore
+            sha=data["sha"],  # type: ignore
+            latest_saved_at=data["latest_saved_at"],  # type: ignore
+            created_at=data["created_at"],  # type: ignore
+            verification=data["verification"],  # type: ignore
         )
 
     def to_dict(self) -> dict[str, str | int]:
