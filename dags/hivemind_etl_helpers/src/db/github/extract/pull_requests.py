@@ -39,7 +39,8 @@ def fetch_raw_pull_requests(
 
     if from_date is not None:
         query += "AND ( datetime(pr.merged_at) >= datetime($fromDate) OR "
-        query += "(datetime(pr.closed_at) >= datetime($fromDate)))"
+        query += "datetime(pr.closed_at) >= datetime($fromDate)) OR"
+        query += "pr.merged_at IS NULL OR pr.closed_at IS NULL"
 
     query += """
     RETURN
