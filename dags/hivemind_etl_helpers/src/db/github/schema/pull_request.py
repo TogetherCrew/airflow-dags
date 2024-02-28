@@ -1,6 +1,4 @@
-from hivemind_etl_helpers.src.db.github.schema.utils import (
-    parse_date_variables,
-)
+from hivemind_etl_helpers.src.db.github.schema.utils import parse_date_variables
 
 
 class GitHubPullRequest:

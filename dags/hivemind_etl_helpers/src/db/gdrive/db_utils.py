@@ -96,10 +96,10 @@ def fetch_files_date_field(
     try:
         # preparing for the database query
         if "text" in identifier_type:
-            ids_string = tuple([f"{item}" for item in file_ids])
+            ids_string = str(tuple([f"{item}" for item in file_ids]))
         elif "integer" in identifier_type:
             if len(file_ids) != 1:
-                ids_string = tuple([int(item) for item in file_ids])
+                ids_string = str(tuple([int(item) for item in file_ids]))
             else:
                 # the tuple would add a semi colon in case of length 1 to string
                 # so we're making sure that won't happen

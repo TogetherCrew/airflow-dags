@@ -1,5 +1,5 @@
-from llama_index import Document
 from hivemind_etl_helpers.src.db.github.schema import GitHubIssue
+from llama_index import Document
 
 
 def transform_issues(data: list[GitHubIssue]) -> tuple[list[Document], list[Document]]:

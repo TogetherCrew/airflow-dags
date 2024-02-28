@@ -1,9 +1,9 @@
-from unittest import TestCase
 from datetime import datetime
+from unittest import TestCase
 
-from llama_index import Document
-from hivemind_etl_helpers.src.db.github.transform.commits import transform_commits
 from hivemind_etl_helpers.src.db.github.schema import GitHubCommit
+from hivemind_etl_helpers.src.db.github.transform.commits import transform_commits
+from llama_index import Document
 
 
 class TestGithubTransformCommits(TestCase):

@@ -2,9 +2,7 @@ from datetime import datetime
 from unittest import TestCase
 
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
-from hivemind_etl_helpers.src.db.github.extract.issues import (
-    fetch_raw_issues,
-)
+from hivemind_etl_helpers.src.db.github.extract.issues import fetch_raw_issues
 
 
 class TestGithubETLFetchRawIssues(TestCase):
@@ -55,7 +53,7 @@ class TestGithubETLFetchRawIssues(TestCase):
                         i.locked = false,
                         i.timeline_url = "https://api.github.com/repos/GitHub/some_repo/issues/1/timeline",
                         i.node_id = "some_id"
-                    
+
                     CREATE (repo:Repository {id: 123, full_name: "Org/SampleRepo"})
                     """
                 )

@@ -53,7 +53,7 @@ class TestGithubETLFetchIssues(TestCase):
                         i.locked = false,
                         i.timeline_url = "https://api.github.com/repos/GitHub/some_repo/issues/1/timeline",
                         i.node_id = "some_id"
-                    
+
                     CREATE (repo:Repository {id: 123, full_name: "Org/SampleRepo"})
                     """
                 )
@@ -106,7 +106,7 @@ class TestGithubETLFetchIssues(TestCase):
                         i.locked = false,
                         i.timeline_url = "https://api.github.com/repos/GitHub/some_repo/issues/1/timeline",
                         i.node_id = "some_id"
-                    
+
                     CREATE (i2:Issue)<-[:CREATED]-(:GitHubUser {login: "author #2"})
                     SET
                         i2.state_reason = "completed",
@@ -131,7 +131,7 @@ class TestGithubETLFetchIssues(TestCase):
                         i2.locked = false,
                         i2.timeline_url = "https://api.github.com/repos/GitHub/some_repo/issues/2/timeline",
                         i2.node_id = "some_id2"
-                    
+
                     CREATE (repo:Repository {id: 123, full_name: "Org/SampleRepo"})
                     """
                 )
@@ -198,7 +198,7 @@ class TestGithubETLFetchIssues(TestCase):
                         i.locked = false,
                         i.timeline_url = "https://api.github.com/repos/GitHub/some_repo/issues/1/timeline",
                         i.node_id = "some_id"
-                    
+
                     CREATE (i2:Issue)<-[:CREATED]-(:GitHubUser {login: "author #2"})
                     SET
                         i2.state_reason = "completed",
@@ -223,7 +223,7 @@ class TestGithubETLFetchIssues(TestCase):
                         i2.locked = false,
                         i2.timeline_url = "https://api.github.com/repos/GitHub/some_repo/issues/2/timeline",
                         i2.node_id = "some_id2"
-                    
+
                     CREATE (repo:Repository {id: 123, full_name: "Org/SampleRepo"})
                     """
                 )

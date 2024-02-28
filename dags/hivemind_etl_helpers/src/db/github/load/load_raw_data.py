@@ -1,7 +1,5 @@
-import logging
-from llama_index import Document
-
 from hivemind_etl_helpers.src.document_node_parser import configure_node_parser
+from llama_index import Document
 from tc_hivemind_backend.db.utils.model_hyperparams import load_model_hyperparams
 from tc_hivemind_backend.embeddings.cohere import CohereEmbedding
 from tc_hivemind_backend.pg_vector_access import PGVectorAccess

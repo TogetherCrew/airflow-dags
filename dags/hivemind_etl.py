@@ -29,10 +29,10 @@ from hivemind_etl_helpers.discord_mongo_summary_etl import process_discord_summa
 from hivemind_etl_helpers.discord_mongo_vector_store_etl import (
     process_discord_guild_mongo,
 )
+from hivemind_etl_helpers.github_etl import process_github_vectorstore
 from hivemind_etl_helpers.src.utils.get_mongo_discord_communities import (
     get_all_discord_communities,
 )
-from hivemind_etl_helpers.github_etl import process_github_vectorstore
 
 
 with DAG(

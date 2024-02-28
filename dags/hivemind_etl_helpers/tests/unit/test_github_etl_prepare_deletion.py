@@ -1,9 +1,9 @@
-from datetime import datetime, timezone
-
 import unittest
+from datetime import datetime, timezone
 from unittest.mock import patch
-from llama_index import Document
+
 from hivemind_etl_helpers.src.db.github.load import PrepareDeletion
+from llama_index import Document
 
 
 class TestPrepareDeletion(unittest.TestCase):

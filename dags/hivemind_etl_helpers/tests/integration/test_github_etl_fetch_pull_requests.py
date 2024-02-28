@@ -2,9 +2,7 @@ from datetime import datetime
 from unittest import TestCase
 
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
-from hivemind_etl_helpers.src.db.github.extract.pull_requests import (
-    fetch_pull_requests,
-)
+from hivemind_etl_helpers.src.db.github.extract.pull_requests import fetch_pull_requests
 
 
 class TestGithubETLFetchRawComments(TestCase):

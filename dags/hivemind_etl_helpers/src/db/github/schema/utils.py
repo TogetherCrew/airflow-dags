@@ -1,9 +1,9 @@
-from datetime import datetime
 import logging
+from datetime import datetime
 
-from neo4j.time import DateTime
 from dateutil import parser
 from hivemind_etl_helpers.src.db.globals import DATE_FORMAT
+from neo4j.time import DateTime
 
 
 def parse_date_variables(date: datetime | str) -> str:

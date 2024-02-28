@@ -1,5 +1,5 @@
-from llama_index import Document
 from hivemind_etl_helpers.src.utils.check_documents import check_documents
+from llama_index import Document
 
 
 class PrepareDeletion:
@@ -129,7 +129,7 @@ class PrepareDeletion:
             deletion_ids = f"({doc_ids_to_delete[0]})"
         else:
             # issues and comments
-            deletion_ids = tuple([int(item) for item in doc_ids_to_delete])
+            deletion_ids = str(tuple([int(item) for item in doc_ids_to_delete]))
 
         deletion_query = f"""
             DELETE FROM data_github

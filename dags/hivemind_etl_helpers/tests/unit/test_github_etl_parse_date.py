@@ -1,10 +1,9 @@
+import logging
 import unittest
 from datetime import datetime
-import logging
+
 from neo4j.time import DateTime
-from hivemind_etl_helpers.src.db.github.schema.utils import (
-    parse_date_variables,
-)
+from hivemind_etl_helpers.src.db.github.schema.utils import parse_date_variables
 
 
 class TestParseDateVariables(unittest.TestCase):
