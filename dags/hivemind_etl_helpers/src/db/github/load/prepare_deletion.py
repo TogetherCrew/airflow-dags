@@ -129,11 +129,11 @@ class PrepareDeletion:
             deletion_ids = f"({doc_ids_to_delete[0]})"
         else:
             # issues and comments
-            deletion_ids = str(tuple([int(item) for item in doc_ids_to_delete]))
+            deletion_ids = str(tuple([f"{item}" for item in doc_ids_to_delete]))
 
         deletion_query = f"""
             DELETE FROM data_github
-            WHERE (metadata_->>'id')::integer IN {deletion_ids};
+            WHERE (metadata_->>'id')::text IN {deletion_ids};
         """
         return deletion_query
 
