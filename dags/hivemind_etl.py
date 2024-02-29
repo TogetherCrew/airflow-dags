@@ -108,9 +108,7 @@ with DAG(
         return github_info
 
     @task
-    def process_github_community(
-        community_information: dict[str, str | datetime]
-    ):
+    def process_github_community(community_information: dict[str, str | datetime]):
         community_id = community_information["community_id"]
         organization_id = community_information["organization_id"]
         from_date = community_information["from_date"]
