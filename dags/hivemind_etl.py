@@ -33,6 +33,9 @@ from hivemind_etl_helpers.github_etl import process_github_vectorstore
 from hivemind_etl_helpers.src.utils.get_mongo_discord_communities import (
     get_all_discord_communities,
 )
+from hivemind_etl_helpers.src.utils.get_github_communities_orgs import (
+    get_github_communities_and_orgs,
+)
 
 with DAG(
     dag_id="discord_vector_store_update",
@@ -95,12 +98,29 @@ with DAG(
 ) as dag:
 
     def get_github_communities() -> list[str]:
-        return ["test_github"]
+        github_info = get_github_communities_and_orgs()
+        # debugging
+        # github_info = [{
+        #     "community_id": "test_github",
+        #     "organization_id": 133082471,
+        #     "from_date": datetime(2024, 1, 1)
+        # }]
+        return github_info
 
     @task
-    def process_github_community(community_id: str):
-        logging.info(f"Starting Github ETL | community_id: {community_id}")
-        process_github_vectorstore(community_id=community_id)
+    def process_github_community(
+        community_information: list[dict[str, str | datetime]]
+    ):
+        community_id = community_information["community_id"]
+        organization_id = community_information["organization_id"]
+        from_date = community_information["from_date"]
 
-    communities = get_github_communities()
-    process_github_community.expand(community_id=communities)
+        logging.info(f"Starting Github ETL | community_id: {community_id}")
+        process_github_vectorstore(
+            community_id=community_id,
+            github_org_id=organization_id,
+            from_starting_date=from_date,
+        )
+
+    communities_info = get_github_communities()
+    process_github_community.expand(community_information=communities_info)

@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 
 from dotenv import load_dotenv
 from hivemind_etl_helpers.src.db.github.extract import (
@@ -17,11 +18,16 @@ from hivemind_etl_helpers.src.db.github.transform import (
     transform_issues,
     transform_prs,
 )
+from hivemind_etl_helpers.src.db.github.github_organization_repos import (
+    get_github_organization_repos,
+)
 from llama_index import Document
 from tc_hivemind_backend.db.pg_db_utils import setup_db
 
 
-def process_github_vectorstore(community_id: str) -> None:
+def process_github_vectorstore(
+    community_id: str, github_org_id: str, from_starting_date: datetime | None = None
+) -> None:
     """
     ETL process for github raw data
 
@@ -45,17 +51,19 @@ def process_github_vectorstore(community_id: str) -> None:
             ORDER BY (metadata_->>'created_at')::timestamp DESC
             LIMIT 1;
     """
-    # TODO: Fetch repositoryIds and from_date from mongodb (GitHub hivemind modules setting)
-    from_date = setup_db(
+    from_date_saved_data = setup_db(
         community_id=community_id, dbname=dbname, latest_date_query=latest_date_query
     )
-    # from_date = None
+    from_date: datetime | None
+    if from_date_saved_data:
+        from_date = from_date_saved_data
+    else:
+        from_date = from_starting_date
+
     logging.info(f"Fetching data from date: {from_date}")
 
-    repository_ids = [
-        634791780,
-        635638754,
-    ]
+    repository_ids = get_github_organization_repos(github_organization_id=github_org_id)
+    logging.info(f"{len(repository_ids)} repositories to fetch data from!")
 
     # EXTRACT
     github_comments = fetch_comments(repository_id=repository_ids, from_date=from_date)
