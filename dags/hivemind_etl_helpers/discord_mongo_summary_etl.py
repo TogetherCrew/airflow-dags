@@ -1,4 +1,6 @@
 import argparse
+import os
+from dotenv import load_dotenv
 import logging
 from datetime import timedelta
 
@@ -13,6 +15,7 @@ from tc_hivemind_backend.db.pg_db_utils import setup_db
 from tc_hivemind_backend.db.utils.model_hyperparams import load_model_hyperparams
 from tc_hivemind_backend.embeddings.cohere import CohereEmbedding
 from tc_hivemind_backend.pg_vector_access import PGVectorAccess
+from traceloop.sdk import Traceloop
 
 
 def process_discord_summaries(community_id: str, verbose: bool = False) -> None:
@@ -31,6 +34,10 @@ def process_discord_summaries(community_id: str, verbose: bool = False) -> None:
         if `True` the summarization process will be printed out
         default is `False`
     """
+    load_dotenv()
+    otel_endpoint = os.getenv("TRACELOOP_BASE_URL")
+    Traceloop.init(app_name="hivemind-server", api_endpoint=otel_endpoint)
+
     chunk_size, embedding_dim = load_model_hyperparams()
     guild_id = find_guild_id_by_community_id(community_id)
     logging.info(f"COMMUNITYID: {community_id}, GUILDID: {guild_id}")
