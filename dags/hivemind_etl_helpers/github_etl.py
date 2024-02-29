@@ -8,6 +8,9 @@ from hivemind_etl_helpers.src.db.github.extract import (
     fetch_issues,
     fetch_pull_requests,
 )
+from hivemind_etl_helpers.src.db.github.github_organization_repos import (
+    get_github_organization_repos,
+)
 from hivemind_etl_helpers.src.db.github.load import (
     PrepareDeletion,
     load_documents_into_pg_database,
@@ -17,9 +20,6 @@ from hivemind_etl_helpers.src.db.github.transform import (
     transform_commits,
     transform_issues,
     transform_prs,
-)
-from hivemind_etl_helpers.src.db.github.github_organization_repos import (
-    get_github_organization_repos,
 )
 from llama_index import Document
 from tc_hivemind_backend.db.pg_db_utils import setup_db

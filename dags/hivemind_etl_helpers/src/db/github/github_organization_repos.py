@@ -6,7 +6,11 @@ def get_github_organization_repos(github_organization_id: str) -> list[int]:
     neo4j_driver = neo4j_connection.connect_neo4j()
 
     with neo4j_driver.session() as session:
-        query = "MATCH (go:GitHubOrganization {id: $org_id})<-[:IS_WITHIN]-(repo:Repository) RETURN COLLECT(repo.id) as repoIds"
+        query = (
+            "MATCH (go:GitHubOrganization {id: $org_id})"
+            "<-[:IS_WITHIN]-(repo:Repository)"
+            "RETURN COLLECT(repo.id) as repoIds"
+        )
         results = session.execute_read(
             lambda tx: list(tx.run(query, org_id=github_organization_id))
         )

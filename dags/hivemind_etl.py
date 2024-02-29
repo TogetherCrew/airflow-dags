@@ -30,11 +30,11 @@ from hivemind_etl_helpers.discord_mongo_vector_store_etl import (
     process_discord_guild_mongo,
 )
 from hivemind_etl_helpers.github_etl import process_github_vectorstore
-from hivemind_etl_helpers.src.utils.get_mongo_discord_communities import (
-    get_all_discord_communities,
-)
 from hivemind_etl_helpers.src.utils.get_github_communities_orgs import (
     get_github_communities_and_orgs,
+)
+from hivemind_etl_helpers.src.utils.get_mongo_discord_communities import (
+    get_all_discord_communities,
 )
 
 with DAG(
@@ -109,7 +109,7 @@ with DAG(
 
     @task
     def process_github_community(
-        community_information: list[dict[str, str | datetime]]
+        community_information: dict[str, str | datetime]
     ):
         community_id = community_information["community_id"]
         organization_id = community_information["organization_id"]

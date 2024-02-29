@@ -1,7 +1,7 @@
-from datetime import datetime
 import unittest
-from bson import ObjectId
+from datetime import datetime
 
+from bson import ObjectId
 from hivemind_etl_helpers.src.utils.get_github_communities_orgs import (
     query_github_modules_db,
 )
