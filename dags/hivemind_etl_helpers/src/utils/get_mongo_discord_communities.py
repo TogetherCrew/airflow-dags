@@ -6,7 +6,7 @@ def get_all_discord_communities() -> list[str]:
     Getting all communities having discord from database for hivemind ETL
     """
     mongo = MongoSingleton.get_instance()
-    cursor = mongo.client["Module"]["modules"].find(
+    cursor = mongo.client["Core"]["modules"].find(
         {
             "name": "hivemind",
         },

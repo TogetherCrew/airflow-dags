@@ -183,7 +183,7 @@ def fetch_channels_and_from_date(guild_id: str) -> tuple[list[str], datetime | N
     if platform is None:
         raise ValueError(f"No platform with given guild_id: {guild_id} available!")
 
-    result = client["Module"]["modules"].find_one(
+    result = client["Core"]["modules"].find_one(
         {
             "communityId": platform["community"],
             "options.platforms.platformId": platform["_id"],
