@@ -1,9 +1,9 @@
 import argparse
-import os
-from dotenv import load_dotenv
 import logging
+import os
 from datetime import timedelta
 
+from dotenv import load_dotenv
 from hivemind_etl_helpers.src.db.discord.discord_summary import DiscordSummary
 from hivemind_etl_helpers.src.db.discord.find_guild_id import (
     find_guild_id_by_community_id,
