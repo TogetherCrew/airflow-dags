@@ -69,7 +69,11 @@ def process_github_vectorstore(
     github_comments = fetch_comments(repository_id=repository_ids, from_date=from_date)
     github_commits = fetch_commits(repository_id=repository_ids, from_date=from_date)
     github_issues = fetch_issues(repository_id=repository_ids, from_date=from_date)
-    github_prs = fetch_pull_requests(repository_id=repository_ids, from_date=from_date)
+    github_prs = fetch_pull_requests(
+        repository_id=repository_ids,
+        from_date_created=from_starting_date,
+        from_date_updated=from_date_saved_data,
+    )
 
     # TRANSFORM
     # llama-index documents

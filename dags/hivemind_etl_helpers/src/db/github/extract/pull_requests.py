@@ -7,7 +7,8 @@ from hivemind_etl_helpers.src.db.github.schema import GitHubPullRequest
 
 def fetch_raw_pull_requests(
     repository_id: list[int],
-    from_date: datetime | None = None,
+    from_date_updated: datetime | None = None,
+    from_date_created: datetime | None = None,
 ) -> list[neo4j._data.Record]:
     """
     fetch pull requests from neo4j data dump
@@ -16,9 +17,18 @@ def fetch_raw_pull_requests(
     -----------
     repository_id : list[int]
         a list of repository id to fetch their pull requests
-    from_date : datetime | None
-        get the pull requests form a specific date that they were created
-        defualt is `None`, meaning to apply no filtering on data
+    from_date_updated : datetime | None
+        get the pull requests form a specific date that
+        they were updated (`closed_at` or `merged_at`)
+        defualt is `None`, meaning to apply no filtering on updates.
+    from_date_created : datetime | None
+        get the pull requests from a spcific date that
+        they were created (`created_at`)
+        defualt is `None`, meaning to apply no filtering on created at
+
+    Notes: The reason we're separating the from dates in prs is because
+    in case of no updates applied (closed_at or merged_at gets filled), the update
+    files would be null.
 
     Returns
     --------
@@ -36,10 +46,12 @@ def fetch_raw_pull_requests(
         WHERE
             pr.repository_id IN $repoIds
     """
+    if from_date_created:
+        query += "AND datetime(pr.created_at) >= datetime($fromDateCreated)"
 
-    if from_date is not None:
-        query += "AND ( datetime(pr.merged_at) >= datetime($fromDate) OR "
-        query += "datetime(pr.closed_at) >= datetime($fromDate) OR"
+    if from_date_updated is not None:
+        query += "AND ( datetime(pr.merged_at) >= datetime($fromDateUpdated) OR "
+        query += "datetime(pr.closed_at) >= datetime($fromDateUpdated) OR"
         query += "(pr.merged_at IS NULL OR pr.closed_at IS NULL))"
 
     query += """
@@ -59,15 +71,21 @@ def fetch_raw_pull_requests(
     ORDER BY datetime(created_at)
     """
 
-    def _exec_query(tx, repoIds, from_date):
-        result = tx.run(query, repoIds=repoIds, fromDate=from_date)
+    def _exec_query(tx, repoIds, from_date_updated, from_date_created):
+        result = tx.run(
+            query,
+            repoIds=repoIds,
+            fromDateUpdated=from_date_updated,
+            fromDateCreated=from_date_created,
+        )
         return list(result)
 
     with neo4j_driver.session() as session:
         raw_records = session.execute_read(
             _exec_query,
             repoIds=repository_id,
-            from_date=from_date,
+            from_date_updated=from_date_updated,
+            from_date_created=from_date_created,
         )
 
     return raw_records
@@ -75,7 +93,8 @@ def fetch_raw_pull_requests(
 
 def fetch_pull_requests(
     repository_id: list[int],
-    from_date: datetime | None = None,
+    from_date_updated: datetime | None = None,
+    from_date_created: datetime | None = None,
 ) -> list[GitHubPullRequest]:
     """
     fetch pull requests from neo4j data dump
@@ -84,16 +103,26 @@ def fetch_pull_requests(
     -----------
     repository_id : list[int]
         a list of repository id to fetch their pull requests
-    from_date : datetime | None
+    from_date_updated : datetime | None
         get the pull requests form a specific date that they were created
         defualt is `None`, meaning to apply no filtering on data
+    from_date_created : datetime | None
+        get the pull requests from a spcific date that
+        they were created (`created_at`)
+        defualt is `None`, meaning to apply no filtering on created at
+
+    Notes: The reason we're separating the from dates in prs is because
+    in case of no updates applied (closed_at or merged_at gets filled), the update
+    files would be null.
 
     Returns
     --------
     github_prs : list[GitHubPullRequest]
         a list of github pull requests extracted from neo4j
     """
-    records = fetch_raw_pull_requests(repository_id, from_date)
+    records = fetch_raw_pull_requests(
+        repository_id, from_date_updated, from_date_created
+    )
 
     github_prs: list[GitHubPullRequest] = []
     for record in records:

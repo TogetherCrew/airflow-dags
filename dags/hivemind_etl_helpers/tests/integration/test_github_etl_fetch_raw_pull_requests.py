@@ -16,13 +16,15 @@ class TestGithubETLFetchRawComments(TestCase):
 
     def test_get_empty_results_no_from_date(self):
         repository_ids = [123, 124]
-        prs = fetch_raw_pull_requests(repository_id=repository_ids, from_date=None)
+        prs = fetch_raw_pull_requests(
+            repository_id=repository_ids, from_date_created=None
+        )
         self.assertEqual(prs, [])
 
     def test_get_empty_results(self):
         repository_ids = [123, 124]
         prs = fetch_raw_pull_requests(
-            repository_id=repository_ids, from_date=datetime(2024, 1, 1)
+            repository_id=repository_ids, from_date_created=datetime(2024, 1, 1)
         )
         self.assertEqual(prs, [])
 
@@ -92,7 +94,7 @@ class TestGithubETLFetchRawComments(TestCase):
         repository_ids = [123]
         prs = fetch_raw_pull_requests(
             repository_id=repository_ids,
-            from_date=datetime(2024, 1, 1),
+            from_date_created=datetime(2024, 1, 1),
         )
 
         self.assertEqual(len(prs), 1)

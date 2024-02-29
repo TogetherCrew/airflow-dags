@@ -14,13 +14,13 @@ class TestGithubETLFetchRawComments(TestCase):
 
     def test_get_empty_results_no_from_date(self):
         repository_ids = [123, 124]
-        prs = fetch_pull_requests(repository_id=repository_ids, from_date=None)
+        prs = fetch_pull_requests(repository_id=repository_ids, from_date_created=None)
         self.assertEqual(prs, [])
 
     def test_get_empty_results(self):
         repository_ids = [123, 124]
         prs = fetch_pull_requests(
-            repository_id=repository_ids, from_date=datetime(2024, 1, 1)
+            repository_id=repository_ids, from_date_created=datetime(2024, 1, 1)
         )
         self.assertEqual(prs, [])
 
@@ -90,7 +90,7 @@ class TestGithubETLFetchRawComments(TestCase):
         repository_ids = [123]
         prs = fetch_pull_requests(
             repository_id=repository_ids,
-            from_date=datetime(2024, 1, 1),
+            from_date_created=datetime(2024, 1, 1),
         )
 
         self.assertEqual(len(prs), 1)
@@ -156,42 +156,29 @@ class TestGithubETLFetchRawComments(TestCase):
         repository_ids = [123]
         prs = fetch_pull_requests(
             repository_id=repository_ids,
-            from_date=datetime(2024, 1, 1),
+            from_date_created=datetime(2024, 1, 1),
         )
-        # note: the from_date is comparing to `closed_at` and `merged_at`
-        # if they were null, then we could have more activity on pr
-        # so we're getting all the 3 prs here
 
-        self.assertEqual(len(prs), 3)
-        self.assertEqual(prs[0].id, 113)
-        self.assertEqual(prs[0].created_at, "2023-02-06 10:23:50")
+        self.assertEqual(len(prs), 2)
+
+        self.assertEqual(prs[0].id, 111)
+        self.assertEqual(prs[0].created_at, "2024-02-06 10:23:50")
         self.assertEqual(prs[0].repository_name, "Org/SampleRepo")
         self.assertEqual(prs[0].latest_saved_at, "2024-02-10 10:23:50")
-        self.assertEqual(prs[0].url, "https://github.com/PullRequest/3")
+        self.assertEqual(prs[0].url, "https://github.com/PullRequest/1")
         self.assertEqual(prs[0].closed_at, None)
         self.assertEqual(prs[0].merged_at, None)
         self.assertEqual(prs[0].state, "open")
-        self.assertEqual(prs[0].title, "sample title #3")
-        self.assertEqual(prs[0].issue_url, "https://api.github.com/issues/3")
+        self.assertEqual(prs[0].title, "sample title")
+        self.assertEqual(prs[0].issue_url, "https://api.github.com/issues/1")
 
-        self.assertEqual(prs[1].id, 111)
-        self.assertEqual(prs[1].created_at, "2024-02-06 10:23:50")
+        self.assertEqual(prs[1].id, 112)
+        self.assertEqual(prs[1].created_at, "2024-02-08 10:23:50")
         self.assertEqual(prs[1].repository_name, "Org/SampleRepo")
         self.assertEqual(prs[1].latest_saved_at, "2024-02-10 10:23:50")
-        self.assertEqual(prs[1].url, "https://github.com/PullRequest/1")
+        self.assertEqual(prs[1].url, "https://github.com/PullRequest/2")
         self.assertEqual(prs[1].closed_at, None)
         self.assertEqual(prs[1].merged_at, None)
         self.assertEqual(prs[1].state, "open")
-        self.assertEqual(prs[1].title, "sample title")
-        self.assertEqual(prs[1].issue_url, "https://api.github.com/issues/1")
-
-        self.assertEqual(prs[2].id, 112)
-        self.assertEqual(prs[2].created_at, "2024-02-08 10:23:50")
-        self.assertEqual(prs[2].repository_name, "Org/SampleRepo")
-        self.assertEqual(prs[2].latest_saved_at, "2024-02-10 10:23:50")
-        self.assertEqual(prs[2].url, "https://github.com/PullRequest/2")
-        self.assertEqual(prs[2].closed_at, None)
-        self.assertEqual(prs[2].merged_at, None)
-        self.assertEqual(prs[2].state, "open")
-        self.assertEqual(prs[2].title, "sample title #2")
-        self.assertEqual(prs[2].issue_url, "https://api.github.com/issues/2")
+        self.assertEqual(prs[1].title, "sample title #2")
+        self.assertEqual(prs[1].issue_url, "https://api.github.com/issues/2")
