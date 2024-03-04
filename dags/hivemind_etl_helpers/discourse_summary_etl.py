@@ -1,5 +1,5 @@
 import logging
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from hivemind_etl_helpers.src.db.discourse.fetch_raw_posts import (
     fetch_raw_posts_grouped,
@@ -7,7 +7,7 @@ from hivemind_etl_helpers.src.db.discourse.fetch_raw_posts import (
 from hivemind_etl_helpers.src.db.discourse.summary.prepare_summary import (
     DiscourseSummary,
 )
-from hivemind_etl_helpers.src.db.discourse.utils.get_forums import get_forums
+from hivemind_etl_helpers.src.db.discourse.utils.get_forums import get_forum_uuid
 from hivemind_etl_helpers.src.document_node_parser import configure_node_parser
 from hivemind_etl_helpers.src.utils.sort_summary_docs import sort_summaries_daily
 from llama_index import Document
@@ -19,7 +19,9 @@ from tc_hivemind_backend.embeddings.cohere import CohereEmbedding
 from tc_hivemind_backend.pg_vector_access import PGVectorAccess
 
 
-def process_discourse_summary(community_id: str) -> None:
+def process_discourse_summary(
+    community_id: str, forum_endpoint: str, from_starting_date: datetime
+) -> None:
     """
     process discourse messages and save the per-channel/per-topic/daily summaries into postgresql
 
@@ -27,30 +29,33 @@ def process_discourse_summary(community_id: str) -> None:
     -----------
     community_id : str
         the community to save its data
+    forum_endpoint : str
+        the forum endpoint that is related to a community
+    from_starting_date : datetime
+        the starting date of the ETL
     """
     dbname = f"community_{community_id}"
     prefix = f"COMMUNITYID: {community_id} "
     logging.info(prefix + "Processing summaries")
 
-    forums = get_forums(community_id=community_id)
+    forum_uuid = get_forum_uuid(forum_endpoint=forum_endpoint)
 
     # The below commented lines are for debugging
-    # forums = [
+    # forum_uuid = [
     #     {
     #         "uuid": "851d8069-fc3a-415a-b684-1261d4404092",
-    #         "endpoint": "gov.optimism.io",
     #     }
     # ]
-    for forum in forums:
-        forum_id = forum["uuid"]
-        forum_endpoint = forum["endpoint"]
-        process_forum(
-            forum_id=forum_id,
-            community_id=community_id,
-            dbname=dbname,
-            log_prefix=f"{prefix}ForumId: {forum_id}",
-            forum_endpoint=forum_endpoint,
-        )
+    forum_id = forum_uuid[0]["uuid"]
+    forum_endpoint = forum_endpoint
+    process_forum(
+        forum_id=forum_id,
+        community_id=community_id,
+        dbname=dbname,
+        log_prefix=f"{prefix}ForumId: {forum_id}",
+        forum_endpoint=forum_endpoint,
+        from_starting_date=from_starting_date,
+    )
 
 
 def process_forum(
@@ -59,6 +64,7 @@ def process_forum(
     dbname: str,
     log_prefix: str,
     forum_endpoint: str,
+    from_starting_date: datetime,
 ):
     """
     process forum data
@@ -76,6 +82,8 @@ def process_forum(
         the logging prefix to print out
     forum_endpoint : str
         the DiscourseForum endpoint for document checking
+    from_starting_date : datetime
+        the time to start processing documents
     """
     chunk_size, embedding_dim = load_model_hyperparams()
     table_name = "discourse_summary"
@@ -93,21 +101,17 @@ def process_forum(
         community_id=community_id, dbname=dbname, latest_date_query=latest_date_query
     )
 
-    if from_date is not None:
+    if from_date and from_date >= from_starting_date:
         # deleting any in-complete saved summaries
         deletion_query = f"""
             DELETE FROM data_{table_name}
             WHERE (metadata_ ->> 'forum_endpoint') = '{forum_endpoint}'
             AND (metadata_ ->> 'date')::timestamp > '{from_date.strftime("%Y-%m-%d")}';
         """
+        # increasing 1 day since we've saved the summaries of the last day
+        from_date += timedelta(days=1)
     else:
         deletion_query = ""
-
-    # increasing 1 day since we've saved the summaries of the last day
-    # e.g.: we would have the summaries of date 2023.12.15
-    # and we should start from the 16th Dec.
-    if from_date is not None:
-        from_date += timedelta(days=1)
 
     logging.info(
         f"{log_prefix} Fetching raw data and converting to llama_index.Documents"
@@ -158,7 +162,11 @@ def process_forum(
 
 def get_summary_documents(
     forum_id: str, raw_data_grouped: list[Record], forum_endpoint: str
-) -> tuple[list[Document], list[Document], list[Document],]:
+) -> tuple[
+    list[Document],
+    list[Document],
+    list[Document],
+]:
     """
     prepare the summary documents for discourse based on given raw data
 

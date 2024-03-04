@@ -2,8 +2,8 @@ import unittest
 from datetime import datetime
 
 from bson import ObjectId
-from hivemind_etl_helpers.src.utils.get_github_communities_orgs import (
-    get_github_communities_and_orgs,
+from hivemind_etl_helpers.src.utils.get_communities_data import (
+    get_github_communities_data,
 )
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
@@ -16,11 +16,11 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
 
         self.client = client
 
-    def test_get_github_communities_and_orgs_empty_data(self):
-        result = get_github_communities_and_orgs()
+    def test_get_github_communities_data_empty_data(self):
+        result = get_github_communities_data()
         self.assertEqual(result, [])
 
-    def test_get_github_communities_and_orgs_single_modules(self):
+    def test_get_github_communities_data_single_modules(self):
         """
         single github platform for one community
         """
@@ -52,7 +52,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
             }
         )
 
-        result = get_github_communities_and_orgs()
+        result = get_github_communities_data()
 
         # Assertions
         self.assertIsInstance(result, list)
@@ -67,7 +67,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
             },
         )
 
-    def test_get_github_communities_and_orgs_multiple_platforms(self):
+    def test_get_github_communities_data_multiple_platforms(self):
         """
         two github platform for one community
         """
@@ -127,7 +127,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
             ]
         )
 
-        result = get_github_communities_and_orgs()
+        result = get_github_communities_data()
 
         self.assertIsInstance(result, list)
         self.assertEqual(len(result), 2)
@@ -149,7 +149,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
             },
         )
 
-    def test_get_github_communities_and_orgs_multiple_platforms_multiple_communities(
+    def test_get_github_communities_data_multiple_platforms_multiple_communities(
         self,
     ):
         """
@@ -239,7 +239,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                 },
             ]
         )
-        results = get_github_communities_and_orgs()
+        results = get_github_communities_data()
 
         self.assertIsInstance(results, list)
         # two communities we have
@@ -279,7 +279,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                     {
                         "community_id": "1009c364f1120850414e0de5",
                         "organization_id": "444444",
-                        "fromDate": datetime(2024, 3, 2),
+                        "from_date": datetime(2024, 3, 2),
                     },
                 )
             else:
