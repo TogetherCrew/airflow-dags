@@ -2,10 +2,10 @@ from datetime import datetime
 from unittest import TestCase
 
 from bson import ObjectId
+from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 from hivemind_etl_helpers.src.utils.mongo_discord_communities import (
     get_all_discord_communities,
 )
-from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
 class TestGetAllDiscordCommunitites(TestCase):
@@ -125,9 +125,8 @@ class TestGetAllDiscordCommunitites(TestCase):
                         "channels": ["1234", "4321"],
                         "roles": ["111", "222"],
                     },
-                    "community": ObjectId("1009c364f1120850414e0dc5"),
-                    "disconnectedAt": None,
                     "community": ObjectId("1009c364f1120850414e0dc8"),
+                    "disconnectedAt": None,
                     "connectedAt": datetime(2023, 12, 1),
                     "createdAt": datetime(2023, 12, 1),
                     "updatedAt": datetime(2023, 12, 1),
