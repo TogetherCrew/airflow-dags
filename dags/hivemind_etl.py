@@ -29,12 +29,12 @@ from hivemind_etl_helpers.discord_mongo_summary_etl import process_discord_summa
 from hivemind_etl_helpers.discord_mongo_vector_store_etl import (
     process_discord_guild_mongo,
 )
-from hivemind_etl_helpers.discourse_vectorstore_etl import process_discourse_vectorstore
 from hivemind_etl_helpers.discourse_summary_etl import process_discourse_summary
+from hivemind_etl_helpers.discourse_vectorstore_etl import process_discourse_vectorstore
 from hivemind_etl_helpers.github_etl import process_github_vectorstore
 from hivemind_etl_helpers.src.utils.get_communities_data import (
-    get_github_communities_data,
     get_discourse_communities,
+    get_github_communities_data,
 )
 from hivemind_etl_helpers.src.utils.get_mongo_discord_communities import (
     get_all_discord_communities,

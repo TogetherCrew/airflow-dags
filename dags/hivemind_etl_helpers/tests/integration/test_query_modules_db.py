@@ -2,9 +2,7 @@ import unittest
 from datetime import datetime
 
 from bson import ObjectId
-from hivemind_etl_helpers.src.utils.get_communities_data import (
-    query_modules_db,
-)
+from hivemind_etl_helpers.src.utils.get_communities_data import query_modules_db
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
