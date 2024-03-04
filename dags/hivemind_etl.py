@@ -36,7 +36,7 @@ from hivemind_etl_helpers.src.utils.get_communities_data import (
     get_discourse_communities,
     get_github_communities_data,
 )
-from hivemind_etl_helpers.src.utils.get_mongo_discord_communities import (
+from hivemind_etl_helpers.src.utils.mongo_discord_communities import (
     get_all_discord_communities,
 )
 
