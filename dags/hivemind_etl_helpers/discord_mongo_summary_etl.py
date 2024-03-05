@@ -36,7 +36,7 @@ def process_discord_summaries(community_id: str, verbose: bool = False) -> None:
     """
     load_dotenv()
     otel_endpoint = os.getenv("TRACELOOP_BASE_URL")
-    Traceloop.init(app_name="hivemind-server", api_endpoint=otel_endpoint)
+    Traceloop.init(app_name="hivemind-discord-summary", api_endpoint=otel_endpoint)
 
     chunk_size, embedding_dim = load_model_hyperparams()
     guild_id = find_guild_id_by_community_id(community_id)
