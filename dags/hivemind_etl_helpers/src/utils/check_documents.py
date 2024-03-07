@@ -77,7 +77,10 @@ def check_documents(
             modified_at_db = files_db[str(id)]
 
             # if the retrieved data had a newer date
-            if modified_at_db < modified_at:
+            if modified_at is not None and (
+                (modified_at_db is None and modified_at is not None)
+                or (modified_at_db < modified_at)
+            ):
                 doc_file_ids_to_delete.append(str(id))
                 documents_to_save.append(doc)
             else:
@@ -93,7 +96,7 @@ def check_documents(
 
 def process_doc_to_id_date(
     documents: list[Document], identifier: str, date_field: str
-) -> dict[str, datetime]:
+) -> dict[str, datetime | None]:
     """
     process documents into a dictionary of their
     `identifier` as key and `date_field` field as values (extracted from metadata)
@@ -115,10 +118,13 @@ def process_doc_to_id_date(
         and modified date of the data as datetime object
     """
     # first fetch the documents' modified at
-    data: dict[str, datetime] = {}
+    data: dict[str, datetime | None] = {}
     for doc in documents:
         file_id = doc.metadata[identifier]
         modified_at = doc.metadata[date_field]
-        data[file_id] = parser.parse(modified_at).replace(tzinfo=timezone.utc)
+        if modified_at is not None:
+            data[file_id] = parser.parse(modified_at).replace(tzinfo=timezone.utc)
+        else:
+            data[file_id] = None
 
     return data

@@ -95,7 +95,17 @@ def fetch_files_date_field(
     connection.autocommit = True
     try:
         # preparing for the database query
-        ids_string = convert_tuple_str(file_ids)
+        if "text" in identifier_type:
+            ids_string = str(tuple([f"{item}" for item in file_ids]))
+        elif "integer" in identifier_type:
+            if len(file_ids) != 1:
+                ids_string = str(tuple([int(item) for item in file_ids]))
+            else:
+                # the tuple would add a semi colon in case of length 1 to string
+                # so we're making sure that won't happen
+                ids_string = f"({int(file_ids[0])})"
+        else:
+            ids_string = convert_tuple_str(file_ids)
 
         with connection.cursor() as cursor:
             query = f"""
@@ -156,6 +166,9 @@ def postprocess_results(results: list[dict[str, str]]) -> dict[str, datetime]:
 
     for r in results:
         for key, value in r.items():
-            results_updated[key] = parser.parse(value).replace(tzinfo=timezone.utc)
+            if value is not None:
+                results_updated[key] = parser.parse(value).replace(tzinfo=timezone.utc)
+            else:
+                results_updated[key] = None
 
     return results_updated

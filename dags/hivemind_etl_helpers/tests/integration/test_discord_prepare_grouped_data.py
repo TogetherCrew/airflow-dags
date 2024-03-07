@@ -21,7 +21,7 @@ class TestDiscordGroupedDataPreparation(TestCase):
         community_id = ObjectId("9f59dd4f38f3474accdc8f24")
         platform_id = ObjectId("063a2a74282db2c00fbc2428")
 
-        client["Module"].drop_collection("modules")
+        client["Core"].drop_collection("modules")
         client["Core"].drop_collection("platforms")
 
         if create_modules:
@@ -42,7 +42,7 @@ class TestDiscordGroupedDataPreparation(TestCase):
                     ]
                 },
             }
-            client["Module"]["modules"].insert_one(data)
+            client["Core"]["modules"].insert_one(data)
 
         if create_platform:
             client["Core"]["platforms"].insert_one(
