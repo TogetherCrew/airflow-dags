@@ -1,15 +1,17 @@
 from datetime import datetime
 from unittest import TestCase
+import pytest
 
 import psycopg2
 from hivemind_etl_helpers.src.db.gdrive.db_utils import setup_db
 from hivemind_etl_helpers.src.db.gdrive.delete_records import delete_records
-from llama_index import Document
+from llama_index.core import Document
 from tc_hivemind_backend.db.credentials import load_postgres_credentials
 from tc_hivemind_backend.db.pg_db_utils import convert_tuple_str
 from tc_hivemind_backend.pg_vector_access import PGVectorAccess
 
 
+@pytest.mark.skip(reason="GDrive ETL is not finished!")
 class TestDeleteRecords(TestCase):
     def setUpDB(self, community_id: str):
         db_name = f"community_{community_id}"

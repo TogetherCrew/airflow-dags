@@ -7,7 +7,7 @@ from hivemind_etl_helpers.src.db.discord.discord_raw_message_to_document import 
     discord_raw_to_docuemnts,
 )
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
-from llama_index.indices.vector_store import VectorStoreIndex
+from llama_index.core.indices.vector_store import VectorStoreIndex
 from tc_hivemind_backend.db.credentials import load_postgres_credentials
 from tc_hivemind_backend.db.pg_db_utils import setup_db
 from tc_hivemind_backend.pg_vector_access import PGVectorAccess

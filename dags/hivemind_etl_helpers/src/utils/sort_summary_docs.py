@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from llama_index import Document
+from llama_index.core import Document
 
 
 def sort_summaries_daily(

@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from hivemind_etl_helpers.src.db.github.schema import GitHubIssue
 from hivemind_etl_helpers.src.db.github.transform.issues import transform_issues
-from llama_index import Document
+from llama_index.core import Document
 
 
 class TestGithubTransformIssues(TestCase):

@@ -8,9 +8,8 @@ from hivemind_etl_helpers.src.db.discourse.summary.summary_utils import (
     transform_summary_to_document,
 )
 from hivemind_etl_helpers.src.utils.summary_base import SummaryBase
-from llama_index import Document, ServiceContext
-from llama_index.llms import LLM
-from llama_index.response_synthesizers.base import BaseSynthesizer
+from llama_index.core import Document, Settings
+from llama_index.core.response_synthesizers.base import BaseSynthesizer
 
 
 class DiscourseSummary(SummaryBase):
@@ -18,12 +17,15 @@ class DiscourseSummary(SummaryBase):
         self,
         forum_id: str,
         forum_endpoint: str,
-        service_context: ServiceContext | None = None,
         response_synthesizer: BaseSynthesizer | None = None,
-        llm: LLM | None = None,
         verbose: bool = False,
+        **kwargs,
     ) -> None:
-        super().__init__(service_context, response_synthesizer, llm, verbose)
+        llm = kwargs.get("llm", Settings.llm)
+
+        super().__init__(
+            llm=llm, response_synthesizer=response_synthesizer, verbose=verbose
+        )
         self.prefix = f"FORUM_ID: {forum_id} "
         self.forum_endpoint = forum_endpoint
 

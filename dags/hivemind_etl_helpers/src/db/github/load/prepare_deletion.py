@@ -1,5 +1,5 @@
 from hivemind_etl_helpers.src.utils.check_documents import check_documents
-from llama_index import Document
+from llama_index.core import Document
 
 
 class PrepareDeletion:

@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from unittest.mock import patch
 
 from hivemind_etl_helpers.src.db.github.load import PrepareDeletion
-from llama_index import Document
+from llama_index.core import Document
 
 
 class TestPrepareDeletion(unittest.TestCase):

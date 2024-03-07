@@ -10,44 +10,51 @@ from hivemind_etl_helpers.src.db.discord.summary.prepare_summaries import (
 from hivemind_etl_helpers.src.db.discord.summary.summary_utils import (
     transform_daily_summary_to_document,
 )
-from llama_index import Document, ServiceContext
-from llama_index.llms import LLM
-from llama_index.response_synthesizers.base import BaseSynthesizer
+from llama_index.core import Document, Settings
+from llama_index.core.llms import LLM
+from llama_index.core.response_synthesizers.base import BaseSynthesizer
 
 
 class DiscordSummary(PrepareSummaries):
     def __init__(
         self,
-        service_context: ServiceContext | None = None,
         response_synthesizer: BaseSynthesizer | None = None,
-        llm: LLM | None = None,
         verbose: bool = False,
+        **kwargs,
     ) -> None:
         """
         initialize the summary preparation class
 
         Parameters
         -----------
-        service_context : llama_index.ServiceContext | None
-            the service context for llama_index to work
-            if nothing passed will be to `llm=gpt-3.5-turbo` and `chunk_size = 512`
         set_response_synthesizer : BaseSynthesizer | None
             whether to set a response_synthesizer to refine the summaries or not
             if nothing passed would be set to `None`
-        llm : LLM | None
-            the llm to use
-            if nothing passed, it would use chatgpt with `gpt-3.5-turbo` model
         verbose : bool
             whether to show the progress of summarizing or not
+        **kwargs :
+            llm : LLM
+                the llm to use
+                if nothing passed, it would use the default `llama_index.core.Setting.llm`
+
+        Note: `chunk_size` is read from `llama_index.core.Setting.llm`.
         """
-        super().__init__(service_context, response_synthesizer, llm, verbose)
+        llm = kwargs.get("llm", Settings.llm)
+
+        super().__init__(
+            llm=llm, response_synthesizer=response_synthesizer, verbose=verbose
+        )
 
     def prepare_summaries(
         self,
         guild_id: str,
         summarization_prefix: str,
         from_date: datetime | None = None,
-    ) -> tuple[list[Document], list[Document], list[Document],]:
+    ) -> tuple[
+        list[Document],
+        list[Document],
+        list[Document],
+    ]:
         """
         prepare per thread summaries of discord messages.
         Note: This will always process the data until 1 day ago.

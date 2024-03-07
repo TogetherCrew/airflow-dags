@@ -5,24 +5,22 @@ from hivemind_etl_helpers.src.db.discord.summary.prepare_summaries import (
     PrepareSummaries,
 )
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
-from llama_index import MockEmbedding, ServiceContext
-from llama_index.llms import MockLLM
+from llama_index.core import MockEmbedding, Settings
+from llama_index.core.llms import MockLLM
 
 
 class TestPrepareSummaries(unittest.TestCase):
     def setUp(self):
         self.mock_llm = MockLLM()
-        self.service_context = ServiceContext.from_defaults(
-            llm=MockLLM(), chunk_size=256, embed_model=MockEmbedding(embed_dim=1024)
-        )
+        Settings.llm = MockLLM()
+        Settings.chunk_size = 256
+        Settings.embed_model = MockEmbedding(embed_dim=1024)
 
     def test_prepare_thread_summaries_empty_data(self):
         self.setUp()
         guild_id = "1234"
 
-        prepare_summaries = PrepareSummaries(
-            service_context=self.service_context, llm=self.mock_llm
-        )
+        prepare_summaries = PrepareSummaries()
         summaries = prepare_summaries.prepare_thread_summaries(
             guild_id=guild_id,
             raw_data_grouped={},
@@ -111,9 +109,7 @@ class TestPrepareSummaries(unittest.TestCase):
             }
         }
 
-        prepare_summaries = PrepareSummaries(
-            service_context=self.service_context, llm=self.mock_llm
-        )
+        prepare_summaries = PrepareSummaries()
         summaries = prepare_summaries.prepare_thread_summaries(
             guild_id=guild_id,
             raw_data_grouped=sample_grouped_data,

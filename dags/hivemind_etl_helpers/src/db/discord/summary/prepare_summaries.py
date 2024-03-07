@@ -8,20 +8,23 @@ from hivemind_etl_helpers.src.db.discord.utils.transform_discord_raw_messges imp
     transform_discord_raw_messages,
 )
 from hivemind_etl_helpers.src.utils.summary_base import SummaryBase
-from llama_index import Document, ServiceContext
-from llama_index.llms import LLM
-from llama_index.response_synthesizers.base import BaseSynthesizer
+from llama_index.core import Document, Settings
+from llama_index.core.llms import LLM
+from llama_index.core.response_synthesizers.base import BaseSynthesizer
 
 
 class PrepareSummaries(SummaryBase):
     def __init__(
         self,
-        service_context: ServiceContext | None = None,
         response_synthesizer: BaseSynthesizer | None = None,
-        llm: LLM | None = None,
         verbose: bool = False,
+        **kwargs,
     ) -> None:
-        super().__init__(service_context, response_synthesizer, llm, verbose)
+        llm = kwargs.get("llm", Settings.llm)
+
+        super().__init__(
+            llm=llm, response_synthesizer=response_synthesizer, verbose=verbose
+        )
         # initialization
         self.prefix: str = ""
 

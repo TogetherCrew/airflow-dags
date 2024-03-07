@@ -20,7 +20,7 @@ from hivemind_etl_helpers.src.db.discord.utils.prepare_reactions_id import (
     prepare_raction_ids,
 )
 from hivemind_etl_helpers.src.db.globals import DATE_FORMAT
-from llama_index import Document
+from llama_index.core import Document
 
 
 def transform_discord_raw_messages(

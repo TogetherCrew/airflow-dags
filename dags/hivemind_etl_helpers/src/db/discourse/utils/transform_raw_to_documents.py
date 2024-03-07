@@ -1,4 +1,4 @@
-from llama_index import Document
+from llama_index.core import Document
 from neo4j import Record
 
 

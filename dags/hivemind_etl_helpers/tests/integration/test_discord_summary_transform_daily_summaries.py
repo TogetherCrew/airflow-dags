@@ -3,7 +3,7 @@ import unittest
 from hivemind_etl_helpers.src.db.discord.summary.summary_utils import (
     transform_daily_summary_to_document,
 )
-from llama_index import Document
+from llama_index.core import Document
 
 
 class TestTransformDailySummaryToDocument(unittest.TestCase):

@@ -1,8 +1,10 @@
 from hivemind_etl_helpers.src.document_node_parser import configure_node_parser
-from llama_index import Document
+from llama_index.core import Document
 from tc_hivemind_backend.db.utils.model_hyperparams import load_model_hyperparams
 from tc_hivemind_backend.embeddings.cohere import CohereEmbedding
 from tc_hivemind_backend.pg_vector_access import PGVectorAccess
+from llama_index.core import Settings
+from llama_index.llms.openai import OpenAI
 
 
 def load_documents_into_pg_database(
@@ -37,16 +39,18 @@ def load_documents_into_pg_database(
 
     pg_vector = PGVectorAccess(table_name=table_name, dbname=dbname)
 
-    embed_model = CohereEmbedding()
     node_parser = configure_node_parser(chunk_size=chunk_size)
+
+    Settings.node_parser = node_parser
+    Settings.embed_model = CohereEmbedding()
+    Settings.chunk_size = chunk_size
+    Settings.llm = OpenAI(model="gpt-3.5-turbo")
 
     pg_vector.save_documents_in_batches(
         community_id=community_id,
         documents=documents,
         batch_size=100,
-        node_parser=node_parser,
         max_request_per_minute=None,
-        embed_model=embed_model,
         embed_dim=embedding_dim,
         request_per_minute=10000,
         deletion_query=kwargs.get("deletion_query", ""),
