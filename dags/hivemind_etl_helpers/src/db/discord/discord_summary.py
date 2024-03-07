@@ -11,7 +11,6 @@ from hivemind_etl_helpers.src.db.discord.summary.summary_utils import (
     transform_daily_summary_to_document,
 )
 from llama_index.core import Document, Settings
-from llama_index.core.llms import LLM
 from llama_index.core.response_synthesizers.base import BaseSynthesizer
 
 
@@ -50,11 +49,7 @@ class DiscordSummary(PrepareSummaries):
         guild_id: str,
         summarization_prefix: str,
         from_date: datetime | None = None,
-    ) -> tuple[
-        list[Document],
-        list[Document],
-        list[Document],
-    ]:
+    ) -> tuple[list[Document], list[Document], list[Document],]:
         """
         prepare per thread summaries of discord messages.
         Note: This will always process the data until 1 day ago.

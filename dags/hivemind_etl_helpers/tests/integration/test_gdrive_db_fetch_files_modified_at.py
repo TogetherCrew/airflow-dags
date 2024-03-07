@@ -1,8 +1,8 @@
 from datetime import datetime
 from unittest import TestCase
-import pytest
 
 import psycopg2
+import pytest
 from hivemind_etl_helpers.src.db.gdrive.db_utils import fetch_files_date_field, setup_db
 from llama_index.core import Document
 from tc_hivemind_backend.db.credentials import load_postgres_credentials

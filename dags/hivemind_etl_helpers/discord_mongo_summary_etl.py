@@ -10,9 +10,9 @@ from hivemind_etl_helpers.src.db.discord.find_guild_id import (
 )
 from hivemind_etl_helpers.src.document_node_parser import configure_node_parser
 from hivemind_etl_helpers.src.utils.sort_summary_docs import sort_summaries_daily
+from llama_index.core import Settings
 from llama_index.core.response_synthesizers import get_response_synthesizer
 from llama_index.llms.openai import OpenAI
-from llama_index.core import Settings
 from tc_hivemind_backend.db.pg_db_utils import setup_db
 from tc_hivemind_backend.db.utils.model_hyperparams import load_model_hyperparams
 from tc_hivemind_backend.embeddings.cohere import CohereEmbedding

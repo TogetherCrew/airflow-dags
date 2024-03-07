@@ -9,7 +9,6 @@ from hivemind_etl_helpers.src.db.discord.utils.transform_discord_raw_messges imp
 )
 from hivemind_etl_helpers.src.utils.summary_base import SummaryBase
 from llama_index.core import Document, Settings
-from llama_index.core.llms import LLM
 from llama_index.core.response_synthesizers.base import BaseSynthesizer
 
 

@@ -1,10 +1,9 @@
 from hivemind_etl_helpers.src.document_node_parser import configure_node_parser
-from llama_index.core import Document
+from llama_index.core import Document, Settings
+from llama_index.llms.openai import OpenAI
 from tc_hivemind_backend.db.utils.model_hyperparams import load_model_hyperparams
 from tc_hivemind_backend.embeddings.cohere import CohereEmbedding
 from tc_hivemind_backend.pg_vector_access import PGVectorAccess
-from llama_index.core import Settings
-from llama_index.llms.openai import OpenAI
 
 
 def load_documents_into_pg_database(

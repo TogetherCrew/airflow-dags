@@ -1,8 +1,8 @@
 from datetime import datetime
 from unittest import TestCase
-import pytest
 
 import psycopg2
+import pytest
 from hivemind_etl_helpers.src.db.gdrive.db_utils import setup_db
 from hivemind_etl_helpers.src.db.gdrive.delete_records import delete_records
 from llama_index.core import Document

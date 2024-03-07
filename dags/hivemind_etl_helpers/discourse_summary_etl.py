@@ -134,8 +134,6 @@ def process_forum(
         node_parser = configure_node_parser(chunk_size=chunk_size)
         pg_vector = PGVectorAccess(table_name=table_name, dbname=dbname)
 
-        embed_model = CohereEmbedding()
-
         sorted_daily_docs = sort_summaries_daily(
             level1_docs=topic_summary_documents,
             level2_docs=category_summary_documenets,
@@ -166,11 +164,7 @@ def process_forum(
 
 def get_summary_documents(
     forum_id: str, raw_data_grouped: list[Record], forum_endpoint: str
-) -> tuple[
-    list[Document],
-    list[Document],
-    list[Document],
-]:
+) -> tuple[list[Document], list[Document], list[Document],]:
     """
     prepare the summary documents for discourse based on given raw data
 
