@@ -36,7 +36,7 @@ class DiscordSummary(PrepareSummaries):
                 the llm to use
                 if nothing passed, it would use the default `llama_index.core.Setting.llm`
 
-        Note: `chunk_size` is read from `llama_index.core.Setting.llm`.
+        Note: `chunk_size` is read from `llama_index.core.Setting.chunk_size`.
         """
         llm = kwargs.get("llm", Settings.llm)
 

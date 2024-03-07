@@ -24,7 +24,7 @@ class SummaryBase:
             the llm to use
             if nothing passed, it would use the default `llama_index.core.Setting.llm`
 
-        Note: `chunk_size` is read from `llama_index.core.Setting.llm`.
+        Note: `chunk_size` is read from `llama_index.core.Setting.chunk_size`.
         """
         self.llm = llm
         self.response_synthesizer = response_synthesizer
