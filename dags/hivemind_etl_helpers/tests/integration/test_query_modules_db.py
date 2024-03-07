@@ -2,13 +2,11 @@ import unittest
 from datetime import datetime
 
 from bson import ObjectId
-from hivemind_etl_helpers.src.utils.get_github_communities_orgs import (
-    query_github_modules_db,
-)
+from hivemind_etl_helpers.src.utils.get_communities_data import query_modules_db
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
-class TestQueryGitHubModulesDB(unittest.TestCase):
+class TestQueryModulesDB(unittest.TestCase):
     def setUp(self):
         client = MongoSingleton.get_instance().client
         client["Core"].drop_collection("modules")
@@ -16,11 +14,11 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
 
         self.client = client
 
-    def test_query_github_modules_db_empty_data(self):
-        result = query_github_modules_db()
+    def test_query_modules_db_empty_data(self):
+        result = query_modules_db(platform="github")
         self.assertEqual(result, [])
 
-    def test_query_github_modules_db_single_modules(self):
+    def test_query_modules_db_single_modules(self):
         """
         single github platform for one community
         """
@@ -52,7 +50,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
             }
         )
 
-        result = query_github_modules_db()
+        result = query_modules_db(platform="github")
 
         # Assertions
         self.assertIsInstance(result, list)
@@ -62,7 +60,9 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
         # one platform we had
         self.assertEqual(len(result[0]["options"][0]), 1)
         self.assertEqual(list(result[0]["options"][0].keys()), ["platforms"])
-        self.assertEqual(result[0]["options"][0]["platforms"]["organizationId"], "1234")
+        self.assertEqual(
+            result[0]["options"][0]["platforms"]["metadata"]["organizationId"], "1234"
+        )
 
         self.assertEqual(
             result[0]["options"][0]["platforms"]["platformId"],
@@ -73,7 +73,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
             result[0]["options"][0]["platforms"]["fromDate"], datetime(2024, 1, 1)
         )
 
-    def test_query_github_modules_db_multiple_platforms(self):
+    def test_query_modules_db_multiple_platforms(self):
         """
         two github platform for one community
         """
@@ -133,7 +133,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
             ]
         )
 
-        result = query_github_modules_db()
+        result = query_modules_db(platform="github")
 
         # Assertions
         self.assertIsInstance(result, list)
@@ -144,7 +144,9 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
         self.assertEqual(len(result[0]["options"]), 2)
 
         # github PLATFORM 1
-        self.assertEqual(result[0]["options"][0]["platforms"]["organizationId"], "1234")
+        self.assertEqual(
+            result[0]["options"][0]["platforms"]["metadata"]["organizationId"], "1234"
+        )
 
         self.assertEqual(
             result[0]["options"][0]["platforms"]["platformId"],
@@ -156,7 +158,9 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
         )
 
         # github platform 2
-        self.assertEqual(result[0]["options"][1]["platforms"]["organizationId"], "4321")
+        self.assertEqual(
+            result[0]["options"][1]["platforms"]["metadata"]["organizationId"], "4321"
+        )
 
         self.assertEqual(
             result[0]["options"][1]["platforms"]["platformId"],
@@ -167,7 +171,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
             result[0]["options"][1]["platforms"]["fromDate"], datetime(2024, 2, 2)
         )
 
-    def test_query_github_modules_db_multiple_platforms_multiple_communities(self):
+    def test_query_modules_db_multiple_platforms_multiple_communities(self):
         """
         two github platform for two separate communities
         """
@@ -255,7 +259,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                 },
             ]
         )
-        results = query_github_modules_db()
+        results = query_modules_db(platform="github")
 
         self.assertIsInstance(results, list)
         # two communities we have
@@ -265,7 +269,9 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
             if community_result["communityId"] == ObjectId("1009c364f1120850414e0de5"):
                 # Community 2: github PLATFORM 1
                 self.assertEqual(
-                    community_result["options"][0]["platforms"]["organizationId"],
+                    community_result["options"][0]["platforms"]["metadata"][
+                        "organizationId"
+                    ],
                     "111111",
                 )
 
@@ -281,7 +287,9 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
 
                 # Community 2: github PLATFORM 2
                 self.assertEqual(
-                    community_result["options"][1]["platforms"]["organizationId"],
+                    community_result["options"][1]["platforms"]["metadata"][
+                        "organizationId"
+                    ],
                     "444444",
                 )
 
@@ -302,7 +310,9 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
 
                 # Community 1: github PLATFORM 1
                 self.assertEqual(
-                    community_result["options"][0]["platforms"]["organizationId"],
+                    community_result["options"][0]["platforms"]["metadata"][
+                        "organizationId"
+                    ],
                     "1234",
                 )
 
@@ -318,7 +328,9 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
 
                 # Community 1: github PLATFORM 2
                 self.assertEqual(
-                    community_result["options"][1]["platforms"]["organizationId"],
+                    community_result["options"][1]["platforms"]["metadata"][
+                        "organizationId"
+                    ],
                     "4321",
                 )
 

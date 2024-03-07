@@ -2,14 +2,14 @@ import neo4j
 from hivemind_etl_helpers.src.utils.neo4j import Neo4jConnection
 
 
-def get_forums(community_id: str) -> list[neo4j._data.Record]:
+def get_forum_uuid(forum_endpoint: str) -> list[neo4j._data.Record]:
     """
-    get a list of forums from a community
+    get the forum uuid that the community connected their discourse to
 
     Parameters
     -----------
-    community_id : str
-        the community we want to process its forum
+    forum_endpoint : str
+        the forum endpoint that is related to a community
 
     Returns
     --------
@@ -19,11 +19,11 @@ def get_forums(community_id: str) -> list[neo4j._data.Record]:
     neo4j = Neo4jConnection()
 
     query = """
-        MATCH (f:DiscourseForum) -[:IS_WITHIN]->(c:Community {id: $communityId})
-        RETURN f.uuid as uuid, f.endpoint as endpoint
+        MATCH (f:DiscourseForum) WHERE f.endpoint = $forum_endpoint
+        RETURN f.uuid as uuid
     """
     forums, _, _ = neo4j.neo4j_ops.neo4j_driver.execute_query(
-        query, communityId=community_id
+        query, forum_endpoint=forum_endpoint
     )
 
     return forums
