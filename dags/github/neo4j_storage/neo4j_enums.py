@@ -27,3 +27,4 @@ class Relationship(Enum):
     COMMITTED = "COMMITTED"
     IS_ON = "IS_ON"
     CHANGED = "CHANGED"
+    LINKED = "LINKED"

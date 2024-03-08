@@ -12,6 +12,7 @@ def save_pull_request_to_neo4j(pr: dict, repository_id: str):
     assignees = pr.pop("assignees", None)
     requested_reviewers = pr.pop("requested_reviewers", None)
     labels = pr.pop("labels", None)
+    linked_issues = pr.pop("linked_issues", None)
     cleaned_pr = remove_nested_collections(pr)
 
     if assignee:
@@ -56,6 +57,16 @@ def save_pull_request_to_neo4j(pr: dict, repository_id: str):
             SET haslb.latestSavedAt = datetime()
     """
 
+    linked_issues_query = f"""
+        WITH pr
+        UNWIND $linked_issues as linked_issue
+        MERGE (i:{Node.Issue.value} {{id: linked_issue.id}})
+            SET i += linked_issue, i.latestSavedAt = datetime()
+        WITH pr, i
+        MERGE (pr)-[islinked:{Relationship.LINKED.value}]->(i)
+            SET islinked.latestSavedAt = datetime()
+    """
+
     with driver.session() as session:
         session.execute_write(
             lambda tx: tx.run(
@@ -74,6 +85,7 @@ def save_pull_request_to_neo4j(pr: dict, repository_id: str):
                 { assignees_query }
                 { requested_reviewers_query }
                 { labels_query  }
+                { linked_issues_query }
 
             """,
                 pr=cleaned_pr,
@@ -83,6 +95,7 @@ def save_pull_request_to_neo4j(pr: dict, repository_id: str):
                 assignees=assignees,
                 labels=labels,
                 requested_reviewers=requested_reviewers,
+                linked_issues=linked_issues
             )
         )
     driver.close()
