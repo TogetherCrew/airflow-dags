@@ -1,7 +1,8 @@
 import logging
 
+from .issues import fetch_issue
 from .smart_proxy import get
-
+from bs4 import BeautifulSoup
 
 def fetch_pull_requests(owner: str, repo: str, page: int, per_page: int = 100):
     """
@@ -57,6 +58,34 @@ def get_all_pull_requests(owner: str, repo: str):
     )
     return all_pull_requests
 
+def extract_issue_info_from_url(url):
+    splitted_url = url.split('/')
+    owner = splitted_url[-4]
+    repo = splitted_url[-3]
+    issue_number = splitted_url[-1]
+
+    return {
+        'owner': owner,
+        'repo': repo,
+        'issue_number': issue_number
+    }
+
+def extract_linked_issues_from_pr(owner: str, repo: str, pull_number: int):
+    html_pr_url = f"https://github.com/{owner}/{repo}/pull/{pull_number}"
+    response = get(html_pr_url)
+    linked_issue = []
+
+    soup = BeautifulSoup(response.text, 'html.parser')    
+    html_linked_issues = soup.find_all('span', class_='Truncate truncate-with-responsive-width my-1', attrs={"data-view-component": "true"})
+
+    for html_linked_issue in html_linked_issues:
+        issue_url = html_linked_issue.find('a').get('href')
+        issue_data = extract_issue_info_from_url(issue_url)
+        issue_info = fetch_issue(owner, repo, issue_data['issue_number'])
+
+        linked_issue.append(issue_info)
+
+    return linked_issue
 
 def fetch_pull_requests_commits(
     owner: str, repo: str, pull_number: int, page: int, per_page: int = 100

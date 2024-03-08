@@ -13,5 +13,6 @@ from .pull_requests import (
     get_all_reactions_of_review_comment,
     get_all_review_comments_of_pull_request,
     get_all_reviews_of_pull_request,
+    extract_linked_issues_from_pr
 )
 from .repos import get_all_org_repos, get_all_repo_contributors
