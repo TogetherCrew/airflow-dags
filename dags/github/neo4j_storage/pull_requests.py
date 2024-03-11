@@ -95,7 +95,7 @@ def save_pull_request_to_neo4j(pr: dict, repository_id: str):
                 assignees=assignees,
                 labels=labels,
                 requested_reviewers=requested_reviewers,
-                linked_issues=linked_issues
+                linked_issues=linked_issues,
             )
         )
     driver.close()

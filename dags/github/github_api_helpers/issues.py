@@ -16,7 +16,9 @@ def fetch_issue(owner: str, repo: str, issue_number: int):
     response = get(endpoint)
     response_data = response.json()
 
-    logging.info(f"Fetched issue {issue_number} for {owner}/{repo}. Issue: {response_data}")
+    logging.info(
+        f"Fetched issue {issue_number} for {owner}/{repo}. Issue: {response_data}"
+    )
     return response_data
 
 
