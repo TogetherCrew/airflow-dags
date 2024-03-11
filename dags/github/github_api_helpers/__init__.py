@@ -5,6 +5,7 @@ from .issues import get_all_comments_of_issue, get_all_issues
 from .labels import get_all_repo_labels
 from .orgs import fetch_org_details, get_all_org_members
 from .pull_requests import (
+    extract_linked_issues_from_pr,
     get_all_comments_of_pull_request,
     get_all_commits_of_pull_request,
     get_all_pull_request_files,
@@ -12,7 +13,6 @@ from .pull_requests import (
     get_all_reactions_of_comment,
     get_all_reactions_of_review_comment,
     get_all_review_comments_of_pull_request,
-    get_all_reviews_of_pull_request,
-    extract_linked_issues_from_pr
+    get_all_reviews_of_pull_request
 )
 from .repos import get_all_org_repos, get_all_repo_contributors

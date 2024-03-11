@@ -1,8 +1,10 @@
 import logging
 
+from bs4 import BeautifulSoup
+
 from .issues import fetch_issue
 from .smart_proxy import get
-from bs4 import BeautifulSoup
+
 
 def fetch_pull_requests(owner: str, repo: str, page: int, per_page: int = 100):
     """
