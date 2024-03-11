@@ -82,10 +82,10 @@ def extract_linked_issues_from_pr(owner: str, repo: str, pull_number: int):
         attrs={"data-view-component": "true"},
     )
     for html_linked_issue in html_linked_issues:
-        issue_url = html_linked_issue.find('a').get('href')
+        issue_url = html_linked_issue.find("a").get("href")
         issue_data = extract_issue_info_from_url(issue_url)
         issue_info = fetch_issue(
-            issue_data['owner'], issue_data['repo'], issue_data['issue_number']
+            issue_data["owner"], issue_data["repo"], issue_data["issue_number"]
         )
 
         linked_issue.append(issue_info)
