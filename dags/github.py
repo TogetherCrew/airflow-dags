@@ -533,12 +533,19 @@ with DAG(
     transform_label = transform_labels.expand(data=labels)
     load_label = load_labels.expand(data=transform_label)
 
+    issues = extract_issues.expand(data=repos)
+    transform_issue = transform_issues.expand(data=issues)
+    load_issue = load_issues.expand(data=transform_issue)
+    load_contributors >> load_issue
+    load_label >> load_issue
+
     prs = extract_pull_requests.expand(data=repos)
     prs_linked_issues = extract_pull_request_linked_issues.expand(data=prs)
     transform_prs = transform_pull_requests.expand(data=prs_linked_issues)
     load_prs = load_pull_requests.expand(data=transform_prs)
     load_contributors >> load_prs
     load_label >> load_prs
+    load_issue >> load_prs
 
     pr_files_changes = extract_pull_request_files_changes.expand(data=prs)
     transform_pr_files_changes = transform_pull_request_files_changes.expand(
@@ -547,12 +554,6 @@ with DAG(
     load_pr_files_changes = load_pull_request_files_changes.expand(
         data=transform_pr_files_changes
     )
-
-    issues = extract_issues.expand(data=repos)
-    transform_issue = transform_issues.expand(data=issues)
-    load_issue = load_issues.expand(data=transform_issue)
-    load_contributors >> load_issue
-    load_label >> load_issue
 
     pr_reviews = extract_pr_review.expand(data=prs)
     transform_pr_review = transform_pr_review.expand(data=pr_reviews)
