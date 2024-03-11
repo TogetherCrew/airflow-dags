@@ -37,6 +37,7 @@ from github.github_api_helpers import (
     get_all_repo_labels,
     get_all_repo_review_comments,
     get_all_reviews_of_pull_request,
+    extract_linked_issues_from_pr
 )
 from github.neo4j_storage import (
     get_orgs_profile_from_neo4j,
@@ -179,6 +180,23 @@ with DAG(
 
         prs = get_all_pull_requests(owner=owner, repo=repo_name)
         new_data = {"prs": prs, **data}
+        return new_data
+
+    @task
+    def extract_pull_request_linked_issues(data):
+        logging.info(f"All data from last stage: {data}")
+        repo = data["repo"]
+        prs = data["prs"]
+        owner = repo["owner"]["login"]
+        repo_name = repo["name"]
+
+        new_prs = []
+        for pr in prs:
+            pr_number = pr["number"]
+            linked_issues = extract_linked_issues_from_pr(owner=owner, repo=repo_name, pull_number=pr_number)
+            new_prs.append({ **pr, "linked_issues": linked_issues })
+
+        new_data = { **data, "prs": new_prs }
         return new_data
 
     @task
@@ -516,7 +534,8 @@ with DAG(
     load_label = load_labels.expand(data=transform_label)
 
     prs = extract_pull_requests.expand(data=repos)
-    transform_prs = transform_pull_requests.expand(data=prs)
+    prs_linked_issues = extract_pull_request_linked_issues.expand(data=prs)
+    transform_prs = transform_pull_requests.expand(data=prs_linked_issues)
     load_prs = load_pull_requests.expand(data=transform_prs)
     load_contributors >> load_prs
     load_label >> load_prs
