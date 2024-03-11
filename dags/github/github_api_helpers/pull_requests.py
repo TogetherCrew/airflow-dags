@@ -92,6 +92,7 @@ def extract_linked_issues_from_pr(owner: str, repo: str, pull_number: int):
 
     return linked_issue
 
+
 def fetch_pull_requests_commits(
     owner: str, repo: str, pull_number: int, page: int, per_page: int = 100
 ):
