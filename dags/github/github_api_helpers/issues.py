@@ -20,6 +20,7 @@ def fetch_issue(owner: str, repo: str, issue_number: int):
     return response_data
 
 # Issues
+
 def fetch_issues(owner: str, repo: str, page: int, per_page: int = 100):
     """
     Fetches the issues for a specific repo page by page.
