@@ -19,8 +19,8 @@ def fetch_issue(owner: str, repo: str, issue_number: int):
     logging.info(f"Fetched issue {issue_number} for {owner}/{repo}. Issue: {response_data}")
     return response_data
 
-# Issues
 
+# Issues
 def fetch_issues(owner: str, repo: str, page: int, per_page: int = 100):
     """
     Fetches the issues for a specific repo page by page.
