@@ -9,6 +9,7 @@ def save_review_comment_to_neo4j(review_comment: dict, repository_id: str):
 
     user = review_comment.pop("user", None)
     pull_request_number = review_comment.pop("pull_request_number", None)
+    reactions_member = review_comment.pop("reactions_member", None)
     cleaned_review = flat_map(review_comment)
 
     if pull_request_number:
@@ -33,6 +34,19 @@ def save_review_comment_to_neo4j(review_comment: dict, repository_id: str):
     else:
         user_query = ""
 
+    if reactions_member:
+        reactions_member_query = f"""
+            WITH c
+            UNWIND $reactions_member as reaction_member
+            MERGE (ghu:{Node.GitHubUser.value} {{id: reaction_member.id}})
+                SET ghu += reaction_member, ghu.latestSavedAt = datetime()
+            WITH c, ghu
+            MERGE (c)-[ra:{Relationship.REACTED.value}]->(ghu)
+                SET ra.latestSavedAt = datetime()
+        """
+    else:
+        reactions_member_query = ""
+
     with driver.session() as session:
         session.execute_write(
             lambda tx: tx.run(
@@ -42,11 +56,13 @@ def save_review_comment_to_neo4j(review_comment: dict, repository_id: str):
 
                 { user_query }
                 { pull_request_query }
+                { reactions_member_query }
             """,
                 review=cleaned_review,
                 repository_id=repository_id,
                 user=user,
                 pull_request_number=pull_request_number,
+                reactions_member=reactions_member,
             )
         )
 
@@ -60,6 +76,7 @@ def save_comment_to_neo4j(comment: dict, repository_id: str):
     user = comment.pop("user", None)
     type = comment.pop("type", None)
     number = comment.pop("number", None)
+    reactions_member = comment.pop("reactions_member", None)
     cleaned_comment = flat_map(comment)
 
     if type == "issue":
@@ -91,6 +108,19 @@ def save_comment_to_neo4j(comment: dict, repository_id: str):
     else:
         user_query = ""
 
+    if reactions_member:
+        reactions_member_query = f"""
+            WITH c
+            UNWIND $reactions_member as reaction_member
+            MERGE (ghu:{Node.GitHubUser.value} {{id: reaction_member.user.id}})
+                SET ghu += reaction_member.user, ghu.latestSavedAt = datetime()
+            WITH c, ghu
+            MERGE (c)-[ra:{Relationship.REACTED.value}]->(ghu)
+                SET ra += reaction_member, ra.latestSavedAt = datetime()
+        """
+    else:
+        reactions_member_query = ""
+
     with driver.session() as session:
         session.execute_write(
             lambda tx: tx.run(
@@ -100,11 +130,13 @@ def save_comment_to_neo4j(comment: dict, repository_id: str):
 
                 { user_query }
                 { issue_query }
+                { reactions_member_query }
             """,
                 comment=cleaned_comment,
                 repository_id=int(repository_id),
                 user=user,
                 number=int(number),
+                reactions_member=reactions_member,
             )
         )
 
