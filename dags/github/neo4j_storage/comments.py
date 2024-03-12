@@ -116,7 +116,7 @@ def save_comment_to_neo4j(comment: dict, repository_id: str):
                 SET ghu += reaction_member.user, ghu.latestSavedAt = datetime()
             WITH c, ghu
             MERGE (c)-[ra:{Relationship.REACTED.value}]->(ghu)
-                SET ra += reaction_member, ra.latestSavedAt = datetime()
+                SET ra.latestSavedAt = datetime()
         """
     else:
         reactions_member_query = ""
