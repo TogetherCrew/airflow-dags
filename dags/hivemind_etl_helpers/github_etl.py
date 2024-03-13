@@ -21,7 +21,7 @@ from hivemind_etl_helpers.src.db.github.transform import (
     transform_issues,
     transform_prs,
 )
-from llama_index import Document
+from llama_index.core import Document
 from tc_hivemind_backend.db.pg_db_utils import setup_db
 
 

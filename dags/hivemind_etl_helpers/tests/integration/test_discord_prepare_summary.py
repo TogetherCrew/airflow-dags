@@ -4,18 +4,15 @@ from unittest import TestCase
 from bson import ObjectId
 from hivemind_etl_helpers.src.db.discord.discord_summary import DiscordSummary
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
-from llama_index import Document, MockEmbedding, ServiceContext
-from llama_index.llms import MockLLM
+from llama_index.core import Document, MockEmbedding, Settings
+from llama_index.core.llms import MockLLM
 
 
 class TestDiscordGroupedDataPreparation(TestCase):
     def setUp(self):
-        self.mock_llm = MockLLM()
-        self.service_context = ServiceContext.from_defaults(
-            llm=MockLLM(),
-            chunk_size=512,
-            embed_model=MockEmbedding(embed_dim=1024),
-        )
+        Settings.llm = MockLLM()
+        Settings.chunk_size = 512
+        Settings.embed_model = MockEmbedding(embed_dim=1024)
 
     def setup_db(
         self,
@@ -101,9 +98,7 @@ class TestDiscordGroupedDataPreparation(TestCase):
         client[guild_id].drop_collection("rawinfos")
         self.setUp()
 
-        discord_summary = DiscordSummary(
-            service_context=self.service_context, llm=self.mock_llm
-        )
+        discord_summary = DiscordSummary()
         (
             thread_summary_docs,
             channel_summary_docs,
@@ -127,9 +122,7 @@ class TestDiscordGroupedDataPreparation(TestCase):
         from_date = datetime(2023, 8, 1)
         self.setUp()
 
-        discord_summary = DiscordSummary(
-            service_context=self.service_context, llm=self.mock_llm
-        )
+        discord_summary = DiscordSummary()
         (
             thread_summary_docs,
             channel_summary_docs,
@@ -221,9 +214,7 @@ class TestDiscordGroupedDataPreparation(TestCase):
         client[guild_id]["rawinfos"].insert_many(raw_data)
         self.setUp()
 
-        discord_summary = DiscordSummary(
-            service_context=self.service_context, llm=self.mock_llm
-        )
+        discord_summary = DiscordSummary()
         (
             thread_summary_docs,
             channel_summary_docs,
@@ -329,9 +320,7 @@ class TestDiscordGroupedDataPreparation(TestCase):
         client[guild_id]["rawinfos"].insert_many(raw_data)
         self.setUp()
 
-        discord_summary = DiscordSummary(
-            service_context=self.service_context, llm=self.mock_llm
-        )
+        discord_summary = DiscordSummary()
         (
             thread_summary_docs,
             channel_summary_docs,

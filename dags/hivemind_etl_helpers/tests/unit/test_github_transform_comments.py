@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from hivemind_etl_helpers.src.db.github.schema import GitHubComment
 from hivemind_etl_helpers.src.db.github.transform.comments import transform_comments
-from llama_index import Document
+from llama_index.core import Document
 
 
 class TestGithubTransformcomComments(TestCase):

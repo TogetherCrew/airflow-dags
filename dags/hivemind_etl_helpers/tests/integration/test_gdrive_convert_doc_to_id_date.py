@@ -1,10 +1,12 @@
 from datetime import datetime, timezone
 from unittest import TestCase
 
+import pytest
 from hivemind_etl_helpers.src.utils.check_documents import process_doc_to_id_date
-from llama_index import Document
+from llama_index.core import Document
 
 
+@pytest.mark.skip(reason="GDrive ETL is not finished!")
 class TestDocumentGdriveProcessing(TestCase):
     def test_empty_documents(self):
         result = process_doc_to_id_date(

@@ -1,4 +1,4 @@
-from llama_index import Document, download_loader
+from llama_index.core import Document, download_loader
 
 
 def retrieve_folder_documents(folder_id: str) -> list[Document]:
