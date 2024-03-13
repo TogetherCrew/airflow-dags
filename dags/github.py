@@ -193,7 +193,9 @@ with DAG(
         new_prs = []
         for pr in prs:
             pr_number = pr["number"]
-            linked_issues = extract_linked_issues_from_pr(owner=owner, repo=repo_name, pull_number=pr_number)
+            linked_issues = extract_linked_issues_from_pr(
+                owner=owner, repo=repo_name, pull_number=pr_number
+            )
             new_prs.append({**pr, "linked_issues": linked_issues})
 
         new_data = {**data, "prs": new_prs}
