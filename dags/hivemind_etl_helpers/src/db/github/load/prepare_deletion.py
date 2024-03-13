@@ -54,10 +54,11 @@ class PrepareDeletion:
         )
 
         documents_to_save = docs_to_save + pr_docsuments_to_save
-
-        deletion_query = self._create_deletion_query(
-            docs_file_ids_to_delete + pr_docs_file_ids_to_delete
-        )
+        doc_ids_to_delete = docs_file_ids_to_delete + pr_docs_file_ids_to_delete
+        if len(doc_ids_to_delete):
+            deletion_query = self._create_deletion_query(doc_ids_to_delete)
+        else:
+            deletion_query = ""
 
         return documents_to_save, deletion_query
 
@@ -125,6 +126,8 @@ class PrepareDeletion:
         self,
         doc_ids_to_delete: list[str],
     ) -> str:
+        if len(doc_ids_to_delete) == 0:
+            return ""
         if len(doc_ids_to_delete) == 1:
             deletion_ids = f"({doc_ids_to_delete[0]})"
         else:
