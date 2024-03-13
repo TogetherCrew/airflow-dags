@@ -24,6 +24,7 @@ from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.decorators import task
 from github.github_api_helpers import (
+    extract_linked_issues_from_pr,
     fetch_commit_files,
     fetch_org_details,
     get_all_commits,
@@ -37,7 +38,6 @@ from github.github_api_helpers import (
     get_all_repo_labels,
     get_all_repo_review_comments,
     get_all_reviews_of_pull_request,
-    extract_linked_issues_from_pr
 )
 from github.neo4j_storage import (
     get_orgs_profile_from_neo4j,
@@ -194,9 +194,9 @@ with DAG(
         for pr in prs:
             pr_number = pr["number"]
             linked_issues = extract_linked_issues_from_pr(owner=owner, repo=repo_name, pull_number=pr_number)
-            new_prs.append({ **pr, "linked_issues": linked_issues })
+            new_prs.append({**pr, "linked_issues": linked_issues})
 
-        new_data = { **data, "prs": new_prs }
+        new_data = {**data, "prs": new_prs}
         return new_data
 
     @task
