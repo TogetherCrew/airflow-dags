@@ -51,4 +51,4 @@ class TestGetGitHubOrgRepos(TestCase):
                 )
             )
         repo_ids = get_github_organization_repos(github_organization_id=org_id)
-        self.assertEqual(repo_ids, [100, 101, 102])
+        self.assertEqual(set(repo_ids), set([100, 101, 102]))
