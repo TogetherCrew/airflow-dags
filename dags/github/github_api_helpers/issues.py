@@ -3,6 +3,25 @@ import logging
 from .smart_proxy import get
 
 
+def fetch_issue(owner: str, repo: str, issue_number: int):
+    """
+    Fetches a specific issue from a GitHub repository.
+
+    :param owner: The owner of the repository.
+    :param repo: The name of the repository.
+    :param issue_number: The number of the issue.
+    :return: The issue data.
+    """
+    endpoint = f"https://api.github.com/repos/{owner}/{repo}/issues/{issue_number}"
+    response = get(endpoint)
+    response_data = response.json()
+
+    logging.info(
+        f"Fetched issue {issue_number} for {owner}/{repo}. Issue: {response_data}"
+    )
+    return response_data
+
+
 # Issues
 def fetch_issues(owner: str, repo: str, page: int, per_page: int = 100):
     """

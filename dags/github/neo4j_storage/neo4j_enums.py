@@ -28,3 +28,4 @@ class Relationship(Enum):
     AUTHORED_BY = "AUTHORED_BY"
     IS_ON = "IS_ON"
     CHANGED = "CHANGED"
+    LINKED = "LINKED"
