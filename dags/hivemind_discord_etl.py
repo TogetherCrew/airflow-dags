@@ -3,7 +3,6 @@ from datetime import datetime
 
 from airflow import DAG
 from airflow.decorators import task
-
 from dotenv import load_dotenv
 from hivemind_etl_helpers.discord_mongo_summary_etl import process_discord_summaries
 from hivemind_etl_helpers.discord_mongo_vector_store_etl import (
@@ -12,7 +11,6 @@ from hivemind_etl_helpers.discord_mongo_vector_store_etl import (
 from hivemind_etl_helpers.src.utils.mongo_discord_communities import (
     get_all_discord_communities,
 )
-
 
 with DAG(
     dag_id="discord_vector_store_update",

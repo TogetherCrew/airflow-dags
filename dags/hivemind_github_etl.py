@@ -5,7 +5,6 @@ from datetime import datetime
 
 from airflow import DAG
 from airflow.decorators import task
-
 from hivemind_etl_helpers.github_etl import process_github_vectorstore
 from hivemind_etl_helpers.src.utils.get_communities_data import (
     get_github_communities_data,

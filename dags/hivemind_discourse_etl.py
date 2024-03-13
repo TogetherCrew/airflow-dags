@@ -3,7 +3,6 @@ from datetime import datetime
 
 from airflow import DAG
 from airflow.decorators import task
-
 from hivemind_etl_helpers.discourse_summary_etl import process_discourse_summary
 from hivemind_etl_helpers.discourse_vectorstore_etl import process_discourse_vectorstore
 from hivemind_etl_helpers.src.utils.get_communities_data import (
