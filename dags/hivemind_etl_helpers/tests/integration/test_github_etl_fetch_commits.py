@@ -29,7 +29,7 @@ class TestFetchCommits(TestCase):
             session.execute_write(
                 lambda tx: tx.run(
                     """
-                    CREATE (co:Commit)<-[:COMMITED]-(user:GitHubUser {login: "author #1"})
+                    CREATE (co:Commit)<-[:COMMITTED]-(user:GitHubUser {login: "author #1"})
                         SET
                             co.`commit.author.name` = "Author#1",
                             co.`commit.message` = "Issue #1 is resolved!",
@@ -68,7 +68,7 @@ class TestFetchCommits(TestCase):
             session.execute_write(
                 lambda tx: tx.run(
                     """
-                    CREATE (co:Commit)<-[:COMMITED]-(user:GitHubUser {login: "author #1"})
+                    CREATE (co:Commit)<-[:COMMITTED]-(user:GitHubUser {login: "author #1"})
                         SET
                             co.`commit.author.name` = "Author#1",
                             co.`commit.message` = "Issue #1 is resolved!",
@@ -108,7 +108,7 @@ class TestFetchCommits(TestCase):
             session.execute_write(
                 lambda tx: tx.run(
                     """
-                    CREATE (co:Commit)<-[:COMMITED]-(:GitHubUser {login: "author #1"})
+                    CREATE (co:Commit)<-[:COMMITTED]-(:GitHubUser {login: "author #1"})
                         SET
                             co.`commit.author.name` = "Author#1",
                             co.`commit.message` = "Issue #1 is resolved!",
@@ -120,7 +120,7 @@ class TestFetchCommits(TestCase):
                             co.`commit.author.date` = "2024-01-01T10:23:50Z",
                             co.`commit.verification.reason` = "invalid"
 
-                    CREATE (co2:Commit)<-[:COMMITED]-(:GitHubUser {login: "author #2"})
+                    CREATE (co2:Commit)<-[:COMMITTED]-(:GitHubUser {login: "author #2"})
                         SET
                             co2.`commit.author.name` = "Author#2",
                             co2.`commit.message` = "Issue #2 is resolved!",
@@ -132,7 +132,7 @@ class TestFetchCommits(TestCase):
                             co2.`commit.author.date` = "2023-01-01T10:23:50Z",
                             co2.`commit.verification.reason` = "invalid"
 
-                    CREATE (co3:Commit)<-[:COMMITED]-(:GitHubUser {login: "author #3"})
+                    CREATE (co3:Commit)<-[:COMMITTED]-(:GitHubUser {login: "author #3"})
                         SET
                             co3.`commit.author.name` = "Author#3",
                             co3.`commit.message` = "Issue #3 is resolved!",

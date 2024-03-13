@@ -29,7 +29,7 @@ class TestFetchRawCommits(TestCase):
             session.execute_write(
                 lambda tx: tx.run(
                     """
-                    CREATE (co:Commit)<-[:COMMITED]-(user:GitHubUser {login: "author #1"})
+                    CREATE (co:Commit)<-[:COMMITTED]-(user:GitHubUser {login: "author #1"})
                         SET
                             co.`commit.author.name` = "Author#1",
                             co.`commit.message` = "Issue #1 is resolved!",
@@ -70,7 +70,7 @@ class TestFetchRawCommits(TestCase):
             session.execute_write(
                 lambda tx: tx.run(
                     """
-                    CREATE (co:Commit)<-[:COMMITED]-(user:GitHubUser {login: "author #1"})
+                    CREATE (co:Commit)<-[:COMMITTED]-(user:GitHubUser {login: "author #1"})
                         SET
                             co.`commit.author.name` = "Author#1",
                             co.`commit.message` = "Issue #1 is resolved!",
