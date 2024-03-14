@@ -58,7 +58,7 @@ def group_per_channel_thread(
         and third level would be the thread
         (thread can be `None` meaning it is the main channel)
     """
-    raw_data_grouped: dict[str, dict[str, dict[str, list]]] = {}
+    raw_data_grouped: dict[str, dict[str, dict[str | None, list]]] = {}
 
     # grouping by channel
     for date in daily_messages.keys():
