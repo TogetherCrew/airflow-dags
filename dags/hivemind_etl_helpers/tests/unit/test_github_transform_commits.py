@@ -15,6 +15,7 @@ class TestGithubTransformCommits(TestCase):
         input_data = [
             GitHubCommit(
                 author_name="author #1",
+                committer_name="author #2",
                 message="sample message",
                 sha="sha#1000000",
                 created_at=datetime(2023, 11, 1).strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -36,6 +37,7 @@ class TestGithubTransformCommits(TestCase):
             documents[0].metadata,
             {
                 "author_name": "author #1",
+                "committer_name": "author #2",
                 "sha": "sha#1000000",
                 "created_at": "2023-11-01 00:00:00",
                 "latest_saved_at": "2023-12-01 01:00:00",
@@ -52,6 +54,7 @@ class TestGithubTransformCommits(TestCase):
         input_data = [
             GitHubCommit(
                 author_name="author #1",
+                committer_name="author #1",
                 message="sample message #1",
                 sha="sha#1000000",
                 created_at=datetime(2023, 11, 1).strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -64,6 +67,7 @@ class TestGithubTransformCommits(TestCase):
             ),
             GitHubCommit(
                 author_name="author #2",
+                committer_name="author #3",
                 message="sample message #2",
                 sha="sha#1000001",
                 created_at=datetime(2023, 11, 2).strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -76,6 +80,7 @@ class TestGithubTransformCommits(TestCase):
             ),
             GitHubCommit(
                 author_name="author #3",
+                committer_name="author #4",
                 message="sample message #3",
                 sha="sha#1000002",
                 created_at=datetime(2023, 11, 3).strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -98,6 +103,7 @@ class TestGithubTransformCommits(TestCase):
             documents[0].metadata,
             {
                 "author_name": "author #1",
+                "committer_name": "author #1",
                 "sha": "sha#1000000",
                 "created_at": "2023-11-01 00:00:00",
                 "latest_saved_at": "2023-12-01 01:00:00",
@@ -114,6 +120,7 @@ class TestGithubTransformCommits(TestCase):
             documents[1].metadata,
             {
                 "author_name": "author #2",
+                "committer_name": "author #3",
                 "sha": "sha#1000001",
                 "created_at": "2023-11-02 00:00:00",
                 "latest_saved_at": "2023-12-02 01:00:00",
@@ -130,6 +137,7 @@ class TestGithubTransformCommits(TestCase):
             documents[2].metadata,
             {
                 "author_name": "author #3",
+                "committer_name": "author #4",
                 "sha": "sha#1000002",
                 "created_at": "2023-11-03 00:00:00",
                 "latest_saved_at": "2023-12-03 01:00:00",

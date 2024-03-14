@@ -5,7 +5,7 @@ class GitHubCommit:
     def __init__(
         self,
         author_name: str,
-        commiter_name: str,
+        committer_name: str,
         message: str,
         api_url: str,
         html_url: str,
@@ -22,7 +22,7 @@ class GitHubCommit:
         and values as the corresponding verification status.
         """
         self.author_name = author_name
-        self.commiter_name = commiter_name
+        self.committer_name = committer_name
         self.message = message
         self.api_url = api_url
         self.html_url = html_url
@@ -37,7 +37,7 @@ class GitHubCommit:
     def from_dict(cls, data: dict[str, str | int]) -> "GitHubCommit":
         return cls(
             author_name=data["author_name"],  # type: ignore
-            commiter_name=data["commiter_name"],  # type: ignore
+            committer_name=data["committer_name"],  # type: ignore
             message=data["message"],  # type: ignore
             api_url=data["api_url"],  # type: ignore
             html_url=data["html_url"],  # type: ignore
@@ -52,7 +52,7 @@ class GitHubCommit:
     def to_dict(self) -> dict[str, str | int]:
         return {
             "author_name": self.author_name,
-            "commiter_name": self.commiter_name,
+            "committer_name": self.committer_name,
             "message": self.message,
             "api_url": self.api_url,
             "html_url": self.html_url,

@@ -28,7 +28,6 @@ def fetch_raw_commits(
     neo4j_connection = Neo4jConnection()
     neo4j_driver = neo4j_connection.connect_neo4j()
     query = """MATCH (co:Commit)<-[:AUTHORED_BY]-(user:GitHubUser)
-        OPTIONAL MATCH (co)<-[:COMMITTED_BY]-(user_commiter:GitHubUser)
         WHERE
         co.repository_id IN $repoIds
     """
@@ -36,10 +35,11 @@ def fetch_raw_commits(
         query += "AND datetime(co.`commit.author.date`) >= datetime($from_date)"
 
     query += """
+        OPTIONAL MATCH (co)<-[:COMMITTED_BY]-(user_commiter:GitHubUser)
         MATCH (repo:Repository {id: co.repository_id})
         RETURN
             user.login AS author_name,
-            user_commiter.login AS commiter_name,
+            user_commiter.login AS committer_name,
             co.`commit.message` AS message,
             co.`commit.url` AS api_url,
             co.`parents.0.html_url` AS html_url,
