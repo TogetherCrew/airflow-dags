@@ -32,7 +32,7 @@ class PrepareSummaries(SummaryBase):
         guild_id: str,
         raw_data_grouped: dict[str, dict[str, dict[str | None, list]]],
         summarization_query: str,
-    ) -> dict[str, dict[str, dict[str, str]]]:
+    ) -> dict[str, dict[str, dict[str | None, str]]]:
         """
         prepare the summaries for threads
 
@@ -47,7 +47,7 @@ class PrepareSummaries(SummaryBase):
 
         Returns
         --------
-        thread_summaries : dict[str, dict[str, dict[str, str]]]
+        thread_summaries : dict[str, dict[str, dict[str | None, str]]]
             the summaries per date, channel, and thread
             the third level are the summaries saved
         """
@@ -60,7 +60,7 @@ class PrepareSummaries(SummaryBase):
                 total_call_count += len(raw_data_grouped[date][channel])
 
         idx = 1
-        thread_summaries: dict[str, dict[str, dict[str, str]]] = {}
+        thread_summaries: dict[str, dict[str, dict[str | None, str]]] = {}
         for date in raw_data_grouped.keys():
             for channel in raw_data_grouped[date].keys():
                 for thread in raw_data_grouped[date][channel].keys():
@@ -76,16 +76,15 @@ class PrepareSummaries(SummaryBase):
                     summary_response = self._get_summary(
                         messages_document, summarization_query
                     )
-                    thread_name = "Main channel" if thread is None else thread
                     thread_summaries.setdefault(date, {}).setdefault(
                         channel, {}
-                    ).setdefault(thread_name, summary_response)
+                    ).setdefault(thread, summary_response)
 
         return thread_summaries
 
     def prepare_channel_summaries(
         self,
-        thread_summaries: dict[str, dict[str, dict[str, str]]],
+        thread_summaries: dict[str, dict[str, dict[str | None, str]]],
         summarization_query: str,
     ) -> tuple[dict[str, dict[str, str]], list[Document]]:
         """
@@ -93,8 +92,8 @@ class PrepareSummaries(SummaryBase):
 
         Parameters
         -----------
-        thread_summaries : dict[str, dict[str, dict[str, str]]]
-            the thread summaries per day, per channel
+        thread_summaries : dict[str, dict[str, dict[str | None, str]]]
+            the thread summaries per day and per channel
         summarization_query : str
             the summarization query to do on the LLM
 
@@ -125,7 +124,14 @@ class PrepareSummaries(SummaryBase):
                         thread_summary=thread_summaries[date][channel][thread],
                         thread_channel=channel,
                     )
-                    channel_documents.append(thread_doc)
+                    # modifying the thread name just for summarizer
+                    thread_doc_modified = transform_thread_summary_to_document(
+                        thread_name="Main channel" if thread is None else thread,
+                        summary_date=date,
+                        thread_summary=thread_summaries[date][channel][thread],
+                        thread_channel=channel,
+                    )
+                    channel_documents.append(thread_doc_modified)
                     thread_summary_documenets.append(thread_doc)
 
                 logging.info(
