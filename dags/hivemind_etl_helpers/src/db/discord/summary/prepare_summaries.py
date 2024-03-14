@@ -1,5 +1,4 @@
 import logging
-import re
 
 from hivemind_etl_helpers.src.db.discord.summary.summary_utils import (
     transform_channel_summary_to_document,
@@ -119,7 +118,6 @@ class PrepareSummaries(SummaryBase):
             for channel in thread_summaries[date].keys():
                 channel_documents: list[Document] = []
                 for thread in thread_summaries[date][channel].keys():
-
                     thread_summary = thread_summaries[date][channel][thread]
                     thread_summary_splitted = self.split_lines(thread_summary)
 
