@@ -40,7 +40,7 @@ class TestFetchRawCommits(TestCase):
                             co.latestSavedAt = "2024-02-06T10:23:50Z",
                             co.`commit.author.date` = "2024-01-01T10:23:50Z",
                             co.`commit.verification.reason` = "valid"
-                    CREATE (co)<-[:AUTHORED_BY]-(user)               
+                    CREATE (co)<-[:AUTHORED_BY]-(user)
 
                     CREATE (repo:Repository {id: 123, full_name: "Org/SampleRepo"})
                     """

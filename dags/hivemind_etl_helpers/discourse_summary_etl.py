@@ -164,7 +164,11 @@ def process_forum(
 
 def get_summary_documents(
     forum_id: str, raw_data_grouped: list[Record], forum_endpoint: str
-) -> tuple[list[Document], list[Document], list[Document],]:
+) -> tuple[
+    list[Document],
+    list[Document],
+    list[Document],
+]:
     """
     prepare the summary documents for discourse based on given raw data
 

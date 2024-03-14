@@ -40,7 +40,7 @@ class TestFetchCommits(TestCase):
                             co.latestSavedAt = "2024-02-06T10:23:50Z",
                             co.`commit.author.date` = "2024-01-01T10:23:50Z",
                             co.`commit.verification.reason` = "valid"
-                    CREATE (co)<-[:AUTHORED_BY]-(user)               
+                    CREATE (co)<-[:AUTHORED_BY]-(user)
 
                     CREATE (repo:Repository {id: 123, full_name: "Org/SampleRepo"})
                     """
@@ -64,7 +64,6 @@ class TestFetchCommits(TestCase):
         self.assertEqual(commits[0].latest_saved_at, "2024-02-06 10:23:50")
         self.assertEqual(commits[0].created_at, "2024-01-01 10:23:50")
         self.assertEqual(commits[0].verification, "valid")
-
 
     def test_get_single_commit_single_repo_no_from_date_no_commiter(self):
         with self.neo4j_driver.session() as session:
