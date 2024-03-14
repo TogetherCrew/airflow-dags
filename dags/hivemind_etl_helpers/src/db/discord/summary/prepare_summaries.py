@@ -30,7 +30,7 @@ class PrepareSummaries(SummaryBase):
     def prepare_thread_summaries(
         self,
         guild_id: str,
-        raw_data_grouped: dict[str, dict[str, dict[str, list]]],
+        raw_data_grouped: dict[str, dict[str, dict[str | None, list]]],
         summarization_query: str,
     ) -> dict[str, dict[str, dict[str, str]]]:
         """
@@ -40,7 +40,7 @@ class PrepareSummaries(SummaryBase):
         -----------
         guild_id : str
             the guild id to convert the raw messages to documents
-        raw_data_grouped : dict[str, dict[str, dict[str, list]]]
+        raw_data_grouped : dict[str, dict[str, dict[str | None, list]]]
             the raw data grouped by date, channel and thread in third nesting level
         summarization_query : str
             the summarization query to do on the LLM
@@ -76,9 +76,10 @@ class PrepareSummaries(SummaryBase):
                     summary_response = self._get_summary(
                         messages_document, summarization_query
                     )
+                    thread_name = "Main channel" if thread is None else thread
                     thread_summaries.setdefault(date, {}).setdefault(
                         channel, {}
-                    ).setdefault(thread, summary_response)
+                    ).setdefault(thread_name, summary_response)
 
         return thread_summaries
 
