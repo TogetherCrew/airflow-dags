@@ -74,24 +74,35 @@ class DiscordSummary(PrepareSummaries):
         daily_summary_documenets : list[llama_index.Document]
             list of daily summaries converted to llama_index documents
         """
+        summary_prompt_posfix = (
+            ". Organize the output in one or multiple descriptive "
+            "bullet points and include important details"
+        )
         raw_data_grouped = prepare_grouped_data(guild_id, from_date)
         if raw_data_grouped != {}:
             thread_summaries = self.prepare_thread_summaries(
-                guild_id, raw_data_grouped, summarization_prefix + " discord thread"
+                guild_id,
+                raw_data_grouped,
+                (summarization_prefix + " discord thread" + summary_prompt_posfix),
             )
             (
                 channel_summaries,
                 thread_summary_documenets,
             ) = self.prepare_channel_summaries(
                 thread_summaries,
-                summarization_prefix + " selection of discord thread summaries",
+                summarization_prefix
+                + (" selection of discord thread summaries" + summary_prompt_posfix),
             )
             (
                 daily_summaries,
                 channel_summary_documenets,
             ) = self.prepare_daily_summaries(
                 channel_summaries,
-                summarization_prefix + " selection of discord channel summaries",
+                (
+                    summarization_prefix
+                    + " selection of discord channel summaries"
+                    + summary_prompt_posfix
+                ),
             )
             daily_summary_documents = transform_daily_summary_to_document(
                 daily_summaries
