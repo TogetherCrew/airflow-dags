@@ -1,4 +1,5 @@
 import logging
+import re
 
 from hivemind_etl_helpers.src.db.discord.summary.summary_utils import (
     transform_channel_summary_to_document,
@@ -118,21 +119,27 @@ class PrepareSummaries(SummaryBase):
             for channel in thread_summaries[date].keys():
                 channel_documents: list[Document] = []
                 for thread in thread_summaries[date][channel].keys():
-                    thread_doc = transform_thread_summary_to_document(
-                        thread_name=thread,
-                        summary_date=date,
-                        thread_summary=thread_summaries[date][channel][thread],
-                        thread_channel=channel,
-                    )
-                    # modifying the thread name just for summarizer
+
+                    thread_summary = thread_summaries[date][channel][thread]
+                    thread_summary_splitted = self.split_lines(thread_summary)
+
+                    for summary in thread_summary_splitted:
+                        thread_doc = transform_thread_summary_to_document(
+                            thread_name=thread,
+                            summary_date=date,
+                            thread_summary=summary,
+                            thread_channel=channel,
+                        )
+                        thread_summary_documenets.append(thread_doc)
+
+                    # modifying the thread name just for channel summarizer
                     thread_doc_modified = transform_thread_summary_to_document(
                         thread_name="Main channel" if thread is None else thread,
                         summary_date=date,
-                        thread_summary=thread_summaries[date][channel][thread],
+                        thread_summary=thread_summary,
                         thread_channel=channel,
                     )
                     channel_documents.append(thread_doc_modified)
-                    thread_summary_documenets.append(thread_doc)
 
                 logging.info(
                     f"{self.prefix} Summrizing channels {idx}/{total_call_count}"
@@ -207,3 +214,28 @@ class PrepareSummaries(SummaryBase):
             daily_summaries[date] = day_summary
 
         return daily_summaries, channel_summary_documenets
+
+    def split_lines(
+        self,
+        text: str,
+    ) -> list[str]:
+        """
+        split a text by its bullet points
+
+        Parameters
+        -----------
+        text : str
+            the text that might contain multiple bullet points
+
+        Returns
+        --------
+        splitted_text : list[str]
+            a list of strings which is the original text
+            but splitted into multiple parts
+        """
+        splitted_text = text.split("\n")
+        empty_string = ""
+        while empty_string in splitted_text:
+            splitted_text.remove(empty_string)
+
+        return splitted_text
