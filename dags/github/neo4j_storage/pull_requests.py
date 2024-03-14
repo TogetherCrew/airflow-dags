@@ -133,7 +133,7 @@ def save_pr_files_changes_to_neo4j(pr_id: int, repository_id: str, file_changes:
     driver = neo4jConnection.connect_neo4j()
 
     # Not saving file changes without a sha
-    file_changes = list(map(lambda fc: fc.get("sha") is not None, file_changes))
+    file_changes = list(filter(lambda fc: fc.get("sha") is not None, file_changes))
 
     with driver.session() as session:
         session.execute_write(
