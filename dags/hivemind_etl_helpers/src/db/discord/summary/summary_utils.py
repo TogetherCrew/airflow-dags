@@ -36,6 +36,7 @@ def transform_thread_summary_to_document(
             "type": "thread",
         },
         excluded_embed_metadata_keys=["date", "thread", "channel", "type"],
+        excluded_llm_metadata_keys=["channel", "date", "type"],
     )
 
     return thread_summary_document
@@ -68,6 +69,7 @@ def transform_channel_summary_to_document(
         text=channel_summary,
         metadata={"date": summary_date, "channel": channel_name, "type": "channel"},
         excluded_embed_metadata_keys=["date", "thread", "channel", "type"],
+        excluded_llm_metadata_keys=["date", "thread", "type"],
     )
 
     return channel_summary_document
