@@ -7,6 +7,8 @@ from hivemind_etl_helpers.src.db.discourse.raw_post_to_documents import (
 from hivemind_etl_helpers.src.db.discourse.utils.get_forums import get_forum_uuid
 from hivemind_etl_helpers.src.document_node_parser import configure_node_parser
 from hivemind_etl_helpers.src.utils.check_documents import check_documents
+from llama_index.core import Settings
+from llama_index.llms.openai import OpenAI
 from tc_hivemind_backend.db.pg_db_utils import setup_db
 from tc_hivemind_backend.db.utils.model_hyperparams import load_model_hyperparams
 from tc_hivemind_backend.embeddings.cohere import CohereEmbedding
@@ -127,15 +129,16 @@ def process_forum(
             WHERE (metadata_->>'postId')::float IN {deletion_ids};
         """
 
-    embed_model = CohereEmbedding()
+    Settings.node_parser = node_parser
+    Settings.embed_model = CohereEmbedding()
+    Settings.chunk_size = chunk_size
+    Settings.llm = OpenAI(model="gpt-3.5-turbo")
 
     pg_vector.save_documents_in_batches(
         community_id=community_id,
         documents=documents,
         batch_size=100,
-        node_parser=node_parser,
         max_request_per_minute=None,
-        embed_model=embed_model,
         embed_dim=embedding_dim,
         doc_file_ids_to_delete=deletion_query,
     )

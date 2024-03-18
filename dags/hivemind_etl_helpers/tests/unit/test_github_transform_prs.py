@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from hivemind_etl_helpers.src.db.github.schema import GitHubPullRequest
 from hivemind_etl_helpers.src.db.github.transform.pull_requests import transform_prs
-from llama_index import Document
+from llama_index.core import Document
 
 
 class TestGithubTransformPRs(TestCase):

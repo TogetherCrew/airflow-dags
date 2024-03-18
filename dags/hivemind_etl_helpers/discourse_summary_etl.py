@@ -10,8 +10,9 @@ from hivemind_etl_helpers.src.db.discourse.summary.prepare_summary import (
 from hivemind_etl_helpers.src.db.discourse.utils.get_forums import get_forum_uuid
 from hivemind_etl_helpers.src.document_node_parser import configure_node_parser
 from hivemind_etl_helpers.src.utils.sort_summary_docs import sort_summaries_daily
-from llama_index import Document
-from llama_index.response_synthesizers import get_response_synthesizer
+from llama_index.core import Document, Settings
+from llama_index.core.response_synthesizers import get_response_synthesizer
+from llama_index.llms.openai import OpenAI
 from neo4j._data import Record
 from tc_hivemind_backend.db.pg_db_utils import setup_db
 from tc_hivemind_backend.db.utils.model_hyperparams import load_model_hyperparams
@@ -133,8 +134,6 @@ def process_forum(
         node_parser = configure_node_parser(chunk_size=chunk_size)
         pg_vector = PGVectorAccess(table_name=table_name, dbname=dbname)
 
-        embed_model = CohereEmbedding()
-
         sorted_daily_docs = sort_summaries_daily(
             level1_docs=topic_summary_documents,
             level2_docs=category_summary_documenets,
@@ -145,13 +144,16 @@ def process_forum(
             f"{log_prefix} Saving discourse summaries (extracting the embedding and saving)"
         )
 
+        Settings.node_parser = node_parser
+        Settings.embed_model = CohereEmbedding()
+        Settings.chunk_size = chunk_size
+        Settings.llm = OpenAI(model="gpt-3.5-turbo")
+
         pg_vector.save_documents_in_batches(
             community_id=community_id,
             documents=sorted_daily_docs,
             batch_size=100,
-            node_parser=node_parser,
             max_request_per_minute=None,
-            embed_model=embed_model,
             embed_dim=embedding_dim,
             request_per_minute=10000,
             deletion_query=deletion_query,

@@ -1,9 +1,12 @@
 from typing import Callable
 
-from llama_index.node_parser import SimpleNodeParser
-from llama_index.node_parser.text.sentence import CHUNKING_REGEX, DEFAULT_PARAGRAPH_SEP
-from llama_index.text_splitter import SentenceSplitter
-from llama_index.utils import get_tokenizer
+from llama_index.core.node_parser import SimpleNodeParser
+from llama_index.core.node_parser.text.sentence import (
+    CHUNKING_REGEX,
+    DEFAULT_PARAGRAPH_SEP,
+)
+from llama_index.core.text_splitter import SentenceSplitter
+from llama_index.core.utils import get_tokenizer
 
 
 def configure_node_parser(

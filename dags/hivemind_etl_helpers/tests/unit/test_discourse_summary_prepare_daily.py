@@ -3,16 +3,15 @@ import unittest
 from hivemind_etl_helpers.src.db.discourse.summary.prepare_summary import (
     DiscourseSummary,
 )
-from llama_index import Document, MockEmbedding, ServiceContext
-from llama_index.llms import MockLLM
+from llama_index.core import Document, MockEmbedding, Settings
+from llama_index.core.llms import MockLLM
 
 
 class TestDiscoursePrepareCategorySummaries(unittest.TestCase):
     def setUp(self):
-        self.mock_llm = MockLLM()
-        self.service_context = ServiceContext.from_defaults(
-            llm=MockLLM(), chunk_size=256, embed_model=MockEmbedding(embed_dim=1024)
-        )
+        Settings.llm = MockLLM()
+        Settings.chunk_size = 256
+        Settings.embed_model = MockEmbedding(embed_dim=1024)
 
     def test_prepare_category_summaries_empty_data(self):
         self.setUp()
@@ -20,8 +19,6 @@ class TestDiscoursePrepareCategorySummaries(unittest.TestCase):
         forum_endpoint = "sample_endpoint"
 
         prepare_summaries = DiscourseSummary(
-            service_context=self.service_context,
-            llm=self.mock_llm,
             forum_id=forum_id,
             forum_endpoint=forum_endpoint,
         )
@@ -40,8 +37,6 @@ class TestDiscoursePrepareCategorySummaries(unittest.TestCase):
         forum_endpoint = "sample_endpoint"
 
         prepare_summaries = DiscourseSummary(
-            service_context=self.service_context,
-            llm=self.mock_llm,
             forum_id=forum_id,
             forum_endpoint=forum_endpoint,
         )
@@ -105,8 +100,6 @@ class TestDiscoursePrepareCategorySummaries(unittest.TestCase):
         forum_endpoint = "sample_endpoint"
 
         prepare_summaries = DiscourseSummary(
-            service_context=self.service_context,
-            llm=self.mock_llm,
             forum_id=forum_id,
             forum_endpoint=forum_endpoint,
         )

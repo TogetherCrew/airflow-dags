@@ -1,4 +1,3 @@
-import argparse
 import logging
 from datetime import timedelta
 
@@ -9,6 +8,8 @@ from hivemind_etl_helpers.src.db.discord.find_guild_id import (
     find_guild_id_by_community_id,
 )
 from hivemind_etl_helpers.src.document_node_parser import configure_node_parser
+from llama_index.core import Settings
+from llama_index.llms.openai import OpenAI
 from tc_hivemind_backend.db.pg_db_utils import setup_db
 from tc_hivemind_backend.db.utils.model_hyperparams import load_model_hyperparams
 from tc_hivemind_backend.embeddings.cohere import CohereEmbedding
@@ -52,7 +53,10 @@ def process_discord_guild_mongo(community_id: str) -> None:
     node_parser = configure_node_parser(chunk_size=chunk_size)
     pg_vector = PGVectorAccess(table_name=table_name, dbname=dbname)
 
-    embed_model = CohereEmbedding()
+    Settings.node_parser = node_parser
+    Settings.embed_model = CohereEmbedding()
+    Settings.chunk_size = chunk_size
+    Settings.llm = OpenAI(model="gpt-3.5-turbo")
 
     pg_vector.save_documents_in_batches(
         community_id=community_id,
@@ -60,19 +64,5 @@ def process_discord_guild_mongo(community_id: str) -> None:
         batch_size=100,
         node_parser=node_parser,
         max_request_per_minute=None,
-        embed_model=embed_model,
-        embed_dim=embedding_dim,
         request_per_minute=10000,
-        # max_request_per_day=REQUEST_PER_DAY,
     )
-
-
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "community_id", type=str, help="the Community that the guild is related to"
-    )
-    args = parser.parse_args()
-
-    process_discord_guild_mongo(community_id=args.community_id)

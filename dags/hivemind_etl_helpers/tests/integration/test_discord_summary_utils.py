@@ -4,7 +4,7 @@ from hivemind_etl_helpers.src.db.discord.summary.summary_utils import (
     transform_channel_summary_to_document,
     transform_thread_summary_to_document,
 )
-from llama_index import Document
+from llama_index.core import Document
 
 
 class TestTransformSummaryToDocument(unittest.TestCase):

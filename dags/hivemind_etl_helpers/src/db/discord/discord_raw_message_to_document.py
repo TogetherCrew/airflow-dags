@@ -4,7 +4,7 @@ from hivemind_etl_helpers.src.db.discord.fetch_raw_messages import fetch_raw_mes
 from hivemind_etl_helpers.src.db.discord.utils.transform_discord_raw_messges import (
     transform_discord_raw_messages,
 )
-from llama_index import Document
+from llama_index.core import Document
 
 
 def discord_raw_to_docuemnts(

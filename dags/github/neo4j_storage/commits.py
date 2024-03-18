@@ -8,6 +8,7 @@ def save_commit_to_neo4j(commit: dict, repository_id: str):
     driver = neo4jConnection.connect_neo4j()
 
     committer = commit.pop("committer", None)
+    author = commit.pop("author", None)
     cleaned_commit = flat_map(commit)
 
     if committer:
@@ -16,11 +17,23 @@ def save_commit_to_neo4j(commit: dict, repository_id: str):
             MERGE (ghu:{Node.GitHubUser.value} {{id: $committer.id}})
                 SET ghu += $committer, ghu.latestSavedAt = datetime()
             WITH c, ghu
-            MERGE (ghu)-[cc:{Relationship.COMMITTED.value}]->(c)
+            MERGE (ghu)-[cc:{Relationship.COMMITTED_BY.value}]->(c)
                 SET cc.latestSavedAt = datetime()
         """
     else:
         committer_query = ""
+
+    if author:
+        author_query = f"""
+            WITH c
+            MERGE (ghu:{Node.GitHubUser.value} {{id: $author.id}})
+                SET ghu += $author, ghu.latestSavedAt = datetime()
+            WITH c, ghu
+            MERGE (ghu)-[ca:{Relationship.AUTHORED_BY.value}]->(c)
+                SET ca.latestSavedAt = datetime()
+        """
+    else:
+        author_query = ""
 
     with driver.session() as session:
         session.execute_write(
@@ -30,10 +43,12 @@ def save_commit_to_neo4j(commit: dict, repository_id: str):
                 SET c += $commit, c.repository_id = $repository_id, c.latestSavedAt = datetime()
 
                 { committer_query }
+                { author_query }
             """,
                 commit=cleaned_commit,
                 repository_id=repository_id,
                 committer=committer,
+                author=author,
             )
         )
 

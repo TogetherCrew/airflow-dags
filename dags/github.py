@@ -25,6 +25,7 @@ from airflow import DAG
 from airflow.decorators import task
 from github.github_api_helpers import (
     get_all_comment_reactions,
+    extract_linked_issues_from_pr,
     fetch_commit_files,
     fetch_org_details,
     get_all_commits,
@@ -180,6 +181,25 @@ with DAG(
 
         prs = get_all_pull_requests(owner=owner, repo=repo_name)
         new_data = {"prs": prs, **data}
+        return new_data
+
+    @task
+    def extract_pull_request_linked_issues(data):
+        logging.info(f"All data from last stage: {data}")
+        repo = data["repo"]
+        prs = data["prs"]
+        owner = repo["owner"]["login"]
+        repo_name = repo["name"]
+
+        new_prs = []
+        for pr in prs:
+            pr_number = pr["number"]
+            linked_issues = extract_linked_issues_from_pr(
+                owner=owner, repo=repo_name, pull_number=pr_number
+            )
+            new_prs.append({**pr, "linked_issues": linked_issues})
+
+        new_data = {**data, "prs": new_prs}
         return new_data
 
     @task
@@ -533,11 +553,19 @@ with DAG(
     transform_label = transform_labels.expand(data=labels)
     load_label = load_labels.expand(data=transform_label)
 
+    issues = extract_issues.expand(data=repos)
+    transform_issue = transform_issues.expand(data=issues)
+    load_issue = load_issues.expand(data=transform_issue)
+    load_contributors >> load_issue
+    load_label >> load_issue
+
     prs = extract_pull_requests.expand(data=repos)
-    transform_prs = transform_pull_requests.expand(data=prs)
+    prs_linked_issues = extract_pull_request_linked_issues.expand(data=prs)
+    transform_prs = transform_pull_requests.expand(data=prs_linked_issues)
     load_prs = load_pull_requests.expand(data=transform_prs)
     load_contributors >> load_prs
     load_label >> load_prs
+    load_issue >> load_prs
 
     pr_files_changes = extract_pull_request_files_changes.expand(data=prs)
     transform_pr_files_changes = transform_pull_request_files_changes.expand(
@@ -546,12 +574,6 @@ with DAG(
     load_pr_files_changes = load_pull_request_files_changes.expand(
         data=transform_pr_files_changes
     )
-
-    issues = extract_issues.expand(data=repos)
-    transform_issue = transform_issues.expand(data=issues)
-    load_issue = load_issues.expand(data=transform_issue)
-    load_contributors >> load_issue
-    load_label >> load_issue
 
     pr_reviews = extract_pr_review.expand(data=prs)
     transform_pr_review = transform_pr_review.expand(data=pr_reviews)

@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from hivemind_etl_helpers.src.db.github.schema import GitHubCommit
 from hivemind_etl_helpers.src.db.github.transform.commits import transform_commits
-from llama_index import Document
+from llama_index.core import Document
 
 
 class TestGithubTransformCommits(TestCase):
