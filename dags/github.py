@@ -348,7 +348,6 @@ with DAG(
             reactions = get_all_comment_reactions(
                 owner=owner, repo=repo_name, comment_id=comment.get("id", None)
             )
-            print("REACTION MEMBER: ", reactions)
             comment["reactions_member"] = reactions
 
         return {"comments": comments, **data}

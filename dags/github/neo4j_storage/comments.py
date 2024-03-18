@@ -41,7 +41,7 @@ def save_review_comment_to_neo4j(review_comment: dict, repository_id: str):
             MERGE (ghu:{Node.GitHubUser.value} {{id: reaction_member.id}})
                 SET ghu += reaction_member, ghu.latestSavedAt = datetime()
             WITH c, ghu
-            MERGE (c)-[ra:{Relationship.REACTED.value}]->(ghu)
+            MERGE (ghu)-[ra:{Relationship.REACTED.value}]->(c)
                 SET ra.latestSavedAt = datetime()
         """
     else:
@@ -115,7 +115,7 @@ def save_comment_to_neo4j(comment: dict, repository_id: str):
             MERGE (ghu:{Node.GitHubUser.value} {{id: reaction_member.user.id}})
                 SET ghu += reaction_member.user, ghu.latestSavedAt = datetime()
             WITH c, ghu
-            MERGE (c)-[ra:{Relationship.REACTED.value}]->(ghu)
+            MERGE (ghu)-[ra:{Relationship.REACTED.value}]->(c)
                 SET ra.latestSavedAt = datetime()
         """
     else:
