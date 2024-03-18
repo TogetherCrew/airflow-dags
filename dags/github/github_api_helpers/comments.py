@@ -155,6 +155,7 @@ def get_all_repo_issues_and_prs_comments(owner: str, repo: str):
     logging.info(f"Found a total of {len(all_comments)} comments for {owner}/{repo}.")
     return all_comments
 
+
 def get_comment_reactions_page(
     owner: str, repo: str, comment_id: int, page: int, per_page: int = 100
 ):
@@ -181,6 +182,7 @@ def get_comment_reactions_page(
 
     return response_data
 
+
 def get_all_comment_reactions(owner: str, repo: str, comment_id: int):
     """
     Retrieves all reactions for a comment in a GitHub repository.
@@ -190,7 +192,9 @@ def get_all_comment_reactions(owner: str, repo: str, comment_id: int):
     :param comment_id: The id of the comment.
     :return: A list of all reactions for the specified comment.
     """
-    logging.info(f"Fetching all reactions for comment {comment_id} in {owner}/{repo}...")
+    logging.info(
+        f"Fetching all reactions for comment {comment_id} in {owner}/{repo}..."
+    )
     all_reactions = []
     current_page = 1
 
@@ -204,5 +208,7 @@ def get_all_comment_reactions(owner: str, repo: str, comment_id: int):
         all_reactions.extend(reactions)
         current_page += 1
 
-    logging.info(f"Found a total of {len(all_reactions)} reactions for comment {comment_id} in {owner}/{repo}.")
+    logging.info(
+        f"Found a total of {len(all_reactions)} reactions for comment {comment_id} in {owner}/{repo}."
+    )
     return all_reactions

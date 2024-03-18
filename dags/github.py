@@ -589,7 +589,9 @@ with DAG(
     load_prs >> load_pr_review_comments
 
     pr_issue_comments = extract_pr_issue_comments.expand(data=prs)
-    pr_issue_comments_with_reactions_member = extract_pr_issue_comments_reactions_member.expand(data=pr_issue_comments)
+    pr_issue_comments_with_reactions_member = (
+        extract_pr_issue_comments_reactions_member.expand(data=pr_issue_comments)
+    )
     transformed_pr_issue_comments = transform_pr_issue_comments.expand(
         data=pr_issue_comments_with_reactions_member
     )
