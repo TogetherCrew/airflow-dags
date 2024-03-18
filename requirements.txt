@@ -5,7 +5,6 @@ asyncpg==0.29.0
 psycopg2-binary==2.9.9
 sqlalchemy[asyncio]
 async-sqlalchemy
-opentelemetry-instrumentation-langchain==0.14.1
 python-pptx
 tc-neo4j-lib
 google-api-python-client
@@ -17,5 +16,5 @@ pytest>=7.4.3, <8.0.0
 python-dotenv>=1.0.0, <2.0.0
 urlextract==1.8.0
 tc-hivemind-backend==1.1.5
-traceloop-sdk==0.14.1
+traceloop-sdk==0.14.3
 beautifulsoup4==4.12.3
