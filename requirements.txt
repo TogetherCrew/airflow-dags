@@ -1,6 +1,5 @@
 numpy
 pymongo
-python-dotenv
 pgvector
 asyncpg
 psycopg2-binary
@@ -10,7 +9,7 @@ python-pptx
 tc-neo4j-lib
 google-api-python-client
 unstructured
-cohere
+cohere==4.56
 neo4j>=5.14.1, <6.0.0
 coverage>=7.3.3, <8.0.0
 pytest>=7.4.3, <8.0.0
