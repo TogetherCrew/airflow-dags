@@ -3,12 +3,12 @@ pymongo==4.6.2
 pgvector==0.2.5
 asyncpg==0.29.0
 psycopg2-binary==2.9.9
-sqlalchemy[asyncio]
+sqlalchemy[asyncio]==1.4.49
 async-sqlalchemy
-# python-pptx
+python-pptx
 tc-neo4j-lib
-# google-api-python-client
-# unstructured
+google-api-python-client
+unstructured
 cohere==4.56
 neo4j>=5.14.1, <6.0.0
 coverage>=7.3.3, <8.0.0
