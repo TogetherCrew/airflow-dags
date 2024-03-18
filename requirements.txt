@@ -3,8 +3,9 @@ pymongo==4.6.2
 pgvector==0.2.5
 asyncpg==0.29.0
 psycopg2-binary==2.9.9
-sqlalchemy[asyncio]==1.4.49
+sqlalchemy[asyncio]
 async-sqlalchemy
+opentelemetry-instrumentation-langchain==0.14.1
 python-pptx
 tc-neo4j-lib
 google-api-python-client
