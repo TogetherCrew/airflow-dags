@@ -27,6 +27,7 @@ from github.github_api_helpers import (
     extract_linked_issues_from_pr,
     fetch_commit_files,
     fetch_org_details,
+    get_all_comment_reactions,
     get_all_commits,
     get_all_issues,
     get_all_org_members,
@@ -336,6 +337,22 @@ with DAG(
         return {"comments": comments, **data}
 
     @task
+    def extract_pr_issue_comments_reactions_member(data):
+        logging.info(f"All data from last stage: {data}")
+        comments = data["comments"]
+        repo = data["repo"]
+        owner = repo["owner"]["login"]
+        repo_name = repo["name"]
+
+        for comment in comments:
+            reactions = get_all_comment_reactions(
+                owner=owner, repo=repo_name, comment_id=comment.get("id", None)
+            )
+            comment["reactions_member"] = reactions
+
+        return {"comments": comments, **data}
+
+    @task
     def transform_pr_issue_comments(data):
         logging.info(f"All data from last stage: {data}")
         return data
@@ -562,17 +579,20 @@ with DAG(
     load_pr_review = load_pr_review.expand(data=transform_pr_review)
 
     pr_review_comments = extract_pr_review_comments.expand(data=prs)
-    transform_pr_review_comments = transform_pr_review_comments.expand(
+    transformed_pr_review_comments = transform_pr_review_comments.expand(
         data=pr_review_comments
     )
     load_pr_review_comments = load_pr_review_comments.expand(
-        data=transform_pr_review_comments
+        data=transformed_pr_review_comments
     )
     load_prs >> load_pr_review_comments
 
     pr_issue_comments = extract_pr_issue_comments.expand(data=prs)
+    pr_issue_comments_with_reactions_member = (
+        extract_pr_issue_comments_reactions_member.expand(data=pr_issue_comments)
+    )
     transformed_pr_issue_comments = transform_pr_issue_comments.expand(
-        data=pr_issue_comments
+        data=pr_issue_comments_with_reactions_member
     )
     loaded_pr_issue_comments = load_pr_issue_comments.expand(
         data=transformed_pr_issue_comments
