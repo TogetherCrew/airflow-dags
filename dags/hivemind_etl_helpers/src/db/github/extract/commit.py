@@ -27,7 +27,7 @@ def fetch_raw_commits(
     """
     neo4j_connection = Neo4jConnection()
     neo4j_driver = neo4j_connection.connect_neo4j()
-    query = """MATCH (co:Commit)<-[:COMMITTED]-(user:GitHubUser)
+    query = """MATCH (co:Commit)<-[:AUTHORED_BY]-(user:GitHubUser)
         WHERE
         co.repository_id IN $repoIds
     """
@@ -35,18 +35,20 @@ def fetch_raw_commits(
         query += "AND datetime(co.`commit.author.date`) >= datetime($from_date)"
 
     query += """
+        OPTIONAL MATCH (co)<-[:COMMITTED_BY]-(user_commiter:GitHubUser)
         MATCH (repo:Repository {id: co.repository_id})
         RETURN
-            user.login as author_name,
-            co.`commit.message` as message,
-            co.`commit.url` as api_url,
-            co.`parents.0.html_url` as html_url,
-            co.repository_id as repository_id,
-            repo.full_name as repository_name,
-            co.sha as sha,
-            co.latestSavedAt as latest_saved_at,
-            co.`commit.author.date` as created_at,
-            co.`commit.verification.reason` as verification
+            user.login AS author_name,
+            user_commiter.login AS committer_name,
+            co.`commit.message` AS message,
+            co.`commit.url` AS api_url,
+            co.`parents.0.html_url` AS html_url,
+            co.repository_id AS repository_id,
+            repo.full_name AS repository_name,
+            co.sha AS sha,
+            co.latestSavedAt AS latest_saved_at,
+            co.`commit.author.date` AS created_at,
+            co.`commit.verification.reason` AS verification
         ORDER BY created_at
     """
 
