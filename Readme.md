@@ -16,4 +16,4 @@ You can quickly launch the application using `Docker Compose`:
 ```bash
 docker-compose --profile flower up
 ```
-reference: https://airflow.apache.org/docs/apache-airflow/stable/howto/docker-compose/index.html
+reference: [Running Airflow in Docker](https://airflow.apache.org/docs/apache-airflow/stable/howto/docker-compose/index.html)
