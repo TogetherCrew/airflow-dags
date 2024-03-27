@@ -5,7 +5,6 @@ from llama_index.core import Document
 
 
 class SummaryTransformer(ABC):
-
     @abstractmethod
     def transform(self, summary: str, metadata: dict[str, Any], **kwargs) -> Document:
         """

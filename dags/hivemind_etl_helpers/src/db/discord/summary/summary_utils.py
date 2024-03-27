@@ -1,12 +1,12 @@
 from typing import Any
-from llama_index.core import Document
+
 from hivemind_etl_helpers.src.utils.summary.summary_transformer import (
     SummaryTransformer,
 )
+from llama_index.core import Document
 
 
 class DiscordSummaryTransformer(SummaryTransformer):
-
     def transform(self, summary: str, metadata: dict[str, Any], **kwargs) -> Document:
         excluded_llm_metadata_keys = kwargs.get("excluded_llm_metadata_keys", [])
         excluded_embed_metadata_keys = kwargs.get("excluded_embed_metadata_keys", [])
