@@ -56,9 +56,7 @@ def fetch_raw_comments(
 
     # if there was some PR and issues to filter
     if len(info_ids) != 0:
-        query += f"""
-        AND info.id IN $info_ids
-        """
+        query += "AND info.id IN $info_ids"
 
     query += """
     RETURN
