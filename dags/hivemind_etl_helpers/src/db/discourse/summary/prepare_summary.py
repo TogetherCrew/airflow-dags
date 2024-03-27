@@ -7,7 +7,7 @@ from hivemind_etl_helpers.src.db.discourse.raw_post_to_documents import (
 from hivemind_etl_helpers.src.db.discourse.summary.summary_utils import (
     transform_summary_to_document,
 )
-from hivemind_etl_helpers.src.utils.summary_base import SummaryBase
+from hivemind_etl_helpers.src.utils.summary.summary_base import SummaryBase
 from llama_index.core import Document, Settings
 from llama_index.core.response_synthesizers.base import BaseSynthesizer
 

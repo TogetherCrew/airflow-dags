@@ -1,13 +1,12 @@
 import logging
 
 from hivemind_etl_helpers.src.db.discord.summary.summary_utils import (
-    transform_channel_summary_to_document,
-    transform_thread_summary_to_document,
+    DiscordSummaryTransformer,
 )
 from hivemind_etl_helpers.src.db.discord.utils.transform_discord_raw_messges import (
     transform_discord_raw_messages,
 )
-from hivemind_etl_helpers.src.utils.summary_base import SummaryBase
+from hivemind_etl_helpers.src.utils.summary.summary_base import SummaryBase
 from llama_index.core import Document, Settings
 from llama_index.core.response_synthesizers.base import BaseSynthesizer
 
@@ -19,6 +18,7 @@ class PrepareSummaries(SummaryBase):
         verbose: bool = False,
         **kwargs,
     ) -> None:
+        self.discord_summary_transformer = DiscordSummaryTransformer()
         llm = kwargs.get("llm", Settings.llm)
 
         super().__init__(
@@ -118,7 +118,7 @@ class PrepareSummaries(SummaryBase):
             for channel in thread_summaries[date].keys():
                 channel_documents: list[Document] = []
                 for thread in thread_summaries[date][channel].keys():
-                    thread_doc = transform_thread_summary_to_document(
+                    thread_doc = self.discord_summary_transformer.transform_thread_summary_to_document(
                         thread_name=thread,
                         summary_date=date,
                         thread_summary=thread_summaries[date][channel][thread],
@@ -180,7 +180,7 @@ class PrepareSummaries(SummaryBase):
         for date in channel_summaries.keys():
             daily_documents: list[Document] = []
             for channel in channel_summaries[date].keys():
-                channel_doc = transform_channel_summary_to_document(
+                channel_doc = self.discord_summary_transformer.transform_channel_summary_to_document(
                     channel_name=channel,
                     channel_summary=channel_summaries[date][channel],
                     summary_date=date,
