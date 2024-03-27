@@ -18,3 +18,4 @@ urlextract==1.8.0
 tc-hivemind-backend==1.1.5
 traceloop-sdk==0.14.3
 beautifulsoup4==4.12.3
+opentelemetry-instrumentation-langchain==0.14.3

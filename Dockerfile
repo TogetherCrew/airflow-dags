@@ -3,7 +3,6 @@ USER root
 COPY . .
 RUN chmod +x init.sh
 USER airflow
-RUN pip install --upgrade pip
 RUN pip install --no-cache-dir --user -r requirements.txt
 
 FROM python:3.11-bullseye AS test
