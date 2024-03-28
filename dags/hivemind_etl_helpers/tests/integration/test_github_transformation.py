@@ -1,13 +1,13 @@
 from datetime import datetime
 from unittest import TestCase
 
-from hivemind_etl_helpers.src.db.github.transform import GitHubTransformation
 from hivemind_etl_helpers.src.db.github.schema import (
     GitHubComment,
     GitHubCommit,
     GitHubIssue,
     GitHubPullRequest,
 )
+from hivemind_etl_helpers.src.db.github.transform import GitHubTransformation
 from llama_index.core import Document
 
 

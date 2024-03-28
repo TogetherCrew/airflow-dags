@@ -78,7 +78,9 @@ def process_github_vectorstore(
     logging.debug(f"{prefix}Transforming commits!")
     docs_commit = github_transformation.transform_commits(github_commits)
     logging.debug(f"{prefix}Transforming issues!")
-    docs_issue, docs_issue_comments = github_transformation.transform_issues(github_issues)
+    docs_issue, docs_issue_comments = github_transformation.transform_issues(
+        github_issues
+    )
     logging.debug(f"{prefix}Transforming pull requests!")
     docs_prs = github_transformation.transform_pull_requests(github_prs)
 

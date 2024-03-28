@@ -8,11 +8,8 @@ from llama_index.core import Document
 
 from .comments import transform_comments
 from .commits import transform_commits
+from .issues import transform_comment_of_issue, transform_issues
 from .pull_requests import transform_prs
-from .issues import (
-    transform_comment_of_issue,
-    transform_issues,
-)
 
 
 class GitHubTransformation:
