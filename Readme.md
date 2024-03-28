@@ -1,5 +1,8 @@
 # airflow-dags
 
+[![Maintainability](https://api.codeclimate.com/v1/badges/50707624ef6029e39e6a/maintainability)](https://codeclimate.com/github/TogetherCrew/airflow-dags/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/50707624ef6029e39e6a/test_coverage)](https://codeclimate.com/github/TogetherCrew/airflow-dags/test_coverage)
+
 In this repository, we've shared all dags for TogetherCrew. The dags are
 
 - [GitHub API data ETL DAG](https://github.com/TogetherCrew/airflow-dags/blob/main/dags/github.py)
