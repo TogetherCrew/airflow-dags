@@ -7,10 +7,8 @@ from hivemind_etl_helpers.src.db.github.extract import GithubExtraction
 
 class TestGithubETLFetchIssues(TestCase):
     
-    def __init__(self):
-        self.extractor = GithubExtraction()
-    
     def setUp(self) -> None:
+        self.extractor = GithubExtraction()
         neo4j_connection = Neo4jConnection()
         self.neo4j_driver = neo4j_connection.connect_neo4j()
         with self.neo4j_driver.session() as session:
