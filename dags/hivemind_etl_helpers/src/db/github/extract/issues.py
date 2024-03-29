@@ -100,5 +100,6 @@ class GithubIssueExtraction():
             github_issues.append(issue)
 
         return github_issues
+    
 
 

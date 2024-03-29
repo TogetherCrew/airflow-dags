@@ -2,10 +2,14 @@ from datetime import datetime
 from unittest import TestCase
 
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
-from hivemind_etl_helpers.src.db.github.extract.issues import fetch_raw_issues
+from hivemind_etl_helpers.src.db.github.extract.issues import GithubExtraction
 
 
 class TestGithubETLFetchRawIssues(TestCase):
+    
+    def __init__(self):
+        self.extractor = GithubExtraction()
+    
     def setUp(self) -> None:
         neo4j_connection = Neo4jConnection()
         self.neo4j_driver = neo4j_connection.connect_neo4j()
@@ -14,12 +18,12 @@ class TestGithubETLFetchRawIssues(TestCase):
 
     def test_get_empty_results_no_from_date(self):
         repository_ids = [123, 124]
-        issues = fetch_raw_issues(repository_id=repository_ids, from_date=None)
+        issues = self.extractor._GithubIssueExtraction__fetch_raw_issues(repository_id=repository_ids, from_date=None)
         self.assertEqual(issues, [])
 
     def test_get_empty_results(self):
         repository_ids = [123, 124]
-        issues = fetch_raw_issues(
+        issues = self.extractor._GithubIssueExtraction__fetch_raw_issues(
             repository_id=repository_ids, from_date=datetime(2024, 1, 1)
         )
         self.assertEqual(issues, [])
@@ -60,7 +64,7 @@ class TestGithubETLFetchRawIssues(TestCase):
             )
 
         repository_ids = [123]
-        issues = fetch_raw_issues(
+        issues = self.extractor._GithubIssueExtraction__fetch_raw_issues(
             repository_id=repository_ids, from_date=datetime(2024, 1, 1)
         )
 
