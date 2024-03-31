@@ -2,11 +2,10 @@ import logging
 from datetime import datetime
 
 from dotenv import load_dotenv
-from hivemind_etl_helpers.src.db.github.extract import (
+from hivemind_etl_helpers.src.db.github.extract import (  # fetch_issues,
     GithubExtraction,
     fetch_comments,
     fetch_commits,
-    # fetch_issues,
     fetch_pull_requests,
 )
 from hivemind_etl_helpers.src.db.github.github_organization_repos import (
