@@ -4,11 +4,11 @@ import neo4j
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
 from hivemind_etl_helpers.src.db.github.schema import GitHubIssue
 
-class GithubIssueExtraction():
-    
+
+class GithubIssueExtraction:
     def __init__(self):
         pass
-    
+
     def __fetch_raw_issues(
         self,
         repository_id: list[int],
@@ -70,7 +70,7 @@ class GithubIssueExtraction():
             )
 
         return raw_records
-    
+
     def fetch_issues(
         self,
         repository_id: list[int],
@@ -100,6 +100,3 @@ class GithubIssueExtraction():
             github_issues.append(issue)
 
         return github_issues
-    
-
-

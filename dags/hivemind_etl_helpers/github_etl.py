@@ -3,11 +3,11 @@ from datetime import datetime
 
 from dotenv import load_dotenv
 from hivemind_etl_helpers.src.db.github.extract import (
+    GithubExtraction,
     fetch_comments,
     fetch_commits,
-    fetch_issues,
+    # fetch_issues,
     fetch_pull_requests,
-    GithubExtraction,
 )
 from hivemind_etl_helpers.src.db.github.github_organization_repos import (
     get_github_organization_repos,
@@ -63,10 +63,12 @@ def process_github_vectorstore(
 
     # EXTRACT
     extractor = GithubExtraction()
-    
+
     github_comments = fetch_comments(repository_id=repository_ids, from_date=from_date)
     github_commits = fetch_commits(repository_id=repository_ids, from_date=from_date)
-    github_issues = extractor.fetch_issues(repository_id=repository_ids, from_date=from_date)
+    github_issues = extractor.fetch_issues(
+        repository_id=repository_ids, from_date=from_date
+    )
     github_prs = fetch_pull_requests(
         repository_id=repository_ids,
         from_date_created=from_starting_date,

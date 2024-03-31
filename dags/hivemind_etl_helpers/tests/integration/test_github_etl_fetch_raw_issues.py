@@ -6,7 +6,6 @@ from hivemind_etl_helpers.src.db.github.extract import GithubExtraction
 
 
 class TestGithubETLFetchRawIssues(TestCase):
-        
     def setUp(self) -> None:
         self.extractor = GithubExtraction()
         neo4j_connection = Neo4jConnection()
@@ -16,7 +15,9 @@ class TestGithubETLFetchRawIssues(TestCase):
 
     def test_get_empty_results_no_from_date(self):
         repository_ids = [123, 124]
-        issues = self.extractor._GithubIssueExtraction__fetch_raw_issues(repository_id=repository_ids, from_date=None)
+        issues = self.extractor._GithubIssueExtraction__fetch_raw_issues(
+            repository_id=repository_ids, from_date=None
+        )
         self.assertEqual(issues, [])
 
     def test_get_empty_results(self):
