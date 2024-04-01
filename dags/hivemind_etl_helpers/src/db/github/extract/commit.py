@@ -89,6 +89,3 @@ class GithubCommitExtraction:
     def _exec_query(tx, repoIds, from_date):
         result = tx.run(query, repoIds=repoIds, from_date=from_date)
         return list(result)
-
-
-
