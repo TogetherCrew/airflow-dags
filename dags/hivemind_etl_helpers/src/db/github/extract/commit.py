@@ -1,7 +1,6 @@
 from datetime import datetime
 
 import neo4j
-
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
 from hivemind_etl_helpers.src.db.github.schema import GitHubCommit
 
