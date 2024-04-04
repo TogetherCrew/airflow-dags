@@ -6,4 +6,4 @@ from .pull_requests import fetch_pull_requests
 
 
 class GithubExtraction(GithubCommitExtraction):
-    pass 
+    pass

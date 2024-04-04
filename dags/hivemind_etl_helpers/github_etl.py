@@ -2,9 +2,12 @@ import logging
 from datetime import datetime
 
 from dotenv import load_dotenv
+from llama_index.core import Document
+from tc_hivemind_backend.db.pg_db_utils import setup_db
+
 from hivemind_etl_helpers.src.db.github.extract import (
-    fetch_comments,
     GithubExtraction,
+    fetch_comments,
     fetch_issues,
     fetch_pull_requests,
 )
@@ -16,8 +19,6 @@ from hivemind_etl_helpers.src.db.github.load import (
     load_documents_into_pg_database,
 )
 from hivemind_etl_helpers.src.db.github.transform import GitHubTransformation
-from llama_index.core import Document
-from tc_hivemind_backend.db.pg_db_utils import setup_db
 
 
 def process_github_vectorstore(
@@ -64,7 +65,9 @@ def process_github_vectorstore(
     github_extractor = GithubExtraction()
 
     github_comments = fetch_comments(repository_id=repository_ids, from_date=from_date)
-    github_commits = github_extractor.fetch_commits(repository_id=repository_ids, from_date=from_date)
+    github_commits = github_extractor.fetch_commits(
+        repository_id=repository_ids, from_date=from_date
+    )
     github_issues = fetch_issues(repository_id=repository_ids, from_date=from_date)
     github_prs = fetch_pull_requests(
         repository_id=repository_ids,
