@@ -1,10 +1,8 @@
 from datetime import datetime
 from unittest import TestCase
 
-from dags.hivemind_etl_helpers.src.db.github.extract import GithubExtraction
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
-from hivemind_etl_helpers.src.db.github.extract import fetch_commits
-
+from dags.hivemind_etl_helpers.src.db.github.extract import GithubExtraction
 
 class TestFetchCommits(TestCase):
     def setUp(self) -> None:
@@ -16,7 +14,9 @@ class TestFetchCommits(TestCase):
 
     def test_get_empty_results_no_from_date(self):
         repository_ids = [123]
-        commits = self.github_commit_extractor.fetch_commits(repository_id=repository_ids, from_date=None)
+        commits = self.github_commit_extractor.fetch_commits(
+            repository_id=repository_ids, from_date=None
+        )
         self.assertEqual(commits, [])
 
     def test_get_empty_results(self):
