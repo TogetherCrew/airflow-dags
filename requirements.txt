@@ -18,3 +18,4 @@ urlextract==1.8.0
 tc-hivemind-backend==1.1.5
 traceloop-sdk>=0.15.2, <0.16.0
 beautifulsoup4==4.12.3
+apache-airflow
