@@ -167,7 +167,7 @@ def get_comment_reactions_page(
     :param comment_id: The id of the comment.
     :param page: The page number of the results.
     :param per_page: The number of results per page (default is 100).
-    :return: A list of reactions for the specified comment.
+    :return: A list of reactions for the specified comment. Returns an empty list if no reactions are available.
     """
     endpoint = f"https://api.github.com/repos/{owner}/{repo}/issues/comments/{comment_id}/reactions"
 
