@@ -4,6 +4,7 @@ from unittest import TestCase
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
 from hivemind_etl_helpers.src.db.github.extract import GithubExtraction
 
+
 class TestGithubETLFetchComments(TestCase):
     def setUp(self) -> None:
         neo4j_connection = Neo4jConnection()
@@ -14,12 +15,16 @@ class TestGithubETLFetchComments(TestCase):
 
     def test_get_empty_results_no_from_date(self):
         repository_ids = [123, 124]
-        comments = self.extractor.fetch_comments(repository_id=repository_ids, from_date=None)
+        comments = self.extractor.fetch_comments(
+            repository_id=repository_ids, from_date=None
+        )
         self.assertEqual(comments, [])
 
     def test_get_empty_results(self):
         repository_ids = [123, 124]
-        comments = self.extractor.fetch_comments(repository_id=repository_ids, from_date=datetime(2024, 1, 1))
+        comments = self.extractor.fetch_comments(
+            repository_id=repository_ids, from_date=datetime(2024, 1, 1)
+        )
         self.assertEqual(comments, [])
 
     def test_get_single_comment_single_repo_no_from_date(self):
@@ -133,7 +138,9 @@ class TestGithubETLFetchComments(TestCase):
             )
 
         repository_ids = [123]
-        comments = self.extractor.fetch_comments(repository_id=repository_ids, from_date=datetime(2024, 1, 1))
+        comments = self.extractor.fetch_comments(
+            repository_id=repository_ids, from_date=datetime(2024, 1, 1)
+        )
 
         self.assertEqual(len(comments), 1)
         self.assertEqual(comments[0].id, 111)

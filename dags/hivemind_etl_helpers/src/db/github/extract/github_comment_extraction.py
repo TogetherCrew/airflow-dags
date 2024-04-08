@@ -1,30 +1,43 @@
+import logging
 from datetime import datetime
+
 import neo4j
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
 from hivemind_etl_helpers.src.db.github.schema import GitHubComment
-import logging
-logging.basicConfig(level=logging.DEBUG, filename='app.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    filename="app.log",
+    filemode="w",
+    format="%(name)s - %(levelname)s - %(message)s",
+)
 
 
 class GitHubCommentExtraction:
     def __init__(self):
         """
-        Initializes the GitHubCommentExtraction class without requiring any parameters.
+        Initializes the GitHubCommentExtraction class
+        without requiring any parameters.
         Establishes a connection to the Neo4j database.
         """
         self.neo4j_connection = Neo4jConnection()
         self.neo4j_driver = self.neo4j_connection.connect_neo4j()
 
-    def __fetch_raw_comments(self, repository_id: list[int], from_date: datetime | None = None, **kwargs) -> list[neo4j.Record]:
+    def __fetch_raw_comments(
+        self, repository_id: list[int],
+        from_date: datetime | None = None, **kwargs
+    ) -> list[neo4j.Record]:
         """
-        Fetch comments from neo4j data dump based on provided repository IDs and an optional date.
+        Fetch comments from neo4j data dump based on
+        provided repository IDs and an optional date.
 
         Parameters
         ----------
         repository_id : list[int]
             A list of repository IDs to fetch comments for.
         from_date : datetime | None, optional
-            A specific date from which to start fetching comments. If None, no date filtering is applied.
+            A specific date from which to start fetching comments.
+            If None, no date filtering is applied.
 
         Returns
         -------
@@ -82,7 +95,9 @@ class GitHubCommentExtraction:
     """
 
         def _exec_query(tx, repoIds, from_date, info_ids):
-            result = tx.run(query, repoIds=repoIds, fromDate=from_date, info_ids=info_ids)
+            result = tx.run(
+                query, repoIds=repoIds, fromDate=from_date, info_ids=info_ids
+            )
             return list(result)
 
         with self.neo4j_driver.session() as session:
@@ -93,19 +108,25 @@ class GitHubCommentExtraction:
                 info_ids=info_ids,
             )
         return raw_records
-    
-    def fetch_comments(self, repository_id: list[int], from_date: datetime | None = None, **kwargs) -> list[GitHubComment]:
+
+    def fetch_comments(
+        self, repository_id: list[int],
+        from_date: datetime | None = None, **kwargs
+    ) -> list[GitHubComment]:
         """
-        Fetch comments from neo4j data dump and convert them to GitHubComment objects based on provided parameters.
+        Fetch comments from neo4j data dump and convert them to GitHubComment
+        objects based on provided parameters.
 
         Parameters
         ----------
         repository_id : list[int]
             A list of repository IDs to fetch comments for.
         from_date : datetime | None, optional
-            A specific date from which to start fetching comments. If None, no date filtering is applied.
+            A specific date from which to start fetching comments.
+            If None, no date filtering is applied.
         **kwargs :
-            Additional keyword arguments such as `pr_ids` and `issue_ids` for filtering.
+            Additional keyword arguments such as: `
+            pr_ids` and `issue_ids` for filtering.
 
         Returns
         -------
@@ -115,10 +136,8 @@ class GitHubCommentExtraction:
 
         records = self.__fetch_raw_comments(repository_id, from_date, **kwargs)
 
-        # github_comments = [GitHubComment.from_dict(record) for record in records]
         github_comments: list[GitHubComment] = []
         for record in records:
             comment = GitHubComment.from_dict(record)
             github_comments.append(comment)
-        # logging.error("************************result: ", github_comments)
         return github_comments

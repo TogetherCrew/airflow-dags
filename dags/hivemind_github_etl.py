@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import logging
 from datetime import datetime
+
 from airflow import DAG
 from airflow.decorators import task
 from hivemind_etl_helpers.github_etl import process_github_vectorstore
-from hivemind_etl_helpers.src.utils.get_communities_data import (
-    get_github_communities_data,
-)
+from hivemind_etl_helpers.src.utils.get_communities_data import \
+    get_github_communities_data
 
 with DAG(
     dag_id="github_vector_store",
@@ -16,7 +16,9 @@ with DAG(
 ) as dag:
 
     @task
-    def process_github_community(community_information: dict[str, str | datetime]):
+    def process_github_community(
+        community_information: dict[str, str | datetime]
+         ):
         community_id = community_information["community_id"]
         organization_id = community_information["organization_id"]
         from_date = community_information["from_date"]
