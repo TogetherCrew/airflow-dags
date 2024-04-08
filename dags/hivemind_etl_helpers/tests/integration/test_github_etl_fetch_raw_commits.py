@@ -9,20 +9,20 @@ class TestFetchRawCommits(TestCase):
     def setUp(self) -> None:
         neo4j_connection = Neo4jConnection()
         self.neo4j_driver = neo4j_connection.connect_neo4j()
-        self.github_commit_extractor = GithubExtraction()
+        self.github_extractor = GithubExtraction()
         with self.neo4j_driver.session() as session:
             session.execute_write(lambda tx: tx.run("MATCH (n) DETACH DELETE (n)"))
 
     def test_get_empty_results_no_from_date(self):
         repository_ids = [123]
-        commits = self.github_commit_extractor._fetch_raw_commits(
+        commits = self.github_extractor._fetch_raw_commits(
             repository_id=repository_ids, from_date=None
         )
         self.assertEqual(commits, [])
 
     def test_get_empty_results(self):
         repository_ids = [123]
-        commits = self.github_commit_extractor._fetch_raw_commits(
+        commits = self.github_extractor._fetch_raw_commits(
             repository_id=repository_ids, from_date=datetime(2024, 1, 1)
         )
         self.assertEqual(commits, [])
@@ -50,7 +50,7 @@ class TestFetchRawCommits(TestCase):
             )
 
         repository_ids = [123]
-        commits = self.github_commit_extractor._fetch_raw_commits(
+        commits = self.github_extractor._fetch_raw_commits(
             repository_id=repository_ids,
         )
 
@@ -91,7 +91,7 @@ class TestFetchRawCommits(TestCase):
             )
 
         repository_ids = [123]
-        commits = self.github_commit_extractor._fetch_raw_commits(
+        commits = self.github_extractor._fetch_raw_commits(
             repository_id=repository_ids,
             from_date=datetime(2024, 1, 1),
         )
