@@ -2,22 +2,26 @@ import logging
 from datetime import datetime
 
 from dotenv import load_dotenv
-from hivemind_etl_helpers.src.db.github.extract import (GithubExtraction,
-                                                        fetch_commits,
-                                                        fetch_issues,
-                                                        fetch_pull_requests)
-from hivemind_etl_helpers.src.db.github.github_organization_repos import \
-    get_github_organization_repos
+from hivemind_etl_helpers.src.db.github.extract import (
+    GithubExtraction,
+    fetch_commits,
+    fetch_issues,
+    fetch_pull_requests,
+)
+from hivemind_etl_helpers.src.db.github.github_organization_repos import (
+    get_github_organization_repos,
+)
 from hivemind_etl_helpers.src.db.github.load import (
-    PrepareDeletion, load_documents_into_pg_database)
+    PrepareDeletion,
+    load_documents_into_pg_database,
+)
 from hivemind_etl_helpers.src.db.github.transform import GitHubTransformation
 from llama_index.core import Document
 from tc_hivemind_backend.db.pg_db_utils import setup_db
 
 
 def process_github_vectorstore(
-    community_id: str, github_org_id: str,
-    from_starting_date: datetime | None = None
+    community_id: str, github_org_id: str, from_starting_date: datetime | None = None
 ) -> None:
     """
     ETL process for github raw data
@@ -43,8 +47,7 @@ def process_github_vectorstore(
             LIMIT 1;
     """
     from_date_saved_data = setup_db(
-        community_id=community_id, dbname=dbname,
-        latest_date_query=latest_date_query
+        community_id=community_id, dbname=dbname, latest_date_query=latest_date_query
     )
     from_date: datetime | None
     if from_date_saved_data:
@@ -54,17 +57,15 @@ def process_github_vectorstore(
 
     logging.info(f"Fetching data from date: {from_date}")
 
-    repository_ids = get_github_organization_repos(
-        github_organization_id=github_org_id)
+    repository_ids = get_github_organization_repos(github_organization_id=github_org_id)
     logging.info(f"{len(repository_ids)} repositories to fetch data from!")
 
     # EXTRACT
     github_comments = GithubExtraction().fetch_comments(
-        repository_id=repository_ids, from_date=from_date)
-    github_commits = fetch_commits(repository_id=repository_ids,
-                                   from_date=from_date)
-    github_issues = fetch_issues(repository_id=repository_ids,
-                                 from_date=from_date)
+        repository_id=repository_ids, from_date=from_date
+    )
+    github_commits = fetch_commits(repository_id=repository_ids, from_date=from_date)
+    github_issues = fetch_issues(repository_id=repository_ids, from_date=from_date)
     github_prs = fetch_pull_requests(
         repository_id=repository_ids,
         from_date_created=from_starting_date,

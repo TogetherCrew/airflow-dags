@@ -65,7 +65,9 @@ class TestGithubETLFetchCommentsFiltered(TestCase):
             )
 
         repository_ids = [123]
-        comments = self.extractor.fetch_comments(repository_id=repository_ids, from_date=datetime(2024, 1, 1))
+        comments = self.extractor.fetch_comments(
+            repository_id=repository_ids, from_date=datetime(2024, 1, 1)
+        )
 
         self.assertEqual(len(comments), 1)
         self.assertEqual(comments[0].id, 111)

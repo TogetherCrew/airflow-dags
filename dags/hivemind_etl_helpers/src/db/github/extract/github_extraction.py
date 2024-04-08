@@ -1,9 +1,11 @@
 from datetime import datetime
 
-from dags.hivemind_etl_helpers.src.db.github.extract import \
+from dags.hivemind_etl_helpers.src.db.github.extract import (
     GitHubCommentExtraction
-from dags.hivemind_etl_helpers.src.db.github.schema.comment import \
+)
+from dags.hivemind_etl_helpers.src.db.github.schema.comment import (
     GitHubComment
+)
 
 # Note
 # Composition might fit here better then inheritance:
@@ -24,6 +26,7 @@ from dags.hivemind_etl_helpers.src.db.github.schema.comment import \
 
 # Without dependency injection
 
+
 class GithubExtraction:
     def __init__(self):
         self.comment_extraction = GitHubCommentExtraction()
@@ -33,11 +36,14 @@ class GithubExtraction:
         # self.issues_extraction = GithubIssuesExtraction()
         # self.pull_requests_extraction = GithubPullRequestsExtraction()
 
-    def fetch_comments(self, repository_id: list[int],
-                       from_date: datetime | None = None,
-                       **kwargs) -> list[GitHubComment]:
-        return self.comment_extraction.fetch_comments(repository_id,
-                                                      from_date, **kwargs)
+    def fetch_comments(
+        self, repository_id: list[int], from_date: datetime | None = None,
+        **kwargs
+    ) -> list[GitHubComment]:
+        return self.comment_extraction.fetch_comments(
+            repository_id, from_date, **kwargs
+        )
+
 
 # With dependency injection
 

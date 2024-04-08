@@ -24,8 +24,7 @@ class GitHubCommentExtraction:
         self.neo4j_driver = self.neo4j_connection.connect_neo4j()
 
     def __fetch_raw_comments(
-        self, repository_id: list[int],
-        from_date: datetime | None = None, **kwargs
+        self, repository_id: list[int], from_date: datetime | None = None, **kwargs
     ) -> list[neo4j.Record]:
         """
         Fetch comments from neo4j data dump based on
@@ -110,8 +109,7 @@ class GitHubCommentExtraction:
         return raw_records
 
     def fetch_comments(
-        self, repository_id: list[int],
-        from_date: datetime | None = None, **kwargs
+        self, repository_id: list[int], from_date: datetime | None = None, **kwargs
     ) -> list[GitHubComment]:
         """
         Fetch comments from neo4j data dump and convert them to GitHubComment
