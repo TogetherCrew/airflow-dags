@@ -134,3 +134,53 @@ def get_discourse_communities() -> list[dict[str, str | datetime]]:
             )
 
     return communities_data
+
+
+def get_google_drive_communities() -> list[dict[str, str | datetime]]:
+    """
+    Get Google Drive communities with their folder IDs, file IDs, drive IDs, and client config.
+
+    Returns
+    ---------
+    communities_data : list[dict[str, str | datetime]]
+        a list of Google Drive data information
+
+        example data output:
+        ```
+        [{
+          "community_id": "community1",
+          "from_date": datetime(2024, 1, 1),
+          "folder_id": "folder_123",
+          "file_id": "file_abc",
+          "drive_id": "drive_xyz",
+          "client_config": {...}
+        }]
+        ```
+    """
+    communities_data: list[dict[str, str | datetime]] = []
+    google_drive_modules = query_modules_db(platform="google-drive")
+
+    for module in google_drive_modules:
+        community_id = str(module["communityId"])
+        options = module["options"]
+
+        for platform in options:
+            platform_data = platform["platforms"]
+            platform_from_date = platform_data["fromDate"]
+            folder_id = platform_data["metadata"].get("folderId")
+            file_id = platform_data["metadata"].get("fileId")
+            drive_id = platform_data["metadata"].get("driveId")
+            client_config = platform_data["metadata"].get("client_config")
+
+            communities_data.append(
+                {
+                    "community_id": community_id,
+                    "from_date": platform_from_date,
+                    "folder_id": folder_id,
+                    "file_id": file_id,
+                    "drive_id": drive_id,
+                    "client_config": client_config,
+                }
+            )
+
+    return communities_data
