@@ -89,3 +89,20 @@ def fetch_commit_files(owner: str, repo: str, sha: str):
     else:
         logging.info(f"No files changed in commit {sha} of {owner}/{repo}.")
         return []
+
+def fetch_commit_pull_requests(owner: str, repo: str, sha: str) -> list:
+    """
+    fetch the pull requests for a specific comment of GitHub repository
+
+    :param owner: The owner of the repository.
+    :param repo: The name of the repository.
+    :param sha: The SHA identifier of the commit.
+    :return: A list of files changed in the specified commit.
+    """
+    logging.info(f"Fetching pull requests of {owner}/{repo}/commits/{sha}")
+    endpoint = f"https://api.github.com/repos/{owner}/{repo}/commits/{sha}/pulls"
+    response = get(endpoint)
+    response_data = response.json()
+
+    return response_data
+

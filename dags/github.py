@@ -26,6 +26,7 @@ from airflow.decorators import task
 from github.github_api_helpers import (
     extract_linked_issues_from_pr,
     fetch_commit_files,
+    fetch_commit_pull_requests,
     fetch_org_details,
     get_all_comment_reactions,
     get_all_commits,
@@ -485,6 +486,20 @@ with DAG(
 
         return data
 
+    @task
+    def extract_commit_pull_requests(data: dict) -> list[dict]:
+        """
+        extract the pull requests for each commit
+        """
+        logging.info(f"Extracting pull requests for commit sha: {data["sha"]}")
+        repo = data["repo"]
+        owner = repo["owner"]["login"]
+        repo_name = repo["name"]
+
+        prs = fetch_commit_pull_requests(owner, repo_name, data["sha"])
+        new_data = {**data, "prs": prs}
+        return new_data
+
     # endregion
 
     # region commits files changes ETL
@@ -602,7 +617,10 @@ with DAG(
 
     commits = extract_commits.expand(data=repos)
     transform_comment = transform_commits.expand(data=commits)
-    load_comment = load_commits.expand(data=transform_comment)
+    load_commit = load_commits.expand(data=transform_comment)
+
+    commit_prs = extract_commit_pull_requests.expand(data=commits)
+    load_commit_prs = load_pull_requests.expand(data=commit_prs)
 
     commits_files_changes = extract_commits_files_changes.expand(data=commits)
     transform_commits_files_changes = transform_commits_files_changes.expand(
@@ -611,5 +629,5 @@ with DAG(
     load_commits_files_changes = load_commits_files_changes.expand(
         data=transform_commits_files_changes
     )
-    load_comment >> load_commits_files_changes
+    load_commit >> load_commits_files_changes
     load_pr_files_changes >> load_commits_files_changes
