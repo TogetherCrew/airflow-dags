@@ -61,6 +61,9 @@ def save_commit_files_changes_to_neo4j(
     neo4jConnection = Neo4jConnection()
     driver = neo4jConnection.connect_neo4j()
 
+    # Not saving file changes without a sha
+    file_changes = list(filter(lambda fc: fc.get("sha") is not None, file_changes))
+
     with driver.session() as session:
         session.execute_write(
             lambda tx: tx.run(
@@ -69,7 +72,6 @@ def save_commit_files_changes_to_neo4j(
                 (c:{Node.Commit.value} {{sha: $commit_sha}})
                 WITH repo, c
                 UNWIND $file_changes AS file_change
-                WHERE file_change.sha IS NOT NULL
                 MERGE (f:{Node.File.value} {{sha: file_change.sha, filename: file_change.filename}})
                     SET f += file_change, f.latestSavedAt = datetime()
                 MERGE (c)-[fc:{Relationship.CHANGED.value}]->(f)
