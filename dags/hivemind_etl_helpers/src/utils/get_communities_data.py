@@ -167,9 +167,9 @@ def get_google_drive_communities() -> list[dict[str, str | datetime]]:
         for platform in options:
             platform_data = platform["platforms"]
             platform_from_date = platform_data["fromDate"]
-            folder_id = platform_data["metadata"]["folderId"]
-            file_id = platform_data["metadata"]["fileId"]
-            drive_id = platform_data["metadata"]["driveId"]
+            folder_id = platform_data["metadata"]["folder_id"]
+            file_id = platform_data["metadata"]["file_id"]
+            drive_id = platform_data["metadata"]["drive_id"]
             client_config = platform_data["metadata"]["client_config"]
 
             communities_data.append(
