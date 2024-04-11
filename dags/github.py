@@ -487,7 +487,7 @@ with DAG(
         return data
 
     @task
-    def extract_commit_pull_requests(data: dict) -> list[dict]:
+    def extract_commit_pull_requests(data: dict) -> dict:
         """
         extract the pull requests for each commit
         """
@@ -621,6 +621,7 @@ with DAG(
 
     commit_prs = extract_commit_pull_requests.expand(data=commits)
     load_commit_prs = load_pull_requests.expand(data=commit_prs)
+    load_commit >> load_commit_prs
 
     commits_files_changes = extract_commits_files_changes.expand(data=commits)
     transform_commits_files_changes = transform_commits_files_changes.expand(
