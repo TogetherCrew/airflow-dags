@@ -16,7 +16,7 @@ class DiscordSummaryTransformer(SummaryTransformer):
             excluded_embed_metadata_keys=excluded_embed_metadata_keys,
             excluded_llm_metadata_keys=excluded_llm_metadata_keys,
         )
-        
+
         return document
 
     def transform_thread_summary_to_document(
