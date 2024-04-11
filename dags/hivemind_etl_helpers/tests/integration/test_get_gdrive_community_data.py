@@ -157,7 +157,7 @@ class TestGetDriveCommunityData(TestCase):
         self.assertEqual(
             result[0],
             {
-                "community_id": "6579c364f1120850414e0dc5",
+                "community_id": "1009c364f1120850414e0dc5",
                 "from_date": datetime(2024, 1, 1),
                 "folder_id": "1RFhr3-KmOZCR5rtp4dlOMn",
                 "file_id": "1RFhr3-KmOZCR5rtp120",
@@ -168,7 +168,7 @@ class TestGetDriveCommunityData(TestCase):
         self.assertEqual(
             result[1],
             {
-                "community_id": "6579c364f1120850414e0dc5",
+                "community_id": "1009c364f1120850414e0dc5",
                 "from_date": datetime(2024, 2, 1),
                 "folder_id": "1RFhr3-KmOZCR5rtp4dlOMl",
                 "file_id": "1RFhr3-KmOZCR5rtp121",
