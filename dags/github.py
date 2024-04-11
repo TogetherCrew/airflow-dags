@@ -491,7 +491,7 @@ with DAG(
         """
         extract the pull requests for each commit
         """
-        logging.info(f"Extracting pull requests for commit sha: {data["sha"]}")
+        logging.info(f"Extracting pull requests for commit sha: {data['sha']}")
         repo = data["repo"]
         owner = repo["owner"]["login"]
         repo_name = repo["name"]

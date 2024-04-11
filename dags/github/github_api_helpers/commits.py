@@ -90,6 +90,7 @@ def fetch_commit_files(owner: str, repo: str, sha: str):
         logging.info(f"No files changed in commit {sha} of {owner}/{repo}.")
         return []
 
+
 def fetch_commit_pull_requests(owner: str, repo: str, sha: str) -> list:
     """
     fetch the pull requests for a specific comment of GitHub repository
@@ -105,4 +106,3 @@ def fetch_commit_pull_requests(owner: str, repo: str, sha: str) -> list:
     response_data = response.json()
 
     return response_data
-
