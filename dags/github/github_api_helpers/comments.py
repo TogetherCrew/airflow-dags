@@ -154,3 +154,61 @@ def get_all_repo_issues_and_prs_comments(owner: str, repo: str):
 
     logging.info(f"Found a total of {len(all_comments)} comments for {owner}/{repo}.")
     return all_comments
+
+
+def get_comment_reactions_page(
+    owner: str, repo: str, comment_id: int, page: int, per_page: int = 100
+):
+    """
+    Fetches the reactions for a comment in a GitHub repository.
+
+    :param owner: The owner of the repository.
+    :param repo: The name of the repository.
+    :param comment_id: The id of the comment.
+    :param page: The page number of the results.
+    :param per_page: The number of results per page (default is 100).
+    :return: A list of reactions for the specified comment. Returns an empty list if no reactions are available.
+    """
+    endpoint = f"https://api.github.com/repos/{owner}/{repo}/issues/comments/{comment_id}/reactions"
+
+    params = {"per_page": per_page, "page": page}
+    response = get(endpoint, params=params)
+    response_data = response.json()
+
+    msg = f"Found {len(response_data)}"
+    msg += f" reactions for comment {comment_id} in {owner}/{repo} on page {page}."
+    msg += f" reactions: {response_data}"
+    logging.info(msg)
+
+    return response_data
+
+
+def get_all_comment_reactions(owner: str, repo: str, comment_id: int):
+    """
+    Retrieves all reactions for a comment in a GitHub repository.
+
+    :param owner: The owner of the repository.
+    :param repo: The name of the repository.
+    :param comment_id: The id of the comment.
+    :return: A list of all reactions for the specified comment.
+    """
+    logging.info(
+        f"Fetching all reactions for comment {comment_id} in {owner}/{repo}..."
+    )
+    all_reactions = []
+    current_page = 1
+
+    while True:
+        logging.info(f"Fetching page {current_page} of reactions...")
+        reactions = get_comment_reactions_page(owner, repo, comment_id, current_page)
+
+        if not reactions:
+            break  # No more reactions to fetch
+
+        all_reactions.extend(reactions)
+        current_page += 1
+
+    logging.info(
+        f"Found a total of {len(all_reactions)} reactions for comment {comment_id} in {owner}/{repo}."
+    )
+    return all_reactions

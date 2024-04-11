@@ -8,7 +8,7 @@ from hivemind_etl_helpers.src.db.discord.summary.prepare_summaries import (
     PrepareSummaries,
 )
 from hivemind_etl_helpers.src.db.discord.summary.summary_utils import (
-    transform_daily_summary_to_document,
+    DiscordSummaryTransformer,
 )
 from llama_index.core import Document, Settings
 from llama_index.core.response_synthesizers.base import BaseSynthesizer
@@ -39,6 +39,7 @@ class DiscordSummary(PrepareSummaries):
         Note: `chunk_size` is read from `llama_index.core.Setting.chunk_size`.
         """
         llm = kwargs.get("llm", Settings.llm)
+        self.discord_summary_transformer = DiscordSummaryTransformer()
 
         super().__init__(
             llm=llm, response_synthesizer=response_synthesizer, verbose=verbose
@@ -104,8 +105,10 @@ class DiscordSummary(PrepareSummaries):
                     + summary_prompt_posfix
                 ),
             )
-            daily_summary_documents = transform_daily_summary_to_document(
-                daily_summaries
+            daily_summary_documents = (
+                self.discord_summary_transformer.transform_daily_summary_to_document(
+                    daily_summaries
+                )
             )
         else:
             logging.info(f"No data received after the data: {from_date}")

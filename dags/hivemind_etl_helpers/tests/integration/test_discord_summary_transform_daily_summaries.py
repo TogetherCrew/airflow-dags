@@ -1,16 +1,23 @@
 import unittest
 
 from hivemind_etl_helpers.src.db.discord.summary.summary_utils import (
-    transform_daily_summary_to_document,
+    DiscordSummaryTransformer,
 )
 from llama_index.core import Document
 
 
 class TestTransformDailySummaryToDocument(unittest.TestCase):
+    def setUp(self) -> None:
+        self.discord_summary_transformer = DiscordSummaryTransformer()
+
     def test_transform_daily_summary_to_document_empty_data(self):
         daily_summary = {}
 
-        result_documents = transform_daily_summary_to_document(daily_summary)
+        result_documents = (
+            self.discord_summary_transformer.transform_daily_summary_to_document(
+                daily_summary
+            )
+        )
         self.assertEqual(result_documents, [])
 
     def test_transform_daily_summary_to_document(self):
@@ -38,7 +45,11 @@ class TestTransformDailySummaryToDocument(unittest.TestCase):
         ]
 
         # Transform and get result
-        result_documents = transform_daily_summary_to_document(daily_summary)
+        result_documents = (
+            self.discord_summary_transformer.transform_daily_summary_to_document(
+                daily_summary
+            )
+        )
 
         # Assertions
         self.assertEqual(len(result_documents), len(expected_documents))

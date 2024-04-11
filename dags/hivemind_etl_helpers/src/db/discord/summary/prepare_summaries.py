@@ -1,13 +1,12 @@
 import logging
 
 from hivemind_etl_helpers.src.db.discord.summary.summary_utils import (
-    transform_channel_summary_to_document,
-    transform_thread_summary_to_document,
+    DiscordSummaryTransformer,
 )
 from hivemind_etl_helpers.src.db.discord.utils.transform_discord_raw_messges import (
     transform_discord_raw_messages,
 )
-from hivemind_etl_helpers.src.utils.summary_base import SummaryBase
+from hivemind_etl_helpers.src.utils.summary.summary_base import SummaryBase
 from llama_index.core import Document, Settings
 from llama_index.core.response_synthesizers.base import BaseSynthesizer
 
@@ -19,6 +18,7 @@ class PrepareSummaries(SummaryBase):
         verbose: bool = False,
         **kwargs,
     ) -> None:
+        self.discord_summary_transformer = DiscordSummaryTransformer()
         llm = kwargs.get("llm", Settings.llm)
 
         super().__init__(
@@ -122,7 +122,7 @@ class PrepareSummaries(SummaryBase):
                     thread_summary_splitted = self.split_lines(thread_summary)
 
                     for summary in thread_summary_splitted:
-                        thread_doc = transform_thread_summary_to_document(
+                        thread_doc = self.discord_summary_transformer.transform_thread_summary_to_document(
                             thread_name=thread,
                             summary_date=date,
                             thread_summary=summary,
@@ -131,7 +131,7 @@ class PrepareSummaries(SummaryBase):
                         thread_summary_documenets.append(thread_doc)
 
                     # modifying the thread name just for channel summarizer
-                    thread_doc_modified = transform_thread_summary_to_document(
+                    thread_doc_modified = self.discord_summary_transformer.transform_thread_summary_to_document(
                         thread_name="Main channel" if thread is None else thread,
                         summary_date=date,
                         thread_summary=thread_summary,
@@ -192,7 +192,7 @@ class PrepareSummaries(SummaryBase):
         for date in channel_summaries.keys():
             daily_documents: list[Document] = []
             for channel in channel_summaries[date].keys():
-                channel_doc = transform_channel_summary_to_document(
+                channel_doc = self.discord_summary_transformer.transform_channel_summary_to_document(
                     channel_name=channel,
                     channel_summary=channel_summaries[date][channel],
                     summary_date=date,

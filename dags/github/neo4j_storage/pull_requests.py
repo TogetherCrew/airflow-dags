@@ -132,11 +132,8 @@ def save_pr_files_changes_to_neo4j(pr_id: int, repository_id: str, file_changes:
     neo4jConnection = Neo4jConnection()
     driver = neo4jConnection.connect_neo4j()
 
-    print(
-        f"MATCH (repo:{Node.Repository.value} {{id: $repository_id}}), (pr:{Node.PullRequest.value} {{id: $pr_id}})"
-    )
-    print("repository_id", repository_id)
-    print("pr_id", pr_id)
+    # Not saving file changes without a sha
+    file_changes = list(filter(lambda fc: fc.get("sha") is not None, file_changes))
 
     with driver.session() as session:
         session.execute_write(
