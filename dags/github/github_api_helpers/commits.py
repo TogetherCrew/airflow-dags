@@ -97,7 +97,7 @@ def fetch_commit_pull_requests(owner: str, repo: str, sha: str) -> list:
     :param owner: The owner of the repository.
     :param repo: The name of the repository.
     :param sha: The SHA identifier of the commit.
-    :return: A list of files changed in the specified commit.
+    :return: A list of pull requests associated with the specified commit.
     """
     logging.info(f"Fetching pull requests of {owner}/{repo}/commits/{sha}")
     endpoint = f"https://api.github.com/repos/{owner}/{repo}/commits/{sha}/pulls"
