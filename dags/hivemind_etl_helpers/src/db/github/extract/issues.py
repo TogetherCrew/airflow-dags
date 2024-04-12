@@ -2,7 +2,7 @@ from datetime import datetime
 
 import neo4j
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
-from hivemind_etl_helpers.src.db.github.schema import GitHubIssue
+from hivemind_etl_helpers.src.db.github.schema import GitHubIssue, GitHubIssueID
 
 
 class GithubIssueExtraction:
@@ -23,7 +23,7 @@ class GithubIssueExtraction:
             a list of repository id to fetch their issues
         from_date : datetime | None
             get the issues form a specific date that they were created
-            defualt is `None`, meaning to apply no filtering on data
+            default is `None`, meaning to apply no filtering on data
 
         Returns
         --------
@@ -85,7 +85,7 @@ class GithubIssueExtraction:
             a list of repository id to fetch their issues
         from_date : datetime | None
             get the issues form a specific date that they were created
-            defualt is `None`, meaning to apply no filtering on data
+            default is `None`, meaning to apply no filtering on data
 
         Returns
         --------
@@ -100,3 +100,33 @@ class GithubIssueExtraction:
             github_issues.append(issue)
 
         return github_issues
+    
+    def fetch_issue_ids(
+        self,
+        repository_id: list[int],
+        from_date: datetime | None = None,
+    ) -> list[GitHubIssueID]:
+        """
+        fetch issues from data dump in neo4j
+
+        Parameters
+        ------------
+        repository_id : list[int]
+            a list of repository id to fetch their issues
+        from_date : datetime | None
+            get the issues form a specific date that they were created
+            default is `None`, meaning to apply no filtering on data
+
+        Returns
+        --------
+        github_issues_ids : list[GitHubIssueID]
+            list of neo4j records as the extracted issue ids
+        """
+        records = self.__fetch_raw_issues(repository_id, from_date)
+
+        github_issue_ids: list[GitHubIssueID] = []
+        for record in records:
+            issue = GitHubIssueID.from_dict(record)
+            github_issues_ids.append(issue)
+
+        return github_issue_ids

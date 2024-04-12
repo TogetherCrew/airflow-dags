@@ -63,3 +63,21 @@ class GitHubIssue:
             "repository_name": self.repository_name,
             "type": "issue",
         }
+
+class GitHubIssueID:
+    def __init__(
+        self,
+        id: int,
+    ) -> None:
+        self.id = id
+
+    @classmethod
+    def from_dict(cls, issue: dict[str, str | int]) -> "GitHubIssueID":
+        return cls(
+            id=issue["id"],  # type: ignore
+        )
+
+    def to_dict(self) -> dict[str, str | int | None]:
+        return {
+            "id": self.id,
+        }
