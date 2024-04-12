@@ -127,6 +127,6 @@ class GithubIssueExtraction:
         github_issue_ids: list[GitHubIssueID] = []
         for record in records:
             issue = GitHubIssueID.from_dict(record)
-            github_issues_ids.append(issue)
+            github_issue_ids.append(issue)
 
         return github_issue_ids
