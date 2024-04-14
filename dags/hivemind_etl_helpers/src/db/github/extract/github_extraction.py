@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from dags.hivemind_etl_helpers.src.db.github.extract import GitHubCommentExtraction
+from dags.hivemind_etl_helpers.src.db.github.extract.comment import GitHubCommentExtraction
 from dags.hivemind_etl_helpers.src.db.github.schema.comment import GitHubComment
 
 # Note
