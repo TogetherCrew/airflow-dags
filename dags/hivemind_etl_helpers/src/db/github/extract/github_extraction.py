@@ -33,7 +33,10 @@ class GithubExtraction:
         # self.pull_requests_extraction = GithubPullRequestsExtraction()
 
     def fetch_comments(
-        self, repository_id: list[int], from_date: datetime | None = None, **kwargs
+        self,
+        repository_id: list[int],
+        from_date: datetime | None = None,
+        **kwargs
     ) -> list[GitHubComment]:
         return self.comment_extraction.fetch_comments(
             repository_id, from_date, **kwargs

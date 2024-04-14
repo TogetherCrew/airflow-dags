@@ -1,16 +1,8 @@
-import logging
 from datetime import datetime
 
 import neo4j
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
 from hivemind_etl_helpers.src.db.github.schema import GitHubComment
-
-logging.basicConfig(
-    level=logging.DEBUG,
-    filename="app.log",
-    filemode="w",
-    format="%(name)s - %(levelname)s - %(message)s",
-)
 
 
 class GitHubCommentExtraction:
@@ -23,7 +15,7 @@ class GitHubCommentExtraction:
         self.neo4j_connection = Neo4jConnection()
         self.neo4j_driver = self.neo4j_connection.connect_neo4j()
 
-    def __fetch_raw_comments(
+    def _fetch_raw_comments(
         self, repository_id: list[int], from_date: datetime | None = None, **kwargs
     ) -> list[neo4j.Record]:
         """
@@ -132,7 +124,7 @@ class GitHubCommentExtraction:
             A list of GitHubComment objects.
         """
 
-        records = self.__fetch_raw_comments(repository_id, from_date, **kwargs)
+        records = self._fetch_raw_comments(repository_id, from_date, **kwargs)
 
         github_comments: list[GitHubComment] = []
         for record in records:
