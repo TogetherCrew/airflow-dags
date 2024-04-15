@@ -506,6 +506,7 @@ with DAG(
         new_data = {**data, "commit_prs": commit_prs}
         return new_data
 
+    @task
     def load_commit_pull_requests(data):
         commit_prs: dict = data["commit_prs"]
         repo_id = data["repo"]["id"]
