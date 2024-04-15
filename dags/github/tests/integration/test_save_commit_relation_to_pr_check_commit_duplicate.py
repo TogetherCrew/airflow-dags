@@ -1,3 +1,5 @@
+# flake8: noqa: E501
+
 from unittest import TestCase
 
 from github.neo4j_storage import save_commits_relation_to_pr

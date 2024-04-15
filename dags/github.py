@@ -491,7 +491,7 @@ with DAG(
 
     # region of pull requests for commit
     @task
-    def extract_commit_pull_requests(data: dict) -> dict:
+    def extract_commit_pull_requests(data):
         commits = data["commits"]
         commit_prs = {}
         for commit in commits:
@@ -506,7 +506,7 @@ with DAG(
         new_data = {**data, "commit_prs": commit_prs}
         return new_data
 
-    def load_commit_pull_requests(data: dict):
+    def load_commit_pull_requests(data):
         commit_prs: dict = data["commit_prs"]
         repo_id = data["repo"]["id"]
 

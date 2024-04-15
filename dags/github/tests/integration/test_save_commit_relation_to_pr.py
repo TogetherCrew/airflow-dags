@@ -1,5 +1,7 @@
-from unittest import TestCase
+# flake8: noqa: E501
+
 from datetime import datetime, timedelta
+from unittest import TestCase
 
 from github.neo4j_storage import save_commits_relation_to_pr
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
