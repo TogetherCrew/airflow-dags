@@ -1,5 +1,4 @@
 from datetime import datetime
-from pathlib import Path
 from unittest import TestCase
 
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
