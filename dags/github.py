@@ -633,12 +633,12 @@ with DAG(
     load_issue >> loaded_pr_issue_comments
 
     commits = extract_commits.expand(data=repos)
-    transform_comment = transform_commits.expand(data=commits)
-    load_commit = load_commits.expand(data=transform_comment)
+    commits_transformed = transform_commits.expand(data=commits)
+    load_commit = load_commits.expand(data=commits_transformed)
 
-    commit_prs = extract_commit_pull_requests.expand(data=commits)
+    commit_prs = extract_commit_pull_requests.expand(data=commits_transformed)
     load_commit_prs = load_commit_pull_requests.expand(data=commit_prs)
-    load_commit >> load_commit_prs
+    commit_prs >> load_commit_prs
 
     commits_files_changes = extract_commits_files_changes.expand(data=commits)
     transform_commits_files_changes = transform_commits_files_changes.expand(
