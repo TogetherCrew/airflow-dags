@@ -46,6 +46,7 @@ from github.neo4j_storage import (
     save_comment_to_neo4j,
     save_commit_files_changes_to_neo4j,
     save_commit_to_neo4j,
+    save_commits_relation_to_pr,
     save_issue_to_neo4j,
     save_label_to_neo4j,
     save_org_member_to_neo4j,
@@ -486,19 +487,34 @@ with DAG(
 
         return data
 
+    # endregion
+
+    # region of pull requests for commit
     @task
     def extract_commit_pull_requests(data: dict) -> dict:
-        """
-        extract the pull requests for each commit
-        """
-        logging.info(f"Extracting pull requests for commit sha: {data['sha']}")
-        repo = data["repo"]
-        owner = repo["owner"]["login"]
-        repo_name = repo["name"]
+        commits = data["commits"]
+        commit_prs = {}
+        for commit in commits:
+            logging.info(f"Extracting pull requests for commit sha: {commit['sha']}")
+            repo = data["repo"]
+            owner = repo["owner"]["login"]
+            repo_name = repo["name"]
 
-        prs = fetch_commit_pull_requests(owner, repo_name, data["sha"])
-        new_data = {**data, "prs": prs}
+            prs = fetch_commit_pull_requests(owner, repo_name, data["sha"])
+            commit_prs[commit["sha"]] = prs
+
+        new_data = {**data, "commit_prs": commit_prs}
         return new_data
+
+    def load_commit_pull_requests(data: dict):
+        commit_prs: dict = data["commit_prs"]
+        repo_id = data["repo"]["id"]
+
+        for commit_sha, prs in commit_prs.items():
+            logging.info(f"Saving commits sha {data['sha']} pull requests!")
+            save_commits_relation_to_pr(commit_sha, repo_id, prs)
+
+        return data
 
     # endregion
 
@@ -620,7 +636,7 @@ with DAG(
     load_commit = load_commits.expand(data=transform_comment)
 
     commit_prs = extract_commit_pull_requests.expand(data=commits)
-    load_commit_prs = load_pull_requests.expand(data=commit_prs)
+    load_commit_prs = load_commit_pull_requests.expand(data=commit_prs)
     load_commit >> load_commit_prs
 
     commits_files_changes = extract_commits_files_changes.expand(data=commits)
