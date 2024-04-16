@@ -500,7 +500,7 @@ with DAG(
             owner = repo["owner"]["login"]
             repo_name = repo["name"]
 
-            prs = fetch_commit_pull_requests(owner, repo_name, data["sha"])
+            prs = fetch_commit_pull_requests(owner, repo_name, commit["sha"])
             commit_prs[commit["sha"]] = prs
 
         new_data = {**data, "commit_prs": commit_prs}
