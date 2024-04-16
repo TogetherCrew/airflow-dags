@@ -61,6 +61,9 @@ def save_commit_files_changes_to_neo4j(
     neo4jConnection = Neo4jConnection()
     driver = neo4jConnection.connect_neo4j()
 
+    # Not saving file changes without a sha
+    file_changes = list(filter(lambda fc: fc.get("sha") is not None, file_changes))
+
     with driver.session() as session:
         session.execute_write(
             lambda tx: tx.run(

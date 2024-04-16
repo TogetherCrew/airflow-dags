@@ -26,6 +26,7 @@ from airflow.decorators import task
 from github.github_api_helpers import (
     extract_linked_issues_from_pr,
     fetch_commit_files,
+    fetch_commit_pull_requests,
     fetch_org_details,
     get_all_comment_reactions,
     get_all_commits,
@@ -45,6 +46,7 @@ from github.neo4j_storage import (
     save_comment_to_neo4j,
     save_commit_files_changes_to_neo4j,
     save_commit_to_neo4j,
+    save_commits_relation_to_pr,
     save_issue_to_neo4j,
     save_label_to_neo4j,
     save_org_member_to_neo4j,
@@ -487,6 +489,36 @@ with DAG(
 
     # endregion
 
+    # region of pull requests for commit
+    @task
+    def extract_commit_pull_requests(data):
+        commits = data["commits"]
+        commit_prs = {}
+        for commit in commits:
+            logging.info(f"Extracting pull requests for commit sha: {commit['sha']}")
+            repo = data["repo"]
+            owner = repo["owner"]["login"]
+            repo_name = repo["name"]
+
+            prs = fetch_commit_pull_requests(owner, repo_name, data["sha"])
+            commit_prs[commit["sha"]] = prs
+
+        new_data = {**data, "commit_prs": commit_prs}
+        return new_data
+
+    @task
+    def load_commit_pull_requests(data):
+        commit_prs: dict = data["commit_prs"]
+        repo_id = data["repo"]["id"]
+
+        for commit_sha, prs in commit_prs.items():
+            logging.info(f"Saving commits sha {data['sha']} pull requests!")
+            save_commits_relation_to_pr(commit_sha, repo_id, prs)
+
+        return data
+
+    # endregion
+
     # region commits files changes ETL
     @task
     def extract_commits_files_changes(data):
@@ -601,8 +633,12 @@ with DAG(
     load_issue >> loaded_pr_issue_comments
 
     commits = extract_commits.expand(data=repos)
-    transform_comment = transform_commits.expand(data=commits)
-    load_comment = load_commits.expand(data=transform_comment)
+    commits_transformed = transform_commits.expand(data=commits)
+    load_commit = load_commits.expand(data=commits_transformed)
+
+    commit_prs = extract_commit_pull_requests.expand(data=commits_transformed)
+    load_commit_prs = load_commit_pull_requests.expand(data=commit_prs)
+    commit_prs >> load_commit_prs
 
     commits_files_changes = extract_commits_files_changes.expand(data=commits)
     transform_commits_files_changes = transform_commits_files_changes.expand(
@@ -611,5 +647,5 @@ with DAG(
     load_commits_files_changes = load_commits_files_changes.expand(
         data=transform_commits_files_changes
     )
-    load_comment >> load_commits_files_changes
+    load_commit >> load_commits_files_changes
     load_pr_files_changes >> load_commits_files_changes
