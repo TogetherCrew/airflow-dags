@@ -512,7 +512,7 @@ with DAG(
         repo_id = data["repo"]["id"]
 
         for commit_sha, prs in commit_prs.items():
-            logging.info(f"Saving commits sha {data['sha']} pull requests!")
+            logging.info(f"Saving the commit sha {commit_sha} pull requests!")
             save_commits_relation_to_pr(commit_sha, repo_id, prs)
 
         return data
