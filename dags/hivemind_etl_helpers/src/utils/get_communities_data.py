@@ -136,13 +136,15 @@ def get_discourse_communities() -> list[dict[str, str | datetime]]:
     return communities_data
 
 
-def get_google_drive_communities() -> list[dict[str, str | datetime]]:
+def get_google_drive_communities() -> (
+    list[dict[str, str | list[str] | datetime | dict]]
+):
     """
     Get Google Drive communities with their folder IDs, file IDs, drive IDs, and client config.
 
     Returns
     ---------
-    communities_data : list[dict[str, str | datetime]]
+    communities_data : list[dict[str, str| list[str] | datetime | dict]]
         a list of Google Drive data information
 
         example data output:
@@ -157,7 +159,7 @@ def get_google_drive_communities() -> list[dict[str, str | datetime]]:
         }]
         ```
     """
-    communities_data: list[dict[str, str | datetime]] = []
+    communities_data: list[dict[str, str | list[str] | datetime | dict]] = []
     google_drive_modules = query_modules_db(platform="google-drive")
 
     for module in google_drive_modules:
