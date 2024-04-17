@@ -177,7 +177,8 @@ def save_commits_relation_to_pr(
                 WITH pr
                 MERGE (commit:{Node.Commit.value} {{sha: $commit_sha}})
                 WITH pr, commit
-                MERGE (commit)-[:IS_ON]->(pr)
+                MERGE (commit)-[r:IS_ON]->(pr)
+                SET r.latestSavedAt = datetime()
             """,
                 pull_requests=pull_requests,
                 commit_sha=commit_sha,
