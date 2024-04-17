@@ -420,7 +420,9 @@ class TestSaveCommitRelationToPR(TestCase):
         )
 
         # Checking the user
-        data_pr = self.neo4j_driver.execute_query("MATCH (pr:PullRequest) RETURN (pr)")
+        data_pr = self.neo4j_driver.execute_query(
+            "MATCH (pr:GitHubPullRequest) RETURN (pr)"
+        )
         records_pr = data_pr.records
         self.assertEqual(len(records_pr), 1)
 
@@ -463,14 +465,16 @@ class TestSaveCommitRelationToPR(TestCase):
         self.assertEqual(pr["milestone"], None)
 
         # Checking the user
-        data_commits = self.neo4j_driver.execute_query("MATCH (co:Commit) RETURN (co)")
+        data_commits = self.neo4j_driver.execute_query(
+            "MATCH (co:GitHubCommit) RETURN (co)"
+        )
         records_commit = data_commits.records
 
         self.assertEqual(len(records_commit), 1)
         self.assertEqual(records_commit[0]["co"]["sha"], "random_sha")
 
         data_user_pr_relation = self.neo4j_driver.execute_query(
-            "MATCH (gu:GitHubUser)-[r:CREATED]->(pr:PullRequest) RETURN gu, r, pr"
+            "MATCH (gu:GitHubUser)-[r:CREATED]->(pr:GitHubPullRequest) RETURN gu, r, pr"
         )
         records_user_pr_relation = data_user_pr_relation.records
         self.assertEqual(len(records_user_pr_relation), 1)
@@ -485,7 +489,7 @@ class TestSaveCommitRelationToPR(TestCase):
         )
 
         data_commit_pr_relation = self.neo4j_driver.execute_query(
-            "MATCH (c:Commit)-[r:IS_ON]->(pr:PullRequest) RETURN c, r, pr"
+            "MATCH (c:GitHubCommit)-[r:IS_ON]->(pr:GitHubPullRequest) RETURN c, r, pr"
         )
         commit_pr_relation = data_commit_pr_relation.records
         self.assertEqual(len(commit_pr_relation), 1)
