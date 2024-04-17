@@ -355,11 +355,15 @@ class TestSaveCommitRelationToPRCheckDuplicateCommit(TestCase):
         ]
 
         # Pre-saving the commit
-        self.neo4j_driver.execute_query("CREATE (c:GitHubCommit) SET c.sha = 'random_sha'")
+        self.neo4j_driver.execute_query(
+            "CREATE (c:GitHubCommit) SET c.sha = 'random_sha'"
+        )
         save_commits_relation_to_pr(
             commit_sha="random_sha", repository_id="1234", pull_requests=pr
         )
 
-        data_commits = self.neo4j_driver.execute_query("MATCH (c:GitHubCommit) RETURN c")
+        data_commits = self.neo4j_driver.execute_query(
+            "MATCH (c:GitHubCommit) RETURN c"
+        )
         # we shouldn't make any new commit node in `save_commits_relation_to_pr`
         self.assertEqual(len(data_commits.records), 1)

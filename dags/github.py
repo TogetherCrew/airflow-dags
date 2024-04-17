@@ -158,7 +158,7 @@ with DAG(
 
     @task
     def transform_github_repos(repo):
-        logging.info(f"Just passing through github repos")
+        logging.info("Just passing through github repos")
 
         return repo
 
@@ -203,7 +203,7 @@ with DAG(
 
     @task
     def transform_pull_requests(data):
-        logging.info(f"Just passing throught PRs for now!")
+        logging.info("Just passing throught PRs for now!")
         return data
 
     @task
@@ -238,7 +238,7 @@ with DAG(
 
     @task
     def transform_pull_request_files_changes(data):
-        logging.info(f"Just passing through the data for now!")
+        logging.info("Just passing through the data for now!")
         return data
 
     @task
@@ -276,14 +276,14 @@ with DAG(
 
     @task
     def transform_pr_review(data):
-        logging.info(f"Just passing through the data for now!")
+        logging.info("Just passing through the data for now!")
         return data
 
     @task
     def load_pr_review(data):
         pr_reviews = data["pr_reviews"]
 
-        for idx ,(pr_id, reviews) in enumerate(pr_reviews.items()):
+        for idx, (pr_id, reviews) in enumerate(pr_reviews.items()):
             logging.info(f"Iteration {idx + 1}/{len(pr_reviews)}")
             for review in reviews:
                 save_review_to_neo4j(pr_id=pr_id, review=review)
@@ -305,7 +305,7 @@ with DAG(
 
     @task
     def transform_pr_review_comments(data):
-        logging.info(f"Just passing through the data for now!")
+        logging.info("Just passing through the data for now!")
         return data
 
     @task
@@ -350,7 +350,7 @@ with DAG(
 
     @task
     def transform_pr_issue_comments(data):
-        logging.info(f"Just passing through the data for now!")
+        logging.info("Just passing through the data for now!")
         return data
 
     @task
@@ -377,7 +377,7 @@ with DAG(
 
     @task
     def transform_repo_contributors(data):
-        logging.info(f"Just passing through the data for now!")
+        logging.info("Just passing through the data for now!")
         return data
 
     @task
@@ -407,7 +407,7 @@ with DAG(
 
     @task
     def transform_issues(data):
-        logging.info(f"Just passing through the data for now!")
+        logging.info("Just passing through the data for now!")
         return data
 
     @task
@@ -435,7 +435,7 @@ with DAG(
 
     @task
     def transform_labels(data):
-        logging.info(f"Just passing through the data for now!")
+        logging.info("Just passing through the data for now!")
         return data
 
     @task
@@ -462,7 +462,7 @@ with DAG(
 
     @task
     def transform_commits(data):
-        logging.info(f"Just passing through the data for now!")
+        logging.info("Just passing through the data for now!")
         return data
 
     @task
@@ -528,7 +528,7 @@ with DAG(
 
     @task
     def transform_commits_files_changes(data):
-        logging.info(f"Just passing through the data for now!")
+        logging.info("Just passing through the data for now!")
         return data
 
     @task
