@@ -131,7 +131,6 @@ with DAG(
 
     @task
     def load_github_organization_members(data):
-        logging.info(f"All data from last stage: {data}")
         members = data["organization_members"]
         org_id = data["organization_info"]["id"]
 
@@ -145,9 +144,9 @@ with DAG(
     # region github repos ETL
     @task
     def extract_github_repos(organizations):
-        logging.info(f"All data from last stage: {organizations}")
         all_repos = []
-        for organization in organizations:
+        for i, organization in enumerate(organizations):
+            logging.info(f"Iteration {i + 1}/{len(organization)}")
             repos = get_all_org_repos(
                 org_name=organization["organization_basic"]["name"]
             )
@@ -159,13 +158,12 @@ with DAG(
 
     @task
     def transform_github_repos(repo):
-        logging.info(f"All data from last stage: {repo}")
+        logging.info(f"Just passing through github repos")
 
         return repo
 
     @task
     def load_github_repos(repo):
-        logging.info(f"All data from last stage: {repo}")
         repo = repo["repo"]
 
         save_repo_to_neo4j(repo)
@@ -176,7 +174,6 @@ with DAG(
     # region pull requests ETL
     @task
     def extract_pull_requests(data):
-        logging.info(f"All data from last stage: {data}")
         repo = data["repo"]
         owner = repo["owner"]["login"]
         repo_name = repo["name"]
@@ -187,14 +184,14 @@ with DAG(
 
     @task
     def extract_pull_request_linked_issues(data):
-        logging.info(f"All data from last stage: {data}")
         repo = data["repo"]
         prs = data["prs"]
         owner = repo["owner"]["login"]
         repo_name = repo["name"]
 
         new_prs = []
-        for pr in prs:
+        for i, pr in enumerate(prs):
+            logging.info(f"Processing iter {i + 1}/{len(prs)}")
             pr_number = pr["number"]
             linked_issues = extract_linked_issues_from_pr(
                 owner=owner, repo=repo_name, pull_number=pr_number
@@ -206,15 +203,15 @@ with DAG(
 
     @task
     def transform_pull_requests(data):
-        logging.info(f"All data from last stage: {data}")
+        logging.info(f"Just passing throught PRs for now!")
         return data
 
     @task
     def load_pull_requests(data):
-        logging.info(f"All data from last stage: {data}")
         prs = data["prs"]
         repository_id = data["repo"]["id"]
-        for pr in prs:
+        for i, pr in enumerate(prs):
+            logging.info(f"Iteration {i + 1}/{len(prs)}")
             save_pull_request_to_neo4j(pr=pr, repository_id=repository_id)
 
         return data
@@ -224,14 +221,14 @@ with DAG(
     # region pull request files changes ETL
     @task
     def extract_pull_request_files_changes(data):
-        logging.info(f"All data from last stage: {data}")
         repo = data["repo"]
         owner = repo["owner"]["login"]
         repo_name = repo["name"]
         prs = data["prs"]
 
         pr_files_changes = {}
-        for pr in prs:
+        for i, pr in enumerate(prs):
+            logging.info(f"Iteration {i + 1}/{len(prs)}")
             files_changes = get_all_pull_request_files(
                 owner=owner, repo=repo_name, pull_number=pr.get("number", None)
             )
@@ -241,16 +238,16 @@ with DAG(
 
     @task
     def transform_pull_request_files_changes(data):
-        logging.info(f"All data from last stage: {data}")
+        logging.info(f"Just passing through the data for now!")
         return data
 
     @task
     def load_pull_request_files_changes(data):
-        logging.info(f"All data from last stage: {data}")
         pr_files_changes = data["pr_files_changes"]
         repository_id = data["repo"]["id"]
 
-        for pr_id, files_changes in pr_files_changes.items():
+        for idx, (pr_id, files_changes) in enumerate(pr_files_changes.items()):
+            logging.info(f"Iteration {idx + 1}/{len(pr_files_changes)}")
             save_pr_files_changes_to_neo4j(
                 pr_id=pr_id, repository_id=repository_id, file_changes=files_changes
             )
@@ -262,14 +259,14 @@ with DAG(
     # region pr review ETL
     @task
     def extract_pr_review(data):
-        logging.info(f"All data from last stage: {data}")
         repo = data["repo"]
         owner = repo["owner"]["login"]
         repo_name = repo["name"]
         prs = data["prs"]
 
         pr_reviews = {}
-        for pr in prs:
+        for i, pr in enumerate(prs):
+            logging.info(f"Iteration {i}/{len(prs)}")
             reviews = get_all_reviews_of_pull_request(
                 owner=owner, repo=repo_name, pull_number=pr.get("number", None)
             )
@@ -279,15 +276,15 @@ with DAG(
 
     @task
     def transform_pr_review(data):
-        logging.info(f"All data from last stage: {data}")
+        logging.info(f"Just passing through the data for now!")
         return data
 
     @task
     def load_pr_review(data):
-        logging.info(f"All data from last stage: {data}")
         pr_reviews = data["pr_reviews"]
 
-        for pr_id, reviews in pr_reviews.items():
+        for idx ,(pr_id, reviews) in enumerate(pr_reviews.items()):
+            logging.info(f"Iteration {idx + 1}/{len(pr_reviews)}")
             for review in reviews:
                 save_review_to_neo4j(pr_id=pr_id, review=review)
 
@@ -299,7 +296,6 @@ with DAG(
 
     @task
     def extract_pr_review_comments(data):
-        logging.info(f"All data from last stage: {data}")
         repo = data["repo"]
         owner = repo["owner"]["login"]
         repo_name = repo["name"]
@@ -309,16 +305,16 @@ with DAG(
 
     @task
     def transform_pr_review_comments(data):
-        logging.info(f"All data from last stage: {data}")
+        logging.info(f"Just passing through the data for now!")
         return data
 
     @task
     def load_pr_review_comments(data):
-        logging.info(f"All data from last stage: {data}")
         review_comments = data["review_comments"]
         repository_id = data["repo"]["id"]
 
-        for review_comment in review_comments:
+        for i, review_comment in enumerate(review_comments):
+            logging.info(f"Iteration {i + 1}/{len(review_comments)}")
             save_review_comment_to_neo4j(
                 review_comment=review_comment, repository_id=repository_id
             )
@@ -330,7 +326,6 @@ with DAG(
     # region pr & issue comments ETL
     @task
     def extract_pr_issue_comments(data):
-        logging.info(f"All data from last stage: {data}")
         repo = data["repo"]
         owner = repo["owner"]["login"]
         repo_name = repo["name"]
@@ -340,7 +335,6 @@ with DAG(
 
     @task
     def extract_pr_issue_comments_reactions_member(data):
-        logging.info(f"All data from last stage: {data}")
         comments = data["comments"]
         repo = data["repo"]
         owner = repo["owner"]["login"]
@@ -356,12 +350,11 @@ with DAG(
 
     @task
     def transform_pr_issue_comments(data):
-        logging.info(f"All data from last stage: {data}")
+        logging.info(f"Just passing through the data for now!")
         return data
 
     @task
     def load_pr_issue_comments(data):
-        logging.info(f"All data from last stage: {data}")
         comments = data["comments"]
         repository_id = data["repo"]["id"]
 
@@ -375,7 +368,6 @@ with DAG(
     # region repo contributors ETL
     @task
     def extract_repo_contributors(data):
-        logging.info(f"All data from last stage: {data}")
         repo = data["repo"]
         repo_name = repo["name"]
         owner = repo["owner"]["login"]
@@ -385,16 +377,16 @@ with DAG(
 
     @task
     def transform_repo_contributors(data):
-        logging.info(f"All data from last stage: {data}")
+        logging.info(f"Just passing through the data for now!")
         return data
 
     @task
     def load_repo_contributors(data):
-        logging.info(f"All data from last stage: {data}")
         contributors = data["contributors"]
         repository_id = data["repo"]["id"]
 
-        for contributor in contributors:
+        for i, contributor in enumerate(contributors):
+            logging.info(f"Iteration {i + 1}/{len(contributors)}")
             save_repo_contributors_to_neo4j(
                 contributor=contributor, repository_id=repository_id
             )
@@ -406,7 +398,6 @@ with DAG(
     # region issues ETL
     @task
     def extract_issues(data):
-        logging.info(f"All data from last stage: {data}")
         repo = data["repo"]
         owner = repo["owner"]["login"]
         repo_name = repo["name"]
@@ -416,16 +407,16 @@ with DAG(
 
     @task
     def transform_issues(data):
-        logging.info(f"All data from last stage: {data}")
+        logging.info(f"Just passing through the data for now!")
         return data
 
     @task
     def load_issues(data):
-        logging.info(f"All data from last stage: {data}")
         issues = data["issues"]
         repository_id = data["repo"]["id"]
 
-        for issue in issues:
+        for i, issue in enumerate(issues):
+            logging.info(f"Iteration {i + 1}/{len(issues)}")
             save_issue_to_neo4j(issue=issue, repository_id=repository_id)
 
         return data
@@ -435,7 +426,6 @@ with DAG(
     # region labels ETL
     @task
     def extract_labels(data):
-        logging.info(f"All data from last stage: {data}")
         repo = data["repo"]
         owner = repo["owner"]["login"]
         repo_name = repo["name"]
@@ -445,15 +435,15 @@ with DAG(
 
     @task
     def transform_labels(data):
-        logging.info(f"All data from last stage: {data}")
+        logging.info(f"Just passing through the data for now!")
         return data
 
     @task
     def load_labels(data):
-        logging.info(f"All data from last stage: {data}")
         labels = data["labels"]
 
-        for label in labels:
+        for i, label in enumerate(labels):
+            logging.info(f"Iteration {i + 1}/{len(labels)}")
             save_label_to_neo4j(label=label)
 
         return data
@@ -463,7 +453,6 @@ with DAG(
     # region commits ETL
     @task
     def extract_commits(data):
-        logging.info(f"All data from last stage: {data}")
         repo = data["repo"]
         owner = repo["owner"]["login"]
         repo_name = repo["name"]
@@ -473,16 +462,16 @@ with DAG(
 
     @task
     def transform_commits(data):
-        logging.info(f"All data from last stage: {data}")
+        logging.info(f"Just passing through the data for now!")
         return data
 
     @task
     def load_commits(data):
-        logging.info(f"All data from last stage: {data}")
         commits = data["commits"]
         repository_id = data["repo"]["id"]
 
-        for commit in commits:
+        for i, commit in enumerate(commits):
+            logging.info(f"Iteration {i + 1}/{len(commits)}")
             save_commit_to_neo4j(commit=commit, repository_id=repository_id)
 
         return data
@@ -494,8 +483,8 @@ with DAG(
     def extract_commit_pull_requests(data):
         commits = data["commits"]
         commit_prs = {}
-        for commit in commits:
-            logging.info(f"Extracting pull requests for commit sha: {commit['sha']}")
+        for i, commit in commits:
+            logging.info(f"Iteration {i + 1}/{len(commits)}")
             repo = data["repo"]
             owner = repo["owner"]["login"]
             repo_name = repo["name"]
@@ -511,8 +500,8 @@ with DAG(
         commit_prs: dict = data["commit_prs"]
         repo_id = data["repo"]["id"]
 
-        for commit_sha, prs in commit_prs.items():
-            logging.info(f"Saving the commit sha {commit_sha} pull requests!")
+        for idx, (commit_sha, prs) in enumerate(commit_prs.items()):
+            logging.info(f"Iteration {idx + 1}/{len(commit_prs)}")
             save_commits_relation_to_pr(commit_sha, repo_id, prs)
 
         return data
@@ -529,7 +518,8 @@ with DAG(
         commits = data["commits"]
 
         commits_files_changes = {}
-        for commit in commits:
+        for i, commit in enumerate(commits):
+            logging.info(f"Iteration {i + 1}/{len(commits)}")
             sha = commit["sha"]
             files_changes = fetch_commit_files(owner=owner, repo=repo_name, sha=sha)
             commits_files_changes[sha] = files_changes
@@ -538,16 +528,16 @@ with DAG(
 
     @task
     def transform_commits_files_changes(data):
-        logging.info(f"All data from last stage: {data}")
+        logging.info(f"Just passing through the data for now!")
         return data
 
     @task
     def load_commits_files_changes(data):
-        logging.info(f"All data from last stage: {data}")
         commits_files_changes = data["commits_files_changes"]
         repository_id = data["repo"]["id"]
 
-        for sha, files_changes in commits_files_changes.items():
+        for idx, (sha, files_changes) in enumerate(commits_files_changes.items()):
+            logging.info(f"Iteration {idx + 1}/{len(commits_files_changes)}")
             save_commit_files_changes_to_neo4j(
                 commit_sha=sha, repository_id=repository_id, file_changes=files_changes
             )
