@@ -54,7 +54,7 @@ class TestGithubETLFetchRawIssues(TestCase):
                         i.timeline_url = "https://api.github.com/repos/GitHub/some_repo/issues/1/timeline",
                         i.node_id = "some_id"
 
-                    CREATE (repo:Repository {id: 123, full_name: "Org/SampleRepo"})
+                    CREATE (repo:GitHubRepository {id: 123, full_name: "Org/SampleRepo"})
                     """
                 )
             )

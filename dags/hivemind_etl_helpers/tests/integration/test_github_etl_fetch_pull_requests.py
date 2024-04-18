@@ -29,7 +29,7 @@ class TestGithubETLFetchRawComments(TestCase):
             session.execute_write(
                 lambda tx: tx.run(
                     """
-                    CREATE (pr:PullRequest)<-[:CREATED]-(:GitHubUser {login: "author #1"})
+                    CREATE (pr:GitHubPullRequest)<-[:CREATED]-(:GitHubUser {login: "author #1"})
                     SET
                         pr.id = 111,
                         pr.repository_id = 123,
@@ -42,7 +42,7 @@ class TestGithubETLFetchRawComments(TestCase):
                         pr.html_url = "https://github.com/PullRequest/1",
                         pr.latestSavedAt = "2024-02-10T10:23:50Z"
 
-                    CREATE (repo:Repository {id: 123, full_name: "Org/SampleRepo"})
+                    CREATE (repo:GitHubRepository {id: 123, full_name: "Org/SampleRepo"})
                     """
                 )
             )
@@ -69,7 +69,7 @@ class TestGithubETLFetchRawComments(TestCase):
             session.execute_write(
                 lambda tx: tx.run(
                     """
-                    CREATE (pr:PullRequest)<-[:CREATED]-(:GitHubUser {login: "author #1"})
+                    CREATE (pr:GitHubPullRequest)<-[:CREATED]-(:GitHubUser {login: "author #1"})
                     SET
                         pr.id = 111,
                         pr.repository_id = 123,
@@ -82,7 +82,7 @@ class TestGithubETLFetchRawComments(TestCase):
                         pr.html_url = "https://github.com/PullRequest/1",
                         pr.latestSavedAt = "2024-02-10T10:23:50Z"
 
-                    CREATE (repo:Repository {id: 123, full_name: "Org/SampleRepo"})
+                    CREATE (repo:GitHubRepository {id: 123, full_name: "Org/SampleRepo"})
                     """
                 )
             )
@@ -110,7 +110,7 @@ class TestGithubETLFetchRawComments(TestCase):
             session.execute_write(
                 lambda tx: tx.run(
                     """
-                    CREATE (pr:PullRequest)<-[:CREATED]-(:GitHubUser {login: "author #1"})
+                    CREATE (pr:GitHubPullRequest)<-[:CREATED]-(:GitHubUser {login: "author #1"})
                     SET
                         pr.id = 111,
                         pr.repository_id = 123,
@@ -148,7 +148,7 @@ class TestGithubETLFetchRawComments(TestCase):
                         pr3.title = "sample title #3",
                         pr3.html_url = "https://github.com/PullRequest/3",
                         pr3.latestSavedAt = "2024-02-10T10:23:50Z"
-                    CREATE (repo:Repository {id: 123, full_name: "Org/SampleRepo"})
+                    CREATE (repo:GitHubRepository {id: 123, full_name: "Org/SampleRepo"})
                     """
                 )
             )

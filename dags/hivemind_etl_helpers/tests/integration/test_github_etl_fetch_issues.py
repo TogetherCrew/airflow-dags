@@ -54,7 +54,7 @@ class TestGithubETLFetchIssues(TestCase):
                         i.timeline_url = "https://api.github.com/repos/GitHub/some_repo/issues/1/timeline",
                         i.node_id = "some_id"
 
-                    CREATE (repo:Repository {id: 123, full_name: "Org/SampleRepo"})
+                    CREATE (repo:GitHubRepository {id: 123, full_name: "Org/SampleRepo"})
                     """
                 )
             )
@@ -132,7 +132,7 @@ class TestGithubETLFetchIssues(TestCase):
                         i2.timeline_url = "https://api.github.com/repos/GitHub/some_repo/issues/2/timeline",
                         i2.node_id = "some_id2"
 
-                    CREATE (repo:Repository {id: 123, full_name: "Org/SampleRepo"})
+                    CREATE (repo:GitHubRepository {id: 123, full_name: "Org/SampleRepo"})
                     """
                 )
             )
@@ -224,7 +224,7 @@ class TestGithubETLFetchIssues(TestCase):
                         i2.timeline_url = "https://api.github.com/repos/GitHub/some_repo/issues/2/timeline",
                         i2.node_id = "some_id2"
 
-                    CREATE (repo:Repository {id: 123, full_name: "Org/SampleRepo"})
+                    CREATE (repo:GitHubRepository {id: 123, full_name: "Org/SampleRepo"})
                     """
                 )
             )

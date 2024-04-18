@@ -58,7 +58,7 @@ class TestGithubETLFetchCommentsFiltered(TestCase):
 
                     CREATE (pr:PullRequest {id: 111})<-[:IS_ON]-(c)
                         SET pr.title = "sample pr title"
-                    CREATE (repo:Repository {id: 123, full_name: "Org/SampleRepo"})
+                    CREATE (repo:GitHubRepository {id: 123, full_name: "Org/SampleRepo"})
                     """
                 )
             )
@@ -140,7 +140,7 @@ class TestGithubETLFetchCommentsFiltered(TestCase):
                         SET i.title = "sample issue title"
                     CREATE (pr:PullRequest)<-[:IS_ON]-(c2)
                         SET pr.title = "sample pr title 2"
-                    CREATE (repo:Repository {id: 123, full_name: "Org/SampleRepo"})
+                    CREATE (repo:GitHubRepository {id: 123, full_name: "Org/SampleRepo"})
                     """
                 )
             )
@@ -226,7 +226,7 @@ class TestGithubETLFetchCommentsFiltered(TestCase):
                         SET i.title = "sample issue title"
                     CREATE (pr:PullRequest {id: 999})<-[:IS_ON]-(c2)
                         SET pr.title = "sample pr title 2"
-                    CREATE (repo:Repository {id: 123, full_name: "Org/SampleRepo"})
+                    CREATE (repo:GitHubRepository {id: 123, full_name: "Org/SampleRepo"})
                     """
                 )
             )
