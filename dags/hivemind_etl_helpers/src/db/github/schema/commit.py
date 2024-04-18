@@ -52,7 +52,7 @@ class GitHubCommit:
             related_pr_title=data.get("related_pr_title", None),
         )
 
-    def to_dict(self) -> dict[str, str | int]:
+    def to_dict(self) -> dict[str, str | int | None]:
         return {
             "author_name": self.author_name,
             "committer_name": self.committer_name,
