@@ -1,7 +1,7 @@
 from datetime import datetime
 
 import neo4j
-from hivemind_etl_helpers.src.db.github.extract import GithubIssueExtraction
+from hivemind_etl_helpers.src.db.github.extract.issues import GithubIssueExtraction
 from hivemind_etl_helpers.src.db.github.schema import GitHubIssue
 
 
