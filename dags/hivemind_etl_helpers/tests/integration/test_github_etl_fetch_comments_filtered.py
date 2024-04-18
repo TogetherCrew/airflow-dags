@@ -37,7 +37,7 @@ class TestGithubETLFetchCommentsFiltered(TestCase):
             session.execute_write(
                 lambda tx: tx.run(
                     """
-                    CREATE (c:Comment)<-[:CREATED]-(user:GitHubUser {login: "author #1"})
+                    CREATE (c:GitHubComment)<-[:CREATED]-(user:GitHubUser {login: "author #1"})
                     SET
                         c.id = 111,
                         c.created_at = "2024-02-06T10:23:50Z",
@@ -56,7 +56,7 @@ class TestGithubETLFetchCommentsFiltered(TestCase):
                         c.`reactions.-1` = 0,
                         c.`reactions.total_count` = 5
 
-                    CREATE (pr:PullRequest {id: 111})<-[:IS_ON]-(c)
+                    CREATE (pr:GitHubPullRequest {id: 111})<-[:IS_ON]-(c)
                         SET pr.title = "sample pr title"
                     CREATE (repo:GitHubRepository {id: 123, full_name: "Org/SampleRepo"})
                     """
@@ -77,7 +77,7 @@ class TestGithubETLFetchCommentsFiltered(TestCase):
         self.assertEqual(comments[0].created_at, "2024-02-06 10:23:50")
         self.assertEqual(comments[0].updated_at, "2024-02-06 10:23:51")
         self.assertEqual(comments[0].related_title, "sample pr title")
-        self.assertEqual(comments[0].related_node, "PullRequest")
+        self.assertEqual(comments[0].related_node, "GitHubPullRequest")
         self.assertEqual(comments[0].text, "A sample comment")
         self.assertEqual(comments[0].latest_saved_at, "2024-02-10 10:23:50")
         expected_reactions = {
@@ -98,7 +98,7 @@ class TestGithubETLFetchCommentsFiltered(TestCase):
             session.execute_write(
                 lambda tx: tx.run(
                     """
-                    CREATE (c:Comment)<-[:CREATED]-(:GitHubUser {login: "author #1"})
+                    CREATE (c:GitHubComment)<-[:CREATED]-(:GitHubUser {login: "author #1"})
                     SET
                         c.id = 111,
                         c.created_at = "2024-02-06T10:23:50Z",
@@ -117,7 +117,7 @@ class TestGithubETLFetchCommentsFiltered(TestCase):
                         c.`reactions.-1` = 0,
                         c.`reactions.total_count` = 5
 
-                    CREATE (c2:Comment)<-[:CREATED]-(:GitHubUser {login: "author #2"})
+                    CREATE (c2:GitHubComment)<-[:CREATED]-(:GitHubUser {login: "author #2"})
                     SET
                         c2.id = 112,
                         c2.created_at = "2023-02-06T10:23:50Z",
@@ -136,9 +136,9 @@ class TestGithubETLFetchCommentsFiltered(TestCase):
                         c2.`reactions.-1` = 0,
                         c2.`reactions.total_count` = 5
 
-                    CREATE (i:Issue {id: 111})<-[:IS_ON]-(c)
+                    CREATE (i:GitHubIssue {id: 111})<-[:IS_ON]-(c)
                         SET i.title = "sample issue title"
-                    CREATE (pr:PullRequest)<-[:IS_ON]-(c2)
+                    CREATE (pr:GitHubPullRequest)<-[:IS_ON]-(c2)
                         SET pr.title = "sample pr title 2"
                     CREATE (repo:GitHubRepository {id: 123, full_name: "Org/SampleRepo"})
                     """
@@ -160,7 +160,7 @@ class TestGithubETLFetchCommentsFiltered(TestCase):
         self.assertEqual(comments[0].created_at, "2024-02-06 10:23:50")
         self.assertEqual(comments[0].updated_at, "2024-02-06 10:23:51")
         self.assertEqual(comments[0].related_title, "sample issue title")
-        self.assertEqual(comments[0].related_node, "Issue")
+        self.assertEqual(comments[0].related_node, "GitHubIssue")
         self.assertEqual(comments[0].text, "A sample comment")
         self.assertEqual(comments[0].latest_saved_at, "2024-02-10 10:23:50")
         expected_reactions = {
@@ -184,7 +184,7 @@ class TestGithubETLFetchCommentsFiltered(TestCase):
             session.execute_write(
                 lambda tx: tx.run(
                     """
-                    CREATE (c:Comment)<-[:CREATED]-(:GitHubUser {login: "author #1"})
+                    CREATE (c:GitHubComment)<-[:CREATED]-(:GitHubUser {login: "author #1"})
                     SET
                         c.id = 111,
                         c.created_at = "2024-02-06T10:23:50Z",
@@ -203,7 +203,7 @@ class TestGithubETLFetchCommentsFiltered(TestCase):
                         c.`reactions.-1` = 0,
                         c.`reactions.total_count` = 5
 
-                    CREATE (c2:Comment)<-[:CREATED]-(:GitHubUser {login: "author #2"})
+                    CREATE (c2:GitHubComment)<-[:CREATED]-(:GitHubUser {login: "author #2"})
                     SET
                         c2.id = 112,
                         c2.created_at = "2024-02-07T10:23:50Z",
@@ -222,9 +222,9 @@ class TestGithubETLFetchCommentsFiltered(TestCase):
                         c2.`reactions.-1` = 0,
                         c2.`reactions.total_count` = 5
 
-                    CREATE (i:Issue {id: 111})<-[:IS_ON]-(c)
+                    CREATE (i:GitHubIssue {id: 111})<-[:IS_ON]-(c)
                         SET i.title = "sample issue title"
-                    CREATE (pr:PullRequest {id: 999})<-[:IS_ON]-(c2)
+                    CREATE (pr:GitHubPullRequest {id: 999})<-[:IS_ON]-(c2)
                         SET pr.title = "sample pr title 2"
                     CREATE (repo:GitHubRepository {id: 123, full_name: "Org/SampleRepo"})
                     """
@@ -247,7 +247,7 @@ class TestGithubETLFetchCommentsFiltered(TestCase):
         self.assertEqual(comments[0].created_at, "2024-02-06 10:23:50")
         self.assertEqual(comments[0].updated_at, "2024-02-06 10:23:51")
         self.assertEqual(comments[0].related_title, "sample issue title")
-        self.assertEqual(comments[0].related_node, "Issue")
+        self.assertEqual(comments[0].related_node, "GitHubIssue")
         self.assertEqual(comments[0].text, "A sample comment")
         self.assertEqual(comments[0].latest_saved_at, "2024-02-10 10:23:50")
         expected_reactions = {
@@ -270,7 +270,7 @@ class TestGithubETLFetchCommentsFiltered(TestCase):
         self.assertEqual(comments[1].created_at, "2024-02-07 10:23:50")
         self.assertEqual(comments[1].updated_at, "2024-02-07 10:23:51")
         self.assertEqual(comments[1].related_title, "sample pr title 2")
-        self.assertEqual(comments[1].related_node, "PullRequest")
+        self.assertEqual(comments[1].related_node, "GitHubPullRequest")
         self.assertEqual(comments[1].text, "A sample comment")
         self.assertEqual(comments[1].latest_saved_at, "2024-02-10 10:23:50")
         expected_reactions = {

@@ -29,7 +29,7 @@ class TestGithubETLFetchIssues(TestCase):
             session.execute_write(
                 lambda tx: tx.run(
                     """
-                    CREATE (i:Issue)<-[:CREATED]-(:GitHubUser {login: "author #1"})
+                    CREATE (i:GitHubIssue)<-[:CREATED]-(:GitHubUser {login: "author #1"})
                     SET
                         i.state_reason = "completed",
                         i.body = "explanation of some sample issue",
@@ -82,7 +82,7 @@ class TestGithubETLFetchIssues(TestCase):
             session.execute_write(
                 lambda tx: tx.run(
                     """
-                    CREATE (i:Issue)<-[:CREATED]-(:GitHubUser {login: "author #1"})
+                    CREATE (i:GitHubIssue)<-[:CREATED]-(:GitHubUser {login: "author #1"})
                     SET
                         i.state_reason = "completed",
                         i.body = "explanation of some sample issue",
@@ -107,7 +107,7 @@ class TestGithubETLFetchIssues(TestCase):
                         i.timeline_url = "https://api.github.com/repos/GitHub/some_repo/issues/1/timeline",
                         i.node_id = "some_id"
 
-                    CREATE (i2:Issue)<-[:CREATED]-(:GitHubUser {login: "author #2"})
+                    CREATE (i2:GitHubIssue)<-[:CREATED]-(:GitHubUser {login: "author #2"})
                     SET
                         i2.state_reason = "completed",
                         i2.body = "explanation of some sample issue 2",
@@ -174,7 +174,7 @@ class TestGithubETLFetchIssues(TestCase):
             session.execute_write(
                 lambda tx: tx.run(
                     """
-                    CREATE (i:Issue)<-[:CREATED]-(:GitHubUser {login: "author #1"})
+                    CREATE (i:GitHubIssue)<-[:CREATED]-(:GitHubUser {login: "author #1"})
                     SET
                         i.state_reason = "completed",
                         i.body = "explanation of some sample issue",
@@ -199,7 +199,7 @@ class TestGithubETLFetchIssues(TestCase):
                         i.timeline_url = "https://api.github.com/repos/GitHub/some_repo/issues/1/timeline",
                         i.node_id = "some_id"
 
-                    CREATE (i2:Issue)<-[:CREATED]-(:GitHubUser {login: "author #2"})
+                    CREATE (i2:GitHubIssue)<-[:CREATED]-(:GitHubUser {login: "author #2"})
                     SET
                         i2.state_reason = "completed",
                         i2.body = "explanation of some sample issue 2",
