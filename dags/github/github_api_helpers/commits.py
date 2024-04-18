@@ -64,9 +64,7 @@ def fetch_commit_details(owner: str, repo: str, commit_sha: str):
     response = get(endpoint)
     response_data = response.json()
 
-    logging.info(
-        f"Found details for commit {commit_sha} of {owner}/{repo}"
-    )
+    logging.info(f"Found details for commit {commit_sha} of {owner}/{repo}")
     return response_data
 
 
