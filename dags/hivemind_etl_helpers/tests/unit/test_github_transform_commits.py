@@ -47,6 +47,7 @@ class TestGithubTransformCommits(TestCase):
                 "repository_name": "SampleRepo",
                 "verification": "valid",
                 "type": "commit",
+                "related_pr_title": None,
             },
         )
 
@@ -64,6 +65,7 @@ class TestGithubTransformCommits(TestCase):
                 repository_id=123,
                 repository_name="SampleRepo",
                 verification="valid",
+                related_pr_title="Sample PR"
             ),
             GitHubCommit(
                 author_name="author #2",
@@ -113,6 +115,7 @@ class TestGithubTransformCommits(TestCase):
                 "repository_name": "SampleRepo",
                 "verification": "valid",
                 "type": "commit",
+                "related_pr_title": "Sample PR",
             },
         )
 
@@ -130,6 +133,7 @@ class TestGithubTransformCommits(TestCase):
                 "repository_name": "SampleRepo",
                 "verification": "valid",
                 "type": "commit",
+                "related_pr_title": None,
             },
         )
 
@@ -147,5 +151,6 @@ class TestGithubTransformCommits(TestCase):
                 "repository_name": "SampleRepo#6",
                 "verification": "unsigned",
                 "type": "commit",
+                "related_pr_title": None,
             },
         )
