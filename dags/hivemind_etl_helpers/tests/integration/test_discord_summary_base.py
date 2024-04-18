@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import Mock
 
-from hivemind_etl_helpers.src.utils.summary_base import SummaryBase
+from hivemind_etl_helpers.src.utils.summary.summary_base import SummaryBase
 from llama_index.core import Document, MockEmbedding, Settings, SummaryIndex
 from llama_index.core.llms import MockLLM
 

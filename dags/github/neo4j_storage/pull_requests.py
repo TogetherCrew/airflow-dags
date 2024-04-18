@@ -132,11 +132,8 @@ def save_pr_files_changes_to_neo4j(pr_id: int, repository_id: str, file_changes:
     neo4jConnection = Neo4jConnection()
     driver = neo4jConnection.connect_neo4j()
 
-    print(
-        f"MATCH (repo:{Node.Repository.value} {{id: $repository_id}}), (pr:{Node.PullRequest.value} {{id: $pr_id}})"
-    )
-    print("repository_id", repository_id)
-    print("pr_id", pr_id)
+    # Not saving file changes without a sha
+    file_changes = list(filter(lambda fc: fc.get("sha") is not None, file_changes))
 
     with driver.session() as session:
         session.execute_write(
@@ -156,6 +153,35 @@ def save_pr_files_changes_to_neo4j(pr_id: int, repository_id: str, file_changes:
                 pr_id=int(pr_id),
                 repository_id=int(repository_id),
                 file_changes=file_changes,
+            )
+        )
+
+    driver.close()
+
+
+def save_commits_relation_to_pr(
+    commit_sha: str, repository_id: str, pull_requests: list
+):
+    neo4jConnection = Neo4jConnection()
+    driver = neo4jConnection.connect_neo4j()
+
+    for pr in pull_requests:
+        save_pull_request_to_neo4j(pr, repository_id)
+
+    with driver.session() as session:
+        session.execute_write(
+            lambda tx: tx.run(
+                f"""
+                UNWIND $pull_requests as pr_data
+                MERGE (pr:{Node.PullRequest.value} {{id: pr_data.id}})
+                WITH pr
+                MERGE (commit:{Node.Commit.value} {{sha: $commit_sha}})
+                WITH pr, commit
+                MERGE (commit)-[r:IS_ON]->(pr)
+                SET r.latestSavedAt = datetime()
+            """,
+                pull_requests=pull_requests,
+                commit_sha=commit_sha,
             )
         )
 

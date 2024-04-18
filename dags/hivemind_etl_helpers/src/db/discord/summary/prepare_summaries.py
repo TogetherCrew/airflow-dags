@@ -1,13 +1,12 @@
 import logging
 
 from hivemind_etl_helpers.src.db.discord.summary.summary_utils import (
-    transform_channel_summary_to_document,
-    transform_thread_summary_to_document,
+    DiscordSummaryTransformer,
 )
 from hivemind_etl_helpers.src.db.discord.utils.transform_discord_raw_messges import (
     transform_discord_raw_messages,
 )
-from hivemind_etl_helpers.src.utils.summary_base import SummaryBase
+from hivemind_etl_helpers.src.utils.summary.summary_base import SummaryBase
 from llama_index.core import Document, Settings
 from llama_index.core.response_synthesizers.base import BaseSynthesizer
 
@@ -19,6 +18,7 @@ class PrepareSummaries(SummaryBase):
         verbose: bool = False,
         **kwargs,
     ) -> None:
+        self.discord_summary_transformer = DiscordSummaryTransformer()
         llm = kwargs.get("llm", Settings.llm)
 
         super().__init__(
@@ -30,9 +30,9 @@ class PrepareSummaries(SummaryBase):
     def prepare_thread_summaries(
         self,
         guild_id: str,
-        raw_data_grouped: dict[str, dict[str, dict[str, list]]],
+        raw_data_grouped: dict[str, dict[str, dict[str | None, list]]],
         summarization_query: str,
-    ) -> dict[str, dict[str, dict[str, str]]]:
+    ) -> dict[str, dict[str, dict[str | None, str]]]:
         """
         prepare the summaries for threads
 
@@ -40,14 +40,14 @@ class PrepareSummaries(SummaryBase):
         -----------
         guild_id : str
             the guild id to convert the raw messages to documents
-        raw_data_grouped : dict[str, dict[str, dict[str, list]]]
+        raw_data_grouped : dict[str, dict[str, dict[str | None, list]]]
             the raw data grouped by date, channel and thread in third nesting level
         summarization_query : str
             the summarization query to do on the LLM
 
         Returns
         --------
-        thread_summaries : dict[str, dict[str, dict[str, str]]]
+        thread_summaries : dict[str, dict[str, dict[str | None, str]]]
             the summaries per date, channel, and thread
             the third level are the summaries saved
         """
@@ -60,7 +60,7 @@ class PrepareSummaries(SummaryBase):
                 total_call_count += len(raw_data_grouped[date][channel])
 
         idx = 1
-        thread_summaries: dict[str, dict[str, dict[str, str]]] = {}
+        thread_summaries: dict[str, dict[str, dict[str | None, str]]] = {}
         for date in raw_data_grouped.keys():
             for channel in raw_data_grouped[date].keys():
                 for thread in raw_data_grouped[date][channel].keys():
@@ -84,7 +84,7 @@ class PrepareSummaries(SummaryBase):
 
     def prepare_channel_summaries(
         self,
-        thread_summaries: dict[str, dict[str, dict[str, str]]],
+        thread_summaries: dict[str, dict[str, dict[str | None, str]]],
         summarization_query: str,
     ) -> tuple[dict[str, dict[str, str]], list[Document]]:
         """
@@ -92,8 +92,8 @@ class PrepareSummaries(SummaryBase):
 
         Parameters
         -----------
-        thread_summaries : dict[str, dict[str, dict[str, str]]]
-            the thread summaries per day, per channel
+        thread_summaries : dict[str, dict[str, dict[str | None, str]]]
+            the thread summaries per day and per channel
         summarization_query : str
             the summarization query to do on the LLM
 
@@ -118,14 +118,26 @@ class PrepareSummaries(SummaryBase):
             for channel in thread_summaries[date].keys():
                 channel_documents: list[Document] = []
                 for thread in thread_summaries[date][channel].keys():
-                    thread_doc = transform_thread_summary_to_document(
-                        thread_name=thread,
+                    thread_summary = thread_summaries[date][channel][thread]
+                    thread_summary_splitted = self.split_lines(thread_summary)
+
+                    for summary in thread_summary_splitted:
+                        thread_doc = self.discord_summary_transformer.transform_thread_summary_to_document(
+                            thread_name=thread,
+                            summary_date=date,
+                            thread_summary=summary,
+                            thread_channel=channel,
+                        )
+                        thread_summary_documenets.append(thread_doc)
+
+                    # modifying the thread name just for channel summarizer
+                    thread_doc_modified = self.discord_summary_transformer.transform_thread_summary_to_document(
+                        thread_name="Main channel" if thread is None else thread,
                         summary_date=date,
-                        thread_summary=thread_summaries[date][channel][thread],
+                        thread_summary=thread_summary,
                         thread_channel=channel,
                     )
-                    channel_documents.append(thread_doc)
-                    thread_summary_documenets.append(thread_doc)
+                    channel_documents.append(thread_doc_modified)
 
                 logging.info(
                     f"{self.prefix} Summrizing channels {idx}/{total_call_count}"
@@ -180,7 +192,7 @@ class PrepareSummaries(SummaryBase):
         for date in channel_summaries.keys():
             daily_documents: list[Document] = []
             for channel in channel_summaries[date].keys():
-                channel_doc = transform_channel_summary_to_document(
+                channel_doc = self.discord_summary_transformer.transform_channel_summary_to_document(
                     channel_name=channel,
                     channel_summary=channel_summaries[date][channel],
                     summary_date=date,
@@ -200,3 +212,28 @@ class PrepareSummaries(SummaryBase):
             daily_summaries[date] = day_summary
 
         return daily_summaries, channel_summary_documenets
+
+    def split_lines(
+        self,
+        text: str,
+    ) -> list[str]:
+        """
+        split a text by its bullet points
+
+        Parameters
+        -----------
+        text : str
+            the text that might contain multiple bullet points
+
+        Returns
+        --------
+        splitted_text : list[str]
+            a list of strings which is the original text
+            but splitted into multiple parts
+        """
+        splitted_text = text.split("\n")
+        empty_string = ""
+        while empty_string in splitted_text:
+            splitted_text.remove(empty_string)
+
+        return splitted_text

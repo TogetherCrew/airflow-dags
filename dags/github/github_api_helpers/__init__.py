@@ -1,6 +1,15 @@
 # flake8: noqa
-from .comments import get_all_repo_issues_and_prs_comments, get_all_repo_review_comments
-from .commits import fetch_commit_details, fetch_commit_files, get_all_commits
+from .comments import (
+    get_all_comment_reactions,
+    get_all_repo_issues_and_prs_comments,
+    get_all_repo_review_comments,
+)
+from .commits import (
+    fetch_commit_details,
+    fetch_commit_files,
+    fetch_commit_pull_requests,
+    get_all_commits,
+)
 from .issues import get_all_comments_of_issue, get_all_issues
 from .labels import get_all_repo_labels
 from .orgs import fetch_org_details, get_all_org_members

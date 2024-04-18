@@ -8,7 +8,7 @@ from hivemind_etl_helpers.src.db.discord.summary.prepare_summaries import (
     PrepareSummaries,
 )
 from hivemind_etl_helpers.src.db.discord.summary.summary_utils import (
-    transform_daily_summary_to_document,
+    DiscordSummaryTransformer,
 )
 from llama_index.core import Document, Settings
 from llama_index.core.response_synthesizers.base import BaseSynthesizer
@@ -39,6 +39,7 @@ class DiscordSummary(PrepareSummaries):
         Note: `chunk_size` is read from `llama_index.core.Setting.chunk_size`.
         """
         llm = kwargs.get("llm", Settings.llm)
+        self.discord_summary_transformer = DiscordSummaryTransformer()
 
         super().__init__(
             llm=llm, response_synthesizer=response_synthesizer, verbose=verbose
@@ -74,27 +75,40 @@ class DiscordSummary(PrepareSummaries):
         daily_summary_documenets : list[llama_index.Document]
             list of daily summaries converted to llama_index documents
         """
+        summary_prompt_posfix = (
+            ". Organize the output in one or multiple descriptive "
+            "bullet points and include important details"
+        )
         raw_data_grouped = prepare_grouped_data(guild_id, from_date)
         if raw_data_grouped != {}:
             thread_summaries = self.prepare_thread_summaries(
-                guild_id, raw_data_grouped, summarization_prefix + " discord thread"
+                guild_id,
+                raw_data_grouped,
+                (summarization_prefix + " discord thread" + summary_prompt_posfix),
             )
             (
                 channel_summaries,
                 thread_summary_documenets,
             ) = self.prepare_channel_summaries(
                 thread_summaries,
-                summarization_prefix + " selection of discord thread summaries",
+                summarization_prefix
+                + (" selection of discord thread summaries" + summary_prompt_posfix),
             )
             (
                 daily_summaries,
                 channel_summary_documenets,
             ) = self.prepare_daily_summaries(
                 channel_summaries,
-                summarization_prefix + " selection of discord channel summaries",
+                (
+                    summarization_prefix
+                    + " selection of discord channel summaries"
+                    + summary_prompt_posfix
+                ),
             )
-            daily_summary_documents = transform_daily_summary_to_document(
-                daily_summaries
+            daily_summary_documents = (
+                self.discord_summary_transformer.transform_daily_summary_to_document(
+                    daily_summaries
+                )
             )
         else:
             logging.info(f"No data received after the data: {from_date}")

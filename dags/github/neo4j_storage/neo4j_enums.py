@@ -3,17 +3,18 @@ from enum import Enum
 
 class Node(Enum):
     # This node is created by the API, and we receive a list of organizations detail to extract data from
-    OrganizationProfile = "OrganizationProfile"
-    GitHubOrganization = "GitHubOrganization"
-    GitHubUser = "GitHubUser"
-    PullRequest = "PullRequest"
-    Repository = "Repository"
-    Issue = "Issue"
-    Label = "Label"
-    Commit = "Commit"
-    Comment = "Comment"
-    ReviewComment = "ReviewComment"
-    File = "File"
+    prefix = "GitHub"
+    OrganizationProfile = f"{prefix}OrganizationProfile"
+    GitHubOrganization = f"{prefix}Organization"
+    GitHubUser = f"{prefix}User"
+    PullRequest = f"{prefix}PullRequest"
+    Repository = f"{prefix}Repository"
+    Issue = f"{prefix}Issue"
+    Label = f"{prefix}Label"
+    Commit = f"{prefix}Commit"
+    Comment = f"{prefix}Comment"
+    ReviewComment = f"{prefix}ReviewComment"
+    File = f"{prefix}File"
 
 
 class Relationship(Enum):
@@ -28,4 +29,5 @@ class Relationship(Enum):
     AUTHORED_BY = "AUTHORED_BY"
     IS_ON = "IS_ON"
     CHANGED = "CHANGED"
+    REACTED = "REACTED"
     LINKED = "LINKED"

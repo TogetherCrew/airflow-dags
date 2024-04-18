@@ -15,12 +15,7 @@ from hivemind_etl_helpers.src.db.github.load import (
     PrepareDeletion,
     load_documents_into_pg_database,
 )
-from hivemind_etl_helpers.src.db.github.transform import (
-    transform_comments,
-    transform_commits,
-    transform_issues,
-    transform_prs,
-)
+from hivemind_etl_helpers.src.db.github.transform import GitHubTransformation
 from llama_index.core import Document
 from tc_hivemind_backend.db.pg_db_utils import setup_db
 
@@ -77,14 +72,17 @@ def process_github_vectorstore(
 
     # TRANSFORM
     # llama-index documents
+    github_transformation = GitHubTransformation()
     logging.debug(f"{prefix}Transforming comments!")
-    docs_comment = transform_comments(github_comments)
+    docs_comment = github_transformation.transform_comments(github_comments)
     logging.debug(f"{prefix}Transforming commits!")
-    docs_commit = transform_commits(github_commits)
+    docs_commit = github_transformation.transform_commits(github_commits)
     logging.debug(f"{prefix}Transforming issues!")
-    docs_issue, docs_issue_comments = transform_issues(github_issues)
+    docs_issue, docs_issue_comments = github_transformation.transform_issues(
+        github_issues
+    )
     logging.debug(f"{prefix}Transforming pull requests!")
-    docs_prs = transform_prs(github_prs)
+    docs_prs = github_transformation.transform_pull_requests(github_prs)
 
     # there's no update on commits
     all_documents: list[Document] = docs_commit.copy()
