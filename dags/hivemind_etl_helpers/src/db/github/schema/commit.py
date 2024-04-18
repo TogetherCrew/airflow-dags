@@ -36,7 +36,7 @@ class GitHubCommit:
         self.related_pr_title = related_pr_title
 
     @classmethod
-    def from_dict(cls, data: dict[str, str | int]) -> "GitHubCommit":
+    def from_dict(cls, data: dict[str, str | int | None]) -> "GitHubCommit":
         return cls(
             author_name=data["author_name"],  # type: ignore
             committer_name=data["committer_name"],  # type: ignore
@@ -49,7 +49,7 @@ class GitHubCommit:
             latest_saved_at=data["latest_saved_at"],  # type: ignore
             created_at=data["created_at"],  # type: ignore
             verification=data["verification"],  # type: ignore
-            related_pr_title=data.get("related_pr_title", None),
+            related_pr_title=data.get("related_pr_title", None),  # type: ignore
         )
 
     def to_dict(self) -> dict[str, str | int | None]:

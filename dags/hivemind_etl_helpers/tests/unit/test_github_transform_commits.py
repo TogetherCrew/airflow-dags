@@ -65,7 +65,7 @@ class TestGithubTransformCommits(TestCase):
                 repository_id=123,
                 repository_name="SampleRepo",
                 verification="valid",
-                related_pr_title="Sample PR"
+                related_pr_title="Sample PR",
             ),
             GitHubCommit(
                 author_name="author #2",
