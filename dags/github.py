@@ -483,7 +483,7 @@ with DAG(
     def extract_commit_pull_requests(data):
         commits = data["commits"]
         commit_prs = {}
-        for i, commit in commits:
+        for i, commit in enumerate(commits):
             logging.info(f"Iteration {i + 1}/{len(commits)}")
             repo = data["repo"]
             owner = repo["owner"]["login"]
