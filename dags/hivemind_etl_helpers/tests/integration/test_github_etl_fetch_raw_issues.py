@@ -15,14 +15,14 @@ class TestGithubETLFetchRawIssues(TestCase):
 
     def test_get_empty_results_no_from_date(self):
         repository_ids = [123, 124]
-        issues = self.extractor._GithubIssueExtraction__fetch_raw_issues(
+        issues = self.extractor._fetch_raw_issues(
             repository_id=repository_ids, from_date=None
         )
         self.assertEqual(issues, [])
 
     def test_get_empty_results(self):
         repository_ids = [123, 124]
-        issues = self.extractor._GithubIssueExtraction__fetch_raw_issues(
+        issues = self.extractor._fetch_raw_issues(
             repository_id=repository_ids, from_date=datetime(2024, 1, 1)
         )
         self.assertEqual(issues, [])
@@ -63,7 +63,7 @@ class TestGithubETLFetchRawIssues(TestCase):
             )
 
         repository_ids = [123]
-        issues = self.extractor._GithubIssueExtraction__fetch_raw_issues(
+        issues = self.extractor._fetch_raw_issues(
             repository_id=repository_ids, from_date=datetime(2024, 1, 1)
         )
 

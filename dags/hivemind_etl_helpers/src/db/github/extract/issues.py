@@ -2,14 +2,20 @@ from datetime import datetime
 
 import neo4j
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
-from hivemind_etl_helpers.src.db.github.schema import GitHubIssue
+from hivemind_etl_helpers.src.db.github.schema import GitHubIssue, GitHubIssueID
 
 
 class GithubIssueExtraction:
     def __init__(self):
-        pass
+        """
+        Initializes the GitHubCommentExtraction class
+        without requiring any parameters.
+        Establishes a connection to the Neo4j database.
+        """
+        self.neo4j_connection = Neo4jConnection()
+        self.neo4j_driver = self.neo4j_connection.connect_neo4j()
 
-    def __fetch_raw_issues(
+    def _fetch_raw_issues(
         self,
         repository_id: list[int],
         from_date: datetime | None = None,
@@ -23,15 +29,14 @@ class GithubIssueExtraction:
             a list of repository id to fetch their issues
         from_date : datetime | None
             get the issues form a specific date that they were created
-            defualt is `None`, meaning to apply no filtering on data
+            default is `None`, meaning to apply no filtering on data
 
         Returns
         --------
         raw_records : list[neo4j._data.Record]
             list of neo4j records as the extracted issues
         """
-        neo4j_connection = Neo4jConnection()
-        neo4j_driver = neo4j_connection.connect_neo4j()
+
         query = """MATCH (i:Issue)<-[:CREATED]-(user:GitHubUser)
             WHERE
             i.repository_id IN $repoIds
@@ -62,7 +67,7 @@ class GithubIssueExtraction:
             result = tx.run(query, repoIds=repoIds, from_date=from_date)
             return list(result)
 
-        with neo4j_driver.session() as session:
+        with self.neo4j_driver.session() as session:
             raw_records = session.execute_read(
                 _exec_query,
                 repoIds=repository_id,
@@ -85,14 +90,14 @@ class GithubIssueExtraction:
             a list of repository id to fetch their issues
         from_date : datetime | None
             get the issues form a specific date that they were created
-            defualt is `None`, meaning to apply no filtering on data
+            default is `None`, meaning to apply no filtering on data
 
         Returns
         --------
         github_issues : list[GitHubIssue]
             list of neo4j records as the extracted issues
         """
-        records = self.__fetch_raw_issues(repository_id, from_date)
+        records = self._fetch_raw_issues(repository_id, from_date)
 
         github_issues: list[GitHubIssue] = []
         for record in records:
@@ -100,3 +105,33 @@ class GithubIssueExtraction:
             github_issues.append(issue)
 
         return github_issues
+
+    def fetch_issue_ids(
+        self,
+        repository_id: list[int],
+        from_date: datetime | None = None,
+    ) -> list[GitHubIssueID]:
+        """
+        fetch issues from data dump in neo4j
+
+        Parameters
+        ------------
+        repository_id : list[int]
+            a list of repository id to fetch their issues
+        from_date : datetime | None
+            get the issues form a specific date that they were created
+            default is `None`, meaning to apply no filtering on data
+
+        Returns
+        --------
+        github_issues_ids : list[GitHubIssueID]
+            list of neo4j records as the extracted issue ids
+        """
+        records = self._fetch_raw_issues(repository_id, from_date)
+
+        github_issue_ids: list[GitHubIssueID] = []
+        for record in records:
+            issue = GitHubIssueID.from_dict(record)
+            github_issue_ids.append(issue)
+
+        return github_issue_ids
