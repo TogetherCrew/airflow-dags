@@ -15,6 +15,7 @@ class GitHubCommit:
         latest_saved_at: str,
         created_at: str,
         verification: str,
+        related_pr_title: str | None = None,
     ) -> None:
         """
         GitHub commit data serialized into a class.
@@ -32,6 +33,7 @@ class GitHubCommit:
         self.latest_saved_at = parse_date_variables(latest_saved_at)
         self.created_at = parse_date_variables(created_at)
         self.verification = verification
+        self.related_pr_title = related_pr_title
 
     @classmethod
     def from_dict(cls, data: dict[str, str | int]) -> "GitHubCommit":
@@ -47,6 +49,7 @@ class GitHubCommit:
             latest_saved_at=data["latest_saved_at"],  # type: ignore
             created_at=data["created_at"],  # type: ignore
             verification=data["verification"],  # type: ignore
+            related_pr_title=data.get("related_pr_title", None),
         )
 
     def to_dict(self) -> dict[str, str | int]:
@@ -62,5 +65,6 @@ class GitHubCommit:
             "latest_saved_at": self.latest_saved_at,
             "created_at": self.created_at,
             "verification": self.verification,
+            "related_pr_title": self.related_pr_title,
             "type": "commit",
         }
