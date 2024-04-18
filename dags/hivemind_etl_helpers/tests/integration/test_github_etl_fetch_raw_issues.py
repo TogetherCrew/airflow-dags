@@ -29,7 +29,7 @@ class TestGithubETLFetchRawIssues(TestCase):
             session.execute_write(
                 lambda tx: tx.run(
                     """
-                    CREATE (i:Issue)<-[:CREATED]-(:GitHubUser {login: "author #1"})
+                    CREATE (i:GitHubIssue)<-[:CREATED]-(:GitHubUser {login: "author #1"})
                     SET
                         i.state_reason = "completed",
                         i.body = "explanation of some sample issue",
