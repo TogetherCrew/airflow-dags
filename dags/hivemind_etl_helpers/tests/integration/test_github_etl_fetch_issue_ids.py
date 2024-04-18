@@ -5,7 +5,7 @@ from github.neo4j_storage.neo4j_connection import Neo4jConnection
 from hivemind_etl_helpers.src.db.github.extract import GithubExtraction
 
 
-class TestGithubETLFetchIssues(TestCase):
+class TestGithubETLFetchIssueIDs(TestCase):
     def setUp(self) -> None:
         self.extractor = GithubExtraction()
         neo4j_connection = Neo4jConnection()
@@ -15,19 +15,19 @@ class TestGithubETLFetchIssues(TestCase):
 
     def test_get_empty_results_no_from_date(self):
         repository_ids = [123, 124]
-        issues = self.extractor.fetch_issues(
+        issue_ids = self.extractor.fetch_issue_ids(
             repository_id=repository_ids, from_date=None
         )
-        self.assertEqual(issues, [])
+        self.assertEqual(issue_ids, [])
 
     def test_get_empty_results(self):
         repository_ids = [123, 124]
-        issues = self.extractor.fetch_issues(
+        issue_ids = self.extractor.fetch_issue_ids(
             repository_id=repository_ids, from_date=datetime(2024, 1, 1)
         )
-        self.assertEqual(issues, [])
+        self.assertEqual(issue_ids, [])
 
-    def test_get_single_issue_single_repo(self):
+    def test_get_single_issue_id_single_repo(self):
         with self.neo4j_driver.session() as session:
             session.execute_write(
                 lambda tx: tx.run(
@@ -63,24 +63,14 @@ class TestGithubETLFetchIssues(TestCase):
             )
 
         repository_ids = [123]
-        issues = self.extractor.fetch_issues(
+        issue_ids = self.extractor.fetch_issue_ids(
             repository_id=repository_ids,
         )
 
-        self.assertEqual(len(issues), 1)
-        self.assertEqual(issues[0].id, 21200001)
-        self.assertEqual(issues[0].title, "some sample title")
-        self.assertEqual(issues[0].text, "explanation of some sample issue")
-        self.assertEqual(issues[0].state, "closed")
-        self.assertEqual(issues[0].state_reason, "completed")
-        self.assertEqual(issues[0].created_at, "2024-02-06 10:23:50")
-        self.assertEqual(issues[0].updated_at, "2024-02-06 12:56:05")
-        self.assertEqual(issues[0].latest_saved_at, "2024-02-15 06:10:02")
-        self.assertEqual(issues[0].url, "https://github.com/GitHub/some_repo/issues/1")
-        self.assertEqual(issues[0].repository_id, 123)
-        self.assertEqual(issues[0].repository_name, "Org/SampleRepo")
+        self.assertEqual(len(issue_ids), 1)
+        self.assertEqual(issue_ids[0].id, 21200001)
 
-    def test_get_multiple_issues_single_repo(self):
+    def test_get_multiple_issue_ids_single_repo(self):
         with self.neo4j_driver.session() as session:
             session.execute_write(
                 lambda tx: tx.run(
@@ -141,38 +131,15 @@ class TestGithubETLFetchIssues(TestCase):
             )
 
         repository_ids = [123]
-        issues = self.extractor.fetch_issues(
+        issue_ids = self.extractor.fetch_issue_ids(
             repository_id=repository_ids,
         )
 
-        self.assertEqual(len(issues), 2)
-        self.assertEqual(issues[0].id, 21200001)
-        self.assertEqual(issues[0].title, "some sample title")
-        self.assertEqual(issues[0].author_name, "author #1")
-        self.assertEqual(issues[0].text, "explanation of some sample issue")
-        self.assertEqual(issues[0].state, "closed")
-        self.assertEqual(issues[0].state_reason, "completed")
-        self.assertEqual(issues[0].created_at, "2024-02-06 10:23:50")
-        self.assertEqual(issues[0].updated_at, "2024-02-06 12:56:05")
-        self.assertEqual(issues[0].latest_saved_at, "2024-02-15 06:10:02")
-        self.assertEqual(issues[0].url, "https://github.com/GitHub/some_repo/issues/1")
-        self.assertEqual(issues[0].repository_id, 123)
-        self.assertEqual(issues[0].repository_name, "Org/SampleRepo")
+        self.assertEqual(len(issue_ids), 2)
+        self.assertEqual(issue_ids[0].id, 21200001)
+        self.assertEqual(issue_ids[1].id, 21200002)
 
-        self.assertEqual(issues[1].id, 21200002)
-        self.assertEqual(issues[1].title, "some sample title 2")
-        self.assertEqual(issues[1].author_name, "author #2")
-        self.assertEqual(issues[1].text, "explanation of some sample issue 2")
-        self.assertEqual(issues[1].state, "closed")
-        self.assertEqual(issues[1].state_reason, "completed")
-        self.assertEqual(issues[1].created_at, "2024-02-09 10:23:50")
-        self.assertEqual(issues[1].updated_at, "2024-02-09 12:56:05")
-        self.assertEqual(issues[1].latest_saved_at, "2024-02-15 06:10:02")
-        self.assertEqual(issues[1].url, "https://github.com/GitHub/some_repo/issues/2")
-        self.assertEqual(issues[1].repository_id, 123)
-        self.assertEqual(issues[1].repository_name, "Org/SampleRepo")
-
-    def test_get_multiple_issues_single_repo_with_filtering(self):
+    def test_get_multiple_issue_ids_single_repo_with_filtering(self):
         with self.neo4j_driver.session() as session:
             session.execute_write(
                 lambda tx: tx.run(
@@ -233,21 +200,9 @@ class TestGithubETLFetchIssues(TestCase):
             )
 
         repository_ids = [123]
-        issues = self.extractor.fetch_issues(
+        issue_ids = self.extractor.fetch_issue_ids(
             repository_id=repository_ids, from_date=datetime(2024, 2, 8)
         )
 
-        self.assertEqual(len(issues), 1)
-
-        self.assertEqual(issues[0].id, 21200002)
-        self.assertEqual(issues[0].title, "some sample title 2")
-        self.assertEqual(issues[0].author_name, "author #2")
-        self.assertEqual(issues[0].text, "explanation of some sample issue 2")
-        self.assertEqual(issues[0].state, "closed")
-        self.assertEqual(issues[0].state_reason, "completed")
-        self.assertEqual(issues[0].created_at, "2024-02-09 10:23:50")
-        self.assertEqual(issues[0].updated_at, "2024-02-09 12:56:05")
-        self.assertEqual(issues[0].latest_saved_at, "2024-02-15 06:10:02")
-        self.assertEqual(issues[0].url, "https://github.com/GitHub/some_repo/issues/2")
-        self.assertEqual(issues[0].repository_id, 123)
-        self.assertEqual(issues[0].repository_name, "Org/SampleRepo")
+        self.assertEqual(len(issue_ids), 1)
+        self.assertEqual(issue_ids[0].id, 21200002)
