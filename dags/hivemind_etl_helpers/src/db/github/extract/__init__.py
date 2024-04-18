@@ -4,6 +4,4 @@ from .commit import fetch_commits
 from .issues import GithubIssueExtraction
 from .pull_requests import fetch_pull_requests
 
-
-class GithubExtraction(GithubIssueExtraction):
-    pass
+from .github_extraction import GithubExtraction
