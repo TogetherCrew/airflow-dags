@@ -152,9 +152,9 @@ def get_google_drive_communities() -> (
         [{
           "community_id": "community1",
           "from_date": datetime(2024, 1, 1),
-          "folder_id": "folder_123",
-          "file_id": "file_abc",
-          "drive_id": "drive_xyz",
+          "folder_ids": ["folder_123"],
+          "file_ids": ["file_abc"],
+          "drive_ids": ["drive_xyz"],
           "client_config": {...}
         }]
         ```
@@ -169,18 +169,18 @@ def get_google_drive_communities() -> (
         for platform in options:
             platform_data = platform["platforms"]
             platform_from_date = platform_data["fromDate"]
-            folder_id = platform_data["metadata"]["folder_id"]
-            file_id = platform_data["metadata"]["file_id"]
-            drive_id = platform_data["metadata"]["drive_id"]
+            folder_ids = platform_data["metadata"]["folder_ids"]
+            file_ids = platform_data["metadata"]["file_ids"]
+            drive_ids = platform_data["metadata"]["drive_ids"]
             client_config = platform_data["metadata"]["client_config"]
 
             communities_data.append(
                 {
                     "community_id": community_id,
                     "from_date": platform_from_date,
-                    "folder_id": folder_id,
-                    "file_id": file_id,
-                    "drive_id": drive_id,
+                    "folder_id": folder_ids,
+                    "file_id": file_ids,
+                    "drive_id": drive_ids,
                     "client_config": client_config,
                 }
             )

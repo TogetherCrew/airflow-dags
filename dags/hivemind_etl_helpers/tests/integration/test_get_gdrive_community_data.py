@@ -68,7 +68,6 @@ class TestGetDriveCommunityData(TestCase):
 
         # Assertions
         self.assertIsInstance(result, list)
-        self.assertIsInstance()
         self.assertEqual(len(result), 1)
         print(result[0])
 
@@ -87,6 +86,61 @@ class TestGetDriveCommunityData(TestCase):
                     "1RFhr3-KmOZCR5rtp13",
                     "1RFhr3-KmOZCR5rtp14",
                 ],
+                "drive_id": "1RFhr3-KmOZCR5rtp123",
+                "client_config": {},
+            },
+        )
+
+    def test_get_string_input(self):
+        self.client["Core"]["modules"].insert_one(
+            {
+                "name": "hivemind",
+                "communityId": ObjectId("6579c364f1120850414e0dc5"),
+                "options": {
+                    "platforms": [
+                        {
+                            "platformId": ObjectId("6579c364f1120850414e0dc6"),
+                            "type": "source",
+                            "fromDate": datetime(2024, 1, 1),
+                            "options": {},
+                        }
+                    ]
+                },
+            }
+        )
+        self.client["Core"]["platforms"].insert_one(
+            {
+                "_id": ObjectId("6579c364f1120850414e0dc6"),
+                "name": "google-drive",
+                "metadata": {
+                    "name": "TEST",
+                    "folder_id": "1RFhr3-KmOZCR5rtp4dlOM",
+                    "file_id": "1RFhr3-KmOZCR5rtp12",
+                    "drive_id": "1RFhr3-KmOZCR5rtp123",
+                    "client_config": {},
+                },
+                "community": ObjectId("6579c364f1120850414e0dc5"),
+                "disconnectedAt": None,
+                "connectedAt": datetime(2023, 12, 1),
+                "createdAt": datetime(2023, 12, 1),
+                "updatedAt": datetime(2023, 12, 1),
+            }
+        )
+
+        result = get_google_drive_communities()
+
+        # Assertions
+        self.assertIsInstance(result, list)
+        self.assertEqual(len(result), 1)
+        print(result[0])
+
+        self.assertEqual(
+            result[0],
+            {
+                "community_id": "6579c364f1120850414e0dc5",
+                "from_date": datetime(2024, 1, 1),
+                "folder_id": "1RFhr3-KmOZCR5rtp4dlOM",
+                "file_id": "1RFhr3-KmOZCR5rtp12",
                 "drive_id": "1RFhr3-KmOZCR5rtp123",
                 "client_config": {},
             },
