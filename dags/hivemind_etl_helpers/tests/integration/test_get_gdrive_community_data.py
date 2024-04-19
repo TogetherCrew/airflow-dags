@@ -43,17 +43,17 @@ class TestGetDriveCommunityData(TestCase):
                 "name": "google-drive",
                 "metadata": {
                     "name": "TEST",
-                    "folder_id": [
+                    "folder_ids": [
                         "1RFhr3-KmOZCR5rtp4dlOM",
                         "1RFhr3-KmOZCR5rtp4dlON",
                         "1RFhr3-KmOZCR5rtp4dlOO",
                     ],
-                    "file_id": [
+                    "file_ids": [
                         "1RFhr3-KmOZCR5rtp12",
                         "1RFhr3-KmOZCR5rtp13",
                         "1RFhr3-KmOZCR5rtp14",
                     ],
-                    "drive_id": "1RFhr3-KmOZCR5rtp123",
+                    "drive_ids": "1RFhr3-KmOZCR5rtp123",
                     "client_config": {},
                 },
                 "community": ObjectId("6579c364f1120850414e0dc5"),
@@ -68,7 +68,6 @@ class TestGetDriveCommunityData(TestCase):
 
         # Assertions
         self.assertIsInstance(result, list)
-        self.assertIsInstance()
         self.assertEqual(len(result), 1)
         print(result[0])
 
@@ -77,17 +76,72 @@ class TestGetDriveCommunityData(TestCase):
             {
                 "community_id": "6579c364f1120850414e0dc5",
                 "from_date": datetime(2024, 1, 1),
-                "folder_id": [
+                "folder_ids": [
                     "1RFhr3-KmOZCR5rtp4dlOM",
                     "1RFhr3-KmOZCR5rtp4dlON",
                     "1RFhr3-KmOZCR5rtp4dlOO",
                 ],
-                "file_id": [
+                "file_ids": [
                     "1RFhr3-KmOZCR5rtp12",
                     "1RFhr3-KmOZCR5rtp13",
                     "1RFhr3-KmOZCR5rtp14",
                 ],
-                "drive_id": "1RFhr3-KmOZCR5rtp123",
+                "drive_ids": "1RFhr3-KmOZCR5rtp123",
+                "client_config": {},
+            },
+        )
+
+    def test_get_string_input(self):
+        self.client["Core"]["modules"].insert_one(
+            {
+                "name": "hivemind",
+                "communityId": ObjectId("6579c364f1120850414e0dc5"),
+                "options": {
+                    "platforms": [
+                        {
+                            "platformId": ObjectId("6579c364f1120850414e0dc6"),
+                            "type": "source",
+                            "fromDate": datetime(2024, 1, 1),
+                            "options": {},
+                        }
+                    ]
+                },
+            }
+        )
+        self.client["Core"]["platforms"].insert_one(
+            {
+                "_id": ObjectId("6579c364f1120850414e0dc6"),
+                "name": "google-drive",
+                "metadata": {
+                    "name": "TEST",
+                    "folder_ids": "1RFhr3-KmOZCR5rtp4dlOM",
+                    "file_ids": "1RFhr3-KmOZCR5rtp12",
+                    "drive_ids": "1RFhr3-KmOZCR5rtp123",
+                    "client_config": {},
+                },
+                "community": ObjectId("6579c364f1120850414e0dc5"),
+                "disconnectedAt": None,
+                "connectedAt": datetime(2023, 12, 1),
+                "createdAt": datetime(2023, 12, 1),
+                "updatedAt": datetime(2023, 12, 1),
+            }
+        )
+
+        result = get_google_drive_communities()
+
+        # Assertions
+        self.assertIsInstance(result, list)
+        self.assertEqual(len(result), 1)
+        print(result[0])
+
+        self.assertEqual(
+            result[0],
+            {
+                "community_id": "6579c364f1120850414e0dc5",
+                "from_date": datetime(2024, 1, 1),
+                "folder_ids": "1RFhr3-KmOZCR5rtp4dlOM",
+                "file_ids": "1RFhr3-KmOZCR5rtp12",
+                "drive_ids": "1RFhr3-KmOZCR5rtp123",
                 "client_config": {},
             },
         )
@@ -125,17 +179,17 @@ class TestGetDriveCommunityData(TestCase):
                     "name": "google-drive",
                     "metadata": {
                         "name": "TEST",
-                        "folder_id": [
+                        "folder_ids": [
                             "1RFhr3-KmOZCR5rtp4dlOMn",
                             "1RFhr3-KmOZCR5rtp4dlOMo",
                             "1RFhr3-KmOZCR5rtp4dlOMp",
                         ],
-                        "file_id": [
+                        "file_ids": [
                             "1RFhr3-KmOZCR5rtp120",
                             "1RFhr3-KmOZCR5rtp121",
                             "1RFhr3-KmOZCR5rtp121",
                         ],
-                        "drive_id": "1RFhr3-KmOZCR5rtp1230",
+                        "drive_ids": "1RFhr3-KmOZCR5rtp1230",
                         "client_config": {},
                     },
                     "community": ObjectId("1009c364f1120850414e0dc5"),
@@ -149,12 +203,12 @@ class TestGetDriveCommunityData(TestCase):
                     "name": "google-drive",
                     "metadata": {
                         "name": "TEST",
-                        "folder_id": [
+                        "folder_ids": [
                             "1RFhr3-KmOZCR5rtp4dlOMl",
                             "1RFhr3-KmOZCR5rtp4dlOM2",
                         ],
-                        "file_id": ["1RFhr3-KmOZCR5rtp121", "1RFhr3-KmOZCR5rtp122"],
-                        "drive_id": "1RFhr3-KmOZCR5rtp1231",
+                        "file_ids": ["1RFhr3-KmOZCR5rtp121", "1RFhr3-KmOZCR5rtp122"],
+                        "drive_ids": "1RFhr3-KmOZCR5rtp1231",
                         "client_config": {},
                     },
                     "community": ObjectId("1009c364f1120850414e0dc5"),
@@ -187,17 +241,17 @@ class TestGetDriveCommunityData(TestCase):
             {
                 "community_id": "1009c364f1120850414e0dc5",
                 "from_date": datetime(2024, 1, 1),
-                "folder_id": [
+                "folder_ids": [
                     "1RFhr3-KmOZCR5rtp4dlOMn",
                     "1RFhr3-KmOZCR5rtp4dlOMo",
                     "1RFhr3-KmOZCR5rtp4dlOMp",
                 ],
-                "file_id": [
+                "file_ids": [
                     "1RFhr3-KmOZCR5rtp120",
                     "1RFhr3-KmOZCR5rtp121",
                     "1RFhr3-KmOZCR5rtp121",
                 ],
-                "drive_id": "1RFhr3-KmOZCR5rtp1230",
+                "drive_ids": "1RFhr3-KmOZCR5rtp1230",
                 "client_config": {},
             },
         )
@@ -206,12 +260,12 @@ class TestGetDriveCommunityData(TestCase):
             {
                 "community_id": "1009c364f1120850414e0dc5",
                 "from_date": datetime(2024, 2, 2),
-                "folder_id": [
+                "folder_ids": [
                     "1RFhr3-KmOZCR5rtp4dlOMl",
                     "1RFhr3-KmOZCR5rtp4dlOM2",
                 ],
-                "file_id": ["1RFhr3-KmOZCR5rtp121", "1RFhr3-KmOZCR5rtp122"],
-                "drive_id": "1RFhr3-KmOZCR5rtp1231",
+                "file_ids": ["1RFhr3-KmOZCR5rtp121", "1RFhr3-KmOZCR5rtp122"],
+                "drive_ids": "1RFhr3-KmOZCR5rtp1231",
                 "client_config": {},
             },
         )
