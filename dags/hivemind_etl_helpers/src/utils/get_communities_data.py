@@ -178,9 +178,9 @@ def get_google_drive_communities() -> (
                 {
                     "community_id": community_id,
                     "from_date": platform_from_date,
-                    "folder_id": folder_ids,
-                    "file_id": file_ids,
-                    "drive_id": drive_ids,
+                    "folder_ids": folder_ids,
+                    "file_ids": file_ids,
+                    "drive_ids": drive_ids,
                     "client_config": client_config,
                 }
             )
