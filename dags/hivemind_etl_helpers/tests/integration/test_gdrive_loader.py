@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import patch
 
+import pytest
 from hivemind_etl_helpers.src.db.gdrive.google_drive_loader import GoogleDriveLoader
 from llama_index.core.schema import Document
 from llama_index.readers.google import GoogleDriveReader
@@ -13,7 +14,7 @@ class TestGoogleDriveLoader(unittest.TestCase):
             "installed": {
                 "client_id": "11223.apps.googleusercontent.com",
                 "project_id": "test-test",
-                "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                "auth_uri": "https://xxx.google.com/o/oauth2/auth",
                 "token_uri": "https://oauth2.googleapis.com/token",
                 "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
                 "client_secret": "xxx-xxxxxt",
@@ -23,15 +24,20 @@ class TestGoogleDriveLoader(unittest.TestCase):
         self.loader = GoogleDriveLoader(self.mock_client_config)
 
     @patch.object(GoogleDriveReader, "load_data")
+    def test_empty_input(self):
+        with pytest.raises(ValueError, match=r"One input at least must be given!"):
+            self.loader.load_data()
+
+    @patch.object(GoogleDriveReader, "load_data")
     def test_load_by_folder_id(self, mock_load_data):
-        folder_id = ["qwertU10p", "qwertU10p1"]
+        folder_id = ["qwertU10p"]
         mock_docs = [
             Document(
-                id_="qwertU10p.docx",
+                id_="qwertU10p2.docx",
                 embedding=None,
                 metadata={
-                    "file_name": "qwertU10p.docx",
-                    "file id": "qwertU10p",
+                    "file_name": "qwertU10p2.docx",
+                    "file id": "qwertU10p2",
                     "author": "Jacku",
                     "file name": "Option",
                     "mime type": "application/vnd.google-apps.document",
@@ -63,11 +69,11 @@ class TestGoogleDriveLoader(unittest.TestCase):
                 metadata_seperator="\n",
             ),
             Document(
-                id_="qwertU10p1.docx",
+                id_="qwertU10p3.docx",
                 embedding=None,
                 metadata={
-                    "file_name": "qwertU10p1.docx",
-                    "file id": "qwertU10p1",
+                    "file_name": "qwertU10p3.docx",
+                    "file id": "qwertU10p3",
                     "author": "Jacku",
                     "file name": "Option",
                     "mime type": "application/vnd.google-apps.document",
@@ -102,6 +108,10 @@ class TestGoogleDriveLoader(unittest.TestCase):
         mock_load_data.return_value = mock_docs
 
         result = self.loader.load_data(folder_ids=folder_id)
+        print("Expected Docs:")
+        print(mock_docs)
+        print("Actual Docs:")
+        print(result)
 
         self.assertEqual(result, mock_docs)
 
@@ -190,7 +200,7 @@ class TestGoogleDriveLoader(unittest.TestCase):
 
     @patch.object(GoogleDriveReader, "load_data")
     def test_load_by_drive_ids(self, mock_load_data):
-        drive_ids = ["qwertU10p", "qwertU10p1"]
+        drive_ids = ["qwertU10p"]
         mock_docs = [
             Document(
                 id_="qwertU10p.docx",

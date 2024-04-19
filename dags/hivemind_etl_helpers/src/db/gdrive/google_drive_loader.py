@@ -27,19 +27,17 @@ class GoogleDriveLoader:
 
         loader = GoogleDriveReader()
 
+        all_docs = []
         if folder_ids:
             for folder_id in folder_ids:
-                docs = loader.load_data(folder_id=folder_id)
-        elif file_ids:
-            docs = loader.load_data(file_ids=file_ids)
+                all_docs.extend(loader.load_data(folder_id=folder_id))
         elif drive_ids:
-            for id in drive_ids:
-                docs = loader.load_data(folder_id=id)
-
+            for drive_id in drive_ids:
+                for drive_id in drive_id:
+                    all_docs.extend(loader.load_data(folder_id=drive_id))
+        elif file_ids:
+            all_docs = loader.load_data(file_ids=file_ids)
         else:
             raise ValueError("One input at least must be given!")
 
-        for doc in docs:
-            doc.id_ = doc.metadata["file_name"]
-
-        return docs
+        return all_docs
