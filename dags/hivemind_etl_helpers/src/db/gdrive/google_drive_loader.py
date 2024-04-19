@@ -25,7 +25,7 @@ class GoogleDriveLoader:
            List of loaded document objects.
         """
 
-        loader = GoogleDriveReader()
+        loader = GoogleDriveReader(self.client_config)
 
         all_docs = []
         if folder_ids:
