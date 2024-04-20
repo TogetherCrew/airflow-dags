@@ -17,8 +17,8 @@ class GoogleDriveLoader:
         """Loads documents from Google Drive.
 
         Args:
-            drive_ids: List of the google drive drive ids.
-            folder_id: List of the google drive folder ids.
+            drive_ids: List of the google drive ids.
+            folder_id: List of the google folder ids.
             file_ids: List of google drive file ids.
 
         Returns:
@@ -33,8 +33,7 @@ class GoogleDriveLoader:
                 all_docs.extend(loader.load_data(folder_id=folder_id))
         elif drive_ids:
             for drive_id in drive_ids:
-                for drive_id in drive_id:
-                    all_docs.extend(loader.load_data(folder_id=drive_id))
+                all_docs.extend(loader.load_data(folder_id=drive_id))
         elif file_ids:
             all_docs = loader.load_data(file_ids=file_ids)
         else:

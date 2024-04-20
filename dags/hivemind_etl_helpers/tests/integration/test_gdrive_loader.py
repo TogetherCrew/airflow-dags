@@ -1,7 +1,6 @@
 import unittest
 from unittest.mock import patch
 
-import pytest
 from llama_index.core.schema import Document
 
 from dags.hivemind_etl_helpers.src.db.gdrive.gdrive_loader import GoogleDriveLoader
