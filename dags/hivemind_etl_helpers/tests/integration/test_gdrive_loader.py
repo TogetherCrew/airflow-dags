@@ -6,7 +6,6 @@ from llama_index.core.schema import Document
 
 
 class TestGoogleDriveLoader(unittest.TestCase):
-
     def setUp(self):
         self.mock_client_config = {
             "installed": {
