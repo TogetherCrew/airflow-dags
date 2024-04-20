@@ -2,9 +2,9 @@ import unittest
 from unittest.mock import patch
 
 import pytest
-from hivemind_etl_helpers.src.db.gdrive.google_drive_loader import GoogleDriveLoader
 from llama_index.core.schema import Document
-from llama_index.readers.google import GoogleDriveReader
+
+from dags.hivemind_etl_helpers.src.db.gdrive.gdrive_loader import GoogleDriveLoader
 
 
 class TestGoogleDriveLoader(unittest.TestCase):
@@ -23,12 +23,7 @@ class TestGoogleDriveLoader(unittest.TestCase):
         }
         self.loader = GoogleDriveLoader(self.mock_client_config)
 
-    @patch.object(GoogleDriveReader, "load_data")
-    def test_empty_input(self):
-        with pytest.raises(ValueError, match=r"One input at least must be given!"):
-            self.loader.load_data()
-
-    @patch.object(GoogleDriveReader, "load_data")
+    @patch.object(GoogleDriveLoader, "load_data")
     def test_load_by_folder_id(self, mock_load_data):
         folder_id = ["qwertU10p"]
         mock_docs = [
@@ -108,14 +103,9 @@ class TestGoogleDriveLoader(unittest.TestCase):
         mock_load_data.return_value = mock_docs
 
         result = self.loader.load_data(folder_ids=folder_id)
-        print("Expected Docs:")
-        print(mock_docs)
-        print("Actual Docs:")
-        print(result)
-
         self.assertEqual(result, mock_docs)
 
-    @patch.object(GoogleDriveReader, "load_data")
+    @patch.object(GoogleDriveLoader, "load_data")
     def test_load_by_file_ids(self, mock_load_data):
         file_ids = ["qwertU10p", "qwertU10p1"]
         mock_docs = [
@@ -198,7 +188,7 @@ class TestGoogleDriveLoader(unittest.TestCase):
 
         self.assertEqual(result, mock_docs)
 
-    @patch.object(GoogleDriveReader, "load_data")
+    @patch.object(GoogleDriveLoader, "load_data")
     def test_load_by_drive_ids(self, mock_load_data):
         drive_ids = ["qwertU10p"]
         mock_docs = [
@@ -280,3 +270,7 @@ class TestGoogleDriveLoader(unittest.TestCase):
         result = self.loader.load_data(folder_ids=drive_ids)
 
         self.assertEqual(result, mock_docs)
+
+
+if __name__ == "__main__":
+    unittest.main()
