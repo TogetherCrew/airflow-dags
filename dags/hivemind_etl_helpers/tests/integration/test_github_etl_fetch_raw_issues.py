@@ -29,7 +29,7 @@ class TestGithubETLFetchRawIssues(TestCase):
             session.execute_write(
                 lambda tx: tx.run(
                     """
-                    CREATE (i:Issue)<-[:CREATED]-(:GitHubUser {login: "author #1"})
+                    CREATE (i:GitHubIssue)<-[:CREATED]-(:GitHubUser {login: "author #1"})
                     SET
                         i.state_reason = "completed",
                         i.body = "explanation of some sample issue",
@@ -54,7 +54,7 @@ class TestGithubETLFetchRawIssues(TestCase):
                         i.timeline_url = "https://api.github.com/repos/GitHub/some_repo/issues/1/timeline",
                         i.node_id = "some_id"
 
-                    CREATE (repo:Repository {id: 123, full_name: "Org/SampleRepo"})
+                    CREATE (repo:GitHubRepository {id: 123, full_name: "Org/SampleRepo"})
                     """
                 )
             )

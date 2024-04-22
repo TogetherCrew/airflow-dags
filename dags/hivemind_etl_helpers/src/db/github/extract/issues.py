@@ -2,6 +2,7 @@ from datetime import datetime
 
 import neo4j
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
+from github.neo4j_storage.neo4j_enums import Node, Relationship
 from hivemind_etl_helpers.src.db.github.schema import GitHubIssue
 
 
@@ -27,15 +28,15 @@ def fetch_raw_issues(
     """
     neo4j_connection = Neo4jConnection()
     neo4j_driver = neo4j_connection.connect_neo4j()
-    query = """MATCH (i:Issue)<-[:CREATED]-(user:GitHubUser)
+    query = f"""MATCH (i:{Node.Issue.value})<-[:{Relationship.CREATED.value}]-(user:{Node.GitHubUser.value})
         WHERE
         i.repository_id IN $repoIds
     """
     if from_date is not None:
         query += "AND datetime(i.updated_at) >= datetime($from_date)"
 
-    query += """
-        MATCH (repo:Repository {id: i.repository_id})
+    query += f"""
+        MATCH (repo:{Node.Repository.value} {{id: i.repository_id}})
         RETURN
             user.login as author_name,
             i.id as id,
