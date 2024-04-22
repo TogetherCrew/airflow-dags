@@ -1,4 +1,5 @@
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
+from github.neo4j_storage.neo4j_enums import Node
 
 
 def get_github_organization_repos(github_organization_id: str) -> list[int]:
@@ -7,8 +8,8 @@ def get_github_organization_repos(github_organization_id: str) -> list[int]:
 
     with neo4j_driver.session() as session:
         query = (
-            "MATCH (go:GitHubOrganization {id: $org_id})"
-            "<-[:IS_WITHIN]-(repo:Repository)"
+            f"MATCH (go:{Node.GitHubOrganization.value} {{id: $org_id}})"
+            f"<-[:IS_WITHIN]-(repo:{Node.Repository.value})"
             "RETURN COLLECT(repo.id) as repoIds"
         )
         results = session.execute_read(
