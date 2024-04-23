@@ -53,7 +53,7 @@ class TestFetchCommits(TestCase):
             )
 
         repository_ids = [123]
-        commits = fetch_commits(
+        commits = self.github_extractor.fetch_commits(
             repository_id=repository_ids,
         )
 
@@ -263,7 +263,7 @@ class TestFetchCommits(TestCase):
             )
 
         repository_ids = [123]
-        commits = fetch_commits(
+        commits = self.github_extractor.fetch_commits(
             repository_id=repository_ids,
         )
 
