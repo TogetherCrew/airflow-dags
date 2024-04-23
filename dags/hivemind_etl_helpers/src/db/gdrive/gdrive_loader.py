@@ -1,7 +1,10 @@
+import logging
 from typing import List, Optional
 
 from llama_index.core.schema import Document
 from llama_index.readers.google import GoogleDriveReader
+
+logging.basicConfig(level=logging.INFO)
 
 
 class GoogleDriveLoader:
@@ -29,12 +32,17 @@ class GoogleDriveLoader:
 
         all_docs = []
         if folder_ids:
+            logging.info("Loading documents from folders...")  # Log start of process
             for folder_id in folder_ids:
+                logging.info(f"Processing folder: {folder_id}")  # Log each folder
                 all_docs.extend(loader.load_data(folder_id=folder_id))
         elif drive_ids:
+            logging.info("Loading documents from drives...")
             for drive_id in drive_ids:
+                logging.info(f"Processing drive: {drive_id}")
                 all_docs.extend(loader.load_data(folder_id=drive_id))
         elif file_ids:
+            logging.info("Loading documents directly...")
             all_docs = loader.load_data(file_ids=file_ids)
         else:
             raise ValueError("One input at least must be given!")

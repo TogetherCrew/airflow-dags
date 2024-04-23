@@ -1,8 +1,9 @@
 import unittest
 from unittest.mock import patch
 
-from dags.hivemind_etl_helpers.src.db.gdrive.gdrive_loader import GoogleDriveLoader
 from llama_index.core.schema import Document
+
+from dags.hivemind_etl_helpers.src.db.gdrive.gdrive_loader import GoogleDriveLoader
 
 
 class TestGoogleDriveLoader(unittest.TestCase):
@@ -267,7 +268,3 @@ class TestGoogleDriveLoader(unittest.TestCase):
         result = self.loader.load_data(folder_ids=drive_ids)
 
         self.assertEqual(result, mock_docs)
-
-
-if __name__ == "__main__":
-    unittest.main()
