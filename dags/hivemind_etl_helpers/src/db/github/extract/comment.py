@@ -2,6 +2,7 @@ from datetime import datetime
 
 import neo4j
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
+from github.neo4j_storage.neo4j_enums import Node, Relationship
 from hivemind_etl_helpers.src.db.github.schema import GitHubComment
 
 
@@ -38,11 +39,11 @@ class GitHubCommentExtraction:
         pr_ids = kwargs.get("pr_ids", None)
         issue_ids = kwargs.get("issue_ids", None)
 
-        query = """
-        MATCH (c:Comment)<-[:CREATED]-(user:GitHubUser)
-        MATCH (c)-[:IS_ON]->(info:PullRequest|Issue)
-        MATCH (repo:Repository {id: c.repository_id})
-        WHERE c.repository_id IN $repoIds
+        query = f"""
+            MATCH (c:{Node.Comment.value})<-[:{Relationship.CREATED.value}]-(user:{Node.GitHubUser.value})
+            MATCH (c)-[:{Relationship.IS_ON.value}]->(info:{Node.PullRequest.value}|{Node.Issue.value})
+            MATCH (repo:{Node.Repository.value} {{id: c.repository_id}})
+            WHERE c.repository_id IN $repoIds
         """
 
         if from_date is not None:
