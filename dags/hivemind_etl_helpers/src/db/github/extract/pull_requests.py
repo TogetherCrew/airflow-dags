@@ -2,6 +2,7 @@ from datetime import datetime
 
 import neo4j
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
+from github.neo4j_storage.neo4j_enums import Node, Relationship
 from hivemind_etl_helpers.src.db.github.schema import GitHubPullRequest
 
 
@@ -40,9 +41,9 @@ def fetch_raw_pull_requests(
 
     # TODO: Update query when `Issue` relation was made.
     # We would need to add the issues related to a PR
-    query = """
-        MATCH (pr:PullRequest)<-[:CREATED]-(user:GitHubUser)
-        MATCH (repo:Repository {id: pr.repository_id})
+    query = f"""
+        MATCH (pr:{Node.PullRequest.value})<-[:{Relationship.CREATED.value}]-(user:{Node.GitHubUser.value})
+        MATCH (repo:{Node.Repository.value} {{id: pr.repository_id}})
         WHERE
             pr.repository_id IN $repoIds
     """

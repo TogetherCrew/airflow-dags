@@ -26,7 +26,7 @@ class TestGetGitHubOrgRepos(TestCase):
                 lambda tx: tx.run(
                     """
                     CREATE (org:GitHubOrganization {id: 123})
-                    CREATE (repo: Repository {id: 100})
+                    CREATE (repo: GitHubRepository {id: 100})
                     CREATE (repo)-[:IS_WITHIN]->(org)
                     """
                 )
@@ -41,9 +41,9 @@ class TestGetGitHubOrgRepos(TestCase):
                 lambda tx: tx.run(
                     """
                     CREATE (org:GitHubOrganization {id: 123})
-                    CREATE (repo: Repository {id: 100})
-                    CREATE (repo2: Repository {id: 101})
-                    CREATE (repo3: Repository {id: 102})
+                    CREATE (repo: GitHubRepository {id: 100})
+                    CREATE (repo2: GitHubRepository {id: 101})
+                    CREATE (repo3: GitHubRepository {id: 102})
                     CREATE (repo)-[:IS_WITHIN]->(org)
                     CREATE (repo2)-[:IS_WITHIN]->(org)
                     CREATE (repo3)-[:IS_WITHIN]->(org)

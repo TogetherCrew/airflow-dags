@@ -9,6 +9,7 @@ from .orgs import (
     save_orgs_to_neo4j,
 )
 from .pull_requests import (
+    save_commits_relation_to_pr,
     save_pr_files_changes_to_neo4j,
     save_pull_request_to_neo4j,
     save_review_to_neo4j,

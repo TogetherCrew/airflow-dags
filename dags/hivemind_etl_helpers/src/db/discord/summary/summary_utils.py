@@ -10,13 +10,13 @@ class DiscordSummaryTransformer(SummaryTransformer):
     def transform(self, summary: str, metadata: dict[str, Any], **kwargs) -> Document:
         excluded_llm_metadata_keys = kwargs.get("excluded_llm_metadata_keys", [])
         excluded_embed_metadata_keys = kwargs.get("excluded_embed_metadata_keys", [])
-
         document = Document(
             text=summary,
             metadata=metadata,
             excluded_embed_metadata_keys=excluded_embed_metadata_keys,
             excluded_llm_metadata_keys=excluded_llm_metadata_keys,
         )
+
         return document
 
     def transform_thread_summary_to_document(

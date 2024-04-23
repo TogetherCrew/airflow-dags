@@ -78,6 +78,7 @@ class TestGitHubTransformation(TestCase):
         input_data = [
             GitHubCommit(
                 author_name="author #1",
+                committer_name="User #1",
                 message="sample message",
                 sha="sha#1000000",
                 created_at=datetime(2023, 11, 1).strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -99,6 +100,7 @@ class TestGitHubTransformation(TestCase):
             documents[0].metadata,
             {
                 "author_name": "author #1",
+                "committer_name": "User #1",
                 "sha": "sha#1000000",
                 "created_at": "2023-11-01 00:00:00",
                 "latest_saved_at": "2023-12-01 01:00:00",
@@ -108,6 +110,7 @@ class TestGitHubTransformation(TestCase):
                 "repository_name": "SampleRepo",
                 "verification": "valid",
                 "type": "commit",
+                "related_pr_title": None,
             },
         )
 
