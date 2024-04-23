@@ -5,6 +5,7 @@ class GitHubCommit:
     def __init__(
         self,
         author_name: str,
+        committer_name: str,
         message: str,
         api_url: str,
         html_url: str,
@@ -14,6 +15,7 @@ class GitHubCommit:
         latest_saved_at: str,
         created_at: str,
         verification: str,
+        related_pr_title: str | None = None,
     ) -> None:
         """
         GitHub commit data serialized into a class.
@@ -21,6 +23,7 @@ class GitHubCommit:
         and values as the corresponding verification status.
         """
         self.author_name = author_name
+        self.committer_name = committer_name
         self.message = message
         self.api_url = api_url
         self.html_url = html_url
@@ -30,12 +33,13 @@ class GitHubCommit:
         self.latest_saved_at = parse_date_variables(latest_saved_at)
         self.created_at = parse_date_variables(created_at)
         self.verification = verification
+        self.related_pr_title = related_pr_title
 
     @classmethod
-    def from_dict(cls, data: dict[str, str | int]) -> "GitHubCommit":
-        # TODO: Update these when data gets updated
+    def from_dict(cls, data: dict[str, str | int | None]) -> "GitHubCommit":
         return cls(
             author_name=data["author_name"],  # type: ignore
+            committer_name=data["committer_name"],  # type: ignore
             message=data["message"],  # type: ignore
             api_url=data["api_url"],  # type: ignore
             html_url=data["html_url"],  # type: ignore
@@ -45,11 +49,13 @@ class GitHubCommit:
             latest_saved_at=data["latest_saved_at"],  # type: ignore
             created_at=data["created_at"],  # type: ignore
             verification=data["verification"],  # type: ignore
+            related_pr_title=data.get("related_pr_title", None),  # type: ignore
         )
 
-    def to_dict(self) -> dict[str, str | int]:
+    def to_dict(self) -> dict[str, str | int | None]:
         return {
             "author_name": self.author_name,
+            "committer_name": self.committer_name,
             "message": self.message,
             "api_url": self.api_url,
             "html_url": self.html_url,
@@ -59,5 +65,6 @@ class GitHubCommit:
             "latest_saved_at": self.latest_saved_at,
             "created_at": self.created_at,
             "verification": self.verification,
+            "related_pr_title": self.related_pr_title,
             "type": "commit",
         }

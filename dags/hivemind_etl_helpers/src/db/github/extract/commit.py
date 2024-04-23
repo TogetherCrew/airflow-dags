@@ -2,6 +2,7 @@ from datetime import datetime
 
 import neo4j
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
+from github.neo4j_storage.neo4j_enums import Node, Relationship
 from hivemind_etl_helpers.src.db.github.schema import GitHubCommit
 
 
@@ -27,26 +28,30 @@ def fetch_raw_commits(
     """
     neo4j_connection = Neo4jConnection()
     neo4j_driver = neo4j_connection.connect_neo4j()
-    query = """MATCH (co:Commit)<-[:COMMITTED]-(user:GitHubUser)
+    query = f"""MATCH (co:{Node.Commit.value})<-[:{Relationship.AUTHORED_BY.value}]-(user:{Node.GitHubUser.value})
         WHERE
         co.repository_id IN $repoIds
     """
     if from_date is not None:
         query += "AND datetime(co.`commit.author.date`) >= datetime($from_date)"
 
-    query += """
-        MATCH (repo:Repository {id: co.repository_id})
+    query += f"""
+        OPTIONAL MATCH (co)<-[:{Relationship.COMMITTED_BY.value}]-(user_commiter:{Node.GitHubUser.value})
+        OPTIONAL MATCH (co)-[:{Relationship.IS_ON.value}]->(pr:{Node.PullRequest.value})
+        MATCH (repo:{Node.Repository.value} {{id: co.repository_id}})
         RETURN
-            user.login as author_name,
-            co.`commit.message` as message,
-            co.`commit.url` as api_url,
-            co.`parents.0.html_url` as html_url,
-            co.repository_id as repository_id,
-            repo.full_name as repository_name,
-            co.sha as sha,
-            co.latestSavedAt as latest_saved_at,
-            co.`commit.author.date` as created_at,
-            co.`commit.verification.reason` as verification
+            user.login AS author_name,
+            user_commiter.login AS committer_name,
+            co.`commit.message` AS message,
+            co.`commit.url` AS api_url,
+            co.`parents.0.html_url` AS html_url,
+            co.repository_id AS repository_id,
+            repo.full_name AS repository_name,
+            co.sha AS sha,
+            co.latestSavedAt AS latest_saved_at,
+            co.`commit.author.date` AS created_at,
+            co.`commit.verification.reason` AS verification,
+            pr.title as related_pr_title
         ORDER BY created_at
     """
 

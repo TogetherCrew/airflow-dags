@@ -29,7 +29,7 @@ class TestFetchRawCommits(TestCase):
             session.execute_write(
                 lambda tx: tx.run(
                     """
-                    CREATE (co:Commit)<-[:COMMITTED]-(user:GitHubUser {login: "author #1"})
+                    CREATE (co:GitHubCommit)<-[:COMMITTED_BY]-(user:GitHubUser {login: "author #1"})
                         SET
                             co.`commit.author.name` = "Author#1",
                             co.`commit.message` = "Issue #1 is resolved!",
@@ -40,8 +40,9 @@ class TestFetchRawCommits(TestCase):
                             co.latestSavedAt = "2024-02-06T10:23:50Z",
                             co.`commit.author.date` = "2024-01-01T10:23:50Z",
                             co.`commit.verification.reason` = "valid"
+                    CREATE (co)<-[:AUTHORED_BY]-(user)
 
-                    CREATE (repo:Repository {id: 123, full_name: "Org/SampleRepo"})
+                    CREATE (repo:GitHubRepository {id: 123, full_name: "Org/SampleRepo"})
                     """
                 )
             )
@@ -53,6 +54,7 @@ class TestFetchRawCommits(TestCase):
 
         self.assertEqual(len(commits), 1)
         self.assertEqual(commits[0]["author_name"], "author #1")
+        self.assertEqual(commits[0]["committer_name"], "author #1")
         self.assertEqual(commits[0]["message"], "Issue #1 is resolved!")
         self.assertEqual(
             commits[0]["api_url"], "https://api.sample_url_for_commit.html"
@@ -70,7 +72,7 @@ class TestFetchRawCommits(TestCase):
             session.execute_write(
                 lambda tx: tx.run(
                     """
-                    CREATE (co:Commit)<-[:COMMITTED]-(user:GitHubUser {login: "author #1"})
+                    CREATE (co:GitHubCommit)<-[:COMMITTED_BY]-(:GitHubUser {login: "author #1"})
                         SET
                             co.`commit.author.name` = "Author#1",
                             co.`commit.message` = "Issue #1 is resolved!",
@@ -81,8 +83,9 @@ class TestFetchRawCommits(TestCase):
                             co.latestSavedAt = "2024-02-06T10:23:50Z",
                             co.`commit.author.date` = "2024-01-01T10:23:50Z",
                             co.`commit.verification.reason` = "invalid"
+                    CREATE (co)<-[:AUTHORED_BY]-(:GitHubUser {login: "author #2"})
 
-                    CREATE (repo:Repository {id: 123, full_name: "Org/SampleRepo2"})
+                    CREATE (repo:GitHubRepository {id: 123, full_name: "Org/SampleRepo2"})
                     """
                 )
             )
@@ -94,7 +97,8 @@ class TestFetchRawCommits(TestCase):
         )
 
         self.assertEqual(len(commits), 1)
-        self.assertEqual(commits[0]["author_name"], "author #1")
+        self.assertEqual(commits[0]["author_name"], "author #2")
+        self.assertEqual(commits[0]["committer_name"], "author #1")
         self.assertEqual(commits[0]["message"], "Issue #1 is resolved!")
         self.assertEqual(
             commits[0]["api_url"], "https://api.sample_url_for_commit.html"
