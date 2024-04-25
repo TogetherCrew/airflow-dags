@@ -186,3 +186,52 @@ def get_google_drive_communities() -> (
             )
 
     return communities_data
+
+
+def get_notion_communities() -> (
+        list[dict[str, str | list[str] | datetime | dict]]
+):
+    """
+    Get all the Notion communities with their database IDs, page IDs, and client config.
+
+    Returns
+    ---------
+    community_orgs : list[dict[str, str | list[str] | datetime | dict]] = []
+        a list of Notion data information
+
+        example data output:
+        ```
+        [{
+          "community_id": "6579c364f1120850414e0dc5",
+          "from_date": datetime(2024, 1, 1),
+          "database_ids": ["dadd27f1dc1e4fa6b5b9dea76858dabe"],
+          "page_ids": ["6a3c20b6861145b29030292120aa03e6"],
+          "client_config": {
+            "integration_token": "secret_kPH3bgR0iMYLqmX9KkLi1wFAueGXjZvKAIlXq2G9wj"
+          }
+        }]
+        ```
+    """
+    communities_data: list[dict[str, str | list[str] | datetime | dict]] = []
+    notion_modules = query_modules_db(platform="notion")
+    for module in notion_modules:
+        community_id = str(module["communityId"])
+
+        options = module["options"]
+        for platform in options:
+            # this is happening because of the unwind operator
+            platform_data = platform["platforms"]
+            platform_from_date = platform_data["fromDate"]
+            database_ids = platform_data["metadata"]["database_ids"]
+            page_ids = platform_data["metadata"]["file_ids"]
+            client_config = platform_data["metadata"]["client_config"]
+
+            communities_data.append(
+                {
+                    "community_id": community_id,
+                    "from_date": platform_from_date,
+                    "database_ids": database_ids,
+                    "page_ids": page_ids,
+                    "client_config": client_config
+                }
+            )
