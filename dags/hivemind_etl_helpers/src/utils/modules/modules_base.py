@@ -18,6 +18,10 @@ class ModulesBase:
             projection : dict[str, int]
                 feature projection on query
 
+        Returns
+        ---------
+        modules_docs : list[dict]
+            all the module documents that have the `platform` within them
         """
         client = MongoSingleton.get_instance().client
         projection = kwargs.get("projection", {})
@@ -29,8 +33,8 @@ class ModulesBase:
             },
             projection,
         )
-
-        return list(cursor)
+        modules_docs = list(cursor)
+        return modules_docs
 
     def get_platform_community_ids(self, platform_name: str) -> list[str]:
         """

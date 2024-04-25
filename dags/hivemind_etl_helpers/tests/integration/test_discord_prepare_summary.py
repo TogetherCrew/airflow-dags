@@ -105,7 +105,7 @@ class TestDiscordGroupedDataPreparation(TestCase):
             channel_summary_docs,
             day_summary_docs,
         ) = discord_summary.prepare_summaries(
-            guild_id, 
+            guild_id,
             selected_channels=channels,
             from_date=from_date,
             summarization_prefix="",
@@ -312,7 +312,7 @@ class TestDiscordGroupedDataPreparation(TestCase):
             guild_id,
             selected_channels=channels,
             from_date=from_date,
-            summarization_prefix=""
+            summarization_prefix="",
         )
 
         self.assertEqual(thread_summary_docs, [])

@@ -2,8 +2,8 @@ from datetime import datetime
 from unittest import TestCase
 
 from bson import ObjectId
-from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 from hivemind_etl_helpers.src.utils.modules import ModulesDiscord
+from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
 class TestGetAllDiscordCommunitites(TestCase):
@@ -50,13 +50,13 @@ class TestGetAllDiscordCommunitites(TestCase):
         print(result)
 
         self.assertEqual(
-            result[0], 
+            result[0],
             {
                 "community_id": "6579c364f1120850414e0dc5",
                 "platform_id": "6579c364f1120850414e0dc6",
                 "selected_channels": ["1234", "4321"],
                 "from_date": datetime(2024, 1, 1),
-            }
+            },
         )
 
     def test_get_discord_communities_data_multiple_platforms(self):
@@ -98,17 +98,19 @@ class TestGetAllDiscordCommunitites(TestCase):
         self.assertEqual(len(results), 2)
 
         self.assertEqual(
-            results, 
-            [{
-                "community_id": "1009c364f1120850414e0dc5",
-                "platform_id": "6579c364f1120850414e0dc6",
-                "selected_channels": ["1234", "4321"],
-                "from_date": datetime(2024, 1, 1),
-            },
-            {
-                "community_id": "1009c364f1120850414e0dc5",
-                "platform_id": "6579c364f1120850414e0dc7",
-                "selected_channels": ["333", "222"],
-                "from_date": datetime(2024, 2, 2),
-            }]
+            results,
+            [
+                {
+                    "community_id": "1009c364f1120850414e0dc5",
+                    "platform_id": "6579c364f1120850414e0dc6",
+                    "selected_channels": ["1234", "4321"],
+                    "from_date": datetime(2024, 1, 1),
+                },
+                {
+                    "community_id": "1009c364f1120850414e0dc5",
+                    "platform_id": "6579c364f1120850414e0dc7",
+                    "selected_channels": ["333", "222"],
+                    "from_date": datetime(2024, 2, 2),
+                },
+            ],
         )

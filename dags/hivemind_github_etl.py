@@ -8,7 +8,6 @@ from airflow.decorators import task
 from hivemind_etl_helpers.github_etl import process_github_vectorstore
 from hivemind_etl_helpers.src.utils.modules import ModulesGitHub
 
-
 with DAG(
     dag_id="github_vector_store",
     start_date=datetime(2024, 2, 21),

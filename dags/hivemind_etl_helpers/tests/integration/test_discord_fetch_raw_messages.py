@@ -119,7 +119,7 @@ class TestFetchRawMessages(unittest.TestCase):
         messages = fetch_raw_messages(
             guild_id,
             selected_channels=channels,
-            from_date=datetime.now() - timedelta(hours=1)
+            from_date=datetime.now() - timedelta(hours=1),
         )
 
         self.assertEqual(len(messages), message_count)
@@ -153,7 +153,7 @@ class TestFetchRawMessages(unittest.TestCase):
         messages = fetch_raw_messages(
             guild_id,
             selected_channels=channels,
-            from_date=datetime.now() - timedelta(hours=1)
+            from_date=datetime.now() - timedelta(hours=1),
         )
 
         self.assertEqual(len(messages), 0)

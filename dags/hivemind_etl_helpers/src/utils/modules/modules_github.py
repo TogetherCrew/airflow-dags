@@ -35,7 +35,6 @@ class ModulesGitHub(ModulesBase):
 
             # each platform of the community
             for platform in module["options"]["platforms"]:
-
                 if platform["name"] != self.platform_name:
                     continue
 

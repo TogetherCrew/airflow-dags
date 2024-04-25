@@ -94,9 +94,7 @@ class TestDiscordGroupedDataPreparation(TestCase):
         from_date = datetime(2023, 8, 1)
 
         data = prepare_grouped_data(
-            guild_id=guild_id,
-            selected_channels=channels,
-            from_date=from_date
+            guild_id=guild_id, selected_channels=channels, from_date=from_date
         )
         self.assertEqual(data, {})
 
@@ -178,9 +176,7 @@ class TestDiscordGroupedDataPreparation(TestCase):
 
         client[guild_id]["rawinfos"].insert_many(raw_data)
         data = prepare_grouped_data(
-            guild_id=guild_id,
-            selected_channels=channels,
-            from_date=from_date
+            guild_id=guild_id, selected_channels=channels, from_date=from_date
         )
 
         self.assertEqual(set(data.keys()), set(["2023-10-01", "2023-10-02"]))
@@ -325,9 +321,7 @@ class TestDiscordGroupedDataPreparation(TestCase):
 
         client[guild_id]["rawinfos"].insert_many(raw_data)
         data = prepare_grouped_data(
-            guild_id=guild_id,
-            selected_channels=channels,
-            from_date=from_date
+            guild_id=guild_id, selected_channels=channels, from_date=from_date
         )
 
         self.assertEqual(data, {})

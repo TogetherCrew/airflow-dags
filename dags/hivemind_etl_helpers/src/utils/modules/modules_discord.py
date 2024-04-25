@@ -22,7 +22,7 @@ class ModulesDiscord(ModulesBase):
         )
         return community_ids
 
-    def get_learning_platforms(self):
+    def get_learning_platforms(self) -> list[dict[str, str | datetime | list]]:
         """
         get discord learning platforms with their forum endpoint
 
@@ -42,7 +42,7 @@ class ModulesDiscord(ModulesBase):
             ```
         """
         modules = self.query(platform=self.platform_name, projection={"name": 0})
-        platforms_data: list[dict[str, str | datetime]] = []
+        platforms_data: list[dict[str, str | datetime | list]] = []
 
         # for each community module
         for module in modules:
@@ -50,7 +50,6 @@ class ModulesDiscord(ModulesBase):
 
             # each platform of the community
             for platform in module["options"]["platforms"]:
-
                 if platform["name"] != self.platform_name:
                     continue
 

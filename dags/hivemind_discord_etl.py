@@ -10,7 +10,6 @@ from hivemind_etl_helpers.discord_mongo_vector_store_etl import (
 )
 from hivemind_etl_helpers.src.utils.modules import ModulesDiscord
 
-
 with DAG(
     dag_id="discord_vector_store_update",
     start_date=datetime(2024, 1, 1),
@@ -19,7 +18,7 @@ with DAG(
 ) as dag:
 
     @task
-    def get_discord_communities() -> list[str]:
+    def get_discord_communities() -> list[dict[str, str | datetime | list]]:
         """
         Getting all communities having discord from database
         """
@@ -27,7 +26,7 @@ with DAG(
         return communities
 
     @task
-    def start_discord_vectorstore(community_info: str):
+    def start_discord_vectorstore(community_info: dict[str, str | datetime | list]):
         load_dotenv()
         community_id = community_info["community_id"]
         platform_id = community_info["platform_id"]

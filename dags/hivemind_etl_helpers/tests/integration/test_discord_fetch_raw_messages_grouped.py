@@ -105,7 +105,7 @@ class TestFetchRawMessagesGrouped(TestCase):
         from_date = datetime(2023, 9, 29)
 
         messages = fetch_raw_msg_grouped(
-            guild_id=guild_id, 
+            guild_id=guild_id,
             from_date=from_date,
             selected_channels=["123"],
         )
@@ -149,9 +149,7 @@ class TestFetchRawMessagesGrouped(TestCase):
         client[guild_id]["rawinfos"].insert_many(raw_data)
 
         results = fetch_raw_msg_grouped(
-            guild_id=guild_id,
-            selected_channels=channels,
-            from_date=from_date
+            guild_id=guild_id, selected_channels=channels, from_date=from_date
         )
         self.assertEqual(len(results), 3)
 
@@ -258,9 +256,8 @@ class TestFetchRawMessagesGrouped(TestCase):
         client[guild_id]["rawinfos"].insert_many(raw_data)
 
         results = fetch_raw_msg_grouped(
-            guild_id=guild_id,
-            selected_channels=channels,
-            from_date=from_date)
+            guild_id=guild_id, selected_channels=channels, from_date=from_date
+        )
 
         self.assertEqual(len(results), 2)
 
