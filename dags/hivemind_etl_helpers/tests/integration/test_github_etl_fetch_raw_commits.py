@@ -15,14 +15,14 @@ class TestFetchRawCommits(TestCase):
 
     def test_get_empty_results_no_from_date(self):
         repository_ids = [123]
-        commits = self.github_extractor._fetch_raw_commits(
+        commits = self.github_extractor.commit_extraction._fetch_raw_commits(
             repository_id=repository_ids, from_date=None
         )
         self.assertEqual(commits, [])
 
     def test_get_empty_results(self):
         repository_ids = [123]
-        commits = self.github_extractor._fetch_raw_commits(
+        commits = self.github_extractor.commit_extraction._fetch_raw_commits(
             repository_id=repository_ids, from_date=datetime(2024, 1, 1)
         )
         self.assertEqual(commits, [])
@@ -51,7 +51,7 @@ class TestFetchRawCommits(TestCase):
             )
 
         repository_ids = [123]
-        commits = self.github_extractor._fetch_raw_commits(
+        commits = self.github_extractor.commit_extraction._fetch_raw_commits(
             repository_id=repository_ids,
         )
 
@@ -94,7 +94,7 @@ class TestFetchRawCommits(TestCase):
             )
 
         repository_ids = [123]
-        commits = self.github_extractor._fetch_raw_commits(
+        commits = self.github_extractor.commit_extraction._fetch_raw_commits(
             repository_id=repository_ids,
             from_date=datetime(2024, 1, 1),
         )
