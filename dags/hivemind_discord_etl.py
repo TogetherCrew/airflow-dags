@@ -23,20 +23,34 @@ with DAG(
         """
         Getting all communities having discord from database
         """
-        communities = ModulesDiscord().get_communities()
+        communities = ModulesDiscord().get_learning_platforms()
         return communities
 
     @task
-    def start_discord_vectorstore(community_id: str):
+    def start_discord_vectorstore(community_info: str):
         load_dotenv()
-        logging.info(f"Working on community, {community_id}")
-        process_discord_guild_mongo(community_id=community_id)
-        logging.info(f"Community {community_id} Job finished!")
+        community_id = community_info["community_id"]
+        platform_id = community_info["platform_id"]
+        selected_channels = community_info["selected_channels"]
+        from_date = community_info["from_date"]
 
-    communities = get_discord_communities()
+        logging.info(
+            f"Processing community_id: {community_id} | platform_id: {platform_id}"
+        )
+        process_discord_guild_mongo(
+            community_id=community_id,
+            platform_id=platform_id,
+            selected_channels=selected_channels,
+            default_from_date=from_date,
+        )
+        logging.info(
+            f"Community {community_id} Job finished | platform_id: {platform_id}"
+        )
+
+    communities_info = get_discord_communities()
     # `start_discord_vectorstore` will be called multiple times
     # with the length of the list
-    start_discord_vectorstore.expand(community_id=communities)
+    start_discord_vectorstore.expand(community_info=communities_info)
 
 
 with DAG(
@@ -52,15 +66,30 @@ with DAG(
         this function is the same with `get_discord_communities`
         we just changed the name for the pylint
         """
-        communities = ModulesDiscord().get_communities()
+        communities = ModulesDiscord().get_learning_platforms()
         return communities
 
     @task
-    def start_discord_summary_vectorstore(community_id: str):
+    def start_discord_summary_vectorstore(community_info: str):
         load_dotenv()
-        logging.info(f"Working on community, {community_id}")
-        process_discord_summaries(community_id=community_id, verbose=False)
-        logging.info(f"Community {community_id} Job finished!")
+
+        community_id = community_info["community_id"]
+        platform_id = community_info["platform_id"]
+        selected_channels = community_info["selected_channels"]
+        from_date = community_info["from_date"]
+        logging.info(
+            f"Working on community, {community_id}| platform_id: {platform_id}"
+        )
+        process_discord_summaries(
+            community_id=community_id,
+            platform_id=platform_id,
+            selected_channels=selected_channels,
+            default_from_date=from_date,
+            verbose=False,
+        )
+        logging.info(
+            f"Community {community_id} Job finished | platform_id: {platform_id}"
+        )
 
     communities = get_mongo_discord_communities()
-    start_discord_summary_vectorstore.expand(community_id=communities)
+    start_discord_summary_vectorstore.expand(community_info=communities)

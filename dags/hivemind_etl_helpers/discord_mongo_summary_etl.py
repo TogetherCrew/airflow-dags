@@ -1,12 +1,12 @@
 import argparse
 import logging
 import os
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from dotenv import load_dotenv
 from hivemind_etl_helpers.src.db.discord.discord_summary import DiscordSummary
 from hivemind_etl_helpers.src.db.discord.find_guild_id import (
-    find_guild_id_by_community_id,
+    find_guild_id_by_platform_id,
 )
 from hivemind_etl_helpers.src.document_node_parser import configure_node_parser
 from hivemind_etl_helpers.src.utils.sort_summary_docs import sort_summaries_daily
@@ -20,7 +20,13 @@ from tc_hivemind_backend.pg_vector_access import PGVectorAccess
 from traceloop.sdk import Traceloop
 
 
-def process_discord_summaries(community_id: str, verbose: bool = False) -> None:
+def process_discord_summaries(
+    community_id: str,
+    platform_id: str,
+    selected_channels: list[str],
+    default_from_date: datetime,
+    verbose: bool = False,
+) -> None:
     """
     prepare the discord data by grouping it into thread, channel and day
     and save the processed summaries into postgresql
@@ -28,9 +34,15 @@ def process_discord_summaries(community_id: str, verbose: bool = False) -> None:
     Note: This will always process the data until 1 day ago.
 
     Parameters
-    ------------
+    -----------
     community_id : str
-        the community id to process its guild data
+        the community id to create or use its database
+    platform_id : str
+        discord platform id
+    selected_channels : list[str]
+        a list of channels to start processing the data
+    default_from_date : datetime
+        the default from_date set in db
     verbose : bool
         verbose the process of summarization or not
         if `True` the summarization process will be printed out
@@ -40,8 +52,8 @@ def process_discord_summaries(community_id: str, verbose: bool = False) -> None:
     otel_endpoint = os.getenv("TRACELOOP_BASE_URL")
     Traceloop.init(app_name="hivemind-discord-summary", api_endpoint=otel_endpoint)
 
-    chunk_size, embedding_dim = load_model_hyperparams()
-    guild_id = find_guild_id_by_community_id(community_id)
+    chunk_size, _ = load_model_hyperparams()
+    guild_id = find_guild_id_by_platform_id(platform_id)
     logging.info(f"COMMUNITYID: {community_id}, GUILDID: {guild_id}")
     table_name = "discord_summary"
     dbname = f"community_{community_id}"
@@ -67,6 +79,10 @@ def process_discord_summaries(community_id: str, verbose: bool = False) -> None:
     else:
         deletion_query = ""
 
+    # if no data was saved, start pre-processing from the given date on modules document
+    if from_date is None:
+        from_date = default_from_date
+
     discord_summary = DiscordSummary(
         response_synthesizer=get_response_synthesizer(response_mode="tree_summarize"),
         verbose=verbose,
@@ -78,6 +94,7 @@ def process_discord_summaries(community_id: str, verbose: bool = False) -> None:
         daily_summary_documenets,
     ) = discord_summary.prepare_summaries(
         guild_id=guild_id,
+        selected_channels=selected_channels,
         from_date=from_date,
         summarization_prefix="Please make a concise summary based only on the provided text from this",
     )
@@ -108,14 +125,3 @@ def process_discord_summaries(community_id: str, verbose: bool = False) -> None:
         request_per_minute=10000,
         deletion_query=deletion_query,
     )
-
-
-if __name__ == "__main__":
-    logging.basicConfig()
-    logging.getLogger().setLevel(logging.INFO)
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "community_id", type=str, help="the Community that the guild is related to"
-    )
-    args = parser.parse_args()
-    process_discord_summaries(community_id=args.community_id)

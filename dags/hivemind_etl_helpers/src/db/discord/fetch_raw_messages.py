@@ -3,7 +3,11 @@ from datetime import datetime
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
-def fetch_raw_messages(guild_id: str, from_date: datetime | None = None) -> list[dict]:
+def fetch_raw_messages(
+    guild_id: str,
+    selected_channels: list[str],
+    from_date: datetime,
+) -> list[dict]:
     """
     fetch rawinfo messages from mongodb database
 
@@ -11,6 +15,8 @@ def fetch_raw_messages(guild_id: str, from_date: datetime | None = None) -> list
     -----------
     guild_id : str
         the guild id to fetch their `rawinfos` messages
+    selected_channels : list[st]
+        the selected channels id to process messages on discord
     from_date : datetime
         get the raw data from a specific date
         default is None, meaning get all the messages
@@ -22,43 +28,28 @@ def fetch_raw_messages(guild_id: str, from_date: datetime | None = None) -> list
     """
     client = MongoSingleton.get_instance().get_client()
 
-    channels, from_date_modules = fetch_channels_and_from_date(guild_id=guild_id)
-
-    raw_messages: list[dict]
-    if from_date is not None:
-        cursor = (
-            client[guild_id]["rawinfos"]
-            .find(
-                {
-                    "type": {"$ne": 18},
-                    "createdDate": {"$gte": from_date},
-                    "isGeneratedByWebhook": False,
-                    "channelId": {"$in": channels},
-                }
-            )
-            .sort("createdDate", 1)
+    cursor = (
+        client[guild_id]["rawinfos"]
+        .find(
+            {
+                "type": {"$ne": 18},
+                "createdDate": {"$gte": from_date},
+                "isGeneratedByWebhook": False,
+                "channelId": {"$in": selected_channels},
+            }
         )
-        raw_messages = list(cursor)
-    else:
-        cursor = (
-            client[guild_id]["rawinfos"]
-            .find(
-                {
-                    "type": {"$ne": 18},
-                    "isGeneratedByWebhook": False,
-                    "channelId": {"$in": channels},
-                    "createdDate": {"$gte": from_date_modules},
-                }
-            )
-            .sort("createdDate", 1)
-        )
-        raw_messages = list(cursor)
+        .sort("createdDate", 1)
+    )
+    raw_messages: list[dict] = list(cursor)
 
     return raw_messages
 
 
 def fetch_raw_msg_grouped(
-    guild_id: str, from_date: datetime | None = None, sort: int = 1
+    guild_id: str,
+    from_date: datetime,
+    selected_channels: list[str],
+    sort: int = 1,
 ) -> list[dict[str, dict]]:
     """
     fetch raw messages grouped by day
@@ -71,6 +62,8 @@ def fetch_raw_msg_grouped(
     from_date : datetime
         get the raw data from a specific date
         default is None, meaning get all the messages
+    selected_channels : list[str]
+        discord channel ids selected to be processed
     sort : int
         sort the data Ascending or Descending
         `1` represents for Ascending
@@ -91,43 +84,24 @@ def fetch_raw_msg_grouped(
     """
     client = MongoSingleton.get_instance().client
 
-    channels, from_date_modules = fetch_channels_and_from_date(guild_id=guild_id)
-
-    # the pipeline to apply through mongodb
+    # the pipeline grouping data per day
     pipeline: list[dict] = []
 
-    if from_date is not None:
-        pipeline.append(
-            {
-                "$match": {
-                    "type": {"$ne": 18},
-                    "createdDate": {
-                        "$gte": from_date,
-                        "$lt": datetime.now().replace(
-                            hour=0, minute=0, second=0, microsecond=0
-                        ),
-                    },
-                    "isGeneratedByWebhook": False,
-                    "channelId": {"$in": channels},
-                }
-            },
-        )
-    else:
-        pipeline.append(
-            {
-                "$match": {
-                    "type": {"$ne": 18},
-                    "createdDate": {
-                        "$gte": from_date_modules,
-                        "$lt": datetime.now().replace(
-                            hour=0, minute=0, second=0, microsecond=0
-                        ),
-                    },
-                    "isGeneratedByWebhook": False,
-                    "channelId": {"$in": channels},
-                }
-            },
-        )
+    pipeline.append(
+        {
+            "$match": {
+                "type": {"$ne": 18},
+                "createdDate": {
+                    "$gte": from_date,
+                    "$lt": datetime.now().replace(
+                        hour=0, minute=0, second=0, microsecond=0
+                    ),
+                },
+                "isGeneratedByWebhook": False,
+                "channelId": {"$in": selected_channels},
+            }
+        },
+    )
 
     # sorting
     pipeline.append(

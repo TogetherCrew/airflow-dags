@@ -4,7 +4,9 @@ from hivemind_etl_helpers.src.db.discord.fetch_raw_messages import fetch_raw_msg
 
 
 def prepare_grouped_data(
-    guild_id: str, from_date: datetime | None
+    guild_id: str,
+    from_date: datetime,
+    selected_channels: list[str],
 ) -> dict[str, dict[str, dict[str | None, list]]]:
     """
     prepare the nested dictionary of grouped data
@@ -16,6 +18,8 @@ def prepare_grouped_data(
     from_date : datetime
         get the raw data from a specific date
         default is None, meaning get all the messages
+    selected_channels : list[str]
+        the channel ids selected to be processed
 
     Returns
     --------
@@ -25,7 +29,9 @@ def prepare_grouped_data(
         and third level would be the thread
     """
     raw_daily_grouped = {}
-    raw_mongo_grouped_messages = fetch_raw_msg_grouped(guild_id, from_date)
+    raw_mongo_grouped_messages = fetch_raw_msg_grouped(
+        guild_id, from_date, selected_channels
+    )
 
     # saving the grouping per day
     for msg in raw_mongo_grouped_messages:
