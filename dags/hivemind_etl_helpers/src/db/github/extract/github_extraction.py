@@ -1,10 +1,8 @@
 from datetime import datetime
 
-from hivemind_etl_helpers.src.db.github.extract.comment import (
-    GitHubCommentExtraction,
-)
-from hivemind_etl_helpers.src.db.github.schema import GitHubComment, GitHubCommit
+from hivemind_etl_helpers.src.db.github.extract.comment import GitHubCommentExtraction
 from hivemind_etl_helpers.src.db.github.extract.commit import GithubCommitExtraction
+from hivemind_etl_helpers.src.db.github.schema import GitHubComment, GitHubCommit
 
 
 class GithubExtraction:
