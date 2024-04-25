@@ -56,7 +56,7 @@ class GoogleDriveLoader:
         for drive_id in drive_ids:
             logging.info(f"Processing drive: {drive_id}")
             try:
-                drive_ids.extend(loader.load_data(folder_id=drive_ids))
+                drive_data.extend(loader.load_data(folder_id=drive_ids))
             except Exception as e:
                 logging.error(
                     f"An error occurred while loading from folder: {e}", exc_info=True
@@ -65,7 +65,7 @@ class GoogleDriveLoader:
 
     def _load_from_files(self, loader: GoogleDriveReader, file_ids: List[str]):
         file_data = []
-        logging.info(f"Processing file")
+        logging.info("Processing file")
         try:
             file_data.extend(loader.load_data(file_ids=file_ids))
         except Exception as e:

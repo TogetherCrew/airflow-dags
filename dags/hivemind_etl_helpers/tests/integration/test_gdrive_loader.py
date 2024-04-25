@@ -1,5 +1,6 @@
+import logging
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from llama_index.core.schema import Document
 
@@ -21,250 +22,130 @@ class TestGoogleDriveLoader(unittest.TestCase):
         }
         self.loader = GoogleDriveLoader(self.mock_client_config)
 
+    def test_load_data_without_input(self):
+        loader = GoogleDriveLoader(client_config=None)
+
+        with self.assertRaises(ValueError):
+            loader.load_data()
+
     @patch.object(GoogleDriveLoader, "load_data")
     def test_load_by_folder_id(self, mock_load_data):
-        folder_id = ["qwertU10p"]
-        mock_docs = [
+        folder_id = ["folder_id_1", "folder_id_2"]
+        # mock_data = [{"text": "Document 1"}, {"text": "Document 2"}]
+        mock_data = [
             Document(
-                id_="qwertU10p2.docx",
-                embedding=None,
+                id_="folder_id_1.docx",
                 metadata={
                     "file_name": "qwertU10p2.docx",
                     "file id": "qwertU10p2",
                     "author": "Jacku",
                     "file name": "Option",
-                    "mime type": "application/vnd.google-apps.document",
-                    "created at": "2024-04-16T12:13:31.089Z",
-                    "modified at": "2024-04-18T09:19:30.956Z",
                 },
-                excluded_embed_metadata_keys=[
-                    "file_name",
-                    "file_type",
-                    "file_size",
-                    "creation_date",
-                    "last_modified_date",
-                    "last_accessed_date",
-                ],
-                excluded_llm_metadata_keys=[
-                    "file_name",
-                    "file_type",
-                    "file_size",
-                    "creation_date",
-                    "last_modified_date",
-                    "last_accessed_date",
-                ],
                 relationships={},
                 text="Option 1: Keep it super casual",
-                start_char_idx=None,
-                end_char_idx=None,
-                text_template="{metadata_str}\n\n{content}",
-                metadata_template="{key}: {value}",
-                metadata_seperator="\n",
             ),
             Document(
-                id_="qwertU10p3.docx",
-                embedding=None,
+                id_="folder_id_2.docx",
                 metadata={
                     "file_name": "qwertU10p3.docx",
                     "file id": "qwertU10p3",
                     "author": "Jacku",
                     "file name": "Option",
-                    "mime type": "application/vnd.google-apps.document",
-                    "created at": "2024-04-16T12:13:31.089Z",
-                    "modified at": "2024-04-18T09:19:30.956Z",
                 },
-                excluded_embed_metadata_keys=[
-                    "file_name",
-                    "file_type",
-                    "file_size",
-                    "creation_date",
-                    "last_modified_date",
-                    "last_accessed_date",
-                ],
-                excluded_llm_metadata_keys=[
-                    "file_name",
-                    "file_type",
-                    "file_size",
-                    "creation_date",
-                    "last_modified_date",
-                    "last_accessed_date",
-                ],
-                relationships={},
                 text="Option 1: Keep it super casual",
-                start_char_idx=None,
-                end_char_idx=None,
-                text_template="{metadata_str}\n\n{content}",
-                metadata_template="{key}: {value}",
-                metadata_seperator="\n",
             ),
         ]
-        mock_load_data.return_value = mock_docs
+        self.mock_loader = Mock()
+        mock_load_data.return_value = mock_data
+        loader = GoogleDriveLoader(self.mock_client_config)
+        result = loader.load_data(folder_ids=folder_id)
 
-        result = self.loader.load_data(folder_ids=folder_id)
-        self.assertEqual(result, mock_docs)
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result, mock_data)
 
     @patch.object(GoogleDriveLoader, "load_data")
-    def test_load_by_file_ids(self, mock_load_data):
-        file_ids = ["qwertU10p", "qwertU10p1"]
-        mock_docs = [
+    def test_load_by_drive_id(self, mock_load_data):
+        drive_ids = ["folder_id_1", "folder_id_2"]
+        # mock_data = [{"text": "Document 1"}, {"text": "Document 2"}]
+        mock_data = [
             Document(
-                id_="qwertU10p.docx",
-                embedding=None,
+                id_="folder_id_1.docx",
                 metadata={
-                    "file_name": "qwertU10p.docx",
-                    "file id": "qwertU10p",
+                    "file_name": "qwertU10p2.docx",
+                    "file id": "qwertU10p2",
                     "author": "Jacku",
                     "file name": "Option",
-                    "mime type": "application/vnd.google-apps.document",
-                    "created at": "2024-04-16T12:13:31.089Z",
-                    "modified at": "2024-04-18T09:19:30.956Z",
                 },
-                excluded_embed_metadata_keys=[
-                    "file_name",
-                    "file_type",
-                    "file_size",
-                    "creation_date",
-                    "last_modified_date",
-                    "last_accessed_date",
-                ],
-                excluded_llm_metadata_keys=[
-                    "file_name",
-                    "file_type",
-                    "file_size",
-                    "creation_date",
-                    "last_modified_date",
-                    "last_accessed_date",
-                ],
                 relationships={},
                 text="Option 1: Keep it super casual",
-                start_char_idx=None,
-                end_char_idx=None,
-                text_template="{metadata_str}\n\n{content}",
-                metadata_template="{key}: {value}",
-                metadata_seperator="\n",
             ),
             Document(
-                id_="qwertU10p1.docx",
-                embedding=None,
+                id_="folder_id_2.docx",
                 metadata={
-                    "file_name": "qwertU10p1.docx",
-                    "file id": "qwertU10p1",
+                    "file_name": "qwertU10p3.docx",
+                    "file id": "qwertU10p3",
                     "author": "Jacku",
                     "file name": "Option",
-                    "mime type": "application/vnd.google-apps.document",
-                    "created at": "2024-04-16T12:13:31.089Z",
-                    "modified at": "2024-04-18T09:19:30.956Z",
                 },
-                excluded_embed_metadata_keys=[
-                    "file_name",
-                    "file_type",
-                    "file_size",
-                    "creation_date",
-                    "last_modified_date",
-                    "last_accessed_date",
-                ],
-                excluded_llm_metadata_keys=[
-                    "file_name",
-                    "file_type",
-                    "file_size",
-                    "creation_date",
-                    "last_modified_date",
-                    "last_accessed_date",
-                ],
-                relationships={},
                 text="Option 1: Keep it super casual",
-                start_char_idx=None,
-                end_char_idx=None,
-                text_template="{metadata_str}\n\n{content}",
-                metadata_template="{key}: {value}",
-                metadata_seperator="\n",
             ),
         ]
-        mock_load_data.return_value = mock_docs
+        # mock_loader = Mock()
+        mock_load_data.return_value = mock_data
+        loader = GoogleDriveLoader(self.mock_client_config)
+        result = loader.load_data(folder_ids=drive_ids)
 
-        result = self.loader.load_data(file_ids=file_ids)
-
-        self.assertEqual(result, mock_docs)
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result, mock_data)
 
     @patch.object(GoogleDriveLoader, "load_data")
-    def test_load_by_drive_ids(self, mock_load_data):
-        drive_ids = ["qwertU10p"]
-        mock_docs = [
+    def test_load_by_file_id(self, mock_load_data):
+        mock_loader = Mock()
+        file_ids = ["file_id_1", "file_id_2"]
+        # mock_data = [{"text": "Document 1"}, {"text": "Document 2"}]
+        mock_data = [
             Document(
-                id_="qwertU10p.docx",
-                embedding=None,
+                id_="file_id_1.docx",
                 metadata={
-                    "file_name": "qwertU10p.docx",
-                    "file id": "qwertU10p",
+                    "file_name": "qwertU10p2.docx",
+                    "file id": "qwertU10p2",
                     "author": "Jacku",
                     "file name": "Option",
-                    "mime type": "application/vnd.google-apps.document",
-                    "created at": "2024-04-16T12:13:31.089Z",
-                    "modified at": "2024-04-18T09:19:30.956Z",
                 },
-                excluded_embed_metadata_keys=[
-                    "file_name",
-                    "file_type",
-                    "file_size",
-                    "creation_date",
-                    "last_modified_date",
-                    "last_accessed_date",
-                ],
-                excluded_llm_metadata_keys=[
-                    "file_name",
-                    "file_type",
-                    "file_size",
-                    "creation_date",
-                    "last_modified_date",
-                    "last_accessed_date",
-                ],
                 relationships={},
                 text="Option 1: Keep it super casual",
-                start_char_idx=None,
-                end_char_idx=None,
-                text_template="{metadata_str}\n\n{content}",
-                metadata_template="{key}: {value}",
-                metadata_seperator="\n",
             ),
             Document(
-                id_="qwertU10p1.docx",
-                embedding=None,
+                id_="file_id_2.docx",
                 metadata={
-                    "file_name": "qwertU10p1.docx",
-                    "file id": "qwertU10p1",
+                    "file_name": "qwertU10p3.docx",
+                    "file id": "qwertU10p3",
                     "author": "Jacku",
                     "file name": "Option",
-                    "mime type": "application/vnd.google-apps.document",
-                    "created at": "2024-04-16T12:13:31.089Z",
-                    "modified at": "2024-04-18T09:19:30.956Z",
                 },
-                excluded_embed_metadata_keys=[
-                    "file_name",
-                    "file_type",
-                    "file_size",
-                    "creation_date",
-                    "last_modified_date",
-                    "last_accessed_date",
-                ],
-                excluded_llm_metadata_keys=[
-                    "file_name",
-                    "file_type",
-                    "file_size",
-                    "creation_date",
-                    "last_modified_date",
-                    "last_accessed_date",
-                ],
-                relationships={},
                 text="Option 1: Keep it super casual",
-                start_char_idx=None,
-                end_char_idx=None,
-                text_template="{metadata_str}\n\n{content}",
-                metadata_template="{key}: {value}",
-                metadata_seperator="\n",
             ),
         ]
-        mock_load_data.return_value = mock_docs
+        # mock_loader = Mock()
+        mock_load_data.return_value = mock_data
+        loader = GoogleDriveLoader(self.mock_client_config)
+        result = loader.load_data(file_ids=file_ids)
 
-        result = self.loader.load_data(folder_ids=drive_ids)
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result, mock_data)
 
-        self.assertEqual(result, mock_docs)
+    @patch.object(GoogleDriveLoader, "load_data")
+    def test_load_from_folders_exception(self, mock_reader):
+        # Arrange
+        mock_loader = Mock()
+        mock_reader.return_value = mock_loader
+        loader = GoogleDriveLoader(client_config=None)
+        mock_loader.side_effect = Exception("Test Exception")
+        folder_ids = ["folder_id_1", "folder_id_2"]
+
+        # Act
+        documents = loader._load_from_folders(mock_loader, folder_ids)
+        # print(documents)
+
+        # Assert
+        self.assertEqual(len(documents), 0)
