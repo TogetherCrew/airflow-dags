@@ -3,11 +3,9 @@ from unittest import TestCase
 
 # import hivemind_etl_helpers
 from bson import ObjectId
-
-from dags.hivemind_etl_helpers.src.utils.get_communities_data import (
-    get_google_drive_communities,
-)
-from dags.hivemind_etl_helpers.src.utils.mongo import MongoSingleton
+from hivemind_etl_helpers.src.utils.get_communities_data import \
+    get_google_drive_communities
+from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
 class TestGetDriveCommunityData(TestCase):
