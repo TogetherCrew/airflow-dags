@@ -29,9 +29,13 @@ class TestQueryModulesDB(unittest.TestCase):
                 "options": {
                     "platforms": [
                         {
-                            "platformId": ObjectId("6579c364f1120850414e0dc6"),
-                            "fromDate": datetime(2024, 1, 1),
-                            "options": {"roles": ["role_id"], "users": ["user_id"]},
+                            "platform": ObjectId("6579c364f1120850414e0dc6"),
+                            "name": "github",
+                            "metadata": {
+                                "learning": {
+                                    "fromDate": datetime(2024, 1, 1),
+                                }
+                            },
                         }
                     ]
                 },

@@ -8,9 +8,8 @@ from hivemind_etl_helpers.discord_mongo_summary_etl import process_discord_summa
 from hivemind_etl_helpers.discord_mongo_vector_store_etl import (
     process_discord_guild_mongo,
 )
-from hivemind_etl_helpers.src.utils.mongo_discord_communities import (
-    get_all_discord_communities,
-)
+from hivemind_etl_helpers.src.utils.modules import ModulesDiscord
+
 
 with DAG(
     dag_id="discord_vector_store_update",
@@ -24,7 +23,7 @@ with DAG(
         """
         Getting all communities having discord from database
         """
-        communities = get_all_discord_communities()
+        communities = ModulesDiscord().get_communities()
         return communities
 
     @task
@@ -53,7 +52,7 @@ with DAG(
         this function is the same with `get_discord_communities`
         we just changed the name for the pylint
         """
-        communities = get_all_discord_communities()
+        communities = ModulesDiscord().get_communities()
         return communities
 
     @task
