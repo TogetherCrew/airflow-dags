@@ -1,10 +1,10 @@
-import logging
 import unittest
 from unittest.mock import Mock, patch
 
 from llama_index.core.schema import Document
 
-from dags.hivemind_etl_helpers.src.db.gdrive.gdrive_loader import GoogleDriveLoader
+from dags.hivemind_etl_helpers.src.db.gdrive.gdrive_loader import \
+    GoogleDriveLoader
 
 
 class TestGoogleDriveLoader(unittest.TestCase):
@@ -31,7 +31,6 @@ class TestGoogleDriveLoader(unittest.TestCase):
     @patch.object(GoogleDriveLoader, "load_data")
     def test_load_by_folder_id(self, mock_load_data):
         folder_id = ["folder_id_1", "folder_id_2"]
-        # mock_data = [{"text": "Document 1"}, {"text": "Document 2"}]
         mock_data = [
             Document(
                 id_="folder_id_1.docx",
@@ -66,7 +65,6 @@ class TestGoogleDriveLoader(unittest.TestCase):
     @patch.object(GoogleDriveLoader, "load_data")
     def test_load_by_drive_id(self, mock_load_data):
         drive_ids = ["folder_id_1", "folder_id_2"]
-        # mock_data = [{"text": "Document 1"}, {"text": "Document 2"}]
         mock_data = [
             Document(
                 id_="folder_id_1.docx",
@@ -90,7 +88,6 @@ class TestGoogleDriveLoader(unittest.TestCase):
                 text="Option 1: Keep it super casual",
             ),
         ]
-        # mock_loader = Mock()
         mock_load_data.return_value = mock_data
         loader = GoogleDriveLoader(self.mock_client_config)
         result = loader.load_data(folder_ids=drive_ids)
@@ -100,9 +97,7 @@ class TestGoogleDriveLoader(unittest.TestCase):
 
     @patch.object(GoogleDriveLoader, "load_data")
     def test_load_by_file_id(self, mock_load_data):
-        mock_loader = Mock()
         file_ids = ["file_id_1", "file_id_2"]
-        # mock_data = [{"text": "Document 1"}, {"text": "Document 2"}]
         mock_data = [
             Document(
                 id_="file_id_1.docx",
@@ -126,7 +121,6 @@ class TestGoogleDriveLoader(unittest.TestCase):
                 text="Option 1: Keep it super casual",
             ),
         ]
-        # mock_loader = Mock()
         mock_load_data.return_value = mock_data
         loader = GoogleDriveLoader(self.mock_client_config)
         result = loader.load_data(file_ids=file_ids)
@@ -136,16 +130,11 @@ class TestGoogleDriveLoader(unittest.TestCase):
 
     @patch.object(GoogleDriveLoader, "load_data")
     def test_load_from_folders_exception(self, mock_reader):
-        # Arrange
         mock_loader = Mock()
         mock_reader.return_value = mock_loader
         loader = GoogleDriveLoader(client_config=None)
         mock_loader.side_effect = Exception("Test Exception")
         folder_ids = ["folder_id_1", "folder_id_2"]
 
-        # Act
         documents = loader._load_from_folders(mock_loader, folder_ids)
-        # print(documents)
-
-        # Assert
         self.assertEqual(len(documents), 0)
