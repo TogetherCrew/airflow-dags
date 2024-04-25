@@ -116,7 +116,11 @@ class TestFetchRawMessages(unittest.TestCase):
 
         client[guild_id]["rawinfos"].insert_many(raw_data)
 
-        messages = fetch_raw_messages(guild_id, from_date=None)
+        messages = fetch_raw_messages(
+            guild_id,
+            selected_channels=channels,
+            from_date=datetime.now() - timedelta(hours=1)
+        )
 
         self.assertEqual(len(messages), message_count)
 
@@ -146,7 +150,11 @@ class TestFetchRawMessages(unittest.TestCase):
         # droping any previous data
         client[guild_id].drop_collection("rawinfos")
 
-        messages = fetch_raw_messages(guild_id, from_date=None)
+        messages = fetch_raw_messages(
+            guild_id,
+            selected_channels=channels,
+            from_date=datetime.now() - timedelta(hours=1)
+        )
 
         self.assertEqual(len(messages), 0)
         self.assertEqual(messages, [])
@@ -192,7 +200,7 @@ class TestFetchRawMessages(unittest.TestCase):
 
         # Fetch messages from a specific date (October 3, 2023)
         from_date = datetime(2023, 10, 3)
-        messages = fetch_raw_messages(guild_id, from_date=from_date)
+        messages = fetch_raw_messages(guild_id, selected_channels=channels, from_date=from_date)
 
         # Check if the fetched messages have the correct date
         for message in messages:

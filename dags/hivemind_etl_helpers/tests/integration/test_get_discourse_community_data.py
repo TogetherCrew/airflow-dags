@@ -15,7 +15,7 @@ class TestGetDiscourseCommunityData(TestCase):
         self.client = client
 
     def test_get_empty_data(self):
-        result = self.modules_discourse.get_discouse_learning_platforms()
+        result = self.modules_discourse.get_learning_platforms()
         self.assertEqual(result, [])
 
     def test_get_single_data(self):
@@ -40,7 +40,7 @@ class TestGetDiscourseCommunityData(TestCase):
             }
         )
 
-        result = self.modules_discourse.get_discouse_learning_platforms()
+        result = self.modules_discourse.get_learning_platforms()
 
         # Assertions
         self.assertIsInstance(result, list)
@@ -101,7 +101,7 @@ class TestGetDiscourseCommunityData(TestCase):
             ]
         )
 
-        result = self.modules_discourse.get_discouse_learning_platforms()
+        result = self.modules_discourse.get_learning_platforms()
         print(result)
 
         self.assertIsInstance(result, list)

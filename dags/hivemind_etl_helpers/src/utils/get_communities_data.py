@@ -93,49 +93,6 @@ def get_github_communities_data() -> list[dict[str, str | datetime]]:
     return community_orgs
 
 
-def get_discourse_communities() -> list[dict[str, str | datetime]]:
-    """
-    get discourse communities with their forum endpoint
-
-
-    Returns
-    ---------
-    communities_data : list[dict[str, str | datetime]]
-        a list of discourse data information
-
-        example data output:
-        ```
-        [{
-            "community_id": "community1",
-            "endpoint": "forum.endpoint.com",
-            "from_date": datetime(2024, 1, 1)
-        }]
-        ```
-    """
-    communities_data: list[dict[str, str | datetime]] = []
-    discourse_modules = query_modules_db(platform="discourse")
-    for module in discourse_modules:
-        community_id = str(module["communityId"])
-
-        options = module["options"]
-        for platform in options:
-            # this is happening because of the unwind operator
-            platform_data = platform["platforms"]
-
-            platform_from_date = platform_data["fromDate"]
-            organization_id = platform_data["metadata"]["endpoint"]
-
-            communities_data.append(
-                {
-                    "community_id": community_id,
-                    "from_date": platform_from_date,
-                    "endpoint": organization_id,
-                }
-            )
-
-    return communities_data
-
-
 def get_google_drive_communities() -> (
     list[dict[str, str | list[str] | datetime | dict]]
 ):

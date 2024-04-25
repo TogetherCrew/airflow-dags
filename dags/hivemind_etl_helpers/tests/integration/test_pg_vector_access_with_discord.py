@@ -152,7 +152,11 @@ class TestPGVectorAccess(unittest.TestCase):
             }
         )
 
-        documents = discord_raw_to_docuemnts(guild_id=guild_id)
+        documents = discord_raw_to_docuemnts(
+            guild_id=guild_id,
+            selected_channels=channels,
+            from_date=datetime(2023, 1, 1),
+        )
         self.setUpDB(dbname=dbname, table_name=table)
         cursor = self.postgres_conn.cursor()
         cursor.execute(f"DROP TABLE IF EXISTS data_{table};")

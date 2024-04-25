@@ -86,30 +86,7 @@ class TestDiscordGroupedDataPreparation(TestCase):
                 }
             )
 
-    def test_empty_data_prepare_without_per_date(self):
-        channels = ["111111", "22222"]
-        guild_id = "1234"
-        self.setup_db(
-            channels=channels,
-            guild_id=guild_id,
-        )
-
-        client = MongoSingleton.get_instance().client
-        client[guild_id].drop_collection("rawinfos")
-        self.setUp()
-
-        discord_summary = DiscordSummary()
-        (
-            thread_summary_docs,
-            channel_summary_docs,
-            day_summary_docs,
-        ) = discord_summary.prepare_summaries(guild_id, summarization_prefix="")
-
-        self.assertEqual(thread_summary_docs, [])
-        self.assertEqual(channel_summary_docs, [])
-        self.assertEqual(day_summary_docs, [])
-
-    def test_empty_data_prepare_with_from_date(self):
+    def test_empty_data_prepare(self):
         channels = ["111111", "22222"]
         guild_id = "1234"
         self.setup_db(
@@ -128,7 +105,10 @@ class TestDiscordGroupedDataPreparation(TestCase):
             channel_summary_docs,
             day_summary_docs,
         ) = discord_summary.prepare_summaries(
-            guild_id, from_date=from_date, summarization_prefix=""
+            guild_id, 
+            selected_channels=channels,
+            from_date=from_date,
+            summarization_prefix="",
         )
 
         self.assertEqual(thread_summary_docs, [])
@@ -220,7 +200,10 @@ class TestDiscordGroupedDataPreparation(TestCase):
             channel_summary_docs,
             day_summary_docs,
         ) = discord_summary.prepare_summaries(
-            guild_id, from_date=from_date, summarization_prefix=""
+            guild_id,
+            selected_channels=channels,
+            from_date=from_date,
+            summarization_prefix="",
         )
 
         # we had 2 days with 3 channels of each 1 thread
@@ -326,7 +309,10 @@ class TestDiscordGroupedDataPreparation(TestCase):
             channel_summary_docs,
             day_summary_docs,
         ) = discord_summary.prepare_summaries(
-            guild_id, from_date=from_date, summarization_prefix=""
+            guild_id,
+            selected_channels=channels,
+            from_date=from_date,
+            summarization_prefix=""
         )
 
         self.assertEqual(thread_summary_docs, [])

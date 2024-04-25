@@ -258,7 +258,11 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
             }
         )
 
-        documents = discord_raw_to_docuemnts(guild_id, from_date=None)
+        documents = discord_raw_to_docuemnts(
+            guild_id,
+            selected_channels=channels,
+            from_date=datetime(2023, 1, 1),
+        )
         self.assertEqual(len(documents), 4)
 
         expected_metadata_0 = {

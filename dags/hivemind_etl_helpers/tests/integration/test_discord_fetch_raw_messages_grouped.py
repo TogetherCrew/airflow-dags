@@ -90,7 +90,11 @@ class TestFetchRawMessagesGrouped(TestCase):
         client = MongoSingleton.get_instance().client
         client[guild_id].drop_collection("rawinfos")
 
-        messages = fetch_raw_msg_grouped(guild_id=guild_id, from_date=None)
+        messages = fetch_raw_msg_grouped(
+            guild_id=guild_id,
+            selected_channels=channels,
+            from_date=datetime.now(),
+        )
 
         self.assertEqual(messages, [])
 
@@ -100,7 +104,11 @@ class TestFetchRawMessagesGrouped(TestCase):
         client[guild_id].drop_collection("rawinfos")
         from_date = datetime(2023, 9, 29)
 
-        messages = fetch_raw_msg_grouped(guild_id=guild_id, from_date=from_date)
+        messages = fetch_raw_msg_grouped(
+            guild_id=guild_id, 
+            from_date=from_date,
+            selected_channels=["123"],
+        )
 
         self.assertEqual(messages, [])
 
@@ -140,7 +148,11 @@ class TestFetchRawMessagesGrouped(TestCase):
 
         client[guild_id]["rawinfos"].insert_many(raw_data)
 
-        results = fetch_raw_msg_grouped(guild_id=guild_id, from_date=from_date)
+        results = fetch_raw_msg_grouped(
+            guild_id=guild_id,
+            selected_channels=channels,
+            from_date=from_date
+        )
         self.assertEqual(len(results), 3)
 
         for res in results:
@@ -245,7 +257,10 @@ class TestFetchRawMessagesGrouped(TestCase):
 
         client[guild_id]["rawinfos"].insert_many(raw_data)
 
-        results = fetch_raw_msg_grouped(guild_id=guild_id, from_date=from_date)
+        results = fetch_raw_msg_grouped(
+            guild_id=guild_id,
+            selected_channels=channels,
+            from_date=from_date)
 
         self.assertEqual(len(results), 2)
 
