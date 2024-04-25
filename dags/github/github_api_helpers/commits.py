@@ -20,7 +20,7 @@ def fetch_commits(owner: str, repo: str, page: int, per_page: int = 100):
     response_data = response.json()
 
     logging.info(
-        f"Found {len(response_data)} commits for {owner}/{repo} on page {page}. Commits: {response_data}"
+        f"Found {len(response_data)} commits for {owner}/{repo} on page {page}."
     )
     return response_data
 
@@ -64,9 +64,7 @@ def fetch_commit_details(owner: str, repo: str, commit_sha: str):
     response = get(endpoint)
     response_data = response.json()
 
-    logging.info(
-        f"Found details for commit {commit_sha} of {owner}/{repo}: {response_data}"
-    )
+    logging.info(f"Found details for commit {commit_sha} of {owner}/{repo}")
     return response_data
 
 
@@ -89,3 +87,20 @@ def fetch_commit_files(owner: str, repo: str, sha: str):
     else:
         logging.info(f"No files changed in commit {sha} of {owner}/{repo}.")
         return []
+
+
+def fetch_commit_pull_requests(owner: str, repo: str, sha: str) -> list:
+    """
+    fetch the pull requests for a specific comment of GitHub repository
+
+    :param owner: The owner of the repository.
+    :param repo: The name of the repository.
+    :param sha: The SHA identifier of the commit.
+    :return: A list of pull requests associated with the specified commit.
+    """
+    logging.info(f"Fetching pull requests of {owner}/{repo}/commits/{sha}")
+    endpoint = f"https://api.github.com/repos/{owner}/{repo}/commits/{sha}/pulls"
+    response = get(endpoint)
+    response_data = response.json()
+
+    return response_data

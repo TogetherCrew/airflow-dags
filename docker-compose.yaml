@@ -44,15 +44,13 @@
 #
 # Feel free to modify this file to suit your needs.
 ---
-version: '3.8'
+version: "3.8"
 
-x-airflow-common:
-  &airflow-common
+x-airflow-common: &airflow-common
   build:
     context: .
     target: prod
-  env_file:
-    &airflow-common-env
+  env_file: &airflow-common-env
     - ./.env.airflow
   volumes:
     - ./dags:/opt/airflow/dags:ro
@@ -60,8 +58,7 @@ x-airflow-common:
     - airflow_config:/opt/airflow/config
     - airflow_plugins:/opt/airflow/plugins
   user: "50000:0"
-  depends_on:
-    &airflow-common-depends-on
+  depends_on: &airflow-common-depends-on
     redis:
       condition: service_healthy
     postgres:
@@ -124,7 +121,7 @@ services:
       - NEO4J_PLUGINS=["apoc", "graph-data-science"]
       - NEO4J_dbms_security_procedures_unrestricted=apoc.*,gds.*
     healthcheck:
-      test: ["CMD" ,"wget", "http://localhost:7474"]
+      test: ["CMD", "wget", "http://localhost:7474"]
       interval: 1m30s
       timeout: 10s
       retries: 2
@@ -188,7 +185,11 @@ services:
     <<: *airflow-common
     command: triggerer
     healthcheck:
-      test: ["CMD-SHELL", 'airflow jobs check --job-type TriggererJob --hostname "$${HOSTNAME}"']
+      test:
+        [
+          "CMD-SHELL",
+          'airflow jobs check --job-type TriggererJob --hostname "$${HOSTNAME}"',
+        ]
       interval: 30s
       timeout: 10s
       retries: 5

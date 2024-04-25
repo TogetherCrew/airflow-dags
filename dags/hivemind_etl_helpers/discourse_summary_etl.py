@@ -24,7 +24,8 @@ def process_discourse_summary(
     community_id: str, forum_endpoint: str, from_starting_date: datetime
 ) -> None:
     """
-    process discourse messages and save the per-channel/per-topic/daily summaries into postgresql
+    process discourse messages and save the per-channel/per-topic/daily
+    summaries into postgresql
 
     Parameters
     -----------
