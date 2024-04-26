@@ -69,7 +69,9 @@ with DAG(
         return communities
 
     @task
-    def start_discord_summary_vectorstore(community_info: dict[str, str | datetime | list]):
+    def start_discord_summary_vectorstore(
+        community_info: dict[str, str | datetime | list]
+    ):
         load_dotenv()
 
         community_id = community_info["community_id"]
