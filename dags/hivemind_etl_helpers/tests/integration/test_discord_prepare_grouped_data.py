@@ -81,21 +81,6 @@ class TestDiscordGroupedDataPreparation(TestCase):
                 }
             )
 
-    def test_empty_data_prepare_without_per_date(self):
-        channels = ["111111", "22222"]
-        guild_id = "1234"
-        self.setup_db(
-            channels=channels,
-            guild_id=guild_id,
-        )
-
-        client = MongoSingleton.get_instance().client
-        client[guild_id].drop_collection("rawinfos")
-
-        data = prepare_grouped_data(guild_id=guild_id, from_date=None)
-
-        self.assertEqual(data, {})
-
     def test_empty_data_prepare_with_from_date(self):
         channels = ["111111", "22222"]
         guild_id = "1234"
@@ -108,7 +93,9 @@ class TestDiscordGroupedDataPreparation(TestCase):
         client[guild_id].drop_collection("rawinfos")
         from_date = datetime(2023, 8, 1)
 
-        data = prepare_grouped_data(guild_id=guild_id, from_date=from_date)
+        data = prepare_grouped_data(
+            guild_id=guild_id, selected_channels=channels, from_date=from_date
+        )
         self.assertEqual(data, {})
 
     def test_some_data_prepare_with_from_date(self):
@@ -188,7 +175,9 @@ class TestDiscordGroupedDataPreparation(TestCase):
             raw_data.append(data)
 
         client[guild_id]["rawinfos"].insert_many(raw_data)
-        data = prepare_grouped_data(guild_id=guild_id, from_date=from_date)
+        data = prepare_grouped_data(
+            guild_id=guild_id, selected_channels=channels, from_date=from_date
+        )
 
         self.assertEqual(set(data.keys()), set(["2023-10-01", "2023-10-02"]))
         for date in data.keys():
@@ -331,6 +320,8 @@ class TestDiscordGroupedDataPreparation(TestCase):
             raw_data.append(data)
 
         client[guild_id]["rawinfos"].insert_many(raw_data)
-        data = prepare_grouped_data(guild_id=guild_id, from_date=from_date)
+        data = prepare_grouped_data(
+            guild_id=guild_id, selected_channels=channels, from_date=from_date
+        )
 
         self.assertEqual(data, {})

@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import numpy as np
 from bson import ObjectId
 from hivemind_etl_helpers.src.db.discord.discord_raw_message_to_document import (
-    discord_raw_to_docuemnts,
+    discord_raw_to_documents,
 )
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
@@ -258,7 +258,11 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
             }
         )
 
-        documents = discord_raw_to_docuemnts(guild_id, from_date=None)
+        documents = discord_raw_to_documents(
+            guild_id,
+            selected_channels=channels,
+            from_date=datetime(2023, 1, 1),
+        )
         self.assertEqual(len(documents), 4)
 
         expected_metadata_0 = {

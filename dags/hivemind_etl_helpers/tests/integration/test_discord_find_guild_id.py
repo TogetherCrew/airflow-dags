@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from bson import ObjectId
 from hivemind_etl_helpers.src.db.discord.find_guild_id import (
-    find_guild_id_by_community_id,
+    find_guild_id_by_platform_id,
 )
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
@@ -63,7 +63,7 @@ class TestFindDiscordGuildId(TestCase):
         self.delete_platform()
         self.add_platform()
 
-        guild_id = find_guild_id_by_community_id(community_id=self.community_id)
+        guild_id = find_guild_id_by_platform_id(platform_id=self.platform_id)
 
         self.assertEqual(guild_id, self.guild_id)
 
@@ -79,4 +79,4 @@ class TestFindDiscordGuildId(TestCase):
         client["Core"]["platforms"].delete_one({"_id": ObjectId(self.platform_id)})
 
         with self.assertRaises(ValueError):
-            _ = find_guild_id_by_community_id(community_id=self.community_id)
+            _ = find_guild_id_by_platform_id(platform_id=self.platform_id)

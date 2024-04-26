@@ -1,11 +1,11 @@
 import logging
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from hivemind_etl_helpers.src.db.discord.discord_raw_message_to_document import (
-    discord_raw_to_docuemnts,
+    discord_raw_to_documents,
 )
 from hivemind_etl_helpers.src.db.discord.find_guild_id import (
-    find_guild_id_by_community_id,
+    find_guild_id_by_platform_id,
 )
 from hivemind_etl_helpers.src.document_node_parser import configure_node_parser
 from llama_index.core import Settings
@@ -16,7 +16,12 @@ from tc_hivemind_backend.embeddings.cohere import CohereEmbedding
 from tc_hivemind_backend.pg_vector_access import PGVectorAccess
 
 
-def process_discord_guild_mongo(community_id: str) -> None:
+def process_discord_guild_mongo(
+    community_id: str,
+    platform_id: str,
+    selected_channels: list[str],
+    default_from_date: datetime,
+) -> None:
     """
     process the discord guild messages from mongodb
     and save the processed data within postgres
@@ -25,9 +30,15 @@ def process_discord_guild_mongo(community_id: str) -> None:
     -----------
     community_id : str
         the community id to create or use its database
+    platform_id : str
+        discord platform id
+    selected_channels : list[str]
+        a list of channels to start processing the data
+    default_from_date : datetime
+        the default from_date set in db
     """
-    chunk_size, embedding_dim = load_model_hyperparams()
-    guild_id = find_guild_id_by_community_id(community_id)
+    chunk_size, _ = load_model_hyperparams()
+    guild_id = find_guild_id_by_platform_id(platform_id)
     logging.info(f"COMMUNITYID: {community_id}, GUILDID: {guild_id}")
     table_name = "discord"
     dbname = f"community_{community_id}"
@@ -49,7 +60,16 @@ def process_discord_guild_mongo(community_id: str) -> None:
     if from_date is not None:
         from_date += timedelta(seconds=1)
 
-    documents = discord_raw_to_docuemnts(guild_id=guild_id, from_date=from_date)
+    # if no data was processed
+    # start from the time set in database
+    if from_date is None:
+        from_date = default_from_date
+
+    documents = discord_raw_to_documents(
+        guild_id=guild_id,
+        from_date=from_date,
+        selected_channels=selected_channels,
+    )
     node_parser = configure_node_parser(chunk_size=chunk_size)
     pg_vector = PGVectorAccess(table_name=table_name, dbname=dbname)
 

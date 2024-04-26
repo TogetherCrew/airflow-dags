@@ -2,9 +2,7 @@ import unittest
 from datetime import datetime
 
 from bson import ObjectId
-from hivemind_etl_helpers.src.utils.get_communities_data import (
-    get_github_communities_data,
-)
+from hivemind_etl_helpers.src.utils.modules import ModulesGitHub
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
@@ -12,12 +10,12 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
     def setUp(self):
         client = MongoSingleton.get_instance().client
         client["Core"].drop_collection("modules")
-        client["Core"].drop_collection("platforms")
+        self.modules_github = ModulesGitHub()
 
         self.client = client
 
     def test_get_github_communities_data_empty_data(self):
-        result = get_github_communities_data()
+        result = self.modules_github.get_learning_platforms()
         self.assertEqual(result, [])
 
     def test_get_github_communities_data_single_modules(self):
@@ -27,32 +25,25 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
         self.client["Core"]["modules"].insert_one(
             {
                 "name": "hivemind",
-                "communityId": ObjectId("6579c364f1120850414e0dc5"),
+                "community": ObjectId("6579c364f1120850414e0dc5"),
                 "options": {
                     "platforms": [
                         {
-                            "platformId": ObjectId("6579c364f1120850414e0dc6"),
-                            "fromDate": datetime(2024, 1, 1),
-                            "options": {"roles": ["role_id"], "users": ["user_id"]},
+                            "platform": ObjectId("6579c364f1120850414e0dc6"),
+                            "name": "github",
+                            "metadata": {
+                                "learning": {
+                                    "fromDate": datetime(2024, 1, 1),
+                                    "organizationId": "1234",
+                                }
+                            },
                         }
                     ]
                 },
             }
         )
-        self.client["Core"]["platforms"].insert_one(
-            {
-                "_id": ObjectId("6579c364f1120850414e0dc6"),
-                "name": "github",
-                "metadata": {"name": "TEST", "organizationId": "1234"},
-                "community": ObjectId("6579c364f1120850414e0dc5"),
-                "disconnectedAt": None,
-                "connectedAt": datetime(2023, 12, 1),
-                "createdAt": datetime(2023, 12, 1),
-                "updatedAt": datetime(2023, 12, 1),
-            }
-        )
 
-        result = get_github_communities_data()
+        result = self.modules_github.get_learning_platforms()
 
         # Assertions
         self.assertIsInstance(result, list)
@@ -74,60 +65,35 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
         self.client["Core"]["modules"].insert_one(
             {
                 "name": "hivemind",
-                "communityId": ObjectId("1009c364f1120850414e0dc5"),
+                "community": ObjectId("1009c364f1120850414e0dc5"),
                 "options": {
                     "platforms": [
                         {
-                            "platformId": ObjectId("6579c364f1120850414e0dc6"),
-                            "fromDate": datetime(2024, 1, 1),
-                            "options": {"roles": ["role_id"], "users": ["user_id"]},
+                            "platform": ObjectId("6579c364f1120850414e0dc6"),
+                            "name": "github",
+                            "metadata": {
+                                "learning": {
+                                    "fromDate": datetime(2024, 1, 1),
+                                    "organizationId": "1234",
+                                }
+                            },
                         },
                         {
-                            "platformId": ObjectId("6579c364f1120850414e0dc7"),
-                            "fromDate": datetime(2024, 2, 2),
-                            "options": {"roles": ["role_id"], "users": ["user_id"]},
+                            "platform": ObjectId("6579c364f1120850414e0dc7"),
+                            "name": "github",
+                            "metadata": {
+                                "learning": {
+                                    "fromDate": datetime(2024, 2, 2),
+                                    "organizationId": "4321",
+                                }
+                            },
                         },
                     ]
                 },
             }
         )
-        self.client["Core"]["platforms"].insert_many(
-            [
-                {
-                    "_id": ObjectId("6579c364f1120850414e0dc6"),
-                    "name": "github",
-                    "metadata": {"name": "TEST", "organizationId": "1234"},
-                    "community": ObjectId("1009c364f1120850414e0dc5"),
-                    "disconnectedAt": None,
-                    "connectedAt": datetime(2023, 12, 1),
-                    "createdAt": datetime(2023, 12, 1),
-                    "updatedAt": datetime(2023, 12, 1),
-                },
-                {
-                    "_id": ObjectId("6579c364f1120850414e0dc7"),
-                    "name": "github",
-                    "metadata": {"name": "TEST2", "organizationId": "4321"},
-                    "community": ObjectId("1009c364f1120850414e0dc5"),
-                    "disconnectedAt": None,
-                    "connectedAt": datetime(2023, 12, 1),
-                    "createdAt": datetime(2023, 12, 1),
-                    "updatedAt": datetime(2023, 12, 1),
-                },
-                # discord shouldn't be returned in this test case
-                {
-                    "_id": ObjectId("6579c364f1120850414e0dc8"),
-                    "name": "discord",
-                    "metadata": {"name": "TEST3", "channels": ["9000", "9001"]},
-                    "community": ObjectId("1009c364f1120850414e0dc5"),
-                    "disconnectedAt": None,
-                    "connectedAt": datetime(2023, 12, 1),
-                    "createdAt": datetime(2023, 12, 1),
-                    "updatedAt": datetime(2023, 12, 1),
-                },
-            ]
-        )
 
-        result = get_github_communities_data()
+        result = self.modules_github.get_learning_platforms()
 
         self.assertIsInstance(result, list)
         self.assertEqual(len(result), 2)
@@ -159,91 +125,67 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
             [
                 {
                     "name": "hivemind",
-                    "communityId": ObjectId("1009c364f1120850414e0dc5"),
+                    "community": ObjectId("1009c364f1120850414e0dc5"),
                     "options": {
                         "platforms": [
                             {
-                                "platformId": ObjectId("6579c364f1120850414e0dc6"),
-                                "fromDate": datetime(2024, 1, 1),
-                                "options": {"roles": ["role_id"], "users": ["user_id"]},
+                                "platform": ObjectId("6579c364f1120850414e0dc6"),
+                                "name": "github",
+                                "metadata": {
+                                    "learning": {
+                                        "fromDate": datetime(2024, 1, 1),
+                                        "organizationId": "1234",
+                                    }
+                                },
                             },
                             {
-                                "platformId": ObjectId("6579c364f1120850414e0dc7"),
-                                "fromDate": datetime(2024, 2, 2),
-                                "options": {"roles": ["role_id"], "users": ["user_id"]},
+                                "platform": ObjectId("6579c364f1120850414e0dc7"),
+                                "name": "github",
+                                "metadata": {
+                                    "learning": {
+                                        "fromDate": datetime(2024, 2, 2),
+                                        "organizationId": "4321",
+                                    }
+                                },
                             },
                         ]
                     },
                 },
                 {
                     "name": "hivemind",
-                    "communityId": ObjectId("1009c364f1120850414e0de5"),
+                    "community": ObjectId("2009c364f1120850414e0dc5"),
                     "options": {
                         "platforms": [
                             {
-                                "platformId": ObjectId("6579c364f1120850414e0dd6"),
-                                "fromDate": datetime(2024, 3, 1),
-                                "options": {"roles": ["role_id"], "users": ["user_id"]},
+                                "platform": ObjectId("6579c364f1120850414e0db5"),
+                                "name": "github",
+                                "metadata": {
+                                    "learning": {
+                                        "fromDate": datetime(2024, 3, 1),
+                                        "organizationId": "111111",
+                                    }
+                                },
                             },
                             {
-                                "platformId": ObjectId("6579c364f1120850414e0dd7"),
-                                "fromDate": datetime(2024, 3, 2),
-                                "options": {"roles": ["role_id"], "users": ["user_id"]},
+                                "platform": ObjectId("6579c364f1120850414e0dc7"),
+                                "name": "discord",
+                                "metadata": {
+                                    "learning": {
+                                        "fromDate": datetime(2024, 3, 1),
+                                        "selectedChannels": ["666", "777"],
+                                    }
+                                },
                             },
                         ]
                     },
                 },
             ]
         )
-        self.client["Core"]["platforms"].insert_many(
-            [
-                {
-                    "_id": ObjectId("6579c364f1120850414e0dc6"),
-                    "name": "github",
-                    "metadata": {"name": "TEST", "organizationId": "1234"},
-                    "community": ObjectId("1009c364f1120850414e0dc5"),
-                    "disconnectedAt": None,
-                    "connectedAt": datetime(2023, 12, 1),
-                    "createdAt": datetime(2023, 12, 1),
-                    "updatedAt": datetime(2023, 12, 1),
-                },
-                {
-                    "_id": ObjectId("6579c364f1120850414e0dc7"),
-                    "name": "github",
-                    "metadata": {"name": "TEST2", "organizationId": "4321"},
-                    "community": ObjectId("1009c364f1120850414e0dc5"),
-                    "disconnectedAt": None,
-                    "connectedAt": datetime(2023, 12, 1),
-                    "createdAt": datetime(2023, 12, 1),
-                    "updatedAt": datetime(2023, 12, 1),
-                },
-                {
-                    "_id": ObjectId("6579c364f1120850414e0dd6"),
-                    "name": "github",
-                    "metadata": {"name": "TEST3", "organizationId": "111111"},
-                    "community": ObjectId("1009c364f1120850414e0de5"),
-                    "disconnectedAt": None,
-                    "connectedAt": datetime(2023, 12, 1),
-                    "createdAt": datetime(2023, 12, 1),
-                    "updatedAt": datetime(2023, 12, 1),
-                },
-                {
-                    "_id": ObjectId("6579c364f1120850414e0dd7"),
-                    "name": "github",
-                    "metadata": {"name": "TEST4", "organizationId": "444444"},
-                    "community": ObjectId("1009c364f1120850414e0de5"),
-                    "disconnectedAt": None,
-                    "connectedAt": datetime(2023, 12, 1),
-                    "createdAt": datetime(2023, 12, 1),
-                    "updatedAt": datetime(2023, 12, 1),
-                },
-            ]
-        )
-        results = get_github_communities_data()
+        results = self.modules_github.get_learning_platforms()
 
         self.assertIsInstance(results, list)
         # two communities we have
-        self.assertEqual(len(results), 4)
+        self.assertEqual(len(results), 3)
 
         for res in results:
             if res["organization_id"] == "1234":
@@ -268,18 +210,9 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                 self.assertEqual(
                     res,
                     {
-                        "community_id": "1009c364f1120850414e0de5",
+                        "community_id": "2009c364f1120850414e0dc5",
                         "organization_id": "111111",
                         "from_date": datetime(2024, 3, 1),
-                    },
-                )
-            elif res["organization_id"] == "444444":
-                self.assertEqual(
-                    res,
-                    {
-                        "community_id": "1009c364f1120850414e0de5",
-                        "organization_id": "444444",
-                        "from_date": datetime(2024, 3, 2),
                     },
                 )
             else:

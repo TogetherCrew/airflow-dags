@@ -5,15 +5,18 @@ from airflow import DAG
 from airflow.decorators import task
 from hivemind_etl_helpers.discourse_summary_etl import process_discourse_summary
 from hivemind_etl_helpers.discourse_vectorstore_etl import process_discourse_vectorstore
-from hivemind_etl_helpers.src.utils.get_communities_data import (
-    get_discourse_communities,
-)
+from hivemind_etl_helpers.src.utils.modules import ModulesDiscourse
 
 with DAG(
     dag_id="discourse_vector_store",
     start_date=datetime(2024, 3, 1),
     schedule_interval="0 2 * * *",
 ) as dag:
+
+    @task
+    def get_discourse_communities():
+        communities = ModulesDiscourse().get_learning_platforms()
+        return communities
 
     @task
     def process_discourse_community(community_information: dict[str, str | datetime]):
@@ -39,6 +42,12 @@ with DAG(
 ) as dag:
 
     @task
+    def get_discourse_communities_info():
+        # renamed the method not to get linter error
+        communities = ModulesDiscourse().get_learning_platforms()
+        return communities
+
+    @task
     def process_discourse_community_summary(
         community_information: dict[str, str | datetime]
     ):
@@ -53,5 +62,5 @@ with DAG(
             from_starting_date=from_date,
         )
 
-    communities_info = get_discourse_communities()
+    communities_info = get_discourse_communities_info()
     process_discourse_community_summary.expand(community_information=communities_info)

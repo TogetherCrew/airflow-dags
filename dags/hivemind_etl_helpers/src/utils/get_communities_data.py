@@ -1,3 +1,7 @@
+"""
+This file to be removed in future and we would move the features to directory
+/dags/hivemind_etl_helpers/src/utils/modules/
+"""
 from datetime import datetime
 
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
@@ -48,92 +52,6 @@ def query_modules_db(platform: str) -> list[dict]:
     cursor = client["Core"]["modules"].aggregate(pipeline)
 
     return list(cursor)
-
-
-def get_github_communities_data() -> list[dict[str, str | datetime]]:
-    """
-    get all the github communities and the
-    related github organization ids
-
-    Returns
-    ---------
-    community_orgs : list[dict[str, str | datetime]]
-        a list of github community information
-
-        example data output:
-        ```
-        [{
-            "community_id": "community1",
-            "organization_id": "organization1",
-            "from_date": datetime(2024, 1, 1)
-        }]
-        ```
-    """
-    community_orgs: list[dict[str, str | datetime]] = []
-    github_modules = query_modules_db(platform="github")
-    for module in github_modules:
-        community_id = str(module["communityId"])
-
-        options = module["options"]
-        for platform in options:
-            # this is happening because of the unwind operator
-            platform_data = platform["platforms"]
-
-            platform_from_date = platform_data["fromDate"]
-            organization_id = platform_data["metadata"]["organizationId"]
-
-            community_orgs.append(
-                {
-                    "community_id": community_id,
-                    "from_date": platform_from_date,
-                    "organization_id": organization_id,
-                }
-            )
-
-    return community_orgs
-
-
-def get_discourse_communities() -> list[dict[str, str | datetime]]:
-    """
-    get discourse communities with their forum endpoint
-
-
-    Returns
-    ---------
-    communities_data : list[dict[str, str | datetime]]
-        a list of discourse data information
-
-        example data output:
-        ```
-        [{
-            "community_id": "community1",
-            "endpoint": "forum.endpoint.com",
-            "from_date": datetime(2024, 1, 1)
-        }]
-        ```
-    """
-    communities_data: list[dict[str, str | datetime]] = []
-    discourse_modules = query_modules_db(platform="discourse")
-    for module in discourse_modules:
-        community_id = str(module["communityId"])
-
-        options = module["options"]
-        for platform in options:
-            # this is happening because of the unwind operator
-            platform_data = platform["platforms"]
-
-            platform_from_date = platform_data["fromDate"]
-            organization_id = platform_data["metadata"]["endpoint"]
-
-            communities_data.append(
-                {
-                    "community_id": community_id,
-                    "from_date": platform_from_date,
-                    "endpoint": organization_id,
-                }
-            )
-
-    return communities_data
 
 
 def get_google_drive_communities() -> (
