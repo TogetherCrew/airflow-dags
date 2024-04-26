@@ -15,7 +15,7 @@ def fetch_raw_messages(
     -----------
     guild_id : str
         the guild id to fetch their `rawinfos` messages
-    selected_channels : list[st]
+    selected_channels : list[str]
         the selected channels id to process messages on discord
     from_date : datetime
         get the raw data from a specific date

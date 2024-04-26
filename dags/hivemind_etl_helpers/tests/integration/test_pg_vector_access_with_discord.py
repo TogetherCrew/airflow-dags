@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import psycopg2
 from bson import ObjectId
 from hivemind_etl_helpers.src.db.discord.discord_raw_message_to_document import (
-    discord_raw_to_docuemnts,
+    discord_raw_to_documents,
 )
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 from llama_index.core.indices.vector_store import VectorStoreIndex
@@ -152,7 +152,7 @@ class TestPGVectorAccess(unittest.TestCase):
             }
         )
 
-        documents = discord_raw_to_docuemnts(
+        documents = discord_raw_to_documents(
             guild_id=guild_id,
             selected_channels=channels,
             from_date=datetime(2023, 1, 1),

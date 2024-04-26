@@ -2,7 +2,7 @@ import logging
 from datetime import datetime, timedelta
 
 from hivemind_etl_helpers.src.db.discord.discord_raw_message_to_document import (
-    discord_raw_to_docuemnts,
+    discord_raw_to_documents,
 )
 from hivemind_etl_helpers.src.db.discord.find_guild_id import (
     find_guild_id_by_platform_id,
@@ -65,7 +65,7 @@ def process_discord_guild_mongo(
     if from_date is None:
         from_date = default_from_date
 
-    documents = discord_raw_to_docuemnts(
+    documents = discord_raw_to_documents(
         guild_id=guild_id,
         from_date=from_date,
         selected_channels=selected_channels,

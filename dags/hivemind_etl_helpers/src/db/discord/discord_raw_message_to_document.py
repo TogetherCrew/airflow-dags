@@ -7,7 +7,7 @@ from hivemind_etl_helpers.src.db.discord.utils.transform_discord_raw_messges imp
 from llama_index.core import Document
 
 
-def discord_raw_to_docuemnts(
+def discord_raw_to_documents(
     guild_id: str,
     selected_channels: list[str],
     from_date: datetime,
