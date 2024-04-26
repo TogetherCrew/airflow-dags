@@ -59,7 +59,7 @@ with DAG(
 ) as dag:
 
     @task
-    def get_mongo_discord_communities() -> list[str]:
+    def get_mongo_discord_communities() -> list[dict[str, str | datetime | list]]:
         """
         Getting all communities having discord from database
         this function is the same with `get_discord_communities`
@@ -69,7 +69,7 @@ with DAG(
         return communities
 
     @task
-    def start_discord_summary_vectorstore(community_info: str):
+    def start_discord_summary_vectorstore(community_info: dict[str, str | datetime | list]):
         load_dotenv()
 
         community_id = community_info["community_id"]

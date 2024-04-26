@@ -200,7 +200,9 @@ class TestFetchRawMessages(unittest.TestCase):
 
         # Fetch messages from a specific date (October 3, 2023)
         from_date = datetime(2023, 10, 3)
-        messages = fetch_raw_messages(guild_id, selected_channels=channels, from_date=from_date)
+        messages = fetch_raw_messages(
+            guild_id, selected_channels=channels, from_date=from_date
+        )
 
         # Check if the fetched messages have the correct date
         for message in messages:
