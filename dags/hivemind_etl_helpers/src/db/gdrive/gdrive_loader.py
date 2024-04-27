@@ -8,6 +8,7 @@ from llama_index.readers.google import GoogleDriveReader
 class GoogleDriveLoader:
     def __init__(self, client_config):
         self.client_config = client_config
+        self.loader = GoogleDriveReader()
 
     def load_data(
         self,
@@ -25,49 +26,48 @@ class GoogleDriveLoader:
         Returns:
            List of loaded document objects.
         """
-        loader = GoogleDriveReader()
 
         if folder_ids:
             logging.info("Loading documents from folders...")
-            return self._load_from_folders(loader, folder_ids)
+            return self._load_from_folders(folder_ids)
         elif drive_ids:
             logging.info("Loading documents from drives...")
-            return self._load_from_drives(loader, drive_ids)
+            return self._load_from_drives(drive_ids)
         elif file_ids:
             logging.info("Loading documents directly...")
-            return self._load_from_files(loader, file_ids)
+            return self._load_from_files(file_ids)
         else:
             raise ValueError("One input at least must be given!")
 
-    def _load_from_folders(self, loader: GoogleDriveReader, folder_ids: List[str]):
+    def _load_from_folders(self, folder_ids: List[str]):
         folders_data = []
         for folder_id in folder_ids:
             logging.info(f"Processing folder: {folder_id}")
             try:
-                folders_data.extend(loader.load_data(folder_id=folder_id))
+                folders_data.extend(self.loader.load_data(folder_id=folder_id))
             except Exception as e:
                 logging.error(
                     f"An error occurred while loading from folder: {e}", exc_info=True
                 )
         return folders_data
 
-    def _load_from_drives(self, loader: GoogleDriveReader, drive_ids: List[str]):
+    def _load_from_drives(self, drive_ids: List[str]):
         drive_data = []
         for drive_id in drive_ids:
             logging.info(f"Processing drive: {drive_id}")
             try:
-                drive_data.extend(loader.load_data(folder_id=drive_ids))
+                drive_data.extend(self.loader.load_data(folder_id=drive_id))
             except Exception as e:
                 logging.error(
                     f"An error occurred while loading from folder: {e}", exc_info=True
                 )
         return drive_data
 
-    def _load_from_files(self, loader: GoogleDriveReader, file_ids: List[str]):
+    def _load_from_files(self, file_ids: List[str]):
         file_data = []
-        logging.info("Processing file")
+        logging.info(f"Processing file")
         try:
-            file_data.extend(loader.load_data(file_ids=file_ids))
+            file_data.extend(self.loader.load_data(file_ids=file_ids))
         except Exception as e:
             logging.error(
                 f"An error occurred while loading from file: {e}", exc_info=True
