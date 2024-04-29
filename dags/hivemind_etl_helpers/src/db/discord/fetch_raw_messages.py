@@ -188,7 +188,7 @@ def get_real_users(guild_id: str) -> list[str]:
     ------------
     guild_id : str
         the guild to fetch its members
-    
+
     Returns
     --------
     user_ids : list[str]
