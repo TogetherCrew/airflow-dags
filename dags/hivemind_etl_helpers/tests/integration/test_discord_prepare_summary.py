@@ -97,7 +97,6 @@ class TestDiscordGroupedDataPreparation(TestCase):
         client = MongoSingleton.get_instance().client
         client[guild_id].drop_collection("rawinfos")
         from_date = datetime(2023, 8, 1)
-        self.setUp()
 
         discord_summary = DiscordSummary()
         (
@@ -117,6 +116,7 @@ class TestDiscordGroupedDataPreparation(TestCase):
 
     def test_some_data_prepare_with_from_date(self):
         channels = ["111111", "22222"]
+        user_ids = ["user1", "user2"]
         guild_id = "1234"
         self.setup_db(
             channels=channels,
@@ -125,13 +125,31 @@ class TestDiscordGroupedDataPreparation(TestCase):
 
         client = MongoSingleton.get_instance().client
         client[guild_id].drop_collection("rawinfos")
+        client[guild_id].drop_collection("guildmembers")
+
+        for user in user_ids:
+            client[guild_id]["guildmembers"].insert_one(
+                {
+                    "discordId": user,
+                    "username": f"username_{user}",
+                    "roles": None,
+                    "joinedAt": datetime(2023, 1, 1),
+                    "avatar": None,
+                    "isBot": False,
+                    "discriminator": "0",
+                    "permissions": None,
+                    "deletedAt": None,
+                    "globalName": None,
+                    "nickname": None,
+                }
+            )
         from_date = datetime(2023, 8, 1)
 
         raw_data = []
         for i in range(2):
             data = {
                 "type": 0,
-                "author": f"author_{i}",
+                "author": user_ids[i],
                 "content": f"test_message {i}",
                 "user_mentions": [],
                 "role_mentions": [],
@@ -143,7 +161,7 @@ class TestDiscordGroupedDataPreparation(TestCase):
                 "messageId": f"11111{i}",
                 "channelId": channels[i % len(channels)],
                 "channelName": "general",
-                "threadId": None,
+                "threadId": "987123",
                 "threadName": "Something",
                 "isGeneratedByWebhook": False,
             }
@@ -152,7 +170,7 @@ class TestDiscordGroupedDataPreparation(TestCase):
         for i in range(2):
             data = {
                 "type": 0,
-                "author": f"author_{i}",
+                "author": user_ids[i],
                 "content": f"test_message {i}",
                 "user_mentions": [],
                 "role_mentions": [],
@@ -173,7 +191,7 @@ class TestDiscordGroupedDataPreparation(TestCase):
         for i in range(2):
             data = {
                 "type": 0,
-                "author": f"author_{i}",
+                "author": user_ids[i],
                 "content": f"test_message {i}",
                 "user_mentions": [],
                 "role_mentions": [],
@@ -192,7 +210,6 @@ class TestDiscordGroupedDataPreparation(TestCase):
             raw_data.append(data)
 
         client[guild_id]["rawinfos"].insert_many(raw_data)
-        self.setUp()
 
         discord_summary = DiscordSummary()
         (
@@ -207,7 +224,11 @@ class TestDiscordGroupedDataPreparation(TestCase):
         )
 
         # we had 2 days with 3 channels of each 1 thread
-        self.assertEqual(len(thread_summary_docs), 6)
+        # MockLLM will output exactly the given query to it
+        # which is out custom prompt
+        # each day the MockLLM output would be multiplied
+        # by 7 because we're breaking the lines
+        self.assertEqual(len(thread_summary_docs), 6 * 7)
         for doc in thread_summary_docs:
             self.assertIsInstance(doc, Document)
 
@@ -226,6 +247,7 @@ class TestDiscordGroupedDataPreparation(TestCase):
         should return no data as we're getting them after the specific date
         """
         channels = ["111111", "22222"]
+        user_ids = ["user1", "user2"]
         guild_id = "1234"
         self.setup_db(
             channels=channels,
@@ -234,13 +256,32 @@ class TestDiscordGroupedDataPreparation(TestCase):
 
         client = MongoSingleton.get_instance().client
         client[guild_id].drop_collection("rawinfos")
+        client[guild_id].drop_collection("guildmembers")
+
+        for user in user_ids:
+            client[guild_id]["guildmembers"].insert_one(
+                {
+                    "discordId": user,
+                    "username": f"username_{user}",
+                    "roles": None,
+                    "joinedAt": datetime(2023, 1, 1),
+                    "avatar": None,
+                    "isBot": False,
+                    "discriminator": "0",
+                    "permissions": None,
+                    "deletedAt": None,
+                    "globalName": None,
+                    "nickname": None,
+                }
+            )
+
         from_date = datetime(2023, 11, 1)
 
         raw_data = []
         for i in range(2):
             data = {
                 "type": 0,
-                "author": f"author_{i}",
+                "author": user_ids[i],
                 "content": f"test_message {i}",
                 "user_mentions": [],
                 "role_mentions": [],
@@ -261,7 +302,7 @@ class TestDiscordGroupedDataPreparation(TestCase):
         for i in range(2):
             data = {
                 "type": 0,
-                "author": f"author_{i}",
+                "author": user_ids[i],
                 "content": f"test_message {i}",
                 "user_mentions": [],
                 "role_mentions": [],
@@ -282,7 +323,7 @@ class TestDiscordGroupedDataPreparation(TestCase):
         for i in range(2):
             data = {
                 "type": 0,
-                "author": f"author_{i}",
+                "author": user_ids[i],
                 "content": f"test_message {i}",
                 "user_mentions": [],
                 "role_mentions": [],
@@ -301,7 +342,6 @@ class TestDiscordGroupedDataPreparation(TestCase):
             raw_data.append(data)
 
         client[guild_id]["rawinfos"].insert_many(raw_data)
-        self.setUp()
 
         discord_summary = DiscordSummary()
         (
