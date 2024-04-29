@@ -22,6 +22,7 @@ class TestFetchRawMessages(unittest.TestCase):
 
         client["Core"].drop_collection("modules")
         client["Core"].drop_collection("platforms")
+        client[guild_id].drop_collection("guildmembers")
 
         if create_modules:
             data = {
@@ -83,6 +84,7 @@ class TestFetchRawMessages(unittest.TestCase):
     def test_fetch_raw_messages_fetch_all(self):
         client = MongoSingleton.get_instance().client
         channels = ["111111", "22222"]
+        users_id = ["user1", "user2", "user3"]
         guild_id = "1234"
         self.setup_db(
             channels=channels,
@@ -92,13 +94,34 @@ class TestFetchRawMessages(unittest.TestCase):
         # droping any previous data
         client[guild_id].drop_collection("rawinfos")
 
-        message_count = 2
+        message_count = 3
+
+        for user in users_id:
+            is_bot = False
+            if user == "user3":
+                is_bot = True
+
+            client[guild_id]["guildmembers"].insert_one(
+                {
+                    "discordId": user,
+                    "username": f"username_{user}",
+                    "roles": None,
+                    "joinedAt": datetime(2023, 1, 1),
+                    "avatar": None,
+                    "isBot": is_bot,
+                    "discriminator": "0",
+                    "permissions": None,
+                    "deletedAt": None,
+                    "globalName": None,
+                    "nickname": None,
+                }
+            )
 
         raw_data = []
         for i in range(message_count):
             data = {
                 "type": 0,
-                "author": str(np.random.randint(100000, 999999)),
+                "author": users_id[i],
                 "content": f"test_message {np.random.randint(0, 10)}",
                 "user_mentions": [],
                 "role_mentions": [],
@@ -122,7 +145,8 @@ class TestFetchRawMessages(unittest.TestCase):
             from_date=datetime.now() - timedelta(hours=1),
         )
 
-        self.assertEqual(len(messages), message_count)
+        # one message was for a bot
+        self.assertEqual(len(messages), 2)
 
         for idx, msg in enumerate(messages):
             for field in msg.keys():
@@ -140,6 +164,7 @@ class TestFetchRawMessages(unittest.TestCase):
         client = MongoSingleton.get_instance().client
 
         guild_id = "1234"
+        users_id = ["user1", "user2", "user3"]
 
         channels = ["111111", "22222"]
         guild_id = "1234"
@@ -149,6 +174,27 @@ class TestFetchRawMessages(unittest.TestCase):
         )
         # droping any previous data
         client[guild_id].drop_collection("rawinfos")
+
+        for user in users_id:
+            is_bot = False
+            if user == "user3":
+                is_bot = True
+
+            client[guild_id]["guildmembers"].insert_one(
+                {
+                    "discordId": user,
+                    "username": f"username_{user}",
+                    "roles": None,
+                    "joinedAt": datetime(2023, 1, 1),
+                    "avatar": None,
+                    "isBot": is_bot,
+                    "discriminator": "0",
+                    "permissions": None,
+                    "deletedAt": None,
+                    "globalName": None,
+                    "nickname": None,
+                }
+            )
 
         messages = fetch_raw_messages(
             guild_id,
@@ -164,11 +210,33 @@ class TestFetchRawMessages(unittest.TestCase):
 
         guild_id = "1234"
         channels = ["111111", "22222"]
+        users_id = ["user1", "user2", "user3", "user4", "user5"]
         guild_id = "1234"
         self.setup_db(
             channels=channels,
             guild_id=guild_id,
         )
+
+        for user in users_id:
+            is_bot = False
+            if user == "user3":
+                is_bot = True
+
+            client[guild_id]["guildmembers"].insert_one(
+                {
+                    "discordId": user,
+                    "username": f"username_{user}",
+                    "roles": None,
+                    "joinedAt": datetime(2023, 1, 1),
+                    "avatar": None,
+                    "isBot": is_bot,
+                    "discriminator": "0",
+                    "permissions": None,
+                    "deletedAt": None,
+                    "globalName": None,
+                    "nickname": None,
+                }
+            )
 
         # Dropping any previous data
         client[guild_id].drop_collection("rawinfos")
@@ -178,7 +246,7 @@ class TestFetchRawMessages(unittest.TestCase):
         for i in range(5):
             data = {
                 "type": 0,
-                "author": str(np.random.randint(100000, 999999)),
+                "author": users_id[i],
                 "content": f"test_message {np.random.randint(0, 10)}",
                 "user_mentions": [],
                 "role_mentions": [],
@@ -210,7 +278,9 @@ class TestFetchRawMessages(unittest.TestCase):
 
         # Check if the number of fetched messages is correct
         expected_messages = [
-            message for message in raw_data if message["createdDate"] >= from_date
+            message
+            for message in raw_data
+            if message["createdDate"] >= from_date and message["author"] != "user3"
         ]
         self.assertEqual(len(messages), len(expected_messages))
 

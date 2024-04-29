@@ -28,10 +28,23 @@ def fetch_raw_messages(
     """
     client = MongoSingleton.get_instance().get_client()
 
+    # fetching real users
+    users_cursor = client[guild_id]["guildmembers"].find(
+        {
+            "isBot": False,
+        },
+        {
+            "_id": 0,
+            "discordId": 1,
+        },
+    )
+    user_ids = list(map(lambda x: x["discordId"], users_cursor))
+
     cursor = (
         client[guild_id]["rawinfos"]
         .find(
             {
+                "author": {"$in": user_ids},
                 "type": {"$ne": 18},
                 "createdDate": {"$gte": from_date},
                 "isGeneratedByWebhook": False,
