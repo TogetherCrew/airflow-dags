@@ -27,11 +27,13 @@ def fetch_raw_messages(
         a list of raw messages
     """
     client = MongoSingleton.get_instance().get_client()
+    user_ids = get_real_users(guild_id)
 
     cursor = (
         client[guild_id]["rawinfos"]
         .find(
             {
+                "author": {"$in": user_ids},
                 "type": {"$ne": 18},
                 "createdDate": {"$gte": from_date},
                 "isGeneratedByWebhook": False,
@@ -83,6 +85,7 @@ def fetch_raw_msg_grouped(
         ```
     """
     client = MongoSingleton.get_instance().client
+    user_ids = get_real_users(guild_id)
 
     # the pipeline grouping data per day
     pipeline: list[dict] = []
@@ -90,6 +93,7 @@ def fetch_raw_msg_grouped(
     pipeline.append(
         {
             "$match": {
+                "author": {"$in": user_ids},
                 "type": {"$ne": 18},
                 "createdDate": {
                     "$gte": from_date,
@@ -174,3 +178,33 @@ def fetch_channels_and_from_date(guild_id: str) -> tuple[list[str], datetime | N
         raise ValueError("No modules set for this community!")
 
     return channels, from_date
+
+
+def get_real_users(guild_id: str) -> list[str]:
+    """
+    get the real users id by removing the bots from the list
+
+    Parameters
+    ------------
+    guild_id : str
+        the guild to fetch its members
+
+    Returns
+    --------
+    user_ids : list[str]
+        a list of user ids that are not bot
+    """
+    client = MongoSingleton.get_instance().get_client()
+
+    # fetching real users
+    users_cursor = client[guild_id]["guildmembers"].find(
+        {
+            "isBot": False,
+        },
+        {
+            "_id": 0,
+            "discordId": 1,
+        },
+    )
+    user_ids = list(map(lambda x: x["discordId"], users_cursor))
+    return user_ids
