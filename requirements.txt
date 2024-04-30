@@ -18,3 +18,6 @@ urlextract==1.8.0
 tc-hivemind-backend==1.1.5
 traceloop-sdk>=0.15.2, <0.16.0
 beautifulsoup4==4.12.3
+llama-index-readers-notion==0.1.6
+llama-index-storage-docstore-redis===0.1.2
+ratelimit===2.2.1

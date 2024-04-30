@@ -40,7 +40,7 @@ class TestGetNotionCommunityData(TestCase):
         self.client["Core"]["platforms"].insert_one(
             {
                 "_id": ObjectId("6579c364f1120850414e0dc6"),
-                "name": "google-drive",
+                "name": "notion",
                 "metadata": {
                     "name": "TEST",
                     "database_ids": [
@@ -109,7 +109,7 @@ class TestGetNotionCommunityData(TestCase):
         self.client["Core"]["platforms"].insert_one(
             {
                 "_id": ObjectId("6579c364f1120850414e0dc6"),
-                "name": "google-drive",
+                "name": "notion",
                 "metadata": {
                     "name": "TEST",
                     "database_ids": "dadd27f1dc1e4fa6b5b9dea76858dabe",
@@ -142,9 +142,9 @@ class TestGetNotionCommunityData(TestCase):
             },
         )
 
-    def test_get_gdrive_communities_data_multiple_platforms(self):
+    def test_get_notion_communities_data_multiple_platforms(self):
         """
-        two gdrive platform for one community
+        two notion platform for one community
         """
         self.client["Core"]["modules"].insert_one(
             {
@@ -172,7 +172,7 @@ class TestGetNotionCommunityData(TestCase):
             [
                 {
                     "_id": ObjectId("6579c364f1120850414e0dc6"),
-                    "name": "google-drive",
+                    "name": "notion",
                     "metadata": {
                         "name": "TEST",
                         "database_ids": [
@@ -202,21 +202,10 @@ class TestGetNotionCommunityData(TestCase):
                         ],
                         "page_ids": [
                             "7a3c20b6861145b29030292120aa03e6",
-                            "f479ee3eef9a4eefb3a393848af9ed9d",
+                            "f479ee3eef9a4eefb3a393848af9ed9d"
                         ],
                         "client_config": {},
                     },
-                    "community": ObjectId("1009c364f1120850414e0dc5"),
-                    "disconnectedAt": None,
-                    "connectedAt": datetime(2023, 12, 1),
-                    "createdAt": datetime(2023, 12, 1),
-                    "updatedAt": datetime(2023, 12, 1),
-                },
-                # discord shouldn't be returned in this test case
-                {
-                    "_id": ObjectId("6579c364f1120850414e0dc8"),
-                    "name": "discord",
-                    "metadata": {"name": "TEST3", "channels": ["9000", "9001"]},
                     "community": ObjectId("1009c364f1120850414e0dc5"),
                     "disconnectedAt": None,
                     "connectedAt": datetime(2023, 12, 1),
@@ -258,7 +247,7 @@ class TestGetNotionCommunityData(TestCase):
                 ],
                 "page_ids": [
                     "7a3c20b6861145b29030292120aa03e6",
-                    "f479ee3eef9a4eefb3a393848af9ed9d",
+                    "f479ee3eef9a4eefb3a393848af9ed9d"
                 ],
                 "client_config": {},
             },

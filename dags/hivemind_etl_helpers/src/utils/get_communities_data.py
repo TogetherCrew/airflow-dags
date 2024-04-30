@@ -188,7 +188,7 @@ def get_google_drive_communities() -> (
     return communities_data
 
 
-def get_notion_communities() -> (
+def get_all_notion_communities() -> (
         list[dict[str, str | list[str] | datetime | dict]]
 ):
     """
@@ -206,9 +206,7 @@ def get_notion_communities() -> (
           "from_date": datetime(2024, 1, 1),
           "database_ids": ["dadd27f1dc1e4fa6b5b9dea76858dabe"],
           "page_ids": ["6a3c20b6861145b29030292120aa03e6"],
-          "client_config": {
-            "integration_token": "secret_kPH3bgR0iMYLqmX9KkLi1wFAueGXjZvKAIlXq2G9wj"
-          }
+          "client_config": {...}
         }]
         ```
     """
