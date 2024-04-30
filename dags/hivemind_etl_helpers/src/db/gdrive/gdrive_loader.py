@@ -65,7 +65,7 @@ class GoogleDriveLoader:
 
     def _load_from_files(self, file_ids: List[str]):
         file_data = []
-        logging.info(f"Processing file")
+        logging.info(f"Processing file {file_ids}")
         try:
             file_data.extend(self.loader.load_data(file_ids=file_ids))
         except Exception as e:
