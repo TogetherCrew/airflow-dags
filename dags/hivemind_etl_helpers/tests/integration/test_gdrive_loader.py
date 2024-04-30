@@ -22,7 +22,7 @@ class TestGoogleDriveLoader(unittest.TestCase):
         self.loader = GoogleDriveLoader(self.mock_client_config)
 
     def test_load_data_without_input(self):
-        loader = GoogleDriveLoader(client_config=None)
+        loader = GoogleDriveLoader(client_config=self.mock_client_config)
 
         with self.assertRaises(ValueError):
             loader.load_data()
@@ -55,7 +55,7 @@ class TestGoogleDriveLoader(unittest.TestCase):
         ]
         self.mock_loader = Mock()
         mock_load_data.return_value = mock_data
-        loader = GoogleDriveLoader(self.mock_client_config)
+        loader = GoogleDriveLoader(client_config=self.mock_client_config)
         result = loader.load_data(folder_ids=folder_id)
 
         self.assertEqual(len(result), 4)
@@ -88,7 +88,7 @@ class TestGoogleDriveLoader(unittest.TestCase):
             ),
         ]
         mock_load_data.return_value = mock_data
-        loader = GoogleDriveLoader(self.mock_client_config)
+        loader = GoogleDriveLoader(client_config=self.mock_client_config)
         result = loader.load_data(drive_ids=drive_ids)
 
         self.assertEqual(len(result), 4)
@@ -131,7 +131,7 @@ class TestGoogleDriveLoader(unittest.TestCase):
     def test_load_from_folders_exception(self, mock_reader):
         mock_loader = Mock()
         mock_reader.return_value = mock_loader
-        loader = GoogleDriveLoader(client_config=None)
+        loader = GoogleDriveLoader(client_config=self.mock_client_config)
         mock_loader.side_effect = Exception("Test Exception")
         folder_ids = ["folder_id_1", "folder_id_2"]
 
@@ -142,7 +142,7 @@ class TestGoogleDriveLoader(unittest.TestCase):
     def test_load_from_drives_exception(self, mock_reader):
         mock_loader = Mock()
         mock_reader.return_value = mock_loader
-        loader = GoogleDriveLoader(client_config=None)
+        loader = GoogleDriveLoader(client_config=self.mock_client_config)
         mock_loader.side_effect = Exception("Test Exception")
         drives_id = ["folder_id_1", "folder_id_2"]
 
@@ -153,7 +153,7 @@ class TestGoogleDriveLoader(unittest.TestCase):
     def test_load_from_files_exception(self, mock_reader):
         mock_loader = Mock()
         mock_reader.return_value = mock_loader
-        loader = GoogleDriveLoader(client_config=None)
+        loader = GoogleDriveLoader(client_config=self.mock_client_config)
         mock_loader.side_effect = Exception("Test Exception")
         file_id = ["folder_id_1", "folder_id_2"]
 
@@ -188,7 +188,7 @@ class TestGoogleDriveLoader(unittest.TestCase):
         ]
         self.mock_loader = Mock()
         mock_load_data.return_value = mock_data
-        loader = GoogleDriveLoader(self.mock_client_config)
+        loader = GoogleDriveLoader(client_config=self.mock_client_config)
         result = loader._load_from_folders(folder_ids=folder_id)
         self.assertEqual(len(result), 4)
 

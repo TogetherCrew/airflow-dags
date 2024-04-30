@@ -8,7 +8,7 @@ from llama_index.readers.google import GoogleDriveReader
 class GoogleDriveLoader:
     def __init__(self, client_config):
         self.client_config = client_config
-        self.loader = GoogleDriveReader()
+        self.loader = GoogleDriveReader(client_config=self.client_config)
 
     def load_data(
         self,
@@ -65,7 +65,7 @@ class GoogleDriveLoader:
 
     def _load_from_files(self, file_ids: List[str]):
         file_data = []
-        logging.info(f"Processing files: {file_ids}")
+        logging.info(f"Processing file")
         try:
             file_data.extend(self.loader.load_data(file_ids=file_ids))
         except Exception as e:
