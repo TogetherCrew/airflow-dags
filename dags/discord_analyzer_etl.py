@@ -1,3 +1,5 @@
+# type: ignore
+# remove the above when all tasks were filled
 import logging
 from datetime import datetime
 
@@ -32,6 +34,7 @@ with DAG(
 
         """
         # the platform that needs to be recomputed
+        # noqa: F841
         platform_id_recompute = kwargs["dag_run"].conf.get("recompute_platform", None)
 
         # for default we're setting the recompute for all platforms to False
@@ -222,6 +225,7 @@ with DAG(
             }
             ```
         """
+        pass
 
     @task
     def discord_load_transformed_members(
@@ -265,7 +269,7 @@ with DAG(
             }
             ```
         """
-        logging.info("platform_processed: ", platform_processed)
+        logging.info(f"platform_processed: {platform_processed}")
         # TODO
         pass
 
