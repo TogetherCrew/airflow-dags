@@ -2,6 +2,7 @@
 This file to be removed in future and we would move the features to directory
 /dags/hivemind_etl_helpers/src/utils/modules/
 """
+
 from datetime import datetime
 
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton

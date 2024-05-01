@@ -34,7 +34,8 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                             "metadata": {
                                 "learning": {
                                     "fromDate": datetime(2024, 1, 1),
-                                    "organizationId": "1234",
+                                    "organizationId": ["1234"],
+                                    "repoIds": ["111", "234"],
                                 }
                             },
                         }
@@ -53,7 +54,8 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
             result[0],
             {
                 "community_id": "6579c364f1120850414e0dc5",
-                "organization_id": "1234",
+                "organization_ids": ["1234"],
+                "repo_ids": ["111", "234"],
                 "from_date": datetime(2024, 1, 1),
             },
         )
@@ -74,7 +76,8 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                             "metadata": {
                                 "learning": {
                                     "fromDate": datetime(2024, 1, 1),
-                                    "organizationId": "1234",
+                                    "organizationId": ["1234"],
+                                    "repoIds": ["111", "234"],
                                 }
                             },
                         },
@@ -84,7 +87,8 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                             "metadata": {
                                 "learning": {
                                     "fromDate": datetime(2024, 2, 2),
-                                    "organizationId": "4321",
+                                    "organizationId": ["4321"],
+                                    "repoIds": ["2132", "8888"],
                                 }
                             },
                         },
@@ -102,7 +106,8 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
             result[0],
             {
                 "community_id": "1009c364f1120850414e0dc5",
-                "organization_id": "1234",
+                "organization_ids": ["1234"],
+                "repo_ids": ["111", "234"],
                 "from_date": datetime(2024, 1, 1),
             },
         )
@@ -110,7 +115,8 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
             result[1],
             {
                 "community_id": "1009c364f1120850414e0dc5",
-                "organization_id": "4321",
+                "organization_ids": ["4321"],
+                "repo_ids": ["2132", "8888"],
                 "from_date": datetime(2024, 2, 2),
             },
         )
@@ -134,7 +140,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                                 "metadata": {
                                     "learning": {
                                         "fromDate": datetime(2024, 1, 1),
-                                        "organizationId": "1234",
+                                        "organizationId": ["1234"],
                                     }
                                 },
                             },
@@ -144,7 +150,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                                 "metadata": {
                                     "learning": {
                                         "fromDate": datetime(2024, 2, 2),
-                                        "organizationId": "4321",
+                                        "repoIds": ["1111"],
                                     }
                                 },
                             },
@@ -162,7 +168,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                                 "metadata": {
                                     "learning": {
                                         "fromDate": datetime(2024, 3, 1),
-                                        "organizationId": "111111",
+                                        "organizationId": ["111111"],
                                     }
                                 },
                             },
@@ -188,30 +194,33 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
         self.assertEqual(len(results), 3)
 
         for res in results:
-            if res["organization_id"] == "1234":
+            if res["organization_ids"] == ["1234"]:
                 self.assertEqual(
                     res,
                     {
                         "community_id": "1009c364f1120850414e0dc5",
-                        "organization_id": "1234",
+                        "organization_ids": ["1234"],
+                        "repo_ids": [],
                         "from_date": datetime(2024, 1, 1),
                     },
                 )
-            elif res["organization_id"] == "4321":
+            elif res["organization_ids"] == []:
                 self.assertEqual(
                     res,
                     {
                         "community_id": "1009c364f1120850414e0dc5",
-                        "organization_id": "4321",
+                        "organization_ids": [],
+                        "repo_ids": ["1111"],
                         "from_date": datetime(2024, 2, 2),
                     },
                 )
-            elif res["organization_id"] == "111111":
+            elif res["organization_ids"] == ["111111"]:
                 self.assertEqual(
                     res,
                     {
                         "community_id": "2009c364f1120850414e0dc5",
-                        "organization_id": "111111",
+                        "organization_ids": ["111111"],
+                        "repo_ids": [],
                         "from_date": datetime(2024, 3, 1),
                     },
                 )

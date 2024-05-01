@@ -21,7 +21,8 @@ class ModulesGitHub(ModulesBase):
             ```
             [{
                 "community_id": "community1",
-                "organization_id": "12345",
+                "organization_ids": ["1111", "2222"],
+                "repoIds": ["132", "45232"],
                 "from_date": datetime(2024, 1, 1)
             }]
             ```
@@ -45,7 +46,10 @@ class ModulesGitHub(ModulesBase):
                     platforms_data.append(
                         {
                             "community_id": str(community),
-                            "organization_id": learning_config["organizationId"],
+                            "organization_ids": learning_config.get(
+                                "organizationId", []
+                            ),
+                            "repo_ids": learning_config.get("repoIds", []),
                             "from_date": learning_config["fromDate"],
                         }
                     )
