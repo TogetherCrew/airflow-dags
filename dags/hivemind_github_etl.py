@@ -29,7 +29,8 @@ with DAG(
         logging.info(f"Starting Github ETL | community_id: {community_id}")
         process_github_vectorstore(
             community_id=community_id,
-            github_org_id=organization_id,
+            github_org_ids=organization_ids,
+            repo_ids=repo_ids,
             from_starting_date=from_date,
         )
 
