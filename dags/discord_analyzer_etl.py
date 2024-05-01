@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 
 from airflow import DAG
@@ -264,6 +265,7 @@ with DAG(
             }
             ```
         """
+        logging.info("platform_processed: ", platform_processed)
         # TODO
         pass
 
