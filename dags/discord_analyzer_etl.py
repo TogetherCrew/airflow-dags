@@ -34,7 +34,9 @@ with DAG(
 
         """
         # the platform that needs to be recomputed
-        platform_id_recompute = kwargs["dag_run"].conf.get("recompute_platform", None)  # noqa: F841
+        platform_id_recompute = kwargs["dag_run"].conf.get(
+            "recompute_platform", None
+        )  # noqa: F841
 
         # for default we're setting the recompute for all platforms to False
         # if an id for `recompute_platform` was given
