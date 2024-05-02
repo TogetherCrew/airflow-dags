@@ -142,7 +142,7 @@ with DAG(
     # region organization members ETL
     @task
     def extract_github_organization_members(organization):
-        
+
         for iter, org in enumerate(organization["organizations_info"]):
             logging.info(
                 "Extracting organization members iteration "
@@ -183,13 +183,11 @@ with DAG(
                 f"Iter {i + 1}/{len(organizations)} | "
                 f"extracting github org {org['name']} repos!"
             )
-            repos = get_all_org_repos(
-                org_name=org["name"]
-            )
+            repos = get_all_org_repos(org_name=org["name"])
             org["repos"] = repos
 
         return organizations
-    
+
     @task
     def extract_github_repos_using_id(repo_id):
         repo = fetch_repo_using_id(repo_id)
@@ -213,12 +211,11 @@ with DAG(
                 )
                 save_repo_to_neo4j(repo)
         return repo
-    
+
     @task
     def load_github_repo(repo):
         logging.info(f"Loading repository with id {repo['id']} into Neo4j!")
         save_repo_to_neo4j(repo)
-
 
     # endregion
 
@@ -236,13 +233,13 @@ with DAG(
 
                 prs = get_all_pull_requests(owner=owner, repo=repo_name)
                 repo["prs"] = prs
-        
+
         return org_data
 
     @task
     def extract_pull_request_linked_issues(org_data):
         organizations = org_data["organizations_info"]
-        
+
         for org in organizations:
             for repo in org["repos"]:
                 repo_name = repo["name"]
@@ -269,7 +266,7 @@ with DAG(
         for org in organizations:
             for repo in org["repos"]:
                 repository_id = repo["id"]
-                for i, pr in enumerate(repo["prs"]):        
+                for i, pr in enumerate(repo["prs"]):
                     logging.info(f"Iteration {i + 1}/{len(repo['prs'])}")
                     save_pull_request_to_neo4j(pr=pr, repository_id=repository_id)
 
@@ -311,7 +308,9 @@ with DAG(
                     pr_id = pr["id"]
                     files_changes = pr["file_changes"]
                     save_pr_files_changes_to_neo4j(
-                        pr_id=pr_id, repository_id=repository_id, file_changes=files_changes
+                        pr_id=pr_id,
+                        repository_id=repository_id,
+                        file_changes=files_changes,
                     )
 
         return org_data
@@ -365,9 +364,11 @@ with DAG(
                 owner = repo["owner"]["login"]
                 repo_name = repo["name"]
 
-                review_comments = get_all_repo_review_comments(owner=owner, repo=repo_name)
+                review_comments = get_all_repo_review_comments(
+                    owner=owner, repo=repo_name
+                )
                 repo["review_comments"] = review_comments
-        
+
         return org_data
 
     @task
@@ -403,7 +404,9 @@ with DAG(
                 owner = repo["owner"]["login"]
                 repo_name = repo["name"]
 
-                comments = get_all_repo_issues_and_prs_comments(owner=owner, repo=repo_name)
+                comments = get_all_repo_issues_and_prs_comments(
+                    owner=owner, repo=repo_name
+                )
                 repo["comments"] = comments
 
         return org_data
@@ -638,7 +641,9 @@ with DAG(
 
                 for commit in commits:
                     sha = commit["sha"]
-                    files_changes = fetch_commit_files(owner=owner, repo=repo_name, sha=sha)
+                    files_changes = fetch_commit_files(
+                        owner=owner, repo=repo_name, sha=sha
+                    )
                     commit["files_changes"] = files_changes
 
         return org_data
@@ -661,7 +666,9 @@ with DAG(
                     sha = commit["sha"]
                     files_changes = commit["file_changes"]
                     save_commit_files_changes_to_neo4j(
-                        commit_sha=sha, repository_id=repo_id, file_changes=files_changes
+                        commit_sha=sha,
+                        repository_id=repo_id,
+                        file_changes=files_changes,
                     )
 
         return org_data
