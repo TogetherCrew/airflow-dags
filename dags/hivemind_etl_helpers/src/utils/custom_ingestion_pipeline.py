@@ -85,6 +85,7 @@ class CustomIngestionPipeline(IngestionPipeline):
         in_place: bool = True,
         store_doc_text: bool = True,
         num_workers: Optional[int] = None,
+        batch_size: int = 10,
         **kwargs: Any,
     ) -> Sequence[BaseNode]:
         input_nodes = self._prepare_inputs(documents, nodes)
@@ -112,9 +113,17 @@ class CustomIngestionPipeline(IngestionPipeline):
                 in_place=in_place,
                 **kwargs,
             )
+            total_batches = (len(nodes) // batch_size) + (1 if len(nodes) % batch_size != 0 else 0)
 
-        if self.vector_store is not None:
-            self.vector_store.add([n for n in nodes if n.embedding is not None])
+            for batch_idx in range(total_batches):
+                start_idx = batch_idx * batch_size
+                end_idx = start_idx + batch_size
+                current_batch = nodes[start_idx:end_idx]
+
+            nodes_with_embeddings = [n for n in current_batch if n.embedding is not None]
+
+            if self.vector_store is not None:
+                self.vector_store.add([n for n in nodes_with_embeddings if n.embedding is not None])
 
         return nodes
 
