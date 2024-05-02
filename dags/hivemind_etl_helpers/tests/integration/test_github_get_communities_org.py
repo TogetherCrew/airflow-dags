@@ -32,11 +32,9 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                             "platform": ObjectId("6579c364f1120850414e0dc6"),
                             "name": "github",
                             "metadata": {
-                                "learning": {
-                                    "fromDate": datetime(2024, 1, 1),
-                                    "organizationId": ["1234"],
-                                    "repoIds": ["111", "234"],
-                                }
+                                "fromDate": datetime(2024, 1, 1),
+                                "organizationId": ["1234"],
+                                "repoIds": ["111", "234"],
                             },
                         }
                     ]
@@ -74,22 +72,18 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                             "platform": ObjectId("6579c364f1120850414e0dc6"),
                             "name": "github",
                             "metadata": {
-                                "learning": {
-                                    "fromDate": datetime(2024, 1, 1),
-                                    "organizationId": ["1234"],
-                                    "repoIds": ["111", "234"],
-                                }
+                                "fromDate": datetime(2024, 1, 1),
+                                "organizationId": ["1234"],
+                                "repoIds": ["111", "234"],
                             },
                         },
                         {
                             "platform": ObjectId("6579c364f1120850414e0dc7"),
                             "name": "github",
                             "metadata": {
-                                "learning": {
-                                    "fromDate": datetime(2024, 2, 2),
-                                    "organizationId": ["4321"],
-                                    "repoIds": ["2132", "8888"],
-                                }
+                                "fromDate": datetime(2024, 2, 2),
+                                "organizationId": ["4321"],
+                                "repoIds": ["2132", "8888"],
                             },
                         },
                     ]
@@ -138,20 +132,16 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                                 "platform": ObjectId("6579c364f1120850414e0dc6"),
                                 "name": "github",
                                 "metadata": {
-                                    "learning": {
-                                        "fromDate": datetime(2024, 1, 1),
-                                        "organizationId": ["1234"],
-                                    }
+                                    "fromDate": datetime(2024, 1, 1),
+                                    "organizationId": ["1234"],
                                 },
                             },
                             {
                                 "platform": ObjectId("6579c364f1120850414e0dc7"),
                                 "name": "github",
                                 "metadata": {
-                                    "learning": {
-                                        "fromDate": datetime(2024, 2, 2),
-                                        "repoIds": ["1111"],
-                                    }
+                                    "fromDate": datetime(2024, 2, 2),
+                                    "repoIds": ["1111"],
                                 },
                             },
                         ]
@@ -166,20 +156,16 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                                 "platform": ObjectId("6579c364f1120850414e0db5"),
                                 "name": "github",
                                 "metadata": {
-                                    "learning": {
-                                        "fromDate": datetime(2024, 3, 1),
-                                        "organizationId": ["111111"],
-                                    }
+                                    "fromDate": datetime(2024, 3, 1),
+                                    "organizationId": ["111111"],
                                 },
                             },
                             {
                                 "platform": ObjectId("6579c364f1120850414e0dc7"),
                                 "name": "discord",
                                 "metadata": {
-                                    "learning": {
-                                        "fromDate": datetime(2024, 3, 1),
-                                        "selectedChannels": ["666", "777"],
-                                    }
+                                    "fromDate": datetime(2024, 3, 1),
+                                    "selectedChannels": ["666", "777"],
                                 },
                             },
                         ]

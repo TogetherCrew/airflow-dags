@@ -39,19 +39,15 @@ class ModulesGitHub(ModulesBase):
                 if platform["name"] != self.platform_name:
                     continue
 
-                # learning is for doing ETL on data
-                if "learning" in platform["metadata"]:
-                    learning_config = platform["metadata"]["learning"]
+                modules_options = platform["metadata"]
 
-                    platforms_data.append(
-                        {
-                            "community_id": str(community),
-                            "organization_ids": learning_config.get(
-                                "organizationId", []
-                            ),
-                            "repo_ids": learning_config.get("repoIds", []),
-                            "from_date": learning_config["fromDate"],
-                        }
-                    )
+                platforms_data.append(
+                    {
+                        "community_id": str(community),
+                        "organization_ids": modules_options.get("organizationId", []),
+                        "repo_ids": modules_options.get("repoIds", []),
+                        "from_date": modules_options["fromDate"],
+                    }
+                )
 
         return platforms_data
