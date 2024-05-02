@@ -4,21 +4,34 @@ from llama_index.readers.notion import NotionPageReader
 
 from typing import List, Optional
 from dotenv import load_dotenv
-load_dotenv()
 
 
 class NotionExtractor:
-    def __init__(self):
+    def __init__(self, notion_token: Optional[str] = None):
         """
-        Initializes the NotionExtractor with an integration token to authenticate API requests.
+        Initializes the NotionExtractor with an integration
+        token to authenticate API requests.
+        If no token is provided,
+        it tries to load it from an environment variable.
 
+        Args:
+        notion_token (Optional[str]): The Notion API integration token.
+        If None, the token
+        is loaded from the 'NOTION_TEST_INTEGRATION_TOKEN' environment variable.
         """
-        self.integration_token = os.getenv('NOTION_INTEGRATION_TOKEN')
+        if notion_token is None:
+            load_dotenv()
+            self.integration_token = os.getenv('NOTION_INTEGRATION_TOKEN')
+        else:
+            self.integration_token = notion_token
+
         self.notion_page_reader = NotionPageReader(self.integration_token)
+
 
     def extract(self, page_ids: Optional[List[str]] = None, database_ids: Optional[List[str]] = None) -> List[Document]:
         """
-        Extracts documents from Notion pages and databases specified by their IDs.
+        Extracts documents from Notion pages and databases,
+        specified by their IDs.
 
         Args:
         page_ids (Optional[List[str]]): List of page IDs to extract documents from.

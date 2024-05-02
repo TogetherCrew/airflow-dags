@@ -193,7 +193,7 @@ class TestGetNotionCommunityData(TestCase):
                 },
                 {
                     "_id": ObjectId("6579c364f1120850414e0dc7"),
-                    "name": "google-drive",
+                    "name": "notion",
                     "metadata": {
                         "name": "TEST",
                         "database_ids": [

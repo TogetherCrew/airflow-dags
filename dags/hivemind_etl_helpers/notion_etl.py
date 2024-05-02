@@ -1,20 +1,22 @@
-import argparse
 import logging
+import os
 
-from tc_hivemind_backend.db.utils.model_hyperparams import load_model_hyperparams
-from dags.hivemind_etl_helpers.src.utils.custom_ingestion_pipeline import CustomIngestionPipeline
-from hivemind_etl_helpers.src.utils.check_documents import check_documents
-from dags.hivemind_etl_helpers.src.db.notion.extractor import NotionExtractor
-from hivemind_etl_helpers.src.document_node_parser import configure_node_parser
+from dotenv import load_dotenv
 from hivemind_etl_helpers.src.db.gdrive.db_utils import setup_db
-from tc_hivemind_backend.pg_vector_access import PGVectorAccess
-from tc_hivemind_backend.embeddings.cohere import CohereEmbedding
+from hivemind_etl_helpers.src.document_node_parser import configure_node_parser
+from llama_index.core.ingestion import DocstoreStrategy, IngestionCache
 from llama_index.storage.docstore.redis import RedisDocumentStore
-from llama_index.core.ingestion import (
-    DocstoreStrategy,
-    IngestionCache,
-)
 from llama_index.storage.kvstore.redis import RedisKVStore as RedisCache
+from tc_hivemind_backend.db.utils.model_hyperparams import (
+    load_model_hyperparams,
+)
+from tc_hivemind_backend.embeddings.cohere import CohereEmbedding
+from tc_hivemind_backend.pg_vector_access import PGVectorAccess
+
+from dags.hivemind_etl_helpers.src.db.notion.extractor import NotionExtractor
+from dags.hivemind_etl_helpers.src.utils.custom_ingestion_pipeline import (
+    CustomIngestionPipeline,
+)
 
 
 def process_notion_etl(
@@ -38,9 +40,12 @@ def process_notion_etl(
 
     Note: One of `database_ids` or `page_ids` should be given.
     """
+    load_dotenv()
     chunk_size, embedding_dim = load_model_hyperparams()
     table_name = "notion"
     dbname = f"community_{community_id}"
+    document_store_name = f"document_store_{community_id}"
+    ingestion_cache_name = f"ingestion_cache_{community_id}"
 
     if database_ids is None and page_ids is None:
         raise ValueError("At least one of the `database_ids` or `page_ids` must be given!")
@@ -48,7 +53,7 @@ def process_notion_etl(
     setup_db(community_id=community_id)
 
     try:
-        notion_extractor = NotionExtractor(integration_token="your_token_here")
+        notion_extractor = NotionExtractor()
         documents = notion_extractor.extract(page_ids=page_ids,
                                              database_ids=database_ids)
     except TypeError as exp:
@@ -57,27 +62,8 @@ def process_notion_etl(
     node_parser = configure_node_parser(chunk_size=chunk_size)
     pg_vector = PGVectorAccess(table_name=table_name, dbname=dbname)
     pg_vector_index = pg_vector.setup_pgvector_index(embed_dim=embedding_dim)
-
-    # print("len(documents) to insert:", len(documents))
-    # print("doc_file_ids_to_delete:", doc_file_ids_to_delete)
-
-    # TODO: Delete the files with id `doc_file_ids_to_delete`
-
-    documents, doc_file_ids_to_delete = check_documents(
-        documents,
-        community_id,
-        identifier="file id",
-        date_field="modified at",
-        table_name=table_name,
-    )
-    # print("len(documents) to insert:", len(documents))
-    # print("doc_file_ids_to_delete:", doc_file_ids_to_delete)
-
-    # TODO: Delete the files with id `doc_file_ids_to_delete`
-
     embed_model = CohereEmbedding()
 
-    # TODO: Create class for IngestionPipeline
     pipeline = CustomIngestionPipeline(
         transformations=[
             node_parser,
@@ -85,12 +71,14 @@ def process_notion_etl(
         ],
         # This could be postgres as well
         docstore=RedisDocumentStore.from_host_and_port(
-            "localhost", 6379, namespace="document_store"
+            os.getenv("REDIS_URL"), os.getenv("REDIS_PORT"),
+            namespace=document_store_name
         ),
         vector_store=pg_vector_index,
         cache=IngestionCache(
-            cache=RedisCache.from_host_and_port("localhost", 6379),
-            collection="redis_cache",
+            cache=RedisCache.from_host_and_port(os.getenv("REDIS_URL"),
+                                                os.getenv("REDIS_PORT")),
+            collection=ingestion_cache_name,
         ),
         docstore_strategy=DocstoreStrategy.UPSERTS,
     )

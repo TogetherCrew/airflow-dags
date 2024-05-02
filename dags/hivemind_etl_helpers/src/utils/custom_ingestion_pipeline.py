@@ -1,6 +1,5 @@
 from llama_index.core.ingestion import IngestionPipeline
 from llama_index.core.schema import (
-    BaseComponent,
     BaseNode,
     Document,
     MetadataMode,
@@ -8,7 +7,7 @@ from llama_index.core.schema import (
 )
 from typing import Any, List, Optional, Sequence
 from enum import Enum
-from llama_index.core.ingestion.cache import DEFAULT_CACHE_NAME, IngestionCache
+from llama_index.core.ingestion.cache import IngestionCache
 from hashlib import sha256
 import re
 from ratelimit import limits, sleep_and_retry
