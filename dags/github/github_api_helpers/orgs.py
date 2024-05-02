@@ -16,7 +16,7 @@ def fetch_org_details(org_name: str):
     response = get(endpoint)
     response_data = response.json()
 
-    logging.info(f"Found details for organization {org_name}: {response_data}")
+    logging.info(f"Found details for organization {org_name}")
     return response_data
 
 
@@ -36,7 +36,7 @@ def fetch_org_members_page(org: str, page: int, per_page: int = 100):
     response_data = response.json()
 
     logging.info(
-        f"Found {len(response_data)} members for organization {org} on page {page}. Members: {response_data}"
+        f"Found {len(response_data)} members for organization {org} on page {page}. Members count: {len(response_data)}"
     )
     return response_data
 
