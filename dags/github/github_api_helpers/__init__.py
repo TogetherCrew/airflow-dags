@@ -24,4 +24,4 @@ from .pull_requests import (
     get_all_review_comments_of_pull_request,
     get_all_reviews_of_pull_request,
 )
-from .repos import get_all_org_repos, get_all_repo_contributors
+from .repos import get_all_org_repos, get_all_repo_contributors, fetch_repo_using_id

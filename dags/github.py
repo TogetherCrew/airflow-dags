@@ -28,6 +28,7 @@ from github.github_api_helpers import (
     fetch_commit_files,
     fetch_commit_pull_requests,
     fetch_org_details,
+    fetch_repo_using_id,
     get_all_comment_reactions,
     get_all_commits,
     get_all_issues,
@@ -42,7 +43,6 @@ from github.github_api_helpers import (
     get_all_reviews_of_pull_request,
 )
 from github.neo4j_storage import (
-    get_orgs_profile_from_neo4j,
     save_comment_to_neo4j,
     save_commit_files_changes_to_neo4j,
     save_commit_to_neo4j,
@@ -58,6 +58,7 @@ from github.neo4j_storage import (
     save_review_comment_to_neo4j,
     save_review_to_neo4j,
 )
+from hivemind_etl_helpers.src.utils.modules import ModulesGitHub
 
 with DAG(
     dag_id="github_functionality",
@@ -67,9 +68,22 @@ with DAG(
 ) as dag:
 
     @task
-    def get_all_organization():
-        orgs = get_orgs_profile_from_neo4j()
-        return orgs
+    def get_github_configs():
+        modules_configs = ModulesGitHub().get_learning_platforms()
+
+        modules_info = []
+        for config in modules_configs:
+            org_ids = config["organization_ids"]
+            repo_ids = config["repo_ids"]
+
+            modules_info.append(
+                {
+                    "organization_ids": org_ids,
+                    "repo_ids": repo_ids,
+                }
+            )
+
+        return modules_info
 
         # !for testing
         # toghether_crew_org = {
@@ -93,24 +107,34 @@ with DAG(
 
     # region organization ETL
     @task
-    def extract_github_organization(organization):
-        logging.info(f"All data from last stage: {organization}")
-        organization_name = organization["name"]
-        org_info = fetch_org_details(org_name=organization_name)
-
-        return {"organization_basic": organization, "organization_info": org_info}
+    def extract_github_organization(module_info):
+        org_ids = module_info["organization_ids"]
+        if org_ids != []:
+            logging.info(f"organizations with ids of {org_ids} to fetch")
+            org_info = []
+            for org_id in org_ids:
+                org = fetch_org_details(org_id=org_id)
+                org_info.append(org)
+            return {"organizations_info": org_info}
+        else:
+            return {"organizations_info": []}
 
     @task
     def transform_github_organization(organization):
-        logging.info(f"All data from last stage: {organization}")
+        logging.info(f"transform_github_organization")
         return organization
 
     @task
     def load_github_organization(organization):
         logging.info(f"All data from last stage: {organization}")
-        organization_info = organization["organization_info"]
-
-        save_orgs_to_neo4j(organization_info)
+        organizations = organization["organizations_info"]
+        for iter, org in enumerate(organizations):
+            logging.info(
+                "Saving organization data in Neo4j"
+                f", Iter: {iter + 1}/{len(organizations)}"
+                f" | saving the org id {org['id']}"
+            )
+            save_orgs_to_neo4j(org)
         return organization
 
     # endregion
@@ -118,24 +142,33 @@ with DAG(
     # region organization members ETL
     @task
     def extract_github_organization_members(organization):
-        logging.info(f"All data from last stage: {organization}")
-        organization_name = organization["organization_basic"]["name"]
-        members = get_all_org_members(org=organization_name)
+        
+        for iter, org in enumerate(organization["organizations_info"]):
+            logging.info(
+                "Extracting organization members iteration "
+                f"{iter + 1}/{len(organization['organizations_info'])} | "
+                f"org name: `{org['name']}` members"
+            )
+            org_name = org["name"]
+            members = get_all_org_members(org=org_name)
+            org["members"] = members
 
-        return {"organization_members": members, **organization}
+        return organization
 
     @task
-    def transform_github_organization_members(data):
-        logging.info(f"All data from last stage: {data}")
-        return data
+    def transform_github_organization_members(org_data):
+        logging.info(f"All org_data from last stage: {org_data}")
+        return org_data
 
     @task
     def load_github_organization_members(data):
-        members = data["organization_members"]
-        org_id = data["organization_info"]["id"]
+        organizations = data["organizations_info"]
 
-        for member in members:
-            save_org_member_to_neo4j(org_id=org_id, member=member)
+        for org in organizations:
+            org_id = org["id"]
+            members = org["members"]
+            for member in members:
+                save_org_member_to_neo4j(org_id=org_id, member=member)
 
         return data
 
@@ -143,18 +176,24 @@ with DAG(
 
     # region github repos ETL
     @task
-    def extract_github_repos(organizations):
-        all_repos = []
-        for i, organization in enumerate(organizations):
-            logging.info(f"Iteration {i + 1}/{len(organization)}")
-            repos = get_all_org_repos(
-                org_name=organization["organization_basic"]["name"]
+    def extract_github_repos(org_data):
+        organizations = org_data["organizations_info"]
+        for i, org in enumerate(organizations):
+            logging.info(
+                f"Iter {i + 1}/{len(organizations)} | "
+                f"extracting github org {org['name']} repos!"
             )
-            repos = list(map(lambda repo: {"repo": repo, **organization}, repos))
+            repos = get_all_org_repos(
+                org_name=org["name"]
+            )
+            org["repos"] = repos
 
-            all_repos.extend(repos)
-
-        return all_repos
+        return organizations
+    
+    @task
+    def extract_github_repos_using_id(repo_id):
+        repo = fetch_repo_using_id(repo_id)
+        return repo
 
     @task
     def transform_github_repos(repo):
@@ -163,217 +202,265 @@ with DAG(
         return repo
 
     @task
-    def load_github_repos(repo):
-        repo = repo["repo"]
-
-        save_repo_to_neo4j(repo)
+    def load_github_org_repos(org_data):
+        organizations = org_data["organizations_info"]
+        for org in organizations:
+            repos = org["repos"]
+            for idx, repo in enumerate(repos):
+                logging.info(
+                    f"Loading repository into Neo4j iteration "
+                    f"{idx + 1}/{len(repos)} | repo_id: {repo['id']}"
+                )
+                save_repo_to_neo4j(repo)
         return repo
+    
+    @task
+    def load_github_repo(repo):
+        logging.info(f"Loading repository with id {repo['id']} into Neo4j!")
+        save_repo_to_neo4j(repo)
+
 
     # endregion
 
     # region pull requests ETL
     @task
-    def extract_pull_requests(data):
-        repo = data["repo"]
-        owner = repo["owner"]["login"]
-        repo_name = repo["name"]
+    def extract_pull_requests(org_data):
+        organizations = org_data["organizations_info"]
 
-        prs = get_all_pull_requests(owner=owner, repo=repo_name)
-        new_data = {"prs": prs, **data}
-        return new_data
+        # updating the org_data here
+        for org in organizations:
+            repos = org["repos"]
+            for repo in repos:
+                owner = repo["owner"]["login"]
+                repo_name = repo["name"]
 
-    @task
-    def extract_pull_request_linked_issues(data):
-        repo = data["repo"]
-        prs = data["prs"]
-        owner = repo["owner"]["login"]
-        repo_name = repo["name"]
-
-        new_prs = []
-        for i, pr in enumerate(prs):
-            logging.info(f"Processing iter {i + 1}/{len(prs)}")
-            pr_number = pr["number"]
-            linked_issues = extract_linked_issues_from_pr(
-                owner=owner, repo=repo_name, pull_number=pr_number
-            )
-            new_prs.append({**pr, "linked_issues": linked_issues})
-
-        new_data = {**data, "prs": new_prs}
-        return new_data
+                prs = get_all_pull_requests(owner=owner, repo=repo_name)
+                repo["prs"] = prs
+        
+        return org_data
 
     @task
-    def transform_pull_requests(data):
-        logging.info("Just passing throught PRs for now!")
-        return data
+    def extract_pull_request_linked_issues(org_data):
+        organizations = org_data["organizations_info"]
+        
+        for org in organizations:
+            for repo in org["repos"]:
+                repo_name = repo["name"]
+                owner = repo["owner"]["login"]
+                for i, pr in enumerate(repo["prs"]):
+                    logging.info(f"Processing prs iter {i + 1}/{repo['prs']}")
+                    pr_number = pr["number"]
+                    linked_issues = extract_linked_issues_from_pr(
+                        owner=owner, repo=repo_name, pull_number=pr_number
+                    )
+                    # adding new data to the current ones
+                    pr["linked_issues"] = linked_issues
+        return org_data
 
     @task
-    def load_pull_requests(data):
-        prs = data["prs"]
-        repository_id = data["repo"]["id"]
-        for i, pr in enumerate(prs):
-            logging.info(f"Iteration {i + 1}/{len(prs)}")
-            save_pull_request_to_neo4j(pr=pr, repository_id=repository_id)
+    def transform_pull_requests(org_data):
+        logging.info("Just passing throught the org_data with PRs for now!")
+        return org_data
 
-        return data
+    @task
+    def load_pull_requests(org_data):
+        organizations = org_data["organizations_info"]
+
+        for org in organizations:
+            for repo in org["repos"]:
+                repository_id = repo["id"]
+                for i, pr in enumerate(repo["prs"]):        
+                    logging.info(f"Iteration {i + 1}/{len(repo['prs'])}")
+                    save_pull_request_to_neo4j(pr=pr, repository_id=repository_id)
+
+        return org_data
 
     # endregion
 
     # region pull request files changes ETL
     @task
-    def extract_pull_request_files_changes(data):
-        repo = data["repo"]
-        owner = repo["owner"]["login"]
-        repo_name = repo["name"]
-        prs = data["prs"]
+    def extract_pull_request_files_changes(org_data):
+        organizations = org_data["organizations_info"]
+        for org in organizations:
+            for repo in org["repos"]:
+                owner = repo["owner"]["login"]
+                repo_name = repo["name"]
+                for pr in repo["prs"]:
+                    pr_files_changes = {}
 
-        pr_files_changes = {}
-        for i, pr in enumerate(prs):
-            logging.info(f"Iteration {i + 1}/{len(prs)}")
-            files_changes = get_all_pull_request_files(
-                owner=owner, repo=repo_name, pull_number=pr.get("number", None)
-            )
-            pr_files_changes[pr["id"]] = files_changes
+                    files_changes = get_all_pull_request_files(
+                        owner=owner, repo=repo_name, pull_number=pr.get("number", None)
+                    )
+                    # keeping the file changes of each pr
+                    pr["file_changes"] = files_changes
 
-        return {"pr_files_changes": pr_files_changes, **data}
-
-    @task
-    def transform_pull_request_files_changes(data):
-        logging.info("Just passing through the data for now!")
-        return data
+        return org_data
 
     @task
-    def load_pull_request_files_changes(data):
-        pr_files_changes = data["pr_files_changes"]
-        repository_id = data["repo"]["id"]
+    def transform_pull_request_files_changes(org_data):
+        logging.info("Just passing through the org_data for now!")
+        return org_data
 
-        for idx, (pr_id, files_changes) in enumerate(pr_files_changes.items()):
-            logging.info(f"Iteration {idx + 1}/{len(pr_files_changes)}")
-            save_pr_files_changes_to_neo4j(
-                pr_id=pr_id, repository_id=repository_id, file_changes=files_changes
-            )
+    @task
+    def load_pull_request_files_changes(org_data):
+        organizations = org_data["organizations_info"]
+        for org in organizations:
+            for repo in org["repos"]:
+                repository_id = repo["id"]
+                for pr in repo["prs"]:
+                    pr_id = pr["id"]
+                    files_changes = pr["file_changes"]
+                    save_pr_files_changes_to_neo4j(
+                        pr_id=pr_id, repository_id=repository_id, file_changes=files_changes
+                    )
 
-        return data
+        return org_data
 
     # endregion
 
     # region pr review ETL
     @task
-    def extract_pr_review(data):
-        repo = data["repo"]
-        owner = repo["owner"]["login"]
-        repo_name = repo["name"]
-        prs = data["prs"]
+    def extract_pr_review(org_data):
+        organizations = org_data["organizations_info"]
+        for org in organizations:
+            for repo in org["repos"]:
+                repo_name = repo["name"]
+                owner = repo["owner"]["login"]
+                for pr in repo["prs"]:
+                    reviews = get_all_reviews_of_pull_request(
+                        owner=owner, repo=repo_name, pull_number=pr.get("number", None)
+                    )
+                    pr["reviews"] = reviews
 
-        pr_reviews = {}
-        for i, pr in enumerate(prs):
-            logging.info(f"Iteration {i}/{len(prs)}")
-            reviews = get_all_reviews_of_pull_request(
-                owner=owner, repo=repo_name, pull_number=pr.get("number", None)
-            )
-            pr_reviews[pr["id"]] = reviews
-
-        return {"pr_reviews": pr_reviews, **data}
+        return org_data
 
     @task
-    def transform_pr_review(data):
-        logging.info("Just passing through the data for now!")
-        return data
+    def transform_pr_review(org_data):
+        logging.info("Just passing through the org_data for now!")
+        return org_data
 
     @task
-    def load_pr_review(data):
-        pr_reviews = data["pr_reviews"]
+    def load_pr_review(org_data):
+        organizations = org_data["organizations_info"]
 
-        for idx, (pr_id, reviews) in enumerate(pr_reviews.items()):
-            logging.info(f"Iteration {idx + 1}/{len(pr_reviews)}")
-            for review in reviews:
-                save_review_to_neo4j(pr_id=pr_id, review=review)
+        for org in organizations:
+            for repo in org["repos"]:
+                for pr in repo["prs"]:
+                    pr_id = pr["id"]
+                    for review in pr["reviews"]:
+                        save_review_to_neo4j(pr_id=pr_id, review=review)
 
-        return data
+        return org_data
 
     # endregion
 
     # region pr review comment ETL
 
     @task
-    def extract_pr_review_comments(data):
-        repo = data["repo"]
-        owner = repo["owner"]["login"]
-        repo_name = repo["name"]
+    def extract_pr_review_comments(org_data):
+        organizations = org_data["organizations_info"]
 
-        review_comments = get_all_repo_review_comments(owner=owner, repo=repo_name)
-        return {"review_comments": review_comments, **data}
+        for org in organizations:
+            for repo in org["repos"]:
+                owner = repo["owner"]["login"]
+                repo_name = repo["name"]
+
+                review_comments = get_all_repo_review_comments(owner=owner, repo=repo_name)
+                repo["review_comments"] = review_comments
+        
+        return org_data
 
     @task
-    def transform_pr_review_comments(data):
-        logging.info("Just passing through the data for now!")
-        return data
+    def transform_pr_review_comments(org_data):
+        logging.info("Just passing through the org_data for now!")
+        return org_data
 
     @task
-    def load_pr_review_comments(data):
-        review_comments = data["review_comments"]
-        repository_id = data["repo"]["id"]
+    def load_pr_review_comments(org_data):
+        organizations = org_data["organizations_info"]
 
-        for i, review_comment in enumerate(review_comments):
-            logging.info(f"Iteration {i + 1}/{len(review_comments)}")
-            save_review_comment_to_neo4j(
-                review_comment=review_comment, repository_id=repository_id
-            )
+        for org in organizations:
+            for repo in org["repos"]:
+                repository_id = repo["id"]
+                review_comments = repo["review_comments"]
 
-        return data
+                for r_comment in review_comments:
+                    save_review_comment_to_neo4j(
+                        review_comment=r_comment, repository_id=repository_id
+                    )
+
+        return org_data
 
     # endregion
 
     # region pr & issue comments ETL
     @task
-    def extract_pr_issue_comments(data):
-        repo = data["repo"]
-        owner = repo["owner"]["login"]
-        repo_name = repo["name"]
+    def extract_pr_issue_comments(org_data):
+        organizations = org_data["organizations_info"]
 
-        comments = get_all_repo_issues_and_prs_comments(owner=owner, repo=repo_name)
-        return {"comments": comments, **data}
+        for org in organizations:
+            for repo in org["repos"]:
+                owner = repo["owner"]["login"]
+                repo_name = repo["name"]
 
-    @task
-    def extract_pr_issue_comments_reactions_member(data):
-        comments = data["comments"]
-        repo = data["repo"]
-        owner = repo["owner"]["login"]
-        repo_name = repo["name"]
+                comments = get_all_repo_issues_and_prs_comments(owner=owner, repo=repo_name)
+                repo["comments"] = comments
 
-        for comment in comments:
-            reactions = get_all_comment_reactions(
-                owner=owner, repo=repo_name, comment_id=comment.get("id", None)
-            )
-            comment["reactions_member"] = reactions
-
-        return {"comments": comments, **data}
+        return org_data
 
     @task
-    def transform_pr_issue_comments(data):
-        logging.info("Just passing through the data for now!")
-        return data
+    def extract_pr_issue_comments_reactions_member(org_data):
+        organizations = org_data["organizations_info"]
+
+        for org in organizations:
+            for repo in org["repos"]:
+                owner = repo["owner"]["login"]
+                repo_name = repo["name"]
+
+                comments = repo["comments"]
+                for comment in comments:
+                    reactions = get_all_comment_reactions(
+                        owner=owner, repo=repo_name, comment_id=comment.get("id", None)
+                    )
+                    comment["reactions_member"] = reactions
+
+        return org_data
 
     @task
-    def load_pr_issue_comments(data):
-        comments = data["comments"]
-        repository_id = data["repo"]["id"]
+    def transform_pr_issue_comments(org_data):
+        logging.info("Just passing through the org_data for now!")
+        return org_data
 
-        for comment in comments:
-            save_comment_to_neo4j(comment=comment, repository_id=repository_id)
+    @task
+    def load_pr_issue_comments(org_data):
+        organizations = org_data["organizations_info"]
 
-        return data
+        for org in organizations:
+            for repo in org["repos"]:
+                repository_id = repo["id"]
+                comments = repo["comments"]
+
+                for comment in comments:
+                    save_comment_to_neo4j(comment=comment, repository_id=repository_id)
+
+        return org_data
 
     # endregion
 
     # region repo contributors ETL
     @task
-    def extract_repo_contributors(data):
-        repo = data["repo"]
-        repo_name = repo["name"]
-        owner = repo["owner"]["login"]
-        contributors = get_all_repo_contributors(owner=owner, repo=repo_name)
+    def extract_repo_contributors(org_data):
+        organizations = org_data["organizations_info"]
 
-        return {"contributors": contributors, **data}
+        for org in organizations:
+            for repo in org["repos"]:
+                owner = repo["owner"]["login"]
+                repo_name = repo["name"]
+
+                contributors = get_all_repo_contributors(owner=owner, repo=repo_name)
+                repo["contributors"] = contributors
+
+        return org_data
 
     @task
     def transform_repo_contributors(data):
@@ -381,261 +468,296 @@ with DAG(
         return data
 
     @task
-    def load_repo_contributors(data):
-        contributors = data["contributors"]
-        repository_id = data["repo"]["id"]
+    def load_repo_contributors(org_data):
+        organizations = org_data["organizations_info"]
 
-        for i, contributor in enumerate(contributors):
-            logging.info(f"Iteration {i + 1}/{len(contributors)}")
-            save_repo_contributors_to_neo4j(
-                contributor=contributor, repository_id=repository_id
-            )
+        for org in organizations:
+            for repo in org["repos"]:
+                contributors = repo["contributors"]
+                repository_id = repo["id"]
 
-        return data
+                for i, contributor in enumerate(contributors):
+                    logging.info(f"Iteration {i + 1}/{len(contributors)}")
+                    save_repo_contributors_to_neo4j(
+                        contributor=contributor, repository_id=repository_id
+                    )
+
+        return org_data
 
     # endregion
 
     # region issues ETL
     @task
-    def extract_issues(data):
-        repo = data["repo"]
-        owner = repo["owner"]["login"]
-        repo_name = repo["name"]
-        issues = get_all_issues(owner=owner, repo=repo_name)
+    def extract_issues(org_data):
+        organizations = org_data["organizations_info"]
 
-        return {"issues": issues, **data}
+        for org in organizations:
+            for repo in org["repos"]:
+                owner = repo["owner"]["login"]
+                repo_name = repo["name"]
+
+                issues = get_all_issues(owner=owner, repo=repo_name)
+                repo["issues"] = issues
+
+        return org_data
 
     @task
-    def transform_issues(data):
-        logging.info("Just passing through the data for now!")
-        return data
+    def transform_issues(org_data):
+        logging.info("Just passing through the org_data for now!")
+        return org_data
 
     @task
-    def load_issues(data):
-        issues = data["issues"]
-        repository_id = data["repo"]["id"]
+    def load_issues(org_data):
+        organizations = org_data["organizations_info"]
 
-        for i, issue in enumerate(issues):
-            logging.info(f"Iteration {i + 1}/{len(issues)}")
-            save_issue_to_neo4j(issue=issue, repository_id=repository_id)
+        for org in organizations:
+            for repo in org["repos"]:
+                repository_id = repo["id"]
+                issues = repo["issues"]
+                for issue in issues:
+                    save_issue_to_neo4j(issue=issue, repository_id=repository_id)
 
-        return data
+        return org_data
 
     # endregion
 
     # region labels ETL
     @task
-    def extract_labels(data):
-        repo = data["repo"]
-        owner = repo["owner"]["login"]
-        repo_name = repo["name"]
-        labels = get_all_repo_labels(owner=owner, repo=repo_name)
+    def extract_labels(org_data):
+        organizations = org_data["organizations_info"]
 
-        return {"labels": labels, **data}
+        for org in organizations:
+            for repo in org["repos"]:
+                owner = repo["owner"]["login"]
+                repo_name = repo["name"]
+
+                labels = get_all_repo_labels(owner=owner, repo=repo_name)
+                repo["labels"] = labels
+
+        return org_data
 
     @task
-    def transform_labels(data):
-        logging.info("Just passing through the data for now!")
-        return data
+    def transform_labels(org_data):
+        logging.info("Just passing through the org_data for now!")
+        return org_data
 
     @task
-    def load_labels(data):
-        labels = data["labels"]
+    def load_labels(org_data):
+        organizations = org_data["organizations_info"]
 
-        for i, label in enumerate(labels):
-            logging.info(f"Iteration {i + 1}/{len(labels)}")
-            save_label_to_neo4j(label=label)
+        for org in organizations:
+            for repo in org["repos"]:
+                labels = repo["labels"]
+            for label in labels:
+                save_label_to_neo4j(label=label)
 
-        return data
+        return org_data
 
     # endregion
 
     # region commits ETL
     @task
-    def extract_commits(data):
-        repo = data["repo"]
-        owner = repo["owner"]["login"]
-        repo_name = repo["name"]
-        commits = get_all_commits(owner=owner, repo=repo_name)
+    def extract_commits(org_data):
+        organizations = org_data["organizations_info"]
 
-        return {"commits": commits, **data}
+        for org in organizations:
+            for repo in org["repos"]:
+                owner = repo["owner"]["login"]
+                repo_name = repo["name"]
+                commits = get_all_commits(owner=owner, repo=repo_name)
+                repo["commits"] = commits
+
+        return org_data
 
     @task
-    def transform_commits(data):
-        logging.info("Just passing through the data for now!")
-        return data
+    def transform_commits(org_data):
+        logging.info("Just passing through the org_data for now!")
+        return org_data
 
     @task
-    def load_commits(data):
-        commits = data["commits"]
-        repository_id = data["repo"]["id"]
+    def load_commits(org_data):
+        organizations = org_data["organizations_info"]
 
-        for i, commit in enumerate(commits):
-            logging.info(f"Iteration {i + 1}/{len(commits)}")
-            save_commit_to_neo4j(commit=commit, repository_id=repository_id)
+        for org in organizations:
+            for repo in org["repos"]:
+                repository_id = repo["id"]
+                commits = repo["commits"]
 
-        return data
+                for commit in commits:
+                    save_commit_to_neo4j(commit=commit, repository_id=repository_id)
+
+        return org_data
 
     # endregion
 
     # region of pull requests for commit
     @task
-    def extract_commit_pull_requests(data):
-        commits = data["commits"]
-        commit_prs = {}
-        for i, commit in enumerate(commits):
-            logging.info(f"Iteration {i + 1}/{len(commits)}")
-            repo = data["repo"]
-            owner = repo["owner"]["login"]
-            repo_name = repo["name"]
+    def extract_commit_pull_requests(org_data):
+        organizations = org_data["organizations_info"]
 
-            prs = fetch_commit_pull_requests(owner, repo_name, commit["sha"])
-            commit_prs[commit["sha"]] = prs
+        for org in organizations:
+            for repo in org["repos"]:
+                owner = repo["owner"]["login"]
+                repo_name = repo["name"]
+                commits = repo["commits"]
 
-        new_data = {**data, "commit_prs": commit_prs}
-        return new_data
+                for commit in commits:
+                    commit_sha = commit["sha"]
+                    prs = fetch_commit_pull_requests(owner, repo_name, commit_sha)
+                    commit["prs"] = prs
+        return org_data
 
     @task
-    def load_commit_pull_requests(data):
-        commit_prs: dict = data["commit_prs"]
-        repo_id = data["repo"]["id"]
+    def load_commit_pull_requests(org_data):
+        organizations = org_data["organizations_info"]
 
-        for idx, (commit_sha, prs) in enumerate(commit_prs.items()):
-            logging.info(f"Iteration {idx + 1}/{len(commit_prs)}")
-            save_commits_relation_to_pr(commit_sha, repo_id, prs)
+        for org in organizations:
+            for repo in org["repos"]:
+                repo_id = repo["id"]
+                commits = repo["commits"]
 
-        return data
+                for commit in commits:
+                    commit_sha = commit["sha"]
+                    prs = commit["prs"]
+                    save_commits_relation_to_pr(commit_sha, repo_id, prs)
+
+        return org_data
 
     # endregion
 
     # region commits files changes ETL
     @task
-    def extract_commits_files_changes(data):
-        logging.info(f"All data from last stage: {data}")
-        repo = data["repo"]
-        owner = repo["owner"]["login"]
-        repo_name = repo["name"]
-        commits = data["commits"]
+    def extract_commits_files_changes(org_data):
+        organizations = org_data["organizations_info"]
 
-        commits_files_changes = {}
-        for i, commit in enumerate(commits):
-            logging.info(f"Iteration {i + 1}/{len(commits)}")
-            sha = commit["sha"]
-            files_changes = fetch_commit_files(owner=owner, repo=repo_name, sha=sha)
-            commits_files_changes[sha] = files_changes
+        for org in organizations:
+            for repo in org["repos"]:
+                repo_name = repo["name"]
+                owner = repo["owner"]["login"]
+                commits = repo["commits"]
 
-        return {"commits_files_changes": commits_files_changes, **data}
+                for commit in commits:
+                    sha = commit["sha"]
+                    files_changes = fetch_commit_files(owner=owner, repo=repo_name, sha=sha)
+                    commit["files_changes"] = files_changes
 
-    @task
-    def transform_commits_files_changes(data):
-        logging.info("Just passing through the data for now!")
-        return data
+        return org_data
 
     @task
-    def load_commits_files_changes(data):
-        commits_files_changes = data["commits_files_changes"]
-        repository_id = data["repo"]["id"]
+    def transform_commits_files_changes(org_data):
+        logging.info("Just passing through the org_data for now!")
+        return org_data
 
-        for idx, (sha, files_changes) in enumerate(commits_files_changes.items()):
-            logging.info(f"Iteration {idx + 1}/{len(commits_files_changes)}")
-            save_commit_files_changes_to_neo4j(
-                commit_sha=sha, repository_id=repository_id, file_changes=files_changes
-            )
+    @task
+    def load_commits_files_changes(org_data):
+        organizations = org_data["organizations_info"]
 
-        return data
+        for org in organizations:
+            for repo in org["repos"]:
+                repo_id = repo["id"]
+                commits = repo["commits"]
+
+                for commit in commits:
+                    sha = commit["sha"]
+                    files_changes = commit["file_changes"]
+                    save_commit_files_changes_to_neo4j(
+                        commit_sha=sha, repository_id=repo_id, file_changes=files_changes
+                    )
+
+        return org_data
 
     # endregion
 
-    orgs = get_all_organization()
-    orgs_info = extract_github_organization.expand(organization=orgs)
+    configs = get_github_configs()
+    orgs_info = extract_github_organization.expand(module_info=configs)
     transform_orgs = transform_github_organization.expand(organization=orgs_info)
     load_orgs = load_github_organization.expand(organization=transform_orgs)
 
     orgs_members = extract_github_organization_members.expand(organization=orgs_info)
     transform_orgs_members = transform_github_organization_members.expand(
-        data=orgs_members
+        org_data=orgs_members
     )
     load_orgs_members = load_github_organization_members.expand(
         data=transform_orgs_members
     )
     load_orgs >> load_orgs_members
 
-    repos = extract_github_repos(organizations=orgs_info)
+    repos = extract_github_repos(org_data=orgs_info)
     transform_repos = transform_github_repos.expand(repo=repos)
-    load_repos = load_github_repos.expand(repo=transform_repos)
+    load_repos = load_github_org_repos.expand(org_data=transform_repos)
     load_orgs >> load_repos
 
-    contributors = extract_repo_contributors.expand(data=repos)
+    contributors = extract_repo_contributors.expand(org_data=repos)
     transform_contributors = transform_repo_contributors.expand(data=contributors)
-    load_contributors = load_repo_contributors.expand(data=transform_contributors)
+    load_contributors = load_repo_contributors.expand(org_data=transform_contributors)
     load_repos >> load_contributors
 
-    labels = extract_labels.expand(data=repos)
-    transform_label = transform_labels.expand(data=labels)
-    load_label = load_labels.expand(data=transform_label)
+    labels = extract_labels.expand(org_data=repos)
+    transform_label = transform_labels.expand(org_data=labels)
+    load_label = load_labels.expand(org_data=transform_label)
 
-    issues = extract_issues.expand(data=repos)
-    transform_issue = transform_issues.expand(data=issues)
-    load_issue = load_issues.expand(data=transform_issue)
+    issues = extract_issues.expand(org_data=repos)
+    transform_issue = transform_issues.expand(org_data=issues)
+    load_issue = load_issues.expand(org_data=transform_issue)
     load_contributors >> load_issue
     load_label >> load_issue
 
-    prs = extract_pull_requests.expand(data=repos)
-    prs_linked_issues = extract_pull_request_linked_issues.expand(data=prs)
-    transform_prs = transform_pull_requests.expand(data=prs_linked_issues)
-    load_prs = load_pull_requests.expand(data=transform_prs)
+    prs = extract_pull_requests.expand(org_data=repos)
+    prs_linked_issues = extract_pull_request_linked_issues.expand(org_data=prs)
+    transform_prs = transform_pull_requests.expand(org_data=prs_linked_issues)
+    load_prs = load_pull_requests.expand(org_data=transform_prs)
     load_contributors >> load_prs
     load_label >> load_prs
     load_issue >> load_prs
 
-    pr_files_changes = extract_pull_request_files_changes.expand(data=prs)
+    pr_files_changes = extract_pull_request_files_changes.expand(org_data=prs)
     transform_pr_files_changes = transform_pull_request_files_changes.expand(
-        data=pr_files_changes
+        org_data=pr_files_changes
     )
     load_pr_files_changes = load_pull_request_files_changes.expand(
-        data=transform_pr_files_changes
+        org_data=transform_pr_files_changes
     )
 
-    pr_reviews = extract_pr_review.expand(data=prs)
-    transform_pr_review = transform_pr_review.expand(data=pr_reviews)
-    load_pr_review = load_pr_review.expand(data=transform_pr_review)
+    pr_reviews = extract_pr_review.expand(org_data=prs)
+    transform_pr_review = transform_pr_review.expand(org_data=pr_reviews)
+    load_pr_review = load_pr_review.expand(org_data=transform_pr_review)
 
-    pr_review_comments = extract_pr_review_comments.expand(data=prs)
+    pr_review_comments = extract_pr_review_comments.expand(org_data=prs)
     transformed_pr_review_comments = transform_pr_review_comments.expand(
-        data=pr_review_comments
+        org_data=pr_review_comments
     )
     load_pr_review_comments = load_pr_review_comments.expand(
-        data=transformed_pr_review_comments
+        org_data=transformed_pr_review_comments
     )
     load_prs >> load_pr_review_comments
 
-    pr_issue_comments = extract_pr_issue_comments.expand(data=prs)
+    pr_issue_comments = extract_pr_issue_comments.expand(org_data=prs)
     pr_issue_comments_with_reactions_member = (
-        extract_pr_issue_comments_reactions_member.expand(data=pr_issue_comments)
+        extract_pr_issue_comments_reactions_member.expand(org_data=pr_issue_comments)
     )
     transformed_pr_issue_comments = transform_pr_issue_comments.expand(
-        data=pr_issue_comments_with_reactions_member
+        org_data=pr_issue_comments_with_reactions_member
     )
     loaded_pr_issue_comments = load_pr_issue_comments.expand(
-        data=transformed_pr_issue_comments
+        org_data=transformed_pr_issue_comments
     )
     load_prs >> loaded_pr_issue_comments
     load_issue >> loaded_pr_issue_comments
 
-    commits = extract_commits.expand(data=repos)
-    commits_transformed = transform_commits.expand(data=commits)
-    load_commit = load_commits.expand(data=commits_transformed)
+    commits = extract_commits.expand(org_data=repos)
+    commits_transformed = transform_commits.expand(org_data=commits)
+    load_commit = load_commits.expand(org_data=commits_transformed)
 
-    commit_prs = extract_commit_pull_requests.expand(data=commits_transformed)
-    load_commit_prs = load_commit_pull_requests.expand(data=commit_prs)
+    commit_prs = extract_commit_pull_requests.expand(org_data=commits_transformed)
+    load_commit_prs = load_commit_pull_requests.expand(org_data=commit_prs)
     commit_prs >> load_commit_prs
 
-    commits_files_changes = extract_commits_files_changes.expand(data=commits)
+    commits_files_changes = extract_commits_files_changes.expand(org_data=commits)
     transform_commits_files_changes = transform_commits_files_changes.expand(
-        data=commits_files_changes
+        org_data=commits_files_changes
     )
     load_commits_files_changes = load_commits_files_changes.expand(
-        data=transform_commits_files_changes
+        org_data=transform_commits_files_changes
     )
     load_commit >> load_commits_files_changes
     load_pr_files_changes >> load_commits_files_changes

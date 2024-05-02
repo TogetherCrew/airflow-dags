@@ -3,20 +3,35 @@ import logging
 from .smart_proxy import get
 
 
-def fetch_org_details(org_name: str):
+def fetch_org_details(org_name: str | None = None, org_id: int | None = None):
     """
     Fetches the details of a specific organization in GitHub.
 
     :param org_name: The name of the organization.
     :return: A dict containing the details of the specified organization.
     """
-    logging.info(f"Fetching details for organization {org_name}...")
-    endpoint = f"https://api.github.com/orgs/{org_name}"
+    if org_name is not None:
+        logging.info(f"Fetching details for organization {org_name}...")
+        endpoint = f"https://api.github.com/orgs/{org_name}"
 
-    response = get(endpoint)
-    response_data = response.json()
+        response = get(endpoint)
+        response_data = response.json()
 
-    logging.info(f"Found details for organization {org_name}")
+        logging.info(f"Found details for organization {org_name}")
+    elif org_id is not None:
+        logging.info(f"Fetching details for organization {org_id}...")
+        endpoint = f"https://api.github.com/orgs/{org_id}"
+
+        response = get(endpoint)
+        response_data = response.json()
+
+        logging.info(f"Found details for organization id {org_id}")
+    else:
+        raise ValueError(
+            "Not given enough input params."
+            " `org_id` or `org_name` should be given in function input!"
+        )
+
     return response_data
 
 
