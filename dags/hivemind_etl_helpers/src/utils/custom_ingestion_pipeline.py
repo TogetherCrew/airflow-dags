@@ -165,7 +165,6 @@ class CustomIngestionPipeline(IngestionPipeline):
             rate_period=60,
             **kwargs):
         decorated_run_transformations = self.rate_limiter(rate_calls,rate_period)(self.run_transformations)
-        print("Applying custom transformations...")
         return decorated_run_transformations(
             nodes,
             transformations,
