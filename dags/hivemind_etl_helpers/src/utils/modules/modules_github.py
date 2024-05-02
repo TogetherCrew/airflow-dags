@@ -22,7 +22,7 @@ class ModulesGitHub(ModulesBase):
             [{
                 "community_id": "community1",
                 "organization_ids": ["1111", "2222"],
-                "repoIds": ["132", "45232"],
+                "repo_ids": ["132", "45232"],
                 "from_date": datetime(2024, 1, 1)
             }]
             ```
