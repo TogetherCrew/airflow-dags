@@ -1,3 +1,5 @@
+import logging
+
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
 from github.neo4j_storage.neo4j_enums import Node
 
@@ -26,9 +28,17 @@ def get_github_organization_repos(github_organization_ids: list[str]) -> list[in
             f"WHERE go.id IN $org_ids"
             " RETURN COLLECT(repo.id) as repoIds"
         )
-        results = session.execute_read(
-            lambda tx: list(tx.run(query, org_ids=github_organization_ids))
-        )
+        try:
+            results = session.execute_read(
+                lambda tx: list(tx.run(query, org_ids=github_organization_ids))
+            )
+        except Exception as exp:
+            logging.error(
+                "Failed to execute Neo4j get organization repos query!"
+                "Returning empty array"
+                f"| Exception: {exp}"
+            )
+            return []
 
     # it's always one result as we applied `COLLECT` in query
     assert len(results) == 1
