@@ -68,7 +68,7 @@ def process_github_vectorstore(
     org_repository_ids = get_github_organization_repos(
         github_organization_ids=github_org_ids
     )
-    repository_ids = repo_ids + org_repository_ids
+    repository_ids = list(set(repo_ids + org_repository_ids))
     logging.info(f"{len(repository_ids)} repositories to fetch data from!")
 
     # EXTRACT
