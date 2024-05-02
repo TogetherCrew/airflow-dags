@@ -22,13 +22,15 @@ with DAG(
     @task
     def process_github_community(community_information: dict[str, str | datetime]):
         community_id = community_information["community_id"]
-        organization_id = community_information["organization_id"]
+        organization_ids = community_information["organization_ids"]
+        repo_ids = community_information["repo_ids"]
         from_date = community_information["from_date"]
 
         logging.info(f"Starting Github ETL | community_id: {community_id}")
         process_github_vectorstore(
             community_id=community_id,
-            github_org_id=organization_id,
+            github_org_ids=organization_ids,
+            repo_ids=repo_ids,
             from_starting_date=from_date,
         )
 

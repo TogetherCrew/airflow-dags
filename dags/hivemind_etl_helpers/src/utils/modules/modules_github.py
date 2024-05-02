@@ -21,7 +21,8 @@ class ModulesGitHub(ModulesBase):
             ```
             [{
                 "community_id": "community1",
-                "organization_id": "12345",
+                "organization_ids": ["1111", "2222"],
+                "repo_ids": ["132", "45232"],
                 "from_date": datetime(2024, 1, 1)
             }]
             ```
@@ -38,16 +39,15 @@ class ModulesGitHub(ModulesBase):
                 if platform["name"] != self.platform_name:
                     continue
 
-                # learning is for doing ETL on data
-                if "learning" in platform["metadata"]:
-                    learning_config = platform["metadata"]["learning"]
+                modules_options = platform["metadata"]
 
-                    platforms_data.append(
-                        {
-                            "community_id": str(community),
-                            "organization_id": learning_config["organizationId"],
-                            "from_date": learning_config["fromDate"],
-                        }
-                    )
+                platforms_data.append(
+                    {
+                        "community_id": str(community),
+                        "organization_ids": modules_options.get("organizationId", []),
+                        "repo_ids": modules_options.get("repoIds", []),
+                        "from_date": modules_options["fromDate"],
+                    }
+                )
 
         return platforms_data

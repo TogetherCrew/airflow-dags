@@ -14,13 +14,13 @@ class TestGetGitHubOrgRepos(TestCase):
             session.execute_write(lambda tx: tx.run("MATCH (n) DETACH DELETE (n)"))
 
     def test_fetch_empty_repos(self):
-        org_id = 123
-        repo_ids = get_github_organization_repos(github_organization_id=org_id)
+        org_id = [123]
+        repo_ids = get_github_organization_repos(github_organization_ids=org_id)
 
         self.assertEqual(repo_ids, [])
 
     def test_fetch_single_repo(self):
-        org_id = 123
+        org_id = [123]
         with self.neo4j_driver.session() as session:
             session.execute_write(
                 lambda tx: tx.run(
@@ -31,11 +31,11 @@ class TestGetGitHubOrgRepos(TestCase):
                     """
                 )
             )
-        repo_ids = get_github_organization_repos(github_organization_id=org_id)
+        repo_ids = get_github_organization_repos(github_organization_ids=org_id)
         self.assertEqual(repo_ids, [100])
 
     def test_fetch_multiple_repo(self):
-        org_id = 123
+        org_id = [123]
         with self.neo4j_driver.session() as session:
             session.execute_write(
                 lambda tx: tx.run(
@@ -50,5 +50,31 @@ class TestGetGitHubOrgRepos(TestCase):
                     """
                 )
             )
-        repo_ids = get_github_organization_repos(github_organization_id=org_id)
+        repo_ids = get_github_organization_repos(github_organization_ids=org_id)
         self.assertEqual(set(repo_ids), set([100, 101, 102]))
+
+    def test_fetch_repos_multiple_orgs(self):
+        org_id = [123, 124]
+        with self.neo4j_driver.session() as session:
+            session.execute_write(
+                lambda tx: tx.run(
+                    """
+                    CREATE (org:GitHubOrganization {id: 123})
+                    CREATE (org2:GitHubOrganization {id: 124})
+
+                    CREATE (repo: GitHubRepository {id: 100})
+                    CREATE (repo2: GitHubRepository {id: 101})
+                    CREATE (repo3: GitHubRepository {id: 102})
+                    CREATE (repo)-[:IS_WITHIN]->(org)
+                    CREATE (repo2)-[:IS_WITHIN]->(org)
+                    CREATE (repo3)-[:IS_WITHIN]->(org)
+
+                    CREATE (repo4: GitHubRepository {id: 200})
+                    CREATE (repo5: GitHubRepository {id: 201})
+                    CREATE (repo4)-[:IS_WITHIN]->(org2)
+                    CREATE (repo5)-[:IS_WITHIN]->(org2)
+                    """
+                )
+            )
+        repo_ids = get_github_organization_repos(github_organization_ids=org_id)
+        self.assertEqual(set(repo_ids), set([100, 101, 102, 200, 201]))
