@@ -1,51 +1,71 @@
-from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.core.ingestion import (
     DocstoreStrategy,
     IngestionPipeline,
     IngestionCache,
 )
+from llama_index.core.node_parser import SemanticSplitterNodeParser
+from llama_index.storage.kvstore.redis import RedisKVStore as RedisCache
+
 from llama_index.storage.docstore.postgres import PostgresDocumentStore
-from llama_index.storage.kvstore.postgres import PostgresKVStore as PostgresCache  
-from llama_index.core.node_parser import SentenceSplitter
 from tc_hivemind_backend.embeddings.cohere import CohereEmbedding
-from tc_hivemind_backend.pg_vector_access import PGVectorAccess 
-from llama_index.core import VectorStoreIndex
 from llama_index.vector_stores.postgres import PGVectorStore
 import os
 
-from src.db.gdrive.gdrive_loader import GoogleDriveLoader
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 class GoogleDriveIngestionPipeline:
-    def __init__(self):
+    def __init__(self, community_id: str):
+        self.community_id = community_id
+
         # Embedding models
         self.cohere_model = CohereEmbedding()
 
         # Database details
-        self.table_name = table_name
-        self.dbname = db_name
+        host = os.getenv("POSTGRES_HOST")
+        password = os.getenv("POSTGRES_PASS")
+        port = os.getenv("POSTGRES_PORT")
+        user = os.getenv("POSTGRES_USER")
+        self.redis_host = os.getenv("REDIS_HOST")
+        self.redis_port = os.getenv("REDIS_PORT")
+
+        self.table_name = "gdrive"
+        self.dbname = f"community_{community_id}"
         self.db_config = {
             "host": host,
-            "port": port, 
-            "database": database,
+            "password": password,
+            "port": port,
             "user": user,
-            "password": postgres
         }
 
-    def run_pipeline(self):
+    def run_pipeline(self, docs):
         pipeline = IngestionPipeline(
-            transformations = [
-            SentenceSplitter(chunk_size=1024, chunk_overlap=20),
-            self.cohere_model  # Use your preferred embedding model
-        ],
-            docstore = PostgresDocumentStore.from_params(**self.db_config),
-            vector_store = PGVectorStore.from_params(
-            **self.db_config,
-            embed_dim=1024,
-        ),
-            # cache=self.cache,  # Uncomment if you want to use caching
-            docstore_strategy=DocstoreStrategy.UPSERTS
+            transformations=[
+                SemanticSplitterNodeParser(embed_model=CohereEmbedding()),
+                self.cohere_model,
+            ],
+            docstore=PostgresDocumentStore.from_params(
+                **self.db_config,
+                database=self.dbname,
+                table_name=self.table_name + "_docstore",
+            ),
+            vector_store=PGVectorStore.from_params(
+                **self.db_config,
+                database=self.dbname,
+                table_name=self.table_name,
+                embed_dim=1024,
+            ),
+            cache=IngestionCache(
+                cache=RedisCache.from_host_and_port(self.redis_host, self.redis_port),
+                collection="sample_test_cache",
+                docstore_strategy=DocstoreStrategy.UPSERTS,
+            ),
+            docstore_strategy=DocstoreStrategy.UPSERTS,
         )
-        # print(pipeline)
-        
 
-        return pipeline
+        nodes = pipeline.run(documents=docs, show_progress=True)
+
+        return nodes
+
