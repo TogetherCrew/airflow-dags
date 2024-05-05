@@ -76,6 +76,57 @@ class GithubIssueExtraction:
 
         return raw_records
 
+    def _fetch_raw_issue_ids(
+        self,
+        repository_id: list[int],
+        from_date: datetime | None = None,
+    ) -> list[neo4j._data.Record]:
+        """
+        fetch raw issues from data dump in neo4j
+
+        Parameters
+        ------------
+        repository_id : list[int]
+            a list of repository id to fetch their issues
+        from_date : datetime | None
+            get the issues form a specific date that they were created
+            default is `None`, meaning to apply no filtering on data
+
+        Returns
+        --------
+        raw_records : list[neo4j._data.Record]
+            list of neo4j records as the extracted issues
+        """
+
+        query = """MATCH (i:Issue)<-[:CREATED]-(user:GitHubUser)
+            WHERE
+            i.repository_id IN $repoIds
+        """
+        if from_date is not None:
+            query += "AND datetime(i.updated_at) >= datetime($from_date)"
+
+        query += """
+            MATCH (repo:Repository {id: i.repository_id})
+            RETURN
+                i.id as id,
+                i.created_at as created_at,
+                repo.full_name as repository_name
+            ORDER BY datetime(created_at)
+        """
+
+        def _exec_query(tx, repoIds, from_date):
+            result = tx.run(query, repoIds=repoIds, from_date=from_date)
+            return list(result)
+
+        with self.neo4j_driver.session() as session:
+            raw_records = session.execute_read(
+                _exec_query,
+                repoIds=repository_id,
+                from_date=from_date,
+            )
+
+        return raw_records
+
     def fetch_issues(
         self,
         repository_id: list[int],
@@ -127,7 +178,7 @@ class GithubIssueExtraction:
         github_issues_ids : list[GitHubIssueID]
             list of neo4j records as the extracted issue ids
         """
-        records = self._fetch_raw_issues(repository_id, from_date)
+        records = self._fetch_raw_issue_ids(repository_id, from_date)
 
         github_issue_ids: list[GitHubIssueID] = []
         for record in records:

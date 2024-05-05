@@ -26,6 +26,13 @@ class GithubExtraction:
     ) -> list[GitHubIssue]:
         return self.issue_extraction.fetch_issues(repository_id, from_date, **kwargs)
 
+    def _fetch_raw_issue_ids(
+        self, repository_id: list[int], from_date: datetime | None = None, **kwargs
+    ) -> list[neo4j._data.Record]:
+        return self.issue_extraction._fetch_raw_issue_ids(
+            repository_id, from_date, **kwargs
+        )
+
     def fetch_issue_ids(
         self, repository_id: list[int], from_date: datetime | None = None, **kwargs
     ) -> list[GitHubIssue]:
