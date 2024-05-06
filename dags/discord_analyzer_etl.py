@@ -47,7 +47,7 @@ with DAG(
         pass
 
     @task
-    def discord_extract_raw_data(
+    def discord_etl_raw_data(
         platform_info: dict[str, str | datetime | bool]
     ) -> dict[str, str | list[dict] | bool]:
         """
@@ -68,78 +68,6 @@ with DAG(
             ```
             if recompute was false, then fetch from the previously saved data date
 
-        Returns
-        --------
-        platform_raw_data : dict[str, str | list[str] | bool]
-            the raw data for a platform
-            example data
-            ```
-            {
-                platform_id: str,
-                raw_data : list[dict],
-                recompute : bool,
-            }
-            ```
-        """
-        # TODO
-        pass
-
-    @task
-    def discord_transform_raw_data(
-        platform_raw_data: dict[str, str | list[dict] | bool]
-    ) -> dict[str, str | list[dict] | bool]:
-        """
-        transform raw data given for a platform to a general data structure
-
-        Parameters
-        ------------
-        platform_raw_data : dict[str, str | list[str] | bool]
-            the raw data for a platform
-            example data
-            ```
-            {
-                platform_id: str,
-                raw_data : list[dict],
-                recompute : bool,
-            }
-            ```
-
-        Returns
-        ----------
-        transformed_data : dict[str, str | list[dict] | bool]
-            the platform's data transformed
-            ```
-            {
-                platform_id: str,
-                transformed_data : list[dict],
-                recompute : bool,
-            }
-            ```
-        """
-        # TODO
-        pass
-
-    @task
-    def discord_load_transformed_data(
-        platform_transformed_data: dict[str, str | list[dict] | bool]
-    ) -> dict[str, str | bool]:
-        """
-        load transformed data within database
-
-        Parameters
-        ------------
-        platform_raw_data : dict[str, str | list[str] | bool]
-            the raw data for a platform
-            example data
-            ```
-            {
-                platform_id: str,
-                raw_data : list[dict],
-                recompute : bool,
-            }
-            ```
-            if recompute is True, then replace the whole previously saved data in database with the new ones
-            else, just save the new ones
 
         Returns
         --------
@@ -152,13 +80,24 @@ with DAG(
             }
             ```
         """
-        # TODO
+        # TODO: EXTRACT
+        # If recompute is False, then just extract from the latest saved document
+        # within rawmemberactivities collection using their date
+        # else, just extract from the `period`
+
+        # TODO: TRANSFORM
+
+        # TODO: LOAD
+        # if recompute is True, then replace the whole previously saved data in
+        # database with the new ones
+        # else, just save the new ones
+
         pass
 
     @task
-    def discord_extract_raw_members(
+    def discord_etl_raw_members(
         platform_info: dict[str, str | datetime | bool]
-    ) -> dict[str, str | list[dict] | bool]:
+    ) -> None:
         """
         extract raw members data for a platform
 
@@ -175,82 +114,14 @@ with DAG(
                 'recompute': bool,
             }
             ```
-            if recompute was false, then will fetch from the previously saved data date
-            if recompute True, then will fetch all platform's members data
-
-        Returns
-        --------
-        platform_raw_data : dict[str, str | list[dict] | bool]
-            the raw data for a platform
-            example data
-            ```
-            {
-                platform_id: str,
-                raw_data : list[dict],
-                recompute : bool,
-            }
-            ```
         """
-        # TODO
-        pass
+        # TODO: EXTRACT
+        # if recompute was false, then will fetch from the previously saved data date
+        # else, then will fetch all platform's members data
 
-    @task
-    def discord_transform_members(
-        platform_raw_data: dict[str, str | list[dict] | bool]
-    ) -> dict[str, str | list[dict] | bool]:
-        """
-        transform raw data given for a platform to a general data structure
+        # TODO: TRANSFORM
 
-        Parameters
-        ------------
-        platform_raw_data : dict[str, str | list[str] | bool]
-            the raw members data for a platform
-            example data
-            ```
-            {
-                platform_id: str,
-                raw_data : list[dict],
-                recompute : bool,
-            }
-            ```
-
-        Returns
-        ----------
-        transformed_data : dict[str, str | list[dict] | bool]
-            the platform's data transformed
-            ```
-            {
-                platform_id: str,
-                transformed_data : list[dict],
-                recompute : bool,
-            }
-            ```
-        """
-        pass
-
-    @task
-    def discord_load_transformed_members(
-        platform_transformed_data: dict[str, str | list[dict] | bool]
-    ) -> None:
-        """
-        load transformed data within database
-
-        Parameters
-        ------------
-        platform_raw_data : dict[str, str | list[str] | bool]
-            the raw data for a platform
-            example data
-            ```
-            {
-                platform_id: str,
-                raw_data : list[dict],
-                recompute : bool,
-            }
-            ```
-            if recompute is True, then replace the whole previously saved data in database with the new ones
-            else, just save the new ones (replace the users with duplicate id)
-        """
-        # TODO
+        # TODO: LOAD
         pass
 
     @task
@@ -275,20 +146,8 @@ with DAG(
         pass
 
     platform_modules = fetch_discord_platforms()
-    raw_memberactivities = discord_extract_raw_data.expand(
-        platform_info=platform_modules
-    )
-    transformed_rawmemberactivities = discord_transform_raw_data.expand(
-        platform_raw_data=raw_memberactivities
-    )
-    discord_processed_data = discord_load_transformed_data(
-        platform_transformed_data=transformed_rawmemberactivities
-    )
+    
+    raw_data_etl = discord_etl_raw_data.expand(platform_info=platform_modules)
+    raw_members_etl = discord_etl_raw_members.expand(platform_info=platform_modules)
 
-    raw_members = discord_extract_raw_members.expand(platform_info=platform_modules)
-    transformed_members = discord_transform_members(platform_raw_data=raw_members)
-    member_load_task = discord_load_transformed_members(
-        platform_transformed_data=transformed_members
-    )
-
-    member_load_task >> analyze_discord(platform_processed=discord_processed_data)
+    raw_members_etl >> analyze_discord(platform_processed=raw_data_etl)
