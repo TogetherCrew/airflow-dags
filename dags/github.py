@@ -61,7 +61,7 @@ from github.neo4j_storage import (
 from hivemind_etl_helpers.src.utils.modules import ModulesGitHub
 
 with DAG(
-    dag_id="github_functionality",
+    dag_id="github_api_etl_organizations",
     start_date=datetime(2022, 12, 1, 14),
     schedule_interval=timedelta(hours=6),
     catchup=False,
@@ -74,12 +74,12 @@ with DAG(
         modules_info = []
         for config in modules_configs:
             org_ids = config["organization_ids"]
-            repo_ids = config["repo_ids"]
+            # repo_ids = config["repo_ids"]
 
             modules_info.append(
                 {
                     "organization_ids": org_ids,
-                    "repo_ids": repo_ids,
+                    # "repo_ids": repo_ids,
                 }
             )
 
@@ -189,11 +189,6 @@ with DAG(
         return organizations
 
     @task
-    def extract_github_repos_using_id(repo_id):
-        repo = fetch_repo_using_id(repo_id)
-        return repo
-
-    @task
     def transform_github_repos(repo):
         logging.info("Just passing through github repos")
 
@@ -283,8 +278,6 @@ with DAG(
                 owner = repo["owner"]["login"]
                 repo_name = repo["name"]
                 for pr in repo["prs"]:
-                    pr_files_changes = {}
-
                     files_changes = get_all_pull_request_files(
                         owner=owner, repo=repo_name, pull_number=pr.get("number", None)
                     )
@@ -675,7 +668,10 @@ with DAG(
 
     # endregion
 
+    # getting modules config
     configs = get_github_configs()
+
+    # working with organization ids
     orgs_info = extract_github_organization.expand(module_info=configs)
     transform_orgs = transform_github_organization.expand(organization=orgs_info)
     load_orgs = load_github_organization.expand(organization=transform_orgs)
