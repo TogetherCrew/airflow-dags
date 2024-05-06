@@ -28,7 +28,6 @@ from github.github_api_helpers import (
     fetch_commit_files,
     fetch_commit_pull_requests,
     fetch_org_details,
-    fetch_repo_using_id,
     get_all_comment_reactions,
     get_all_commits,
     get_all_issues,
@@ -121,7 +120,7 @@ with DAG(
 
     @task
     def transform_github_organization(organization):
-        logging.info(f"transform_github_organization")
+        logging.info("transform_github_organization")
         return organization
 
     @task
@@ -142,7 +141,6 @@ with DAG(
     # region organization members ETL
     @task
     def extract_github_organization_members(organization):
-
         for iter, org in enumerate(organization["organizations_info"]):
             logging.info(
                 "Extracting organization members iteration "

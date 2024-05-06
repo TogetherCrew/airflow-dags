@@ -50,6 +50,7 @@ def get_all_org_repos(org_name: str):
     )
     return all_repos
 
+
 def fetch_repo_using_id(repo_id: int):
     """
     fetch github repository using their id
