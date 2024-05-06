@@ -1,8 +1,7 @@
-import psycopg2
 import unittest
-from typing import List
 from unittest.mock import Mock
 
+import psycopg2
 from llama_index.core.ingestion import IngestionPipeline
 from llama_index.core.schema import Document
 from tc_hivemind_backend.db.credentials import load_postgres_credentials

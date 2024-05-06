@@ -1,8 +1,11 @@
 import os
 
 from dotenv import load_dotenv
-from llama_index.core.ingestion import (DocstoreStrategy, IngestionCache,
-                                        IngestionPipeline)
+from llama_index.core.ingestion import (
+    DocstoreStrategy,
+    IngestionCache,
+    IngestionPipeline,
+)
 from llama_index.core.node_parser import SemanticSplitterNodeParser
 from llama_index.storage.docstore.postgres import PostgresDocumentStore
 from llama_index.storage.kvstore.redis import RedisKVStore as RedisCache
