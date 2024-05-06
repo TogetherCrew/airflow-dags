@@ -27,6 +27,8 @@ services:
       - EMBEDDING_DIM=1024
       - OPENAI_API_KEY=some_credentials
       - COHERE_API_KEY=some_credentials
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     volumes:
       - ./coverage:/project/coverage
     depends_on:
