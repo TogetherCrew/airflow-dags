@@ -1,17 +1,13 @@
-from llama_index.core.ingestion import (
-    DocstoreStrategy,
-    IngestionPipeline,
-    IngestionCache,
-)
-from llama_index.core.node_parser import SemanticSplitterNodeParser
-from llama_index.storage.kvstore.redis import RedisKVStore as RedisCache
-
-from llama_index.storage.docstore.postgres import PostgresDocumentStore
-from tc_hivemind_backend.embeddings.cohere import CohereEmbedding
-from llama_index.vector_stores.postgres import PGVectorStore
 import os
 
 from dotenv import load_dotenv
+from llama_index.core.ingestion import (DocstoreStrategy, IngestionCache,
+                                        IngestionPipeline)
+from llama_index.core.node_parser import SemanticSplitterNodeParser
+from llama_index.storage.docstore.postgres import PostgresDocumentStore
+from llama_index.storage.kvstore.redis import RedisKVStore as RedisCache
+from llama_index.vector_stores.postgres import PGVectorStore
+from tc_hivemind_backend.embeddings.cohere import CohereEmbedding
 
 load_dotenv()
 
@@ -68,4 +64,3 @@ class GoogleDriveIngestionPipeline:
         nodes = pipeline.run(documents=docs, show_progress=True)
 
         return nodes
-
