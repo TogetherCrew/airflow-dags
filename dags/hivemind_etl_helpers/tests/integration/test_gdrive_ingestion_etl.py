@@ -22,6 +22,8 @@ class TestGoogleDriveIngestionPipeline(unittest.TestCase):
             host=creds["host"],
             port=creds["port"],
         )
+        self.redis_host = '127..0.0.1'
+        self.redis_port = '6379'
 
     def test_run_pipeline(self):
         ingest_pipeline = Mock(IngestionPipeline)
