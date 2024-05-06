@@ -146,7 +146,7 @@ with DAG(
         pass
 
     platform_modules = fetch_discord_platforms()
-    
+
     raw_data_etl = discord_etl_raw_data.expand(platform_info=platform_modules)
     raw_members_etl = discord_etl_raw_members.expand(platform_info=platform_modules)
 
