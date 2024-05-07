@@ -68,7 +68,7 @@ class TestGoogleDriveIngestionPipeline(unittest.TestCase):
             )
         ]
 
-        ingest_pipeline.run.return_value = expected_return
         processed_result = gdrive_pipeline.run_pipeline(docs)
         self.assertEqual(len(processed_result), 2)
-        self.assertIsInstance(processed_result, List[TextNode])
+        self.assertEqual(processed_result[0].id_, expected_return[0].id)
+        self.assertEqual(processed_result[1].id_, expected_return[1].id)
