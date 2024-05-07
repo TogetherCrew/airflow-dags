@@ -1,3 +1,4 @@
+from typing import List
 import unittest
 from unittest.mock import Mock
 
@@ -43,30 +44,31 @@ class TestGoogleDriveIngestionPipeline(unittest.TestCase):
 
         expected_return = [
             TextNode(
-                id_="b049e7cf-3279-404b-b324-9776fe1cf60b",
+                id_='9b79aef5-6dae-41f7-93ea-7f1ee3f63725',
                 embedding=[
-                    0.026794434,
-                    -0.0103302,
-                    -0.004966736,
-                    -0.006626129,
-                    -0.013679504,
+                    0.5,
+                    0.5,
+                    0.5,
+                    0.5,
+                    0.5
                 ],
-            ),
+                metadata={}, 
+                excluded_embed_metadata_keys=[], 
+                excluded_llm_metadata_keys=[]),
             TextNode(
-                id_="3b3033c0-7e37-493c-8b4c-fd51f754a59a",
+                id_='a7dd4cae-517f-4bed-9038-b075406f0d3c',
                 embedding=[
-                    0.026794434,
-                    -0.0103302,
-                    -0.004966736,
-                    -0.006626129,
-                    -0.013679504,
+                    0.5,
+                    0.5,
+                    0.5,
+                    0.5,
+                    0.5
                 ],
-            ),
+                metadata={}, excluded_embed_metadata_keys=[], excluded_llm_metadata_keys=[],
+            )
         ]
-        print(expected_return)
 
         ingest_pipeline.run.return_value = expected_return
         processed_result = gdrive_pipeline.run_pipeline(docs)
-        print(processed_result)
         self.assertEqual(len(processed_result), 2)
-        self.assertIsInstance(processed_result, TextNode)
+        self.assertIsInstance(processed_result, List[TextNode])
