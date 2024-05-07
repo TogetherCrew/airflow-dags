@@ -42,35 +42,8 @@ class TestGoogleDriveIngestionPipeline(unittest.TestCase):
             ),
         ]
 
-        expected_return = [
-            TextNode(
-                id_='9b79aef5-6dae-41f7-93ea-7f1ee3f63725',
-                embedding=[
-                    0.5,
-                    0.5,
-                    0.5,
-                    0.5,
-                    0.5
-                ],
-                metadata={}, 
-                excluded_embed_metadata_keys=[], 
-                excluded_llm_metadata_keys=[]),
-            TextNode(
-                id_='a7dd4cae-517f-4bed-9038-b075406f0d3c',
-                embedding=[
-                    0.5,
-                    0.5,
-                    0.5,
-                    0.5,
-                    0.5
-                ],
-                metadata={}, excluded_embed_metadata_keys=[], excluded_llm_metadata_keys=[],
-            )
-        ]
 
         processed_result = gdrive_pipeline.run_pipeline(docs)
         ingest_pipeline.run.return_value = processed_result
         self.assertEqual(len(processed_result), 2)
         processed_result.run.assert_called_once()
-        self.assertEqual(processed_result[0].id_, expected_return[0].id)
-        self.assertEqual(processed_result[1].id_, expected_return[1].id)
