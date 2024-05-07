@@ -4,6 +4,7 @@ from unittest.mock import Mock
 import psycopg2
 from hivemind_etl_helpers.gdrive_ingestion_etl import GoogleDriveIngestionPipeline
 from hivemind_etl_helpers.src.db.gdrive.db_utils import setup_db
+from llama_index.core import MockEmbedding
 from llama_index.core.ingestion import IngestionPipeline
 from llama_index.core.schema import Document
 from tc_hivemind_backend.db.credentials import load_postgres_credentials
@@ -21,14 +22,13 @@ class TestGoogleDriveIngestionPipeline(unittest.TestCase):
             host=creds["host"],
             port=creds["port"],
         )
-        self.redis_host = "127..0.0.1"
-        self.redis_port = "6379"
 
     def test_run_pipeline(self):
         ingest_pipeline = Mock(IngestionPipeline)
         community = "1234"
         self.setUpDB(community)
-        my_object = GoogleDriveIngestionPipeline("1234")
+        gdrive_pipeline = GoogleDriveIngestionPipeline("1234")
+        gdrive_pipeline.cohere_model = MockEmbedding(embed_dim=1024)
         docs = [
             Document(
                 id_="b049e7cf-3279-404b-b324-9776fe1cf60b",
@@ -41,5 +41,5 @@ class TestGoogleDriveIngestionPipeline(unittest.TestCase):
         ]
 
         ingest_pipeline.run.return_value = docs
-        processed_result = my_object.run_pipeline(docs)
+        processed_result = gdrive_pipeline.run_pipeline(docs)
         self.assertEqual(len(processed_result), 0)
