@@ -63,10 +63,10 @@ class TestGoogleDriveIngestionPipeline(unittest.TestCase):
                 ],
             ),
         ]
-        print(processed_result)
         print(expected_return)
 
         ingest_pipeline.run.return_value = expected_return
         processed_result = gdrive_pipeline.run_pipeline(docs)
+        print(processed_result)
         self.assertEqual(len(processed_result), 2)
         self.assertIsInstance(processed_result, TextNode)
