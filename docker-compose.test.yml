@@ -27,8 +27,9 @@ services:
       - EMBEDDING_DIM=1024
       - OPENAI_API_KEY=some_credentials
       - COHERE_API_KEY=some_credentials
-      - REDIS_HOST=127.0.0.1
+      - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - REDIS_PASSWORD=password
     volumes:
       - ./coverage:/project/coverage
     depends_on:
@@ -37,6 +38,8 @@ services:
       mongo:
         condition: service_healthy
       postgres:
+        condition: service_healthy
+      redis:
         condition: service_healthy
   neo4j:
     image: "neo4j:5.9.0"
@@ -71,3 +74,12 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+  redis:
+    image: redis:7.2.4
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 30s
+      retries: 50
+      start_period: 30s
+    restart: always
