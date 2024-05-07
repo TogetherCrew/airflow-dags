@@ -1,4 +1,3 @@
-from typing import List
 import unittest
 from unittest.mock import Mock
 
@@ -8,7 +7,6 @@ from hivemind_etl_helpers.src.db.gdrive.db_utils import setup_db
 from llama_index.core import MockEmbedding
 from llama_index.core.ingestion import IngestionPipeline
 from llama_index.core.schema import Document
-from llama_index_client import TextNode
 from tc_hivemind_backend.db.credentials import load_postgres_credentials
 
 
@@ -41,7 +39,6 @@ class TestGoogleDriveIngestionPipeline(unittest.TestCase):
                 text="""Musa species are native to tropical Indomalaya and Australia""",
             ),
         ]
-
 
         processed_result = gdrive_pipeline.run_pipeline(docs)
         ingest_pipeline.run.return_value = processed_result
