@@ -1,13 +1,13 @@
 import unittest
 from unittest.mock import Mock
 
-from llama_index_client import TextNode
 import psycopg2
-from dags.hivemind_etl_helpers.gdrive_ingestion_etl import GoogleDriveIngestionPipeline
-from dags.hivemind_etl_helpers.src.db.gdrive.db_utils import setup_db
+from hivemind_etl_helpers.gdrive_ingestion_etl import GoogleDriveIngestionPipeline
+from hivemind_etl_helpers.src.db.gdrive.db_utils import setup_db
 from llama_index.core import MockEmbedding
 from llama_index.core.ingestion import IngestionPipeline
 from llama_index.core.schema import Document
+from llama_index_client import TextNode
 from tc_hivemind_backend.db.credentials import load_postgres_credentials
 
 
@@ -61,10 +61,12 @@ class TestGoogleDriveIngestionPipeline(unittest.TestCase):
                     -0.006626129,
                     -0.013679504,
                 ],
-            )
+            ),
         ]
+        print(processed_result)
+        print(expected_return)
 
         ingest_pipeline.run.return_value = expected_return
         processed_result = gdrive_pipeline.run_pipeline(docs)
         self.assertEqual(len(processed_result), 2)
-        self.assertIsInstance(processed_result, TextNode())
+        self.assertIsInstance(processed_result, TextNode)
