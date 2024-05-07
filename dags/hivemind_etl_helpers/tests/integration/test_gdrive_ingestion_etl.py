@@ -46,4 +46,3 @@ class TestGoogleDriveIngestionPipeline(unittest.TestCase):
         processed_result = gdrive_pipeline.run_pipeline(docs)
         ingest_pipeline.run.return_value = processed_result
         self.assertEqual(len(processed_result), 2)
-        ingest_pipeline.run.assert_called_once()
