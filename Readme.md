@@ -17,6 +17,6 @@ Note: the Hivemind ETL dags, are related to the data processing of togethercrew'
 You can quickly launch the application using `Docker Compose`:
 
 ```bash
-docker-compose --profile flower up
+docker-compose -f docker-compose.yaml up
 ```
 reference: [Running Airflow in Docker](https://airflow.apache.org/docs/apache-airflow/stable/howto/docker-compose/index.html)
