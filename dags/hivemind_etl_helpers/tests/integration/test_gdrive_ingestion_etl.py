@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import Mock
 
+from llama_index_client import TextNode
 import psycopg2
 from hivemind_etl_helpers.gdrive_ingestion_etl import GoogleDriveIngestionPipeline
 from hivemind_etl_helpers.src.db.gdrive.db_utils import setup_db
@@ -40,6 +41,31 @@ class TestGoogleDriveIngestionPipeline(unittest.TestCase):
             ),
         ]
 
-        ingest_pipeline.run.return_value = docs
+        expected_return = [
+            TextNode(
+                id_="b049e7cf-3279-404b-b324-9776fe1cf60b",
+                embedding=[
+                    0.026794434,
+                    -0.0103302,
+                    -0.004966736,
+                    -0.006626129,
+                    -0.013679504,
+                ],
+            ),
+            TextNode(
+                id_="3b3033c0-7e37-493c-8b4c-fd51f754a59a",
+                embedding=[
+                    0.026794434,
+                    -0.0103302,
+                    -0.004966736,
+                    -0.006626129,
+                    -0.013679504,
+                ],
+            )
+        ]
+
+        ingest_pipeline.run.return_value = expected_return
         processed_result = gdrive_pipeline.run_pipeline(docs)
-        self.assertEqual(len(processed_result), 0)
+        self.assertEqual(processed_result, expected_return)
+        self.assertEqual(len(processed_result), 2)
+        self.assertIsInstance(processed_result, TextNode())
