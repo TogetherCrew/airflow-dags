@@ -42,7 +42,7 @@ class GoogleDriveIngestionPipeline:
     def run_pipeline(self, docs):
         pipeline = IngestionPipeline(
             transformations=[
-                SemanticSplitterNodeParser(embed_model=CohereEmbedding()),
+                SemanticSplitterNodeParser(embed_model=self.cohere_model),
                 self.cohere_model,
             ],
             docstore=PostgresDocumentStore.from_params(
