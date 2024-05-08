@@ -45,6 +45,8 @@ class TestGoogleDriveIngestionPipeline(unittest.TestCase):
 
     def test_load_pipeline_run_exception(self):
         ingest_pipeline = Mock(IngestionPipeline)
+        community = "1234"
+        self.setUpDB(community)
         gdrive_pipeline = GoogleDriveIngestionPipeline("1234")
         gdrive_pipeline.cohere_model = MockEmbedding(embed_dim=1024)
         docs = [Document()]
