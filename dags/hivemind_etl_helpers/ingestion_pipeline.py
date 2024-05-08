@@ -8,28 +8,27 @@ from llama_index.core.node_parser import SemanticSplitterNodeParser
 from llama_index.storage.docstore.postgres import PostgresDocumentStore
 from llama_index.storage.kvstore.redis import RedisKVStore as RedisCache
 from llama_index.vector_stores.postgres import PGVectorStore
+from tc_hivemind_backend.db.credentials import load_postgres_credentials
 from tc_hivemind_backend.embeddings.cohere import CohereEmbedding
 
 from dags.hivemind_etl_helpers.src.db.gdrive.db_utils import setup_db
 
 
-class NotionIngestionPipeline:
-    def __init__(self, community_id: str, testing: bool = False):
+class CustomIngestionPipeline:
+    def __init__(self, community_id: str, table_name: str,
+                 testing: bool = False):
         load_dotenv()
-        host = os.getenv("POSTGRES_HOST")
-        password = os.getenv("POSTGRES_PASS")
-        port = os.getenv("POSTGRES_PORT")
-        user = os.getenv("POSTGRES_USER")
+        postgres_credentials = load_postgres_credentials()
         self.redis_host = os.getenv("REDIS_HOST")
         self.redis_port = os.getenv("REDIS_PORT")
 
-        self.table_name = "notion"
+        self.table_name = table_name
         self.dbname = f"community_{community_id}"
         self.db_config = {
-            "host": host,
-            "password": password,
-            "port": port,
-            "user": user,
+            "host": postgres_credentials["host"],
+            "password": postgres_credentials["password"],
+            "port": postgres_credentials["port"],
+            "user": postgres_credentials["user"],
         }
         self.community_id = community_id
         self.embed_model = CohereEmbedding()

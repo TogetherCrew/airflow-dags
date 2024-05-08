@@ -112,8 +112,14 @@ class TestGetNotionCommunityData(TestCase):
                 "name": "notion",
                 "metadata": {
                     "name": "TEST",
-                    "database_ids": "dadd27f1dc1e4fa6b5b9dea76858dabe",
-                    "page_ids": "6a3c20b6861145b29030292120aa03e6",
+                    "database_ids": [
+                            "dadd27f1dc1e4fa6b5b9dea76858dabe",
+                            "47d677c96cfc434dbe49cb90f0d8fdfb",
+                    ],
+                    "page_ids": [
+                            "6a3c20b6861145b29030292120aa03e6",
+                            "e479ee3eef9a4eefb3a393848af9ed9d",
+                    ],
                     "client_config": {},
                 },
                 "community": ObjectId("6579c364f1120850414e0dc5"),

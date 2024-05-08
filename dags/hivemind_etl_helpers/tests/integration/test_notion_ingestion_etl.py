@@ -2,12 +2,13 @@ import unittest
 from unittest.mock import Mock
 
 import psycopg2
-from hivemind_etl_helpers.notion_ingestion_etl import NotionIngestionPipeline
 from hivemind_etl_helpers.src.db.gdrive.db_utils import setup_db
-from llama_index.core import MockEmbedding
-from llama_index.core.ingestion import IngestionPipeline
 from llama_index.core.schema import Document
 from tc_hivemind_backend.db.credentials import load_postgres_credentials
+
+from dags.hivemind_etl_helpers.ingestion_pipeline import (
+    CustomIngestionPipeline
+)
 
 
 class TestNotionIngestionPipeline(unittest.TestCase):
@@ -24,11 +25,15 @@ class TestNotionIngestionPipeline(unittest.TestCase):
         )
 
     def test_run_pipeline(self):
-        ingest_pipeline = Mock(IngestionPipeline)
+        ingest_pipeline = Mock(CustomIngestionPipeline)
         community = "1312"
         self.setUpDB(community)
-        notion_ingestion_pipeline = NotionIngestionPipeline("1312")
-        notion_ingestion_pipeline.cohere_model = MockEmbedding(embed_dim=1024)
+        table_name = "notion"
+        notion_ingestion_pipeline = CustomIngestionPipeline(
+            community_id="1312",
+            table_name=table_name,
+            testing=True
+        )
         docs = [
             Document(
                 id_="8307b4b8-1dc5-4d1b-a5b5-084e18bc4046",

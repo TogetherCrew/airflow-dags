@@ -1,7 +1,7 @@
 import logging
 
-from dags.hivemind_etl_helpers.notion_ingestion_etl import (
-    NotionIngestionPipeline
+from dags.hivemind_etl_helpers.ingestion_pipeline import (
+    CustomIngestionPipeline
 )
 from dags.hivemind_etl_helpers.src.db.notion.extractor import NotionExtractor
 
@@ -36,7 +36,9 @@ def process_notion_etl(
     except TypeError as exp:
         logging.info(f"No documents retrieved from notion! exp: {exp}")
 
-    ingestion_pipeline = NotionIngestionPipeline(community_id)
+    table_name = "notion"
+    ingestion_pipeline = CustomIngestionPipeline(community_id,
+                                                 table_name=table_name)
     try:
         ingestion_pipeline.run_pipeline(documents=documents)
     except Exception as e:
