@@ -20,6 +20,6 @@ traceloop-sdk>=0.15.2, <0.16.0
 beautifulsoup4==4.12.3
 llama-index-readers-google==0.2.4
 llama-index-core
-llama-index-storage-docstore-postgres
+llama-index-storage-docstore-postgres==0.1.3
 llama-index-storage-kvstore-redis
 llama-index-vector-stores-postgres
