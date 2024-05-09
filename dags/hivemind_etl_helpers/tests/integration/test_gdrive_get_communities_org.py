@@ -23,7 +23,6 @@ class TestQueryGDriveModulesDB(unittest.TestCase):
         single gdrive platform for one community
         """
         sample_user = ObjectId("5d7baf326c8a2e2400000000")
-        sample_access_token = "tokenid12345"
         sample_refresh_token = "tokenid8899812"
         self.client["Core"]["modules"].insert_one(
             {
@@ -43,17 +42,6 @@ class TestQueryGDriveModulesDB(unittest.TestCase):
                         }
                     ]
                 },
-            }
-        )
-        self.client["Core"]["tokens"].insert_one(
-            {
-                "token": sample_access_token,
-                "user": sample_user,
-                "type": "google_access",
-                "expires": datetime.now() + timedelta(days=1),
-                "blacklisted": False,
-                "createdAt": datetime.now() - timedelta(days=1),
-                "updatedAt": datetime.now() - timedelta(days=1),
             }
         )
         self.client["Core"]["tokens"].insert_one(
@@ -81,7 +69,6 @@ class TestQueryGDriveModulesDB(unittest.TestCase):
                 "drive_ids": ["1234"],
                 "folder_ids": ["111", "234"],
                 "file_ids": ["124", "782"],
-                "access_token": sample_access_token,
                 "refresh_token": sample_refresh_token,
             },
         )
@@ -91,11 +78,9 @@ class TestQueryGDriveModulesDB(unittest.TestCase):
         two gdrive platform for one community
         """
         sample_user1 = ObjectId("5d7baf326c8a2e2400000000")
-        sample_access_token1 = "tokenid12345"
         sample_refresh_token1 = "tokenid8899812"
 
         sample_user2 = ObjectId("5d7baf326c8a2e2400000001")
-        sample_access_token2 = "tokenid9999"
         sample_refresh_token2 = "tokeni00000"
 
         self.client["Core"]["modules"].insert_one(
@@ -129,17 +114,6 @@ class TestQueryGDriveModulesDB(unittest.TestCase):
         )
         self.client["Core"]["tokens"].insert_one(
             {
-                "token": sample_access_token1,
-                "user": sample_user1,
-                "type": "google_access",
-                "expires": datetime.now() + timedelta(days=1),
-                "blacklisted": False,
-                "createdAt": datetime.now() - timedelta(days=1),
-                "updatedAt": datetime.now() - timedelta(days=1),
-            }
-        )
-        self.client["Core"]["tokens"].insert_one(
-            {
                 "token": sample_refresh_token1,
                 "user": sample_user1,
                 "type": "google_refresh",
@@ -150,17 +124,6 @@ class TestQueryGDriveModulesDB(unittest.TestCase):
             }
         )
 
-        self.client["Core"]["tokens"].insert_one(
-            {
-                "token": sample_access_token2,
-                "user": sample_user2,
-                "type": "google_access",
-                "expires": datetime.now() + timedelta(days=1),
-                "blacklisted": False,
-                "createdAt": datetime.now() - timedelta(days=1),
-                "updatedAt": datetime.now() - timedelta(days=1),
-            }
-        )
         self.client["Core"]["tokens"].insert_one(
             {
                 "token": sample_refresh_token2,
@@ -185,7 +148,6 @@ class TestQueryGDriveModulesDB(unittest.TestCase):
                 "drive_ids": ["1234"],
                 "folder_ids": ["111", "234"],
                 "file_ids": ["124", "782"],
-                "access_token": sample_access_token1,
                 "refresh_token": sample_refresh_token1,
             },
         )
@@ -196,7 +158,6 @@ class TestQueryGDriveModulesDB(unittest.TestCase):
                 "drive_ids": ["8438348"],
                 "folder_ids": ["9090"],
                 "file_ids": [],
-                "access_token": sample_access_token2,
                 "refresh_token": sample_refresh_token2,
             },
         )
@@ -311,7 +272,6 @@ class TestQueryGDriveModulesDB(unittest.TestCase):
                 "drive_ids": ["1234"],
                 "folder_ids": ["111", "234"],
                 "file_ids": ["124", "782"],
-                "access_token": sample_access_token1,
                 "refresh_token": sample_refresh_token1,
             },
         )
@@ -322,7 +282,6 @@ class TestQueryGDriveModulesDB(unittest.TestCase):
                 "drive_ids": ["8438348"],
                 "folder_ids": ["9090"],
                 "file_ids": [],
-                "access_token": sample_access_token2,
                 "refresh_token": sample_refresh_token2,
             },
         )

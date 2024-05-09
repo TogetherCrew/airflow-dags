@@ -24,7 +24,6 @@ class ModulesGDrive(ModulesBase):
                 "drive_ids": ["1111", "2222"],
                 "folder_ids": ["132", "45232"],
                 "file_ids": ["9999", "888"],
-                "access_token": "gdsasf78y",
                 "refresh_token": "3ui2he09w",
             }]
             ```
@@ -45,10 +44,6 @@ class ModulesGDrive(ModulesBase):
                 refresh_token = self.get_token(
                     user=modules_options["userId"], token_type="google_refresh"
                 )
-                access_token = self.get_token(
-                    user=modules_options["userId"], token_type="google_access"
-                )
-
                 platforms_data.append(
                     {
                         "community_id": str(community),
@@ -56,7 +51,6 @@ class ModulesGDrive(ModulesBase):
                         "folder_ids": modules_options.get("folderIds", []),
                         "file_ids": modules_options.get("fileIds", []),
                         "refresh_token": refresh_token,
-                        "access_token": access_token,
                     }
                 )
 
