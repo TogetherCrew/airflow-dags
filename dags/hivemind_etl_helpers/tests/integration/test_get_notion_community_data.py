@@ -144,11 +144,11 @@ class TestGetNotionCommunityData(TestCase):
                 "from_date": datetime(2024, 1, 1),
                 "database_ids": [
                     "dadd27f1dc1e4fa6b5b9dea76858dabe",
-                    "47d677c96cfc434dbe49cb90f0d8fdfb"
+                    "47d677c96cfc434dbe49cb90f0d8fdfb",
                 ],
                 "page_ids": [
                     "6a3c20b6861145b29030292120aa03e6",
-                    "e479ee3eef9a4eefb3a393848af9ed9d"
+                    "e479ee3eef9a4eefb3a393848af9ed9d",
                 ],
                 "client_config": {},
             },
