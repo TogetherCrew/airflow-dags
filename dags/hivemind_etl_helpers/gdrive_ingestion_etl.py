@@ -25,14 +25,6 @@ class GoogleDriveIngestionPipeline:
         self.table_name = "gdrive"
         self.dbname = f"community_{community_id}"
 
-        self.db_config = {
-            "database": self.dbname,
-            "user": self.pg_creds["user"],
-            "password": self.pg_creds["password"],
-            "host": self.pg_creds["host"],
-            "port": self.pg_creds["port"],
-        }
-
         # Database details
         self.redis_host = self.redis_cred["host"]
         self.redis_port = self.redis_cred["port"]
@@ -44,13 +36,19 @@ class GoogleDriveIngestionPipeline:
                 self.cohere_model,
             ],
             docstore=PostgresDocumentStore.from_params(
-                **self.db_config,
-                # database=self.dbname,
+                host=self.pg_creds["host"],
+                port=self.pg_creds["port"],
+                database=self.dbname,
+                user=self.pg_creds["user"],
+                password=self.pg_creds["password"],
                 table_name=self.table_name + "_docstore",
             ),
             vector_store=PGVectorStore.from_params(
-                **self.db_config,
-                # database=self.dbname,
+                host=self.pg_creds["host"],
+                port=self.pg_creds["port"],
+                database=self.dbname,
+                user=self.pg_creds["user"],
+                password=self.pg_creds["password"],
                 table_name=self.table_name,
                 embed_dim=1024,
             ),
