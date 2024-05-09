@@ -25,6 +25,7 @@ class TestCredentialLoadings(unittest.TestCase):
 
     def test_redis_envs_check_type(self):
         redis_creds = load_redis_credentials()
+
         self.assertIsInstance(redis_creds, dict)
 
     def test_redis_envs_values(self):
