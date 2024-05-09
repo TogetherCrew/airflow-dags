@@ -2,7 +2,6 @@ from datetime import datetime
 from unittest import TestCase
 
 from bson import ObjectId
-
 from dags.hivemind_etl_helpers.src.utils.get_communities_data import (
     get_all_notion_communities,
 )
@@ -144,8 +143,8 @@ class TestGetNotionCommunityData(TestCase):
                 "community_id": "6579c364f1120850414e0dc5",
                 "from_date": datetime(2024, 1, 1),
                 "database_ids": [
-                        "dadd27f1dc1e4fa6b5b9dea76858dabe",
-                        "47d677c96cfc434dbe49cb90f0d8fdfb"
+                    "dadd27f1dc1e4fa6b5b9dea76858dabe",
+                    "47d677c96cfc434dbe49cb90f0d8fdfb"
                 ],
                 "page_ids": [
                     "6a3c20b6861145b29030292120aa03e6",

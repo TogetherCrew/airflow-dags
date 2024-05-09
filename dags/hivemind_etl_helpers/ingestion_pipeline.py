@@ -1,3 +1,4 @@
+from dags.hivemind_etl_helpers.src.db.gdrive.db_utils import setup_db
 from hivemind_etl_helpers.src.utils.credentials import load_redis_credentials
 from llama_index.core import MockEmbedding
 from llama_index.core.ingestion import (
@@ -11,10 +12,7 @@ from llama_index.storage.kvstore.redis import RedisKVStore as RedisCache
 from llama_index.vector_stores.postgres import PGVectorStore
 from tc_hivemind_backend.db.credentials import load_postgres_credentials
 from tc_hivemind_backend.db.utils.model_hyperparams import load_model_hyperparams
-
 from tc_hivemind_backend.embeddings.cohere import CohereEmbedding
-
-from dags.hivemind_etl_helpers.src.db.gdrive.db_utils import setup_db
 
 
 class CustomIngestionPipeline:
