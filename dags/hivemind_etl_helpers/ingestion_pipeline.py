@@ -17,16 +17,12 @@ from tc_hivemind_backend.embeddings.cohere import CohereEmbedding
 
 class CustomIngestionPipeline:
     def __init__(self, community_id: str, table_name: str, testing: bool = False):
-        redis_credentials = load_redis_credentials()
         postgres_credentials = load_postgres_credentials()
-        self.redis_host = redis_credentials["host"]
-        self.redis_port = redis_credentials["port"]
+        redis_credentials = load_redis_credentials()
+        self.postgres_credentials = postgres_credentials
+        self.redis_credentials = redis_credentials
         self.table_name = table_name
         self.dbname = f"community_{community_id}"
-        self.postgres_host = postgres_credentials["host"]
-        self.postgres_port = postgres_credentials["port"]
-        self.postgres_user = postgres_credentials["user"]
-        self.postgres_password = postgres_credentials["password"]
         self.community_id = community_id
         self.embed_model = CohereEmbedding()
         if testing:
@@ -41,24 +37,25 @@ class CustomIngestionPipeline:
                 self.embed_model,
             ],
             docstore=PostgresDocumentStore.from_params(
-                host=self.postgres_host,
-                port=self.postgres_port,
-                user=self.postgres_user,
-                password=self.postgres_password,
+                host=self.postgres_credentials["host"],
+                port=self.postgres_credentials["port"],
+                user=self.postgres_credentials["user"],
+                password=self.postgres_credentials["password"],
                 database=self.dbname,
                 table_name=self.table_name + "_docstore",
             ),
             vector_store=PGVectorStore.from_params(
-                host=self.postgres_host,
-                port=self.postgres_port,
-                user=self.postgres_user,
-                password=self.postgres_password,
+                host=self.postgres_credentials["host"],
+                port=self.postgres_credentials["port"],
+                user=self.postgres_credentials["user"],
+                password=self.postgres_credentials["password"],
                 database=self.dbname,
                 table_name=self.table_name,
                 embed_dim=embedding_dim,
             ),
             cache=IngestionCache(
-                cache=RedisCache.from_host_and_port(self.redis_host, self.redis_port),
+                cache=RedisCache.from_host_and_port(self.redis_credentials["host"],
+                                                    self.redis_credentials["port"]),
                 collection=self.dbname + f"_{self.table_name}" + "_ingestion_cache",
             ),
             docstore_strategy=DocstoreStrategy.UPSERTS,
