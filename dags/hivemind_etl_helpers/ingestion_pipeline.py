@@ -22,15 +22,12 @@ class CustomIngestionPipeline:
         postgres_credentials = load_postgres_credentials()
         self.redis_host = redis_credentials["host"]
         self.redis_port = redis_credentials["port"]
-
         self.table_name = table_name
         self.dbname = f"community_{community_id}"
-        self.db_config = {
-            "host": postgres_credentials["host"],
-            "password": postgres_credentials["password"],
-            "port": postgres_credentials["port"],
-            "user": postgres_credentials["user"],
-        }
+        self.postgres_host = postgres_credentials["host"]
+        self.postgres_port = postgres_credentials["port"]
+        self.postgres_user = postgres_credentials["user"]
+        self.postgres_password = postgres_credentials["password"]
         self.community_id = community_id
         self.embed_model = CohereEmbedding()
         if testing:
@@ -45,12 +42,18 @@ class CustomIngestionPipeline:
                 self.embed_model,
             ],
             docstore=PostgresDocumentStore.from_params(
-                **self.db_config,
+                host=self.postgres_host,
+                port=self.postgres_port,
+                user=self.postgres_user,
+                password=self.postgres_password,
                 database=self.dbname,
                 table_name=self.table_name + "_docstore",
             ),
             vector_store=PGVectorStore.from_params(
-                **self.db_config,
+                host=self.postgres_host,
+                port=self.postgres_port,
+                user=self.postgres_user,
+                password=self.postgres_password,
                 database=self.dbname,
                 table_name=self.table_name,
                 embed_dim=embedding_dim,
