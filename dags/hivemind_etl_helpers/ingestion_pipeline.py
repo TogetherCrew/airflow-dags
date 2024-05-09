@@ -54,8 +54,9 @@ class CustomIngestionPipeline:
                 embed_dim=embedding_dim,
             ),
             cache=IngestionCache(
-                cache=RedisCache.from_host_and_port(self.redis_credentials["host"],
-                                                    self.redis_credentials["port"]),
+                cache=RedisCache.from_host_and_port(
+                    self.redis_credentials["host"], self.redis_credentials["port"]
+                ),
                 collection=self.dbname + f"_{self.table_name}" + "_ingestion_cache",
             ),
             docstore_strategy=DocstoreStrategy.UPSERTS,
