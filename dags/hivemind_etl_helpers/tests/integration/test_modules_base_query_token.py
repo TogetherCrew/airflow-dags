@@ -1,7 +1,7 @@
 from unittest import TestCase
+from datetime import datetime, timedelta
 
 from bson import ObjectId
-from datetime import datetime, timedelta
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 from hivemind_etl_helpers.src.utils.modules.modules_base import ModulesBase
 
