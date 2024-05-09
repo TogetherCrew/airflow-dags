@@ -40,6 +40,6 @@ def process_notion_etl(
     ingestion_pipeline = CustomIngestionPipeline(community_id,
                                                  table_name=table_name)
     try:
-        ingestion_pipeline.run_pipeline(documents=documents)
+        ingestion_pipeline.run_pipeline(docs=documents)
     except Exception as e:
         logging.info(f"Error while trying to run NotionIngestionPipeline! exp: {e}")

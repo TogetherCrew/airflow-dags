@@ -152,3 +152,4 @@ def get_all_notion_communities() -> (
                     "client_config": client_config
                 }
             )
+    return communities_data

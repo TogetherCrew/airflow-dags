@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from bson import ObjectId
 from hivemind_etl_helpers.src.utils.get_communities_data import (
-    get_notion_communities,
+    get_all_notion_communities,
 )
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
@@ -17,7 +17,7 @@ class TestGetNotionCommunityData(TestCase):
         self.client = client
 
     def test_get_empty_data(self):
-        result = get_notion_communities()
+        result = get_all_notion_communities()
         self.assertEqual(result, [])
 
     def test_get_single_data(self):
@@ -63,7 +63,7 @@ class TestGetNotionCommunityData(TestCase):
             }
         )
 
-        result = get_notion_communities()
+        result = get_all_notion_communities()
 
         # Assertions
         self.assertIsInstance(result, list)
@@ -130,7 +130,7 @@ class TestGetNotionCommunityData(TestCase):
             }
         )
 
-        result = get_notion_communities()
+        result = get_all_notion_communities()
 
         # Assertions
         self.assertIsInstance(result, list)
@@ -221,7 +221,7 @@ class TestGetNotionCommunityData(TestCase):
             ]
         )
 
-        result = get_notion_communities()
+        result = get_all_notion_communities()
 
         self.assertIsInstance(result, list)
         self.assertEqual(len(result), 2)
