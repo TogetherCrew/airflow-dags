@@ -8,9 +8,7 @@ from hivemind_etl_helpers.discord_mongo_summary_etl import process_discord_summa
 from hivemind_etl_helpers.discord_mongo_vector_store_etl import (
     process_discord_guild_mongo,
 )
-from hivemind_etl_helpers.src.utils.mongo_discord_communities import (
-    get_all_discord_communities,
-)
+from hivemind_etl_helpers.src.utils.modules import ModulesDiscord
 
 with DAG(
     dag_id="discord_vector_store_update",
@@ -20,24 +18,38 @@ with DAG(
 ) as dag:
 
     @task
-    def get_discord_communities() -> list[str]:
+    def get_discord_communities() -> list[dict[str, str | datetime | list]]:
         """
         Getting all communities having discord from database
         """
-        communities = get_all_discord_communities()
+        communities = ModulesDiscord().get_learning_platforms()
         return communities
 
     @task
-    def start_discord_vectorstore(community_id: str):
+    def start_discord_vectorstore(community_info: dict[str, str | datetime | list]):
         load_dotenv()
-        logging.info(f"Working on community, {community_id}")
-        process_discord_guild_mongo(community_id=community_id)
-        logging.info(f"Community {community_id} Job finished!")
+        community_id = community_info["community_id"]
+        platform_id = community_info["platform_id"]
+        selected_channels = community_info["selected_channels"]
+        from_date = community_info["from_date"]
 
-    communities = get_discord_communities()
+        logging.info(
+            f"Processing community_id: {community_id} | platform_id: {platform_id}"
+        )
+        process_discord_guild_mongo(
+            community_id=community_id,
+            platform_id=platform_id,
+            selected_channels=selected_channels,
+            default_from_date=from_date,
+        )
+        logging.info(
+            f"Community {community_id} Job finished | platform_id: {platform_id}"
+        )
+
+    communities_info = get_discord_communities()
     # `start_discord_vectorstore` will be called multiple times
     # with the length of the list
-    start_discord_vectorstore.expand(community_id=communities)
+    start_discord_vectorstore.expand(community_info=communities_info)
 
 
 with DAG(
@@ -47,21 +59,38 @@ with DAG(
 ) as dag:
 
     @task
-    def get_mongo_discord_communities() -> list[str]:
+    def get_mongo_discord_communities() -> list[dict[str, str | datetime | list]]:
         """
         Getting all communities having discord from database
         this function is the same with `get_discord_communities`
         we just changed the name for the pylint
         """
-        communities = get_all_discord_communities()
+        communities = ModulesDiscord().get_learning_platforms()
         return communities
 
     @task
-    def start_discord_summary_vectorstore(community_id: str):
+    def start_discord_summary_vectorstore(
+        community_info: dict[str, str | datetime | list]
+    ):
         load_dotenv()
-        logging.info(f"Working on community, {community_id}")
-        process_discord_summaries(community_id=community_id, verbose=False)
-        logging.info(f"Community {community_id} Job finished!")
+
+        community_id = community_info["community_id"]
+        platform_id = community_info["platform_id"]
+        selected_channels = community_info["selected_channels"]
+        from_date = community_info["from_date"]
+        logging.info(
+            f"Working on community, {community_id}| platform_id: {platform_id}"
+        )
+        process_discord_summaries(
+            community_id=community_id,
+            platform_id=platform_id,
+            selected_channels=selected_channels,
+            default_from_date=from_date,
+            verbose=False,
+        )
+        logging.info(
+            f"Community {community_id} Job finished | platform_id: {platform_id}"
+        )
 
     communities = get_mongo_discord_communities()
-    start_discord_summary_vectorstore.expand(community_id=communities)
+    start_discord_summary_vectorstore.expand(community_info=communities)

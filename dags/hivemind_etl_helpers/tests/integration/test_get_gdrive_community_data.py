@@ -1,6 +1,7 @@
 from datetime import datetime
 from unittest import TestCase
 
+# import hivemind_etl_helpers
 from bson import ObjectId
 from hivemind_etl_helpers.src.utils.get_communities_data import (
     get_google_drive_communities,
@@ -53,7 +54,7 @@ class TestGetDriveCommunityData(TestCase):
                         "1RFhr3-KmOZCR5rtp13",
                         "1RFhr3-KmOZCR5rtp14",
                     ],
-                    "drive_ids": "1RFhr3-KmOZCR5rtp123",
+                    "drive_ids": ["1RFhr3-KmOZCR5rtp123"],
                     "client_config": {},
                 },
                 "community": ObjectId("6579c364f1120850414e0dc5"),
@@ -86,7 +87,7 @@ class TestGetDriveCommunityData(TestCase):
                     "1RFhr3-KmOZCR5rtp13",
                     "1RFhr3-KmOZCR5rtp14",
                 ],
-                "drive_ids": "1RFhr3-KmOZCR5rtp123",
+                "drive_ids": ["1RFhr3-KmOZCR5rtp123"],
                 "client_config": {},
             },
         )
@@ -189,7 +190,7 @@ class TestGetDriveCommunityData(TestCase):
                             "1RFhr3-KmOZCR5rtp121",
                             "1RFhr3-KmOZCR5rtp121",
                         ],
-                        "drive_ids": "1RFhr3-KmOZCR5rtp1230",
+                        "drive_ids": ["1RFhr3-KmOZCR5rtp1230"],
                         "client_config": {},
                     },
                     "community": ObjectId("1009c364f1120850414e0dc5"),
@@ -208,7 +209,7 @@ class TestGetDriveCommunityData(TestCase):
                             "1RFhr3-KmOZCR5rtp4dlOM2",
                         ],
                         "file_ids": ["1RFhr3-KmOZCR5rtp121", "1RFhr3-KmOZCR5rtp122"],
-                        "drive_ids": "1RFhr3-KmOZCR5rtp1231",
+                        "drive_ids": ["1RFhr3-KmOZCR5rtp1231"],
                         "client_config": {},
                     },
                     "community": ObjectId("1009c364f1120850414e0dc5"),
@@ -251,7 +252,7 @@ class TestGetDriveCommunityData(TestCase):
                     "1RFhr3-KmOZCR5rtp121",
                     "1RFhr3-KmOZCR5rtp121",
                 ],
-                "drive_ids": "1RFhr3-KmOZCR5rtp1230",
+                "drive_ids": ["1RFhr3-KmOZCR5rtp1230"],
                 "client_config": {},
             },
         )
@@ -265,7 +266,7 @@ class TestGetDriveCommunityData(TestCase):
                     "1RFhr3-KmOZCR5rtp4dlOM2",
                 ],
                 "file_ids": ["1RFhr3-KmOZCR5rtp121", "1RFhr3-KmOZCR5rtp122"],
-                "drive_ids": "1RFhr3-KmOZCR5rtp1231",
+                "drive_ids": ["1RFhr3-KmOZCR5rtp1231"],
                 "client_config": {},
             },
         )

@@ -48,8 +48,9 @@ class DiscordSummary(PrepareSummaries):
     def prepare_summaries(
         self,
         guild_id: str,
+        selected_channels: list[str],
         summarization_prefix: str,
-        from_date: datetime | None = None,
+        from_date: datetime,
     ) -> tuple[list[Document], list[Document], list[Document],]:
         """
         prepare per thread summaries of discord messages.
@@ -59,6 +60,8 @@ class DiscordSummary(PrepareSummaries):
         ------------
         guild_id : str
             the guild id to access data
+        selected_channels: list[str]
+            the discord channels to produce summaries
         summarization_prefix : str
             the summarization query prefix to do on the LLM
         from_date : datetime
@@ -79,7 +82,7 @@ class DiscordSummary(PrepareSummaries):
             ". Organize the output in one or multiple descriptive "
             "bullet points and include important details"
         )
-        raw_data_grouped = prepare_grouped_data(guild_id, from_date)
+        raw_data_grouped = prepare_grouped_data(guild_id, from_date, selected_channels)
         if raw_data_grouped != {}:
             thread_summaries = self.prepare_thread_summaries(
                 guild_id,

@@ -21,6 +21,7 @@ class TestFetchRawMessagesGrouped(TestCase):
 
         client["Core"].drop_collection("modules")
         client["Core"].drop_collection("platforms")
+        client[guild_id].drop_collection("guildmembers")
 
         if create_modules:
             data = {
@@ -80,39 +81,121 @@ class TestFetchRawMessagesGrouped(TestCase):
             )
 
     def test_empty_data_empty_fromdate(self):
+        client = MongoSingleton.get_instance().client
         channels = ["111111", "22222"]
+        users_id = ["user1", "user2", "user3"]
         guild_id = "1234"
         self.setup_db(
             channels=channels,
             guild_id=guild_id,
         )
 
+        for user in users_id:
+            is_bot = False
+            if user == "user3":
+                is_bot = True
+
+            client[guild_id]["guildmembers"].insert_one(
+                {
+                    "discordId": user,
+                    "username": f"username_{user}",
+                    "roles": None,
+                    "joinedAt": datetime(2023, 1, 1),
+                    "avatar": None,
+                    "isBot": is_bot,
+                    "discriminator": "0",
+                    "permissions": None,
+                    "deletedAt": None,
+                    "globalName": None,
+                    "nickname": None,
+                }
+            )
+
         client = MongoSingleton.get_instance().client
         client[guild_id].drop_collection("rawinfos")
 
-        messages = fetch_raw_msg_grouped(guild_id=guild_id, from_date=None)
+        messages = fetch_raw_msg_grouped(
+            guild_id=guild_id,
+            selected_channels=channels,
+            from_date=datetime.now(),
+        )
 
         self.assertEqual(messages, [])
 
     def test_empty_data_non_empty_fromdate(self):
-        guild_id = "1234"
         client = MongoSingleton.get_instance().client
+        guild_id = "1234"
+        channels = ["111111", "22222"]
+        users_id = ["user1", "user2", "user3"]
+        self.setup_db(
+            channels=channels,
+            guild_id=guild_id,
+        )
+
+        for user in users_id:
+            is_bot = False
+            if user == "user3":
+                is_bot = True
+
+            client[guild_id]["guildmembers"].insert_one(
+                {
+                    "discordId": user,
+                    "username": f"username_{user}",
+                    "roles": None,
+                    "joinedAt": datetime(2023, 1, 1),
+                    "avatar": None,
+                    "isBot": is_bot,
+                    "discriminator": "0",
+                    "permissions": None,
+                    "deletedAt": None,
+                    "globalName": None,
+                    "nickname": None,
+                }
+            )
+
         client[guild_id].drop_collection("rawinfos")
         from_date = datetime(2023, 9, 29)
 
-        messages = fetch_raw_msg_grouped(guild_id=guild_id, from_date=from_date)
+        messages = fetch_raw_msg_grouped(
+            guild_id=guild_id,
+            from_date=from_date,
+            selected_channels=["123"],
+        )
 
         self.assertEqual(messages, [])
 
     def test_some_data_available_empty_fromdate_single_channel_single_thread(self):
         channels = ["111111"]
         guild_id = "1234"
+        users_id = ["user1", "user2", "user3"]
+        guild_id = "1234"
         self.setup_db(
             channels=channels,
             guild_id=guild_id,
         )
-
         client = MongoSingleton.get_instance().client
+
+        for user in users_id:
+            is_bot = False
+            if user == "user3":
+                is_bot = True
+
+            client[guild_id]["guildmembers"].insert_one(
+                {
+                    "discordId": user,
+                    "username": f"username_{user}",
+                    "roles": None,
+                    "joinedAt": datetime(2023, 1, 1),
+                    "avatar": None,
+                    "isBot": is_bot,
+                    "discriminator": "0",
+                    "permissions": None,
+                    "deletedAt": None,
+                    "globalName": None,
+                    "nickname": None,
+                }
+            )
+
         client[guild_id].drop_collection("rawinfos")
         from_date = datetime(2023, 9, 29)
 
@@ -120,7 +203,7 @@ class TestFetchRawMessagesGrouped(TestCase):
         for i in range(3):
             data = {
                 "type": 0,
-                "author": f"author_{i}",
+                "author": users_id[i],
                 "content": f"test_message {i}",
                 "user_mentions": [],
                 "role_mentions": [],
@@ -140,8 +223,11 @@ class TestFetchRawMessagesGrouped(TestCase):
 
         client[guild_id]["rawinfos"].insert_many(raw_data)
 
-        results = fetch_raw_msg_grouped(guild_id=guild_id, from_date=from_date)
-        self.assertEqual(len(results), 3)
+        results = fetch_raw_msg_grouped(
+            guild_id=guild_id, selected_channels=channels, from_date=from_date
+        )
+        # we had one of the messages sent by a bot
+        self.assertEqual(len(results), 2)
 
         for res in results:
             messages = res["messages"]
@@ -150,7 +236,7 @@ class TestFetchRawMessagesGrouped(TestCase):
             if res["_id"]["date"] == "2023-10-01":
                 self.assertEqual(len(messages), 1)
                 self.assertEqual(messages[0]["type"], 0)
-                self.assertEqual(messages[0]["author"], "author_0")
+                self.assertEqual(messages[0]["author"], "user1")
                 self.assertEqual(messages[0]["content"], "test_message 0")
                 self.assertEqual(messages[0]["user_mentions"], [])
                 self.assertEqual(messages[0]["role_mentions"], [])
@@ -166,7 +252,7 @@ class TestFetchRawMessagesGrouped(TestCase):
             elif res["_id"]["date"] == "2023-10-02":
                 self.assertEqual(len(messages), 1)
                 self.assertEqual(messages[0]["type"], 0)
-                self.assertEqual(messages[0]["author"], "author_1")
+                self.assertEqual(messages[0]["author"], "user2")
                 self.assertEqual(messages[0]["content"], "test_message 1")
                 self.assertEqual(messages[0]["user_mentions"], [])
                 self.assertEqual(messages[0]["role_mentions"], [])
@@ -179,22 +265,6 @@ class TestFetchRawMessagesGrouped(TestCase):
                 self.assertEqual(messages[0]["threadId"], None)
                 self.assertEqual(messages[0]["threadName"], None)
                 self.assertEqual(messages[0]["isGeneratedByWebhook"], False)
-            elif res["_id"]["date"] == "2023-10-03":
-                self.assertEqual(len(messages), 1)
-                self.assertEqual(messages[0]["type"], 0)
-                self.assertEqual(messages[0]["author"], "author_2")
-                self.assertEqual(messages[0]["content"], "test_message 2")
-                self.assertEqual(messages[0]["user_mentions"], [])
-                self.assertEqual(messages[0]["role_mentions"], [])
-                self.assertEqual(messages[0]["reactions"], [])
-                self.assertEqual(messages[0]["replied_user"], None)
-                self.assertEqual(messages[0]["createdDate"], datetime(2023, 10, 3))
-                self.assertEqual(messages[0]["messageId"], "111112")
-                self.assertEqual(messages[0]["channelId"], channels[0])
-                self.assertEqual(messages[0]["channelName"], "general")
-                self.assertEqual(messages[0]["threadId"], None)
-                self.assertEqual(messages[0]["threadName"], None)
-                self.assertEqual(messages[0]["isGeneratedByWebhook"], False)
             else:
                 raise IndexError("Not possible, data shouldn't be here")
 
@@ -202,6 +272,7 @@ class TestFetchRawMessagesGrouped(TestCase):
         self,
     ):
         channels = ["111111", "22222"]
+        users_id = ["user1", "user2", "user3"]
         guild_id = "1234"
         self.setup_db(
             channels=channels,
@@ -211,6 +282,27 @@ class TestFetchRawMessagesGrouped(TestCase):
         client = MongoSingleton.get_instance().client
         client[guild_id].drop_collection("rawinfos")
         from_date = datetime(2023, 9, 29)
+
+        for user in users_id:
+            is_bot = False
+            if user == "user3":
+                is_bot = True
+
+            client[guild_id]["guildmembers"].insert_one(
+                {
+                    "discordId": user,
+                    "username": f"username_{user}",
+                    "roles": None,
+                    "joinedAt": datetime(2023, 1, 1),
+                    "avatar": None,
+                    "isBot": is_bot,
+                    "discriminator": "0",
+                    "permissions": None,
+                    "deletedAt": None,
+                    "globalName": None,
+                    "nickname": None,
+                }
+            )
 
         raw_data = []
         for i in range(3):
@@ -227,7 +319,7 @@ class TestFetchRawMessagesGrouped(TestCase):
 
             data = {
                 "type": 0,
-                "author": f"author_{i}",
+                "author": users_id[i],
                 "content": f"test_message {i}",
                 "user_mentions": [],
                 "role_mentions": [],
@@ -245,15 +337,16 @@ class TestFetchRawMessagesGrouped(TestCase):
 
         client[guild_id]["rawinfos"].insert_many(raw_data)
 
-        results = fetch_raw_msg_grouped(guild_id=guild_id, from_date=from_date)
+        results = fetch_raw_msg_grouped(
+            guild_id=guild_id, selected_channels=channels, from_date=from_date
+        )
 
-        self.assertEqual(len(results), 2)
+        # we had one of the messages sent by a bot
+        self.assertEqual(len(results), 1)
 
         for res in results:
             messages = res["messages"]
             if res["_id"]["date"] == "2023-10-01":
                 self.assertEqual(len(messages), 2)
-            elif res["_id"]["date"] == "2023-10-02":
-                self.assertEqual(len(messages), 1)
             else:
                 raise IndexError("Not possible, data shouldn't be here")

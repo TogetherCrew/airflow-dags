@@ -3,8 +3,7 @@ from datetime import datetime
 
 from dotenv import load_dotenv
 from hivemind_etl_helpers.src.db.github.extract import (
-    fetch_comments,
-    fetch_commits,
+    GithubExtraction,
     fetch_issues,
     fetch_pull_requests,
 )
@@ -21,7 +20,10 @@ from tc_hivemind_backend.db.pg_db_utils import setup_db
 
 
 def process_github_vectorstore(
-    community_id: str, github_org_id: str, from_starting_date: datetime | None = None
+    community_id: str,
+    github_org_ids: list[str],
+    repo_ids: list[str],
+    from_starting_date: datetime | None = None,
 ) -> None:
     """
     ETL process for github raw data
@@ -30,6 +32,12 @@ def process_github_vectorstore(
     ------------
     community_id : str
         the community to save github's data
+    github_org_ids : list[str]
+        a list of github organization ids to process their data
+    repo_ids : list[str]
+        a list of github repositories to process their data
+    from_starting_date : datetime | None
+        the date to start processing data from
     """
     load_dotenv()
     dbname = f"community_{community_id}"
@@ -57,12 +65,20 @@ def process_github_vectorstore(
 
     logging.info(f"Fetching data from date: {from_date}")
 
-    repository_ids = get_github_organization_repos(github_organization_id=github_org_id)
+    org_repository_ids = get_github_organization_repos(
+        github_organization_ids=github_org_ids
+    )
+    repository_ids = list(set(repo_ids + org_repository_ids))
     logging.info(f"{len(repository_ids)} repositories to fetch data from!")
 
     # EXTRACT
-    github_comments = fetch_comments(repository_id=repository_ids, from_date=from_date)
-    github_commits = fetch_commits(repository_id=repository_ids, from_date=from_date)
+    github_extractor = GithubExtraction()
+    github_comments = github_extractor.fetch_comments(
+        repository_id=repository_ids, from_date=from_date
+    )
+    github_commits = github_extractor.fetch_commits(
+        repository_id=repository_ids, from_date=from_date
+    )
     github_issues = fetch_issues(repository_id=repository_ids, from_date=from_date)
     github_prs = fetch_pull_requests(
         repository_id=repository_ids,
