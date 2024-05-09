@@ -2,10 +2,11 @@ from datetime import datetime
 from unittest import TestCase
 
 from bson import ObjectId
-from hivemind_etl_helpers.src.utils.get_communities_data import (
-    get_all_notion_communities,
-)
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
+
+from dags.hivemind_etl_helpers.src.utils.get_communities_data import (
+    get_all_notion_communities
+)
 
 
 class TestGetNotionCommunityData(TestCase):
