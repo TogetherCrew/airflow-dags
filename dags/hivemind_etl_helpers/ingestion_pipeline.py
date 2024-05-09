@@ -8,7 +8,7 @@ from llama_index.storage.kvstore.redis import RedisKVStore as RedisCache
 from llama_index.vector_stores.postgres import PGVectorStore
 from tc_hivemind_backend.db.credentials import load_postgres_credentials
 from tc_hivemind_backend.db.utils.model_hyperparams import (
-    load_model_hyperparams
+    load_model_hyperparams,
 )
 from tc_hivemind_backend.embeddings.cohere import CohereEmbedding
 
@@ -16,7 +16,7 @@ from dags.hivemind_etl_helpers.src.db.gdrive.db_utils import setup_db
 
 
 class CustomIngestionPipeline:
-    def __init__(self, community_id: str, table_name: str,
+    def __init__(self, community_id: str, table_name: str, 
                  testing: bool = False):
         redis_credentials = load_redis_credentials()
         postgres_credentials = load_postgres_credentials()
@@ -59,8 +59,7 @@ class CustomIngestionPipeline:
                 embed_dim=embedding_dim,
             ),
             cache=IngestionCache(
-                cache=RedisCache.from_host_and_port(self.redis_host,
-                                                    self.redis_port),
+                cache=RedisCache.from_host_and_port(self.redis_host, self.redis_port),
                 collection=self.dbname + f"_{self.table_name}" + "_ingestion_cache",
             ),
             docstore_strategy=DocstoreStrategy.UPSERTS,

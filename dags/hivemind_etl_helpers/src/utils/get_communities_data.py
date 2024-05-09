@@ -107,9 +107,7 @@ def get_google_drive_communities() -> (
     return communities_data
 
 
-def get_all_notion_communities() -> (
-        list[dict[str, str | list[str] | datetime | dict]]
-):
+def get_all_notion_communities() -> list[dict[str, str | list[str] | datetime | dict]]:
     """
     Get all the Notion communities with their database IDs, page IDs, and client config.
 
@@ -140,7 +138,7 @@ def get_all_notion_communities() -> (
             platform_data = platform["platforms"]
             platform_from_date = platform_data["fromDate"]
             database_ids = platform_data["metadata"]["database_ids"]
-            page_ids = platform_data["metadata"]["file_ids"]
+            page_ids = platform_data["metadata"]["page_ids"]
             client_config = platform_data["metadata"]["client_config"]
 
             communities_data.append(
@@ -149,7 +147,7 @@ def get_all_notion_communities() -> (
                     "from_date": platform_from_date,
                     "database_ids": database_ids,
                     "page_ids": page_ids,
-                    "client_config": client_config
+                    "client_config": client_config,
                 }
             )
     return communities_data

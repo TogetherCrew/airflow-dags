@@ -1,9 +1,9 @@
 import os
+from typing import List, Optional
+
+from dotenv import load_dotenv
 from llama_index.core import Document
 from llama_index.readers.notion import NotionPageReader
-
-from typing import List, Optional
-from dotenv import load_dotenv
 
 
 class NotionExtractor:
@@ -21,14 +21,17 @@ class NotionExtractor:
         """
         if notion_token is None:
             load_dotenv()
-            self.integration_token = os.getenv('NOTION_INTEGRATION_TOKEN')
+            self.integration_token = os.getenv("NOTION_INTEGRATION_TOKEN")
         else:
             self.integration_token = notion_token
 
         self.notion_page_reader = NotionPageReader(self.integration_token)
 
-
-    def extract(self, page_ids: Optional[List[str]] = None, database_ids: Optional[List[str]] = None) -> List[Document]:
+    def extract(
+        self,
+        page_ids: Optional[List[str]] = None,
+        database_ids: Optional[List[str]] = None,
+    ) -> List[Document]:
         """
         Extracts documents from Notion pages and databases,
         specified by their IDs.

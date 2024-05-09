@@ -30,9 +30,7 @@ class TestNotionIngestionPipeline(unittest.TestCase):
         self.setUpDB(community)
         table_name = "notion"
         notion_ingestion_pipeline = CustomIngestionPipeline(
-            community_id="1312",
-            table_name=table_name,
-            testing=True
+            community_id="1312", table_name=table_name, testing=True
         )
         docs = [
             Document(
