@@ -27,49 +27,53 @@ class GoogleDriveLoader:
            List of loaded document objects.
         """
 
+        documents = []
         if folder_ids:
-            logging.info("Loading documents from folders...")
-            return self._load_from_folders(folder_ids)
-        elif drive_ids:
-            logging.info("Loading documents from drives...")
-            return self._load_from_drives(drive_ids)
-        elif file_ids:
-            logging.info("Loading documents directly...")
-            return self._load_from_files(file_ids)
-        else:
+            for folder_id in folder_ids:
+                logging.info("Loading documents from folders...")
+                documents.extend(self._load_from_folders(folder_id))
+        if drive_ids:
+            for drive_id in drive_ids:
+                print(drive_id)
+                logging.info("Loading documents from drives...")
+                documents.extend(self._load_from_drives(drive_id))
+        if file_ids:
+            logging.info("Loading documents from files...")
+            documents.extend(self._load_from_files(file_ids))
+        if not documents:
             raise ValueError("One input at least must be given!")
 
-    def _load_from_folders(self, folder_ids: List[str]):
-        folders_data = []
-        for folder_id in folder_ids:
-            logging.info(f"Processing folder: {folder_id}")
-            try:
-                folders_data.extend(self.loader.load_data(folder_id=folder_id))
-            except Exception as e:
-                logging.error(
-                    f"An error occurred while loading from folder: {e}", exc_info=True
-                )
-        return folders_data
+        return documents
 
-    def _load_from_drives(self, drive_ids: List[str]):
-        drive_data = []
-        for drive_id in drive_ids:
-            logging.info(f"Processing drive: {drive_id}")
-            try:
-                drive_data.extend(self.loader.load_data(folder_id=drive_id))
-            except Exception as e:
-                logging.error(
-                    f"An error occurred while loading from folder: {e}", exc_info=True
-                )
-        return drive_data
-
-    def _load_from_files(self, file_ids: List[str]):
-        file_data = []
-        logging.info(f"Processing file {file_ids}")
+    def _load_from_folders(self, folder_id: str):
+        logging.info(f"Processing folder: {folder_id}")
         try:
-            file_data.extend(self.loader.load_data(file_ids=file_ids))
+            load_folder = self.loader.load_data(folder_id=folder_id)
+            return load_folder
+        except Exception as e:
+            logging.error(
+                f"An error occurred while loading from folder: {e}", exc_info=True
+            )
+            return []
+
+    def _load_from_drives(self, drive_id: str):
+        logging.info(f"Processing drive: {drive_id}")
+        try:
+            load_drive_data = self.loader.load_data(folder_id=drive_id)
+            return load_drive_data
+        except Exception as e:
+            logging.error(
+                f"An error occurred while loading from folder: {e}", exc_info=True
+            )
+            return []
+
+    def _load_from_files(self, file_id: List[str]):
+        logging.info(f"Processing file {file_id}")
+        try:
+            load_file_data = self.loader.load_data(file_ids=file_id)
+            return load_file_data
         except Exception as e:
             logging.error(
                 f"An error occurred while loading from file: {e}", exc_info=True
             )
-        return file_data
+            return []
