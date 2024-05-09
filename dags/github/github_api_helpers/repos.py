@@ -51,6 +51,18 @@ def get_all_org_repos(org_name: str):
     return all_repos
 
 
+def fetch_repo_using_id(repo_id: int):
+    """
+    fetch github repository using their id
+    """
+    logging.info(f"Fetching repository of repo-id: {repo_id}")
+    endpoint = f"https://api.github.com/repositories/{repo_id}"
+    response = get(endpoint)
+    response_data = response.json()
+
+    return response_data
+
+
 def fetch_repo_contributors_page(owner: str, repo: str, page: int, per_page: int = 100):
     """
     Fetches the contributors for a specific repository in GitHub.
