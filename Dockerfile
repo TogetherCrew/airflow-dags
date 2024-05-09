@@ -1,4 +1,4 @@
-FROM apache/airflow:2.9.0-python3.11 AS prod
+FROM apache/airflow:2.9.1-python3.11 AS prod
 USER root
 COPY . .
 RUN chmod +x init.sh
