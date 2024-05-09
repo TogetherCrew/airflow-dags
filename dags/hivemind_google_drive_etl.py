@@ -23,12 +23,12 @@ with DAG(
         return gdrive_communities
 
     @task
-    def process_gdrive_data(community_information: dict[str, str | datetime]):
+    def process_gdrive_data(community_information: list[dict[str, str | list[str] | datetime | dict]]):
         community_id = community_information["community_id"]
-        file_ids = communities_info["file_ids"]
-        folder_ids = communities_info["folder_ids"]
-        drive_ids = communities_info["drive_ids"]
-        client_config = communities_info[client_config]
+        file_ids = community_id["file_ids"]
+        folder_ids = community_id["folder_ids"]
+        drive_ids = community_id["drive_ids"]
+        client_config = community_id[client_config]
 
         logging.info(f"Starting Gdrive ETL | community_id: {community_id}")
         loader = GoogleDriveLoader(client_config=client_config)
@@ -39,5 +39,5 @@ with DAG(
         ingest_data = GoogleDriveIngestionPipeline(community_id=community_id)
         ingest_data.run_pipeline(load_file_data)
 
-        communities_info = get_gdrive_communities()
-        process_gdrive_data.expand(community_information=communities_info)
+    communities_info = get_gdrive_communities()
+    process_gdrive_data.expand(community_information=communities_info)
