@@ -1,7 +1,9 @@
 import unittest
 
-from hivemind_etl_helpers.src.utils.credentials import (load_mongo_credentials,
-                                                        load_redis_credentials)
+from hivemind_etl_helpers.src.utils.credentials import (
+    load_mongo_credentials,
+    load_redis_credentials,
+)
 
 
 class TestCredentialLoadings(unittest.TestCase):

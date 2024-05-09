@@ -1,14 +1,9 @@
 import unittest
-from unittest.mock import Mock
-
 import psycopg2
+from dags.hivemind_etl_helpers.ingestion_pipeline import CustomIngestionPipeline
 from hivemind_etl_helpers.src.db.gdrive.db_utils import setup_db
 from llama_index.core.schema import Document
 from tc_hivemind_backend.db.credentials import load_postgres_credentials
-
-from dags.hivemind_etl_helpers.ingestion_pipeline import (
-    CustomIngestionPipeline
-)
 
 
 class TestNotionIngestionPipeline(unittest.TestCase):
@@ -25,7 +20,6 @@ class TestNotionIngestionPipeline(unittest.TestCase):
         )
 
     def test_run_pipeline(self):
-        ingest_pipeline = Mock(CustomIngestionPipeline)
         community = "1312"
         self.setUpDB(community)
         table_name = "notion"
@@ -44,5 +38,4 @@ class TestNotionIngestionPipeline(unittest.TestCase):
         ]
 
         processed_result = notion_ingestion_pipeline.run_pipeline(docs)
-        ingest_pipeline.run.return_value = processed_result
         self.assertEqual(len(processed_result), 2)

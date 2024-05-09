@@ -51,11 +51,7 @@ class DiscordSummary(PrepareSummaries):
         selected_channels: list[str],
         summarization_prefix: str,
         from_date: datetime,
-    ) -> tuple[
-        list[Document],
-        list[Document],
-        list[Document],
-    ]:
+    ) -> tuple[list[Document], list[Document], list[Document],]:
         """
         prepare per thread summaries of discord messages.
         Note: This will always process the data until 1 day ago.
