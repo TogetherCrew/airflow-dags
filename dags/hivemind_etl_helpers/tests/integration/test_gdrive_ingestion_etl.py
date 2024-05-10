@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import Mock
 
-from hivemind_etl_helpers.gdrive_ingestion_etl import GoogleDriveIngestionPipeline
+from dags.hivemind_etl_helpers.ingestion_pipeline import CustomIngestionPipeline
 from hivemind_etl_helpers.src.db.gdrive.db_utils import setup_db
 from llama_index.core import MockEmbedding
 from llama_index.core.ingestion import IngestionPipeline
@@ -25,8 +25,9 @@ class TestGoogleDriveIngestionPipeline(unittest.TestCase):
     def test_run_pipeline(self):
         ingest_pipeline = Mock(IngestionPipeline)
         community = "1234"
+        table_name = "gdrive"
         self.setUpDB(community)
-        gdrive_pipeline = GoogleDriveIngestionPipeline("1234")
+        gdrive_pipeline = CustomIngestionPipeline("1234", table_name=table_name, testing=True)
         gdrive_pipeline.cohere_model = MockEmbedding(embed_dim=1024)
         docs = [
             Document(
@@ -46,8 +47,9 @@ class TestGoogleDriveIngestionPipeline(unittest.TestCase):
     def test_load_pipeline_run_exception(self):
         ingest_pipeline = Mock(IngestionPipeline)
         community = "1234"
+        table_name = "gdrive"
         self.setUpDB(community)
-        gdrive_pipeline = GoogleDriveIngestionPipeline("1234")
+        gdrive_pipeline = CustomIngestionPipeline("1234", table_name=table_name, testing=True)
         gdrive_pipeline.cohere_model = MockEmbedding(embed_dim=1024)
         docs = ["ww"]
 
