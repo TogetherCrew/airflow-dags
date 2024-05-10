@@ -1,5 +1,3 @@
-from dags.hivemind_etl_helpers.src.db.gdrive.db_utils import setup_db
-from hivemind_etl_helpers.src.utils.credentials import load_redis_credentials
 from llama_index.core import MockEmbedding
 from llama_index.core.ingestion import (
     DocstoreStrategy,
@@ -14,19 +12,18 @@ from tc_hivemind_backend.db.credentials import load_postgres_credentials
 from tc_hivemind_backend.db.utils.model_hyperparams import load_model_hyperparams
 from tc_hivemind_backend.embeddings.cohere import CohereEmbedding
 
+from dags.hivemind_etl_helpers.src.db.gdrive.db_utils import setup_db
+from dags.hivemind_etl_helpers.src.utils.redis import RedisSingleton
+
 
 class CustomIngestionPipeline:
     def __init__(self, community_id: str, table_name: str, testing: bool = False):
-        postgres_credentials = load_postgres_credentials()
-        redis_credentials = load_redis_credentials()
-        self.postgres_credentials = postgres_credentials
-        self.redis_credentials = redis_credentials
+        self.postgres_credentials = load_postgres_credentials()
         self.table_name = table_name
         self.dbname = f"community_{community_id}"
         self.community_id = community_id
-        self.embed_model = CohereEmbedding()
-        if testing:
-            self.embed_model = MockEmbedding(embed_dim=1024)
+        self.embed_model = CohereEmbedding() if not testing else MockEmbedding(embed_dim=1024)
+        self.redis_client = RedisSingleton.get_instance().get_client()
 
     def run_pipeline(self, docs):
         _, embedding_dim = load_model_hyperparams()
@@ -54,9 +51,7 @@ class CustomIngestionPipeline:
                 embed_dim=embedding_dim,
             ),
             cache=IngestionCache(
-                cache=RedisCache.from_host_and_port(
-                    self.redis_credentials["host"], self.redis_credentials["port"]
-                ),
+                cache=RedisCache.from_redis_client(self.redis_client),
                 collection=self.dbname + f"_{self.table_name}" + "_ingestion_cache",
             ),
             docstore_strategy=DocstoreStrategy.UPSERTS,
