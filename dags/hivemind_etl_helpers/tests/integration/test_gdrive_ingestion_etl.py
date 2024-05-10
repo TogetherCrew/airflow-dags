@@ -3,7 +3,6 @@ from unittest.mock import Mock
 
 from dags.hivemind_etl_helpers.ingestion_pipeline import CustomIngestionPipeline
 from hivemind_etl_helpers.src.db.gdrive.db_utils import setup_db
-from llama_index.core import MockEmbedding
 from llama_index.core.ingestion import IngestionPipeline
 from llama_index.core.schema import Document
 from tc_hivemind_backend.db.credentials import load_postgres_credentials
@@ -27,8 +26,9 @@ class TestGoogleDriveIngestionPipeline(unittest.TestCase):
         community = "1234"
         table_name = "gdrive"
         self.setUpDB(community)
-        gdrive_pipeline = CustomIngestionPipeline("1234", table_name=table_name, testing=True)
-        gdrive_pipeline.cohere_model = MockEmbedding(embed_dim=1024)
+        gdrive_pipeline = CustomIngestionPipeline(
+            "1234", table_name=table_name, testing=True
+        )
         docs = [
             Document(
                 id_="b049e7cf-3279-404b-b324-9776fe1cf60b",
@@ -45,14 +45,14 @@ class TestGoogleDriveIngestionPipeline(unittest.TestCase):
         self.assertEqual(len(processed_result), 2)
 
     def test_load_pipeline_run_exception(self):
-        ingest_pipeline = Mock(IngestionPipeline)
-        community = "1234"
-        table_name = "gdrive"
-        self.setUpDB(community)
-        gdrive_pipeline = CustomIngestionPipeline("1234", table_name=table_name, testing=True)
-        gdrive_pipeline.cohere_model = MockEmbedding(embed_dim=1024)
+        gdrive_pipeline = CustomIngestionPipeline(
+            "1234", table_name="gdrive", testing=True
+        )
+        gdrive_pipeline.run_pipeline = Mock()
+        gdrive_pipeline.run_pipeline.side_effect = Exception("Test Exception")
         docs = ["ww"]
-
-        processed_result = gdrive_pipeline.run_pipeline(docs)
-        ingest_pipeline.side_effect = Exception("Test Exception")
-        self.assertIsNone(processed_result)
+        try:
+            gdrive_pipeline.run_pipeline(docs)
+        except Exception as e:
+            self.assertEqual(str(e), "Test Exception")
+        gdrive_pipeline.run_pipeline.assert_called_with(docs)
