@@ -76,12 +76,13 @@ services:
       retries: 5
   redis:
     image: redis:7.2.4
+    command: redis-server --requirepass password
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=password
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD", "redis-cli", "-a", "password", "ping"]
       interval: 10s
       timeout: 30s
       retries: 50

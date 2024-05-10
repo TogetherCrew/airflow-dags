@@ -25,7 +25,6 @@ class CustomIngestionPipeline:
             CohereEmbedding() if not testing else MockEmbedding(embed_dim=1024)
         )
         self.redis_client = RedisSingleton.get_instance().get_client()
-        self.redis_client = RedisSingleton.get_instance().get_client()
 
     def run_pipeline(self, docs):
         _, embedding_dim = load_model_hyperparams()
