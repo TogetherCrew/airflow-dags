@@ -32,8 +32,8 @@ class RedisSingleton:
 
     def create_redis_client(self, redis_creds: dict[str, str]):
         return redis.Redis(
-            host=redis_creds['host'],
-            port=int(redis_creds['port']),
-            password=redis_creds.get('password', None),
+            host=redis_creds["host"],
+            port=int(redis_creds["port"]),
+            password=redis_creds["password"],
             decode_responses=True,
         )

@@ -1,6 +1,6 @@
-from llama_index.core import MockEmbedding
 from dags.hivemind_etl_helpers.src.db.gdrive.db_utils import setup_db
 from dags.hivemind_etl_helpers.src.utils.redis import RedisSingleton
+from llama_index.core import MockEmbedding
 from llama_index.core.ingestion import (
     DocstoreStrategy,
     IngestionCache,
@@ -21,7 +21,10 @@ class CustomIngestionPipeline:
         self.table_name = table_name
         self.dbname = f"community_{community_id}"
         self.community_id = community_id
-        self.embed_model = CohereEmbedding() if not testing else MockEmbedding(embed_dim=1024)
+        self.embed_model = (
+            CohereEmbedding() if not testing else MockEmbedding(embed_dim=1024)
+        )
+        self.redis_client = RedisSingleton.get_instance().get_client()
         self.redis_client = RedisSingleton.get_instance().get_client()
 
     def run_pipeline(self, docs):
