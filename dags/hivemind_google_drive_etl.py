@@ -30,7 +30,7 @@ with DAG(
         file_ids = community_information[0]["file_ids"]
         folder_ids = community_information[0]["folder_ids"]
         drive_ids = community_information[0]["drive_ids"]
-        client_config = community_information[0]['client_config']
+        client_config = community_information[0]["client_config"]
 
         logging.info(f"Starting Gdrive ETL | community_id: {community_id}")
         loader = GoogleDriveLoader(client_config=client_config)
