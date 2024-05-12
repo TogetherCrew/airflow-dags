@@ -26,11 +26,11 @@ with DAG(
     def process_gdrive_data(
         community_information: list[dict[str, str | list[str] | datetime | dict]]
     ):
-        community_id = community_information["community_id"]
-        file_ids = community_information["file_ids"]
-        folder_ids = community_information["folder_ids"]
-        drive_ids = community_information["drive_ids"]
-        client_config = community_information['client_config']
+        community_id = community_information[0]["community_id"]
+        file_ids = community_information[0]["file_ids"]
+        folder_ids = community_information[0]["folder_ids"]
+        drive_ids = community_information[0]["drive_ids"]
+        client_config = community_information[0]['client_config']
 
         logging.info(f"Starting Gdrive ETL | community_id: {community_id}")
         loader = GoogleDriveLoader(client_config=client_config)

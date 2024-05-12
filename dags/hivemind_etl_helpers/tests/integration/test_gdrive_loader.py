@@ -130,10 +130,9 @@ class TestGoogleDriveLoader(unittest.TestCase):
 
     @patch.object(GoogleDriveReader, "load_data")
     def test_load_from_folders_exception(self, mock_reader):
-        mock_loader = Mock()
         mock_reader.return_value = []
         loader = GoogleDriveLoader(client_config=self.mock_client_config)
-        mock_loader.side_effect = Exception("Test Exception")
+        mock_reader.side_effect = Exception("Test Exception")
         folder_ids = ["folder_id_1", "folder_id_2"]
 
         documents = loader._load_from_folders(folder_ids)
@@ -141,10 +140,9 @@ class TestGoogleDriveLoader(unittest.TestCase):
 
     @patch.object(GoogleDriveReader, "load_data")
     def test_load_from_drives_exception(self, mock_reader):
-        mock_loader = Mock()
         mock_reader.return_value = []
         loader = GoogleDriveLoader(client_config=self.mock_client_config)
-        mock_loader.side_effect = Exception("Test Exception")
+        mock_reader.side_effect = Exception("Test Exception")
         drives_id = ["folder_id_1", "folder_id_2"]
 
         documents = loader._load_from_drives(drives_id)
@@ -152,10 +150,9 @@ class TestGoogleDriveLoader(unittest.TestCase):
 
     @patch.object(GoogleDriveReader, "load_data")
     def test_load_from_files_exception(self, mock_reader):
-        mock_loader = Mock()
         mock_reader.return_value = []
         loader = GoogleDriveLoader(client_config=self.mock_client_config)
-        mock_loader.side_effect = Exception("Test Exception")
+        mock_reader.side_effect = Exception("Test Exception")
         file_id = ["folder_id_1", "folder_id_2"]
 
         documents = loader._load_from_files(file_id)
