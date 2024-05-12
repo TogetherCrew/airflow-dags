@@ -159,11 +159,11 @@ class TestGoogleDriveLoader(unittest.TestCase):
         self.assertEqual(len(documents), 0)
 
     @patch.object(GoogleDriveReader, "load_data")
-    def test__load_by_folder_id(self, mock_load_data):
-        folder_id = ["folder_id_1", "folder_id_2"]
+    def test__load_by_folder_id(self, mock_get):
+        folder_ids = ["file_id_1", "file_id_2"]
         mock_data = [
             Document(
-                id_="folder_id_1.docx",
+                id_="file_id_1.docx",
                 metadata={
                     "file_name": "qwertU10p2.docx",
                     "file id": "qwertU10p2",
@@ -174,7 +174,7 @@ class TestGoogleDriveLoader(unittest.TestCase):
                 text="Option 1: Keep it super casual",
             ),
             Document(
-                id_="folder_id_2.docx",
+                id_="file_id_2.docx",
                 metadata={
                     "file_name": "qwertU10p3.docx",
                     "file id": "qwertU10p3",
@@ -184,11 +184,10 @@ class TestGoogleDriveLoader(unittest.TestCase):
                 text="Option 1: Keep it super casual",
             ),
         ]
-        self.mock_loader = Mock()
-        mock_load_data.return_value = mock_data
+        mock_get.return_value = mock_data
         loader = GoogleDriveLoader(client_config=self.mock_client_config)
-        result = loader._load_from_folders(folder_id=folder_id)
-        self.assertEqual(len(result), 2)
+        result = loader._load_from_folders(folder_ids=folder_ids)
+        assert result[0].id_ == mock_data[0].id_
 
     @patch.object(GoogleDriveReader, "load_data")
     def test__load_by_file_id(self, mock_load_data):
@@ -218,10 +217,11 @@ class TestGoogleDriveLoader(unittest.TestCase):
         ]
         mock_load_data.return_value = mock_data
         loader = GoogleDriveLoader(self.mock_client_config)
-        result = loader._load_from_files(file_id=file_ids)
+        result = loader._load_from_files(file_ids=file_ids)
 
         self.assertEqual(len(result), 2)
         self.assertEqual(result, mock_data)
+        assert result[0].id_ == mock_data[0].id_
 
     @patch.object(GoogleDriveReader, "load_data")
     def test__load_by_drive_id(self, mock_load_data):
@@ -249,8 +249,10 @@ class TestGoogleDriveLoader(unittest.TestCase):
                 text="Option 1: Keep it super casual",
             ),
         ]
-        mock_load_data.return_value = mock_data
-        loader = GoogleDriveLoader(self.mock_client_config)
-        result = loader._load_from_drives(drive_id=drive_ids)
 
-        self.assertEqual(len(result), 2)
+        mock_load_data.return_value = mock_data
+        loader = GoogleDriveLoader(client_config=self.mock_client_config)
+        result = loader._load_from_drives(drive_ids=drive_ids)
+        assert result[0].id_ == mock_data[0].id_
+
+        self.assertEqual(len(result), 4)
