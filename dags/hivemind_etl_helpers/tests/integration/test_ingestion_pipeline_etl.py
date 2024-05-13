@@ -8,7 +8,7 @@ from llama_index.core.schema import Document
 from tc_hivemind_backend.db.credentials import load_postgres_credentials
 
 
-class TestGoogleDriveIngestionPipeline(unittest.TestCase):
+class TestIngestionPipeline(unittest.TestCase):
     def setUpDB(self, community: str):
         self.db_name = f"community_{community}"
         self.creds = load_postgres_credentials()
