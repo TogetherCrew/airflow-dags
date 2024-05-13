@@ -90,6 +90,8 @@ class TestGoogleDriveLoader(unittest.TestCase):
         loader = GoogleDriveLoader(client_config=self.mock_client_config)
         result = loader.load_data(drive_ids=drive_ids)
 
+        # because we have called `load_data` two times for drives
+        # we're expecting the result to be 4
         self.assertEqual(len(result), 4)
         self.assertEqual(result[0].id_, mock_data[0].id_)
 
