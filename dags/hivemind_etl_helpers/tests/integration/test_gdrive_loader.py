@@ -141,7 +141,6 @@ class TestGoogleDriveLoader(unittest.TestCase):
     @patch.object(GoogleDriveReader, "load_data")
     def test_load_from_files_exception(self, mock_reader):
         mock_reader.return_value = []
-        loader = GoogleDriveLoader(client_config=self.mock_client_config)
         loader = GoogleDriveLoader(refresh_token=self.refresh_token)
         file_id = ["folder_id_1", "folder_id_2"]
 
