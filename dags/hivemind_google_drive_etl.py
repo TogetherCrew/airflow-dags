@@ -7,9 +7,7 @@ from airflow import DAG
 from airflow.decorators import task
 from hivemind_etl_helpers.gdrive_ingestion_etl import GoogleDriveIngestionPipeline
 from hivemind_etl_helpers.src.db.gdrive.gdrive_loader import GoogleDriveLoader
-from hivemind_etl_helpers.src.utils.get_communities_data import (
-    get_google_drive_communities,
-)
+from hivemind_etl_helpers.src.utils.modules import ModulesGDrive
 
 with DAG(
     dag_id="gdrive_vector_store",
@@ -19,21 +17,22 @@ with DAG(
 
     @task
     def get_gdrive_communities():
-        gdrive_communities = get_google_drive_communities()
+        modules = ModulesGDrive()
+        gdrive_communities = modules.get_learning_platforms()
         return gdrive_communities
 
     @task
     def process_gdrive_data(
-        community_information: list[dict[str, str | list[str] | datetime | dict]]
+        community_information: dict[str, str | list[str] | datetime | dict]
     ):
-        community_id = community_information[0]["community_id"]
-        file_ids = community_information[0]["file_ids"]
-        folder_ids = community_information[0]["folder_ids"]
-        drive_ids = community_information[0]["drive_ids"]
-        client_config = community_information[0]["client_config"]
+        community_id = community_information["community_id"]
+        file_ids = community_information["file_ids"]
+        folder_ids = community_information["folder_ids"]
+        drive_ids = community_information["drive_ids"]
+        refresh_token = community_information["refresh_token"]
 
         logging.info(f"Starting Gdrive ETL | community_id: {community_id}")
-        loader = GoogleDriveLoader(client_config=client_config)
+        loader = GoogleDriveLoader(refresh_token=refresh_token)
         load_file_data = loader.load_data(
             file_ids=file_ids, folder_ids=folder_ids, drive_ids=drive_ids
         )
