@@ -59,7 +59,7 @@ class TestGoogleDriveLoader(unittest.TestCase):
         result = loader.load_data(folder_ids=folder_id)
 
         self.assertEqual(len(result), 4)
-        # self.assertEqual(result, mock_data)
+        self.assertEqual(result[0].id_, mock_data[0].id_)
 
     @patch.object(GoogleDriveReader, "load_data")
     def test_load_by_drive_id(self, mock_load_data):
@@ -93,7 +93,7 @@ class TestGoogleDriveLoader(unittest.TestCase):
         result = loader.load_data(drive_ids=drive_ids)
 
         self.assertEqual(len(result), 4)
-        # self.assertEqual(result, mock_data)
+        self.assertEqual(result[0].id_, mock_data[0].id_)
 
     @patch.object(GoogleDriveReader, "load_data")
     def test_load_by_file_id(self, mock_load_data):
@@ -187,7 +187,8 @@ class TestGoogleDriveLoader(unittest.TestCase):
         mock_get.return_value = mock_data
         loader = GoogleDriveLoader(client_config=self.mock_client_config)
         result = loader._load_from_folders(folder_ids=folder_ids)
-        assert result[0].id_ == mock_data[0].id_
+        self.assertEqual(len(result), 4)
+        self.assertEqual(result[0].id_, mock_data[0].id_)
 
     @patch.object(GoogleDriveReader, "load_data")
     def test__load_by_file_id(self, mock_load_data):
@@ -221,7 +222,7 @@ class TestGoogleDriveLoader(unittest.TestCase):
 
         self.assertEqual(len(result), 2)
         self.assertEqual(result, mock_data)
-        assert result[0].id_ == mock_data[0].id_
+        self.assertEqual(result[0].id_, mock_data[0].id_)
 
     @patch.object(GoogleDriveReader, "load_data")
     def test__load_by_drive_id(self, mock_load_data):
@@ -253,6 +254,6 @@ class TestGoogleDriveLoader(unittest.TestCase):
         mock_load_data.return_value = mock_data
         loader = GoogleDriveLoader(client_config=self.mock_client_config)
         result = loader._load_from_drives(drive_ids=drive_ids)
-        assert result[0].id_ == mock_data[0].id_
+        self.assertEqual(result[0].id_, mock_data[0].id_)
 
         self.assertEqual(len(result), 4)
