@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 from hivemind_etl_helpers.src.db.gdrive.gdrive_loader import GoogleDriveLoader
 from llama_index.core.schema import Document
