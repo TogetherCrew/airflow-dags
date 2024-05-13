@@ -1,8 +1,8 @@
-import os
-from dotenv import load_dotenv
 import logging
+import os
 from typing import List, Optional
 
+from dotenv import load_dotenv
 from llama_index.core.schema import Document
 from llama_index.readers.google import GoogleDriveReader
 
@@ -11,7 +11,6 @@ class GoogleDriveLoader:
     def __init__(self, refresh_token: str):
         self.refresh_token = refresh_token
         client_id, client_secret = self._load_google_drive_creds()
-
 
         self.loader = GoogleDriveReader(
             authorized_user_info={
@@ -84,7 +83,7 @@ class GoogleDriveLoader:
                 f"An error occurred while loading from file: {e}", exc_info=True
             )
         return file_data
-    
+
     def _load_google_drive_creds(self) -> tuple[str, str]:
         """
         load google drive credentials
@@ -105,5 +104,5 @@ class GoogleDriveLoader:
             raise ValueError("`GOOGLE_CLIENT_ID` not found from env variables!")
         if client_secret is None:
             raise ValueError("`GOOGLE_CLIENT_SECRET` not found from env variables!")
-        
+
         return client_id, client_secret

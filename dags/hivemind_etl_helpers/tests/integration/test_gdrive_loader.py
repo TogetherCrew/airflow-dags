@@ -1,5 +1,5 @@
-import unittest
 import os
+import unittest
 from unittest.mock import Mock, patch
 
 from hivemind_etl_helpers.src.db.gdrive.gdrive_loader import GoogleDriveLoader
