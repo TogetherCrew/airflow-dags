@@ -1,3 +1,4 @@
+from bson import ObjectId
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
@@ -55,3 +56,40 @@ class ModulesBase:
         community_ids = list(map(lambda x: str(x["community"]), modules))
 
         return community_ids
+
+    def get_token(self, user: ObjectId, token_type: str) -> str:
+        """
+        get a specific type of token for a user
+        This method is called when we needed a token for modules to extract its data
+
+        Parameters
+        ------------
+        user : ObjectId
+            the user that hold the token
+        token_type : str
+            the type of token. i.e. `google_refresh`
+
+        Returns
+        --------
+        token : str
+            the token that was required for module's ETL process
+        """
+        client = MongoSingleton.get_instance().client
+
+        token_doc = client["Core"]["tokens"].find_one(
+            {
+                "user": user,
+                "type": token_type,
+            },
+            {
+                "token": 1,
+            },
+            sort=[("createdAt", 1)],
+        )
+        if token_doc is None:
+            raise ValueError(
+                f"No Token for the given user {user} "
+                "in tokens collection of the Core database!"
+            )
+        token = token_doc["token"]
+        return token

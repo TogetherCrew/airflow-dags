@@ -2,9 +2,7 @@ from datetime import datetime
 from unittest import TestCase
 
 from bson import ObjectId
-from dags.hivemind_etl_helpers.src.utils.get_communities_data import (
-    get_all_notion_communities,
-)
+from hivemind_etl_helpers.src.utils.modules import ModulesNotion
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
@@ -13,11 +11,11 @@ class TestGetNotionCommunityData(TestCase):
         client = MongoSingleton.get_instance().client
         client["Core"].drop_collection("modules")
         client["Core"].drop_collection("platforms")
-
         self.client = client
+        self.modules_notion = ModulesNotion()
 
     def test_get_empty_data(self):
-        result = get_all_notion_communities()
+        result = self.modules_notion.get_all_notion_communities()
         self.assertEqual(result, [])
 
     def test_get_single_data(self):
@@ -63,7 +61,7 @@ class TestGetNotionCommunityData(TestCase):
             }
         )
 
-        result = get_all_notion_communities()
+        result = self.modules_notion.get_all_notion_communities()
 
         # Assertions
         self.assertIsInstance(result, list)
@@ -130,7 +128,7 @@ class TestGetNotionCommunityData(TestCase):
             }
         )
 
-        result = get_all_notion_communities()
+        result = self.modules_notion.get_all_notion_communities()
 
         # Assertions
         self.assertIsInstance(result, list)
@@ -227,7 +225,7 @@ class TestGetNotionCommunityData(TestCase):
             ]
         )
 
-        result = get_all_notion_communities()
+        result = self.modules_notion.get_all_notion_communities()
 
         self.assertIsInstance(result, list)
         self.assertEqual(len(result), 2)

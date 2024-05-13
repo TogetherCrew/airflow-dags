@@ -6,9 +6,7 @@ from datetime import datetime
 from airflow import DAG
 from airflow.decorators import task
 from dags.hivemind_etl_helpers.notion_etl import process_notion_etl
-from hivemind_etl_helpers.src.utils.get_communities_data import (
-    get_all_notion_communities,
-)
+from hivemind_etl_helpers.src.utils.modules import ModulesNotion
 
 with DAG(
     dag_id="notion_vector_store_update",
@@ -21,7 +19,7 @@ with DAG(
         """
         Getting all communities having notion from database
         """
-        communities = get_all_notion_communities()
+        communities = ModulesNotion().get_all_notion_communities()
         return communities
 
     @task
