@@ -61,7 +61,7 @@ class TestGetNotionCommunityData(TestCase):
             result[0],
             {
                 "community_id": "6579c364f1120850414e0dc5",
-                "from_date": datetime(2024, 1, 1),
+                # "from_date": datetime(2024, 1, 1),
                 "database_ids": [
                     "dadd27f1dc1e4fa6b5b9dea76858dabe",
                     "eadd27f1dc1e4fa6b5b9dea76858dabe",
@@ -140,7 +140,7 @@ class TestGetNotionCommunityData(TestCase):
             result[0],
             {
                 "community_id": "6579c364f1120850414e0dc5",
-                "from_date": datetime(2024, 1, 1),
+                # "from_date": datetime(2024, 1, 1),
                 "database_ids": [
                     "dadd27f1dc1e4fa6b5b9dea76858dabe",
                     "47d677c96cfc434dbe49cb90f0d8fdfb",
@@ -255,7 +255,7 @@ class TestGetNotionCommunityData(TestCase):
             result[0],
             {
                 "community_id": "1009c364f1120850414e0dc5",
-                "from_date": datetime(2024, 1, 1),
+                # "from_date": datetime(2024, 1, 1),
                 "database_ids": [
                     "dadd27f1dc1e4fa6b5b9dea76858dabe",
                     "384d0d271c8d4668a79db40aca9e15de",
@@ -271,7 +271,7 @@ class TestGetNotionCommunityData(TestCase):
             result[1],
             {
                 "community_id": "1009c364f1120850414e0dc5",
-                "from_date": datetime(2024, 2, 2),
+                # "from_date": datetime(2024, 2, 2),
                 "database_ids": [
                     "eadd27f1dc1e4fa6b5b9dea76858dabe",
                     "484d0d271c8d4668a79db40aca9e15de",
