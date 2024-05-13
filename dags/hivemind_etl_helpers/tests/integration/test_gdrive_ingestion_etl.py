@@ -51,8 +51,7 @@ class TestGoogleDriveIngestionPipeline(unittest.TestCase):
         gdrive_pipeline.run_pipeline = Mock()
         gdrive_pipeline.run_pipeline.side_effect = Exception("Test Exception")
         docs = ["ww"]
-        try:
+        with self.assertRaises(Exception) as context:
             gdrive_pipeline.run_pipeline(docs)
-        except Exception as e:
-            self.assertEqual(str(e), "Test Exception")
+        self.assertEqual(str(context.exception), "Test Exception")
         gdrive_pipeline.run_pipeline.assert_called_with(docs)
