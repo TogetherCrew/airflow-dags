@@ -160,7 +160,7 @@ class TestGetNotionCommunityData(TestCase):
         self.client["Core"]["modules"].insert_one(
             {
                 "name": "hivemind",
-                "communityId": ObjectId("1009c364f1120850414e0dc5"),
+                "community": ObjectId("1009c364f1120850414e0dc5"),
                 "options": {
                     "platforms": [
                         {
