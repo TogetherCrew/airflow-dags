@@ -1,0 +1,20 @@
+{
+  // Enables linting in general
+  "python.linting.enabled": true,
+
+  // Enables flake8 for linting
+  "python.linting.flake8Enabled": true,
+
+  // Specifies 'black' as the code formatting provider
+  "python.formatting.provider": "black",
+
+  // Enables automatic code formatting on file save
+  "editor.formatOnSave": true,
+
+  // Configures settings specifically for Python files
+  "[python]": {
+      "editor.codeActionsOnSave": {
+        "source.organizeImports": "never"
+      }
+  }
+}
