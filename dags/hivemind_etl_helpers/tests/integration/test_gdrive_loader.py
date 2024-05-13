@@ -53,7 +53,6 @@ class TestGoogleDriveLoader(unittest.TestCase):
                 text="Option 1: Keep it super casual",
             ),
         ]
-        self.mock_loader = Mock()
         mock_load_data.return_value = mock_data
         loader = GoogleDriveLoader(client_config=self.mock_client_config)
         result = loader.load_data(folder_ids=folder_id)
@@ -89,7 +88,6 @@ class TestGoogleDriveLoader(unittest.TestCase):
         ]
         mock_load_data.return_value = mock_data
         loader = GoogleDriveLoader(client_config=self.mock_client_config)
-        print(loader)
         result = loader.load_data(drive_ids=drive_ids)
 
         self.assertEqual(len(result), 4)
