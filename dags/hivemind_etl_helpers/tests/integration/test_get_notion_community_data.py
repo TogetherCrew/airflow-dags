@@ -42,7 +42,7 @@ class TestGetNotionCommunityData(TestCase):
                                 "client_config": {},
                             },
                             "type": "source",
-                            "fromDate": datetime(2024, 1, 1),
+                            "from_date": datetime(2024, 1, 1),
                             "options": {},
                         }
                     ]
@@ -97,7 +97,7 @@ class TestGetNotionCommunityData(TestCase):
                                 "client_config": {},
                             },
                             "type": "source",
-                            "fromDate": datetime(2024, 1, 1),
+                            "from_date": datetime(2024, 1, 1),
                         }
                     ]
                 },
@@ -109,23 +109,6 @@ class TestGetNotionCommunityData(TestCase):
         self.assertIsInstance(result, list)
         self.assertEqual(len(result), 1)
         print(result[0])
-
-        # self.assertEqual(
-        #     result[0],
-        #     {
-        #         "community_id": "6579c364f1120850414e0dc5",
-        #         "from_date": datetime(2024, 1, 1),
-        #         "database_ids": [
-        #             "dadd27f1dc1e4fa6b5b9dea76858dabe",
-        #             "47d677c96cfc434dbe49cb90f0d8fdfb",
-        #         ],
-        #         "page_ids": [
-        #             "6a3c20b6861145b29030292120aa03e6",
-        #             "e479ee3eef9a4eefb3a393848af9ed9d",
-        #         ],
-        #         "client_config": {},
-        #     },
-        # )
         self.assertEqual(result[0]["community_id"], "6579c364f1120850414e0dc5", "Check community ID")
         self.assertIn(result[0]["from_date"], [datetime(2024, 1, 1), None], "from_date should be datetime(2024, 1, 1) or None")
         self.assertEqual(
@@ -170,7 +153,7 @@ class TestGetNotionCommunityData(TestCase):
                                 ],
                                 "client_config": {},
                             },
-                            "fromDate": datetime(2024, 1, 1),
+                            "from_date": datetime(2024, 1, 1),
                         },
                         {
                             "platform": ObjectId("6579c364f1120850414e0dc7"),
@@ -186,7 +169,7 @@ class TestGetNotionCommunityData(TestCase):
                                 ],
                                 "client_config": {},
                             },
-                            "fromDate": datetime(2024, 2, 2),
+                            "from_date": datetime(2024, 2, 2),
                         },
                     ]
                 },
@@ -197,39 +180,6 @@ class TestGetNotionCommunityData(TestCase):
 
         self.assertIsInstance(result, list)
         self.assertEqual(len(result), 2)
-
-        # self.assertEqual(
-        #     result[0],
-        #     {
-        #         "community_id": "1009c364f1120850414e0dc5",
-        #         "from_date": datetime(2024, 1, 1),
-        #         "database_ids": [
-        #             "dadd27f1dc1e4fa6b5b9dea76858dabe",
-        #             "384d0d271c8d4668a79db40aca9e15de",
-        #         ],
-        #         "page_ids": [
-        #             "6a3c20b6861145b29030292120aa03e6",
-        #             "e479ee3eef9a4eefb3a393848af9ed9d",
-        #         ],
-        #         "client_config": {},
-        #     },
-        # )
-        # self.assertEqual(
-        #     result[1],
-        #     {
-        #         "community_id": "1009c364f1120850414e0dc5",
-        #         "from_date": datetime(2024, 2, 2),
-        #         "database_ids": [
-        #             "eadd27f1dc1e4fa6b5b9dea76858dabe",
-        #             "484d0d271c8d4668a79db40aca9e15de",
-        #         ],
-        #         "page_ids": [
-        #             "7a3c20b6861145b29030292120aa03e6",
-        #             "f479ee3eef9a4eefb3a393848af9ed9d",
-        #         ],
-        #         "client_config": {},
-        #     },
-        # )
         self.assertEqual(result[0]["community_id"], "1009c364f1120850414e0dc5", "Check community ID for first result")
         self.assertIn(result[0]["from_date"], [datetime(2024, 1, 1), None], "from_date should be datetime(2024, 1, 1) or None")
         self.assertEqual(
@@ -252,7 +202,7 @@ class TestGetNotionCommunityData(TestCase):
 
         # Assertions for the second element in the result
         self.assertEqual(result[1]["community_id"], "1009c364f1120850414e0dc5", "Check community ID for second result")
-        self.assertIn(result[0]["from_date"], [datetime(2024, 2, 2), None], "from_date should be datetime(2024, 1, 1) or None")
+        self.assertIn(result[1]["from_date"], [datetime(2024, 2, 2), None], "from_date should be datetime(2024, 2, 2) or None")
         self.assertEqual(
             result[1]["database_ids"],
             [
