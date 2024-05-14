@@ -87,7 +87,6 @@ class TestGetNotionCommunityData(TestCase):
                             "platform": ObjectId("6579c364f1120850414e0dc6"),
                             "name": "notion",
                             "metadata": {
-                                "name": "TEST",
                                 "database_ids": [
                                     "dadd27f1dc1e4fa6b5b9dea76858dabe",
                                     "47d677c96cfc434dbe49cb90f0d8fdfb",
@@ -105,33 +104,9 @@ class TestGetNotionCommunityData(TestCase):
                 },
             }
         )
-        # self.client["Core"]["platforms"].insert_one(
-        #     {
-        #         "_id": ObjectId("6579c364f1120850414e0dc6"),
-        #         "name": "notion",
-        #         "metadata": {
-        #             "name": "TEST",
-        #             "database_ids": [
-        #                 "dadd27f1dc1e4fa6b5b9dea76858dabe",
-        #                 "47d677c96cfc434dbe49cb90f0d8fdfb",
-        #             ],
-        #             "page_ids": [
-        #                 "6a3c20b6861145b29030292120aa03e6",
-        #                 "e479ee3eef9a4eefb3a393848af9ed9d",
-        #             ],
-        #             "client_config": {},
-        #         },
-        #         "community": ObjectId("6579c364f1120850414e0dc5"),
-        #         "disconnectedAt": None,
-        #         "connectedAt": datetime(2023, 12, 1),
-        #         "createdAt": datetime(2023, 12, 1),
-        #         "updatedAt": datetime(2023, 12, 1),
-        #     }
-        # )
 
         result = self.modules_notion.get_all_notion_communities()
 
-        # Assertions
         self.assertIsInstance(result, list)
         self.assertEqual(len(result), 1)
         print(result[0])
@@ -140,7 +115,6 @@ class TestGetNotionCommunityData(TestCase):
             result[0],
             {
                 "community_id": "6579c364f1120850414e0dc5",
-                # "from_date": datetime(2024, 1, 1),
                 "database_ids": [
                     "dadd27f1dc1e4fa6b5b9dea76858dabe",
                     "47d677c96cfc434dbe49cb90f0d8fdfb",
@@ -199,52 +173,6 @@ class TestGetNotionCommunityData(TestCase):
                 },
             }
         )
-        # self.client["Core"]["platforms"].insert_many(
-        #     [
-        #         {
-        #             "_id": ObjectId("6579c364f1120850414e0dc6"),
-        #             "name": "notion",
-        #             "metadata": {
-        #                 "name": "TEST",
-        #                 "database_ids": [
-        #                     "dadd27f1dc1e4fa6b5b9dea76858dabe",
-        #                     "384d0d271c8d4668a79db40aca9e15de",
-        #                 ],
-        #                 "page_ids": [
-        #                     "6a3c20b6861145b29030292120aa03e6",
-        #                     "e479ee3eef9a4eefb3a393848af9ed9d",
-        #                 ],
-        #                 "client_config": {},
-        #             },
-        #             "community": ObjectId("1009c364f1120850414e0dc5"),
-        #             "disconnectedAt": None,
-        #             "connectedAt": datetime(2023, 12, 1),
-        #             "createdAt": datetime(2023, 12, 1),
-        #             "updatedAt": datetime(2023, 12, 1),
-        #         },
-        #         {
-        #             "_id": ObjectId("6579c364f1120850414e0dc7"),
-        #             "name": "notion",
-        #             "metadata": {
-        #                 "name": "TEST",
-        #                 "database_ids": [
-        #                     "eadd27f1dc1e4fa6b5b9dea76858dabe",
-        #                     "484d0d271c8d4668a79db40aca9e15de",
-        #                 ],
-        #                 "page_ids": [
-        #                     "7a3c20b6861145b29030292120aa03e6",
-        #                     "f479ee3eef9a4eefb3a393848af9ed9d",
-        #                 ],
-        #                 "client_config": {},
-        #             },
-        #             "community": ObjectId("1009c364f1120850414e0dc5"),
-        #             "disconnectedAt": None,
-        #             "connectedAt": datetime(2023, 12, 1),
-        #             "createdAt": datetime(2023, 12, 1),
-        #             "updatedAt": datetime(2023, 12, 1),
-        #         },
-        #     ]
-        # )
 
         result = self.modules_notion.get_all_notion_communities()
 
@@ -255,7 +183,6 @@ class TestGetNotionCommunityData(TestCase):
             result[0],
             {
                 "community_id": "1009c364f1120850414e0dc5",
-                # "from_date": datetime(2024, 1, 1),
                 "database_ids": [
                     "dadd27f1dc1e4fa6b5b9dea76858dabe",
                     "384d0d271c8d4668a79db40aca9e15de",
@@ -271,7 +198,6 @@ class TestGetNotionCommunityData(TestCase):
             result[1],
             {
                 "community_id": "1009c364f1120850414e0dc5",
-                # "from_date": datetime(2024, 2, 2),
                 "database_ids": [
                     "eadd27f1dc1e4fa6b5b9dea76858dabe",
                     "484d0d271c8d4668a79db40aca9e15de",

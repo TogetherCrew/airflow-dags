@@ -45,7 +45,7 @@ class ModulesNotion(ModulesBase):
                 communities_data.append(
                     {
                         "community_id": str(community),
-                        "from_date": platform.get("from_date"),
+                        "from_date": platform.get("from_date", None),
                         "database_ids": modules_options.get("database_ids", []),
                         "page_ids": modules_options.get("page_ids", []),
                         "client_config": modules_options.get("client_config", {}),
