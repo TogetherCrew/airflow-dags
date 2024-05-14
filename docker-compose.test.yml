@@ -50,7 +50,7 @@ services:
       - NEO4J_PLUGINS=["apoc", "graph-data-science"]
       - NEO4J_dbms_security_procedures_unrestricted=apoc.*,gds.*
     healthcheck:
-      test: ["CMD" ,"wget", "http://localhost:7474"]
+      test: ["CMD", "wget", "http://localhost:7474"]
       interval: 1m30s
       timeout: 10s
       retries: 2
@@ -78,8 +78,13 @@ services:
       retries: 5
   redis:
     image: redis:7.2.4
+    command: redis-server --requirepass password
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=password
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD", "redis-cli", "-a", "password", "ping"]
       interval: 10s
       timeout: 30s
       retries: 50
