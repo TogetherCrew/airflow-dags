@@ -15,7 +15,7 @@ class TestGetNotionCommunityData(TestCase):
         self.modules_notion = ModulesNotion()
 
     def test_get_empty_data(self):
-        result = self.modules_notion.get_all_notion_communities()
+        result = self.modules_notion.get_learning_platforms()
         self.assertEqual(result, [])
 
     def test_get_single_data(self):
@@ -50,7 +50,7 @@ class TestGetNotionCommunityData(TestCase):
             }
         )
 
-        result = self.modules_notion.get_all_notion_communities()
+        result = self.modules_notion.get_learning_platforms()
 
         self.assertIsInstance(result, list)
         self.assertEqual(len(result), 1)
@@ -104,7 +104,7 @@ class TestGetNotionCommunityData(TestCase):
             }
         )
 
-        result = self.modules_notion.get_all_notion_communities()
+        result = self.modules_notion.get_learning_platforms()
 
         self.assertIsInstance(result, list)
         self.assertEqual(len(result), 1)
@@ -193,7 +193,7 @@ class TestGetNotionCommunityData(TestCase):
             }
         )
 
-        result = self.modules_notion.get_all_notion_communities()
+        result = self.modules_notion.get_learning_platforms()
 
         self.assertIsInstance(result, list)
         self.assertEqual(len(result), 2)

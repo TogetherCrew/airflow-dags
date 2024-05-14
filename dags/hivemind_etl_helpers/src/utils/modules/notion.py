@@ -8,9 +8,9 @@ class ModulesNotion(ModulesBase):
         self.platform_name = "notion"
         super().__init__()
 
-    def get_all_notion_communities(
-            self,
-            ) -> list[dict[str, str | list[str] | datetime | dict]]:
+    def get_learning_platforms(
+        self,
+    ) -> list[dict[str, str | list[str] | datetime | dict]]:
         """
         Get all the Notion communities with their database IDs, page IDs, and client config.
 
@@ -45,7 +45,6 @@ class ModulesNotion(ModulesBase):
                 communities_data.append(
                     {
                         "community_id": str(community),
-                        "from_date": platform.get("from_date", None),
                         "database_ids": modules_options.get("database_ids", []),
                         "page_ids": modules_options.get("page_ids", []),
                         "client_config": modules_options.get("client_config", {}),

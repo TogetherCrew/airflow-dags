@@ -42,7 +42,7 @@ class ModulesGDrive(ModulesBase):
 
                 modules_options = platform["metadata"]
                 refresh_token = self.get_token(
-                    user=modules_options["userId"], token_type="google_refresh"
+                    platform_id=platform["platform"], token_type="google_refresh"
                 )
                 platforms_data.append(
                     {
