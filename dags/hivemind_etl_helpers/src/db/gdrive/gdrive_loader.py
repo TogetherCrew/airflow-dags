@@ -37,17 +37,19 @@ class GoogleDriveLoader:
            List of loaded document objects.
         """
 
+        documents = []
         if folder_ids:
             logging.info("Loading documents from folders...")
-            return self._load_from_folders(folder_ids)
-        elif drive_ids:
+            documents.extend(self._load_from_folders(folder_ids))
+        if drive_ids:
             logging.info("Loading documents from drives...")
-            return self._load_from_drives(drive_ids)
-        elif file_ids:
+            documents.extend(self._load_from_drives(drive_ids))
+        if file_ids:
             logging.info("Loading documents directly...")
-            return self._load_from_files(file_ids)
-        else:
+            documents.extend(self._load_from_files(file_ids))
+        if not documents:
             raise ValueError("One input at least must be given!")
+        return documents
 
     def _load_from_folders(self, folder_ids: List[str]):
         folders_data = []
