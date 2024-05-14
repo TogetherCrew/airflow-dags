@@ -19,7 +19,7 @@ with DAG(
         """
         Getting all communities having notion from database
         """
-        communities = ModulesNotion().get_all_notion_communities()
+        communities = ModulesNotion().get_learning_platforms()
         return communities
 
     @task

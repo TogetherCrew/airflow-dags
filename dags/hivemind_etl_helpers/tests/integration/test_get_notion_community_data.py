@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from unittest import TestCase
 
 from bson import ObjectId
@@ -10,6 +10,7 @@ class TestGetNotionCommunityData(TestCase):
     def setUp(self):
         client = MongoSingleton.get_instance().client
         client["Core"].drop_collection("modules")
+        client["Core"].drop_collection("tokens")
         client["Core"].drop_collection("platforms")
         self.client = client
         self.modules_notion = ModulesNotion()
@@ -19,14 +20,37 @@ class TestGetNotionCommunityData(TestCase):
         self.assertEqual(result, [])
 
     def test_get_single_data(self):
+        sample_user = ObjectId("5d7baf326c8a2e2400000000")
+        platform_id = ObjectId("6579c364f1120850414e0dc6")
+        community_id = ObjectId("6579c364f1120850414e0dc5")
+        sample_access_token = "tokenid8899812"
+
+        self.client["Core"]["platforms"].insert_one(
+            {
+                "_id": platform_id,
+                "name": "notion",
+                "metadata": {
+                    "id": "113445975232201081511",
+                    "userId": str(sample_user),
+                    "name": "John Doe",
+                    "picture": "random-image",
+                    "owner": {"id": str(sample_user)},
+                },
+                "community": community_id,
+                "disconnectedAt": None,
+                "connectedAt": datetime.now(),
+                "createdAt": datetime.now(),
+                "updatedAt": datetime.now(),
+            }
+        )
         self.client["Core"]["modules"].insert_one(
             {
                 "name": "hivemind",
-                "community": ObjectId("6579c364f1120850414e0dc5"),
+                "community": community_id,
                 "options": {
                     "platforms": [
                         {
-                            "platform": ObjectId("6579c364f1120850414e0dc6"),
+                            "platform": platform_id,
                             "name": "notion",
                             "metadata": {
                                 "database_ids": [
@@ -39,14 +63,22 @@ class TestGetNotionCommunityData(TestCase):
                                     "7a3c20b6861145b29030292120aa03e6",
                                     "8a3c20b6861145b29030292120aa03e6",
                                 ],
-                                "client_config": {},
                             },
-                            "type": "source",
-                            "from_date": datetime(2024, 1, 1),
-                            "options": {},
                         }
                     ]
                 },
+            }
+        )
+
+        self.client["Core"]["tokens"].insert_one(
+            {
+                "token": sample_access_token,
+                "user": sample_user,
+                "type": "notion_access",
+                "expires": datetime.now() + timedelta(days=1),
+                "blacklisted": False,
+                "createdAt": datetime.now() - timedelta(days=1),
+                "updatedAt": datetime.now() - timedelta(days=1),
             }
         )
 
@@ -56,14 +88,13 @@ class TestGetNotionCommunityData(TestCase):
         self.assertEqual(len(result), 1)
 
         self.assertEqual(result[0]["community_id"], "6579c364f1120850414e0dc5")
-        self.assertIn(result[0]["from_date"], [datetime(2024, 1, 1), None], "from_date should be datetime(2024, 1, 1) or None")
         self.assertEqual(
             result[0]["database_ids"],
             [
                 "dadd27f1dc1e4fa6b5b9dea76858dabe",
                 "eadd27f1dc1e4fa6b5b9dea76858dabe",
                 "fadd27f1dc1e4fa6b5b9dea76858dabe",
-            ]
+            ],
         )
         self.assertEqual(
             result[0]["page_ids"],
@@ -71,76 +102,30 @@ class TestGetNotionCommunityData(TestCase):
                 "6a3c20b6861145b29030292120aa03e6",
                 "7a3c20b6861145b29030292120aa03e6",
                 "8a3c20b6861145b29030292120aa03e6",
-            ]
-        )
-        self.assertEqual(result[0]["client_config"], {})
-
-    def test_get_string_input(self):
-        self.client["Core"]["modules"].insert_one(
-            {
-                "name": "hivemind",
-                "community": ObjectId("6579c364f1120850414e0dc5"),
-                "options": {
-                    "platforms": [
-                        {
-                            "platform": ObjectId("6579c364f1120850414e0dc6"),
-                            "name": "notion",
-                            "metadata": {
-                                "database_ids": [
-                                    "dadd27f1dc1e4fa6b5b9dea76858dabe",
-                                    "47d677c96cfc434dbe49cb90f0d8fdfb",
-                                ],
-                                "page_ids": [
-                                    "6a3c20b6861145b29030292120aa03e6",
-                                    "e479ee3eef9a4eefb3a393848af9ed9d",
-                                ],
-                                "client_config": {},
-                            },
-                            "type": "source",
-                            "from_date": datetime(2024, 1, 1),
-                        }
-                    ]
-                },
-            }
-        )
-
-        result = self.modules_notion.get_learning_platforms()
-
-        self.assertIsInstance(result, list)
-        self.assertEqual(len(result), 1)
-        print(result[0])
-        self.assertEqual(result[0]["community_id"], "6579c364f1120850414e0dc5", "Check community ID")
-        self.assertIn(result[0]["from_date"], [datetime(2024, 1, 1), None], "from_date should be datetime(2024, 1, 1) or None")
-        self.assertEqual(
-            result[0]["database_ids"],
-            [
-                "dadd27f1dc1e4fa6b5b9dea76858dabe",
-                "47d677c96cfc434dbe49cb90f0d8fdfb",
             ],
-            "Check database IDs match expected"
         )
-        self.assertEqual(
-            result[0]["page_ids"],
-            [
-                "6a3c20b6861145b29030292120aa03e6",
-                "e479ee3eef9a4eefb3a393848af9ed9d",
-            ],
-            "Check page IDs match expected"
-        )
-        self.assertEqual(result[0]["client_config"], {}, "Check client_config is empty")
+        self.assertEqual(result[0]["access_token"], sample_access_token)
 
     def test_get_notion_communities_data_multiple_platforms(self):
         """
         two notion platform for one community
         """
+        sample_user1 = ObjectId("5d7baf326c8a2e2400000000")
+        sample_user2 = ObjectId("5d7baf326c8a2e2400000001")
+        platform_id1 = ObjectId("6579c364f1120850414e0dc6")
+        platform_id2 = ObjectId("6579c364f1120850414e0dc7")
+        community_id = ObjectId("1009c364f1120850414e0dc5")
+        sample_access_token1 = "tokenid8899812"
+        sample_access_token2 = "tokenid8899832"
+
         self.client["Core"]["modules"].insert_one(
             {
                 "name": "hivemind",
-                "community": ObjectId("1009c364f1120850414e0dc5"),
+                "community": community_id,
                 "options": {
                     "platforms": [
                         {
-                            "platform": ObjectId("6579c364f1120850414e0dc6"),
+                            "platform": platform_id1,
                             "name": "notion",
                             "metadata": {
                                 "database_ids": [
@@ -151,12 +136,10 @@ class TestGetNotionCommunityData(TestCase):
                                     "6a3c20b6861145b29030292120aa03e6",
                                     "e479ee3eef9a4eefb3a393848af9ed9d",
                                 ],
-                                "client_config": {},
                             },
-                            "from_date": datetime(2024, 1, 1),
                         },
                         {
-                            "platform": ObjectId("6579c364f1120850414e0dc7"),
+                            "platform": platform_id2,
                             "name": "notion",
                             "metadata": {
                                 "database_ids": [
@@ -167,12 +150,71 @@ class TestGetNotionCommunityData(TestCase):
                                     "7a3c20b6861145b29030292120aa03e6",
                                     "f479ee3eef9a4eefb3a393848af9ed9d",
                                 ],
-                                "client_config": {},
                             },
-                            "from_date": datetime(2024, 2, 2),
                         },
                     ]
                 },
+            }
+        )
+
+        self.client["Core"]["platforms"].insert_one(
+            {
+                "_id": platform_id1,
+                "name": "notion",
+                "metadata": {
+                    "id": "113445975232201081511",
+                    "userId": str(sample_user1),
+                    "name": "John Doe",
+                    "picture": "random-image",
+                    "owner": {"id": str(sample_user1)},
+                },
+                "community": community_id,
+                "disconnectedAt": None,
+                "connectedAt": datetime.now(),
+                "createdAt": datetime.now(),
+                "updatedAt": datetime.now(),
+            }
+        )
+
+        self.client["Core"]["platforms"].insert_one(
+            {
+                "_id": platform_id2,
+                "name": "notion",
+                "metadata": {
+                    "id": "113445975232201081512",
+                    "userId": str(sample_user2),
+                    "name": "Jane Doe",
+                    "picture": "random-image",
+                    "owner": {"id": str(sample_user2)},
+                },
+                "community": community_id,
+                "disconnectedAt": None,
+                "connectedAt": datetime.now(),
+                "createdAt": datetime.now(),
+                "updatedAt": datetime.now(),
+            }
+        )
+        self.client["Core"]["tokens"].insert_one(
+            {
+                "token": sample_access_token1,
+                "user": sample_user1,
+                "type": "notion_access",
+                "expires": datetime.now() + timedelta(days=1),
+                "blacklisted": False,
+                "createdAt": datetime.now() - timedelta(days=1),
+                "updatedAt": datetime.now() - timedelta(days=1),
+            }
+        )
+
+        self.client["Core"]["tokens"].insert_one(
+            {
+                "token": sample_access_token2,
+                "user": sample_user2,
+                "type": "notion_access",
+                "expires": datetime.now() + timedelta(days=1),
+                "blacklisted": False,
+                "createdAt": datetime.now() - timedelta(days=1),
+                "updatedAt": datetime.now() - timedelta(days=1),
             }
         )
 
@@ -180,43 +222,33 @@ class TestGetNotionCommunityData(TestCase):
 
         self.assertIsInstance(result, list)
         self.assertEqual(len(result), 2)
-        self.assertEqual(result[0]["community_id"], "1009c364f1120850414e0dc5", "Check community ID for first result")
-        self.assertIn(result[0]["from_date"], [datetime(2024, 1, 1), None], "from_date should be datetime(2024, 1, 1) or None")
         self.assertEqual(
-            result[0]["database_ids"],
-            [
-                "dadd27f1dc1e4fa6b5b9dea76858dabe",
-                "384d0d271c8d4668a79db40aca9e15de",
-            ],
-            "Check database IDs match expected for first result"
+            result[0],
+            {
+                "community_id": str(community_id),
+                "database_ids": [
+                    "dadd27f1dc1e4fa6b5b9dea76858dabe",
+                    "384d0d271c8d4668a79db40aca9e15de",
+                ],
+                "page_ids": [
+                    "6a3c20b6861145b29030292120aa03e6",
+                    "e479ee3eef9a4eefb3a393848af9ed9d",
+                ],
+                "access_token": sample_access_token1,
+            },
         )
         self.assertEqual(
-            result[0]["page_ids"],
-            [
-                "6a3c20b6861145b29030292120aa03e6",
-                "e479ee3eef9a4eefb3a393848af9ed9d",
-            ],
-            "Check page IDs match expected for first result"
+            result[1],
+            {
+                "community_id": str(community_id),
+                "database_ids": [
+                    "eadd27f1dc1e4fa6b5b9dea76858dabe",
+                    "484d0d271c8d4668a79db40aca9e15de",
+                ],
+                "page_ids": [
+                    "7a3c20b6861145b29030292120aa03e6",
+                    "f479ee3eef9a4eefb3a393848af9ed9d",
+                ],
+                "access_token": sample_access_token2,
+            },
         )
-        self.assertEqual(result[0]["client_config"], {}, "Check client_config is empty for first result")
-
-        # Assertions for the second element in the result
-        self.assertEqual(result[1]["community_id"], "1009c364f1120850414e0dc5", "Check community ID for second result")
-        self.assertIn(result[1]["from_date"], [datetime(2024, 2, 2), None], "from_date should be datetime(2024, 2, 2) or None")
-        self.assertEqual(
-            result[1]["database_ids"],
-            [
-                "eadd27f1dc1e4fa6b5b9dea76858dabe",
-                "484d0d271c8d4668a79db40aca9e15de",
-            ],
-            "Check database IDs match expected for second result"
-        )
-        self.assertEqual(
-            result[1]["page_ids"],
-            [
-                "7a3c20b6861145b29030292120aa03e6",
-                "f479ee3eef9a4eefb3a393848af9ed9d",
-            ],
-            "Check page IDs match expected for second result"
-        )
-        self.assertEqual(result[1]["client_config"], {}, "Check client_config is empty for second result")
