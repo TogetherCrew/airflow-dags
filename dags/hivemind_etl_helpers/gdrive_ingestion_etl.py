@@ -1,15 +1,17 @@
 import logging
 
 from hivemind_etl_helpers.src.utils.credentials import load_redis_credentials
+from hivemind_etl_helpers.src.utils.mongo import get_mongo_uri
+from hivemind_etl_helpers.src.utils.qdrant import QdrantSingleton
 from llama_index.core.ingestion import (
     DocstoreStrategy,
     IngestionCache,
     IngestionPipeline,
 )
 from llama_index.core.node_parser import SemanticSplitterNodeParser
-from llama_index.storage.docstore.postgres import PostgresDocumentStore
 from llama_index.storage.kvstore.redis import RedisKVStore as RedisCache
-from llama_index.vector_stores.postgres import PGVectorStore
+from llama_index.storage.docstore.mongodb import MongoDocumentStore
+from llama_index.vector_stores.qdrant import QdrantVectorStore
 from tc_hivemind_backend.db.credentials import load_postgres_credentials
 from tc_hivemind_backend.db.utils.model_hyperparams import load_model_hyperparams
 from tc_hivemind_backend.embeddings.cohere import CohereEmbedding
@@ -18,45 +20,42 @@ from tc_hivemind_backend.embeddings.cohere import CohereEmbedding
 class GoogleDriveIngestionPipeline:
     def __init__(self, community_id: str):
         self.community_id = community_id
+        self.qdrant_client = QdrantSingleton.get_instance().client
 
         # Embedding models
         self.cohere_model = CohereEmbedding()
         _, self.embedding_dim = load_model_hyperparams()
         self.pg_creds = load_postgres_credentials()
         self.redis_cred = load_redis_credentials()
-        self.table_name = "gdrive"
-        self.dbname = f"community_{community_id}"
+        self.collection_name = community_id
+        self.platform_name = "gdrive"
 
         # Database details
         self.redis_host = self.redis_cred["host"]
         self.redis_port = self.redis_cred["port"]
 
     def run_pipeline(self, docs):
+        # qdrant is just collection based and doesn't have any database
+        qdrant_collection_name = f"{self.collection_name}_{self.platform_name}"
+        vector_store = QdrantVectorStore(
+            client=self.qdrant_client,
+            collection_name=qdrant_collection_name,
+        )
+
         pipeline = IngestionPipeline(
             transformations=[
                 SemanticSplitterNodeParser(embed_model=self.cohere_model),
                 self.cohere_model,
             ],
-            docstore=PostgresDocumentStore.from_params(
-                host=self.pg_creds["host"],
-                port=self.pg_creds["port"],
-                database=self.dbname,
-                user=self.pg_creds["user"],
-                password=self.pg_creds["password"],
-                table_name=self.table_name + "_docstore",
+            docstore=MongoDocumentStore.from_uri(
+                uri=get_mongo_uri(),
+                db_name=f"docstore_{self.collection_name}",
+                namespace=self.platform_name
             ),
-            vector_store=PGVectorStore.from_params(
-                host=self.pg_creds["host"],
-                port=self.pg_creds["port"],
-                database=self.dbname,
-                user=self.pg_creds["user"],
-                password=self.pg_creds["password"],
-                table_name=self.table_name,
-                embed_dim=self.embedding_dim,
-            ),
+            vector_store=vector_store,
             cache=IngestionCache(
                 cache=RedisCache.from_host_and_port(self.redis_host, self.redis_port),
-                collection=self.dbname + f"_{self.table_name}" + "_ingestion_cache",
+                collection=f"{self.collection_name}_{self.platform_name}_ingestion_cache",
                 docstore_strategy=DocstoreStrategy.UPSERTS,
             ),
             docstore_strategy=DocstoreStrategy.UPSERTS,
