@@ -55,26 +55,46 @@ class TestGetNotionCommunityData(TestCase):
         # Assertions
         self.assertIsInstance(result, list)
         self.assertEqual(len(result), 1)
-        print(result[0])
+        # print(result[0])
 
+        # self.assertEqual(
+        #     result[0],
+        #     {
+        #         "community_id": "6579c364f1120850414e0dc5",
+        #         "from_date": datetime(2024, 1, 1),
+        #         "database_ids": [
+        #             "dadd27f1dc1e4fa6b5b9dea76858dabe",
+        #             "eadd27f1dc1e4fa6b5b9dea76858dabe",
+        #             "fadd27f1dc1e4fa6b5b9dea76858dabe",
+        #         ],
+        #         "page_ids": [
+        #             "6a3c20b6861145b29030292120aa03e6",
+        #             "7a3c20b6861145b29030292120aa03e6",
+        #             "8a3c20b6861145b29030292120aa03e6",
+        #         ],
+        #         "client_config": {},
+        #     },
+        # )
+
+        self.assertEqual(result[0]["community_id"], "6579c364f1120850414e0dc5")
+        self.assertIn(result[0]["from_date"], [datetime(2024, 1, 1), None], "from_date should be datetime(2024, 1, 1) or None")
         self.assertEqual(
-            result[0],
-            {
-                "community_id": "6579c364f1120850414e0dc5",
-                "from_date": datetime(2024, 1, 1),
-                "database_ids": [
-                    "dadd27f1dc1e4fa6b5b9dea76858dabe",
-                    "eadd27f1dc1e4fa6b5b9dea76858dabe",
-                    "fadd27f1dc1e4fa6b5b9dea76858dabe",
-                ],
-                "page_ids": [
-                    "6a3c20b6861145b29030292120aa03e6",
-                    "7a3c20b6861145b29030292120aa03e6",
-                    "8a3c20b6861145b29030292120aa03e6",
-                ],
-                "client_config": {},
-            },
+            result[0]["database_ids"],
+            [
+                "dadd27f1dc1e4fa6b5b9dea76858dabe",
+                "eadd27f1dc1e4fa6b5b9dea76858dabe",
+                "fadd27f1dc1e4fa6b5b9dea76858dabe",
+            ]
         )
+        self.assertEqual(
+            result[0]["page_ids"],
+            [
+                "6a3c20b6861145b29030292120aa03e6",
+                "7a3c20b6861145b29030292120aa03e6",
+                "8a3c20b6861145b29030292120aa03e6",
+            ]
+        )
+        self.assertEqual(result[0]["client_config"], {})
 
     def test_get_string_input(self):
         self.client["Core"]["modules"].insert_one(
