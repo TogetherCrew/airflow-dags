@@ -52,7 +52,6 @@ class TestModulesBaseQueryToken(TestCase):
         self.assertEqual(token, sample_token_value)
 
     def test_empty_tokens_collection(self):
-        sample_user = ObjectId("5d7baf326c8a2e2400000000")
         platform_id = ObjectId("6579c364f1120850414e0dc6")
         sample_token_type = "type1"
         with self.assertRaises(ValueError):

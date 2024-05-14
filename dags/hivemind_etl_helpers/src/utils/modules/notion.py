@@ -16,7 +16,7 @@ class ModulesNotion(ModulesBase):
 
         Returns
         ---------
-        community_orgs : list[dict[str, str | list[str] | datetime | dict]] = []
+        community_orgs : list[dict[str, str | list[str]]] = []
             a list of Notion data information
 
             example data output:
@@ -30,7 +30,7 @@ class ModulesNotion(ModulesBase):
             ```
         """
         modules = self.query(platform=self.platform_name, projection={"name": 0})
-        communities_data: list[dict[str, str | list[str] | datetime | dict]] = []
+        communities_data: list[dict[str, str | list[str]]] = []
 
         for module in modules:
             community = module["community"]
