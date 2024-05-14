@@ -24,17 +24,17 @@ with DAG(
 
     @task
     def start_notion_vectorstore(community_info: dict[str, str | list[str]]):
-        community_id = community_info["community_id"]  # type: ignore
-        database_ids = community_info["database_ids"]  # type: ignore
-        page_ids = community_info["page_ids"]  # type: ignore
-        access_token = community_info["access_token"]  # type: ignore
+        community_id = community_info["community_id"]
+        database_ids = community_info["database_ids"]
+        page_ids = community_info["page_ids"]
+        access_token = community_info["access_token"]
 
         logging.info(f"Working on community, {community_id}")
         process_notion_etl(
-            community_id=community_id,
-            database_ids=database_ids,
-            page_ids=page_ids,
-            access_token=access_token,
+            community_id=community_id,  # type: ignore
+            database_ids=database_ids,  # type: ignore
+            page_ids=page_ids,  # type: ignore
+            access_token=access_token,  # type: ignore
         )
         logging.info(f"Community {community_id} Job finished!")
 

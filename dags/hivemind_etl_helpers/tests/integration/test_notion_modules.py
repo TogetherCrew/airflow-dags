@@ -37,15 +37,15 @@ class TestGetNotionModules(TestCase):
                     "bot_id": "***************",
                     "request_id": "3b***************07f",
                     "owner": {
-                    "type": "user",
-                    "user": {
-                        "type": "person",
-                        "object": "user",
-                        "id": "**sdklj****AAAAA",
-                        "name": "Jon Doe",
-                        "avatar_url": "https://avatar"
+                        "type": "user",
+                        "user": {
+                            "type": "person",
+                            "object": "user",
+                            "id": "**sdklj****AAAAA",
+                            "name": "Jon Doe",
+                            "avatar_url": "https://avatar",
                         },
-                    }
+                    },
                 },
                 "community": community_id,
                 "disconnectedAt": None,
@@ -180,15 +180,15 @@ class TestGetNotionModules(TestCase):
                     "bot_id": "***************",
                     "request_id": "3b***************07f",
                     "owner": {
-                    "type": "user",
-                    "user": {
-                        "type": "person",
-                        "object": "user",
-                        "id": "**sdklj****AAAAA",
-                        "name": "Jon Doe",
-                        "avatar_url": "https://avatar"
+                        "type": "user",
+                        "user": {
+                            "type": "person",
+                            "object": "user",
+                            "id": "**sdklj****AAAAA",
+                            "name": "Jon Doe",
+                            "avatar_url": "https://avatar",
                         },
-                    }
+                    },
                 },
                 "community": community_id,
                 "disconnectedAt": None,
@@ -210,15 +210,15 @@ class TestGetNotionModules(TestCase):
                     "bot_id": "***************",
                     "request_id": "3b***************07f",
                     "owner": {
-                    "type": "user",
-                    "user": {
-                        "type": "person",
-                        "object": "user",
-                        "id": "**sdklj****AAAAA",
-                        "name": "Jon Doe",
-                        "avatar_url": "https://avatar"
+                        "type": "user",
+                        "user": {
+                            "type": "person",
+                            "object": "user",
+                            "id": "**sdklj****AAAAA",
+                            "name": "Jon Doe",
+                            "avatar_url": "https://avatar",
                         },
-                    }
+                    },
                 },
                 "community": community_id,
                 "disconnectedAt": None,
