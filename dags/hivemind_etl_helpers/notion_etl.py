@@ -8,6 +8,7 @@ def process_notion_etl(
     community_id: str,
     database_ids: list[str] | None = None,
     page_ids: list[str] | None = None,
+    access_token: str | None = None,
 ) -> None:
     """
     process the notion files
@@ -23,6 +24,8 @@ def process_notion_etl(
     page_ids : list[str] | None
         the page ids to process their data
         default is None
+    access_token : str | None
+        notion ingegration access token
 
     Note: One of `database_ids` or `page_ids` should be given.
     """
@@ -31,7 +34,7 @@ def process_notion_etl(
             "At least one of the `database_ids` or `page_ids` must be given!"
         )
     try:
-        notion_extractor = NotionExtractor()
+        notion_extractor = NotionExtractor(notion_token=access_token)
         documents = notion_extractor.extract(
             page_ids=page_ids, database_ids=database_ids
         )

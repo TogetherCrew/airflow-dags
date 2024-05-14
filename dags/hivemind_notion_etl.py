@@ -15,7 +15,7 @@ with DAG(
 ) as dag:
 
     @task
-    def get_notion_communities() -> list[str]:
+    def get_notion_communities() -> list[dict[str, str | list[str]]]:
         """
         Getting all communities having notion from database
         """
@@ -23,10 +23,20 @@ with DAG(
         return communities
 
     @task
-    def start_notion_vectorstore(community_id: str):
+    def start_notion_vectorstore(community_info: dict[str, str | list[str]]):
+        community_id = community_info["community_id"]
+        database_ids = community_info["database_ids"]
+        page_ids = community_info["page_ids"]
+        access_token = community_info["access_token"]
+
         logging.info(f"Working on community, {community_id}")
-        process_notion_etl(community_id=community_id)
+        process_notion_etl(
+            community_id=community_id,
+            database_ids=database_ids,
+            page_ids=page_ids,
+            access_token=access_token,
+        )
         logging.info(f"Community {community_id} Job finished!")
 
-    communities = get_notion_communities()
-    start_notion_vectorstore.expand(community_id=communities)
+    communities_info = get_notion_communities()
+    start_notion_vectorstore.expand(community_info=communities_info)

@@ -10,7 +10,7 @@ class ModulesNotion(ModulesBase):
 
     def get_learning_platforms(
         self,
-    ) -> list[dict[str, str | list[str] | datetime | dict]]:
+    ) -> list[dict[str, str | list[str]]]:
         """
         Get all the Notion communities with their database IDs, page IDs, and client config.
 
