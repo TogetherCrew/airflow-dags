@@ -6,7 +6,7 @@ from hivemind_etl_helpers.src.utils.modules import ModulesNotion
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
-class TestGetNotionCommunityData(TestCase):
+class TestGetNotionModules(TestCase):
     def setUp(self):
         client = MongoSingleton.get_instance().client
         client["Core"].drop_collection("modules")
@@ -30,11 +30,22 @@ class TestGetNotionCommunityData(TestCase):
                 "_id": platform_id,
                 "name": "notion",
                 "metadata": {
-                    "id": "113445975232201081511",
                     "userId": str(sample_user),
-                    "name": "John Doe",
-                    "picture": "random-image",
-                    "owner": {"id": str(sample_user)},
+                    "workspace_id": "6146c182-d4f5-481c-a4ce-45cedb42f389",
+                    "workspace_name": "John Doe's Notion",
+                    "workspace_icon": "https://xxxxxxxx",
+                    "bot_id": "***************",
+                    "request_id": "3b***************07f",
+                    "owner": {
+                    "type": "user",
+                    "user": {
+                        "type": "person",
+                        "object": "user",
+                        "id": "**sdklj****AAAAA",
+                        "name": "Jon Doe",
+                        "avatar_url": "https://avatar"
+                        },
+                    }
                 },
                 "community": community_id,
                 "disconnectedAt": None,
@@ -162,11 +173,22 @@ class TestGetNotionCommunityData(TestCase):
                 "_id": platform_id1,
                 "name": "notion",
                 "metadata": {
-                    "id": "113445975232201081511",
                     "userId": str(sample_user1),
-                    "name": "John Doe",
-                    "picture": "random-image",
-                    "owner": {"id": str(sample_user1)},
+                    "workspace_id": "6146c182-d4f5-481c-a4ce-45cedb42f389",
+                    "workspace_name": "John Doe's Notion",
+                    "workspace_icon": "https://xxxxxxxx",
+                    "bot_id": "***************",
+                    "request_id": "3b***************07f",
+                    "owner": {
+                    "type": "user",
+                    "user": {
+                        "type": "person",
+                        "object": "user",
+                        "id": "**sdklj****AAAAA",
+                        "name": "Jon Doe",
+                        "avatar_url": "https://avatar"
+                        },
+                    }
                 },
                 "community": community_id,
                 "disconnectedAt": None,
@@ -181,11 +203,22 @@ class TestGetNotionCommunityData(TestCase):
                 "_id": platform_id2,
                 "name": "notion",
                 "metadata": {
-                    "id": "113445975232201081512",
                     "userId": str(sample_user2),
-                    "name": "Jane Doe",
-                    "picture": "random-image",
-                    "owner": {"id": str(sample_user2)},
+                    "workspace_id": "6146c182-d4f5-481c-a4ce-45cedb42f389",
+                    "workspace_name": "John Doe's Notion",
+                    "workspace_icon": "https://xxxxxxxx",
+                    "bot_id": "***************",
+                    "request_id": "3b***************07f",
+                    "owner": {
+                    "type": "user",
+                    "user": {
+                        "type": "person",
+                        "object": "user",
+                        "id": "**sdklj****AAAAA",
+                        "name": "Jon Doe",
+                        "avatar_url": "https://avatar"
+                        },
+                    }
                 },
                 "community": community_id,
                 "disconnectedAt": None,
