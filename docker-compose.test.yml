@@ -83,7 +83,8 @@ services:
       retries: 5
   redis:
     image: redis:7.2.4
-    command: redis-server --requirepass password
+    # command: redis-server --requirepass password
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
