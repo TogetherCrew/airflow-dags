@@ -12,7 +12,7 @@ class TestIngestionPipeline(unittest.TestCase):
         community = "1234"
         collection_name = "gdrive"
         gdrive_pipeline = CustomIngestionPipeline(
-            "1234", collection_name=collection_name, testing=True
+            community_id=community, collection_name=collection_name, testing=True
         )
         docs = [
             Document(

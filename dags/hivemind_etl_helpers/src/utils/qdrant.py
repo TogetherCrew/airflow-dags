@@ -35,7 +35,7 @@ class QdrantSingleton:
             QdrantSingleton()
             try:
                 _ = QdrantSingleton.__instance.client.get_collections()
-                logging.info(f"QDrant Connected Successfully!")
+                logging.info("QDrant Connected Successfully!")
             except Exception as exp:
                 logging.error(f"QDrant not connected! exp: {exp}")
 
