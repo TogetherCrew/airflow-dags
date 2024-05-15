@@ -46,8 +46,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-      qdrant:
-        condition: service_healthy
+      # qdrant:
+      #   condition: service_healthy
   neo4j:
     image: "neo4j:5.9.0"
     environment:
