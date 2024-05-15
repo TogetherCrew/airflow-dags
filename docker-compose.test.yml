@@ -107,7 +107,8 @@ services:
       # test: curl --fail http://qdrant:6333/healthz
       # test: curl --fail http://localhost:6333/healthz || exit 1
       # test: wget --no-verbose --tries=1 --spider http://localhost:6333/healthz || exit 1
-      test: ["CMD", "wget", "--spider", "--quiet", "http://localhost:6333"]
+      # test: ["CMD", "wget", "--spider", "--quiet", "http://localhost:6333"]
+      test: ["CMD-SHELL", "curl -v http://localhost:6333 > /proc/1/fd/1 2>/proc/1/fd/2"]
       interval: 10s
       timeout: 10s
       retries: 3
