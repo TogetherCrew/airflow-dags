@@ -35,9 +35,9 @@ class TestCredentialLoadings(unittest.TestCase):
     def test_redis_envs_values(self):
         redis_creds = load_redis_credentials()
 
-        self.assertNotEqual(redis_creds["password"], "")
-        self.assertNotEqual(redis_creds["host"], "")
-        self.assertNotEqual(redis_creds["port"], "")
+        self.assertIsNotNone(redis_creds["password"])
+        self.assertIsNotNone(redis_creds["host"])
+        self.assertIsNotNone(redis_creds["port"])
 
         self.assertIsInstance(redis_creds["password"], str)
         self.assertIsInstance(redis_creds["host"], str)

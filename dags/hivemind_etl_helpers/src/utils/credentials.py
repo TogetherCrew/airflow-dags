@@ -44,12 +44,22 @@ def load_redis_credentials() -> dict[str, str]:
     """
     load_dotenv()
 
-    redis_creds: dict[str, str] = {}
+    host = os.getenv("REDIS_HOST")
+    port = os.getenv("REDIS_PORT")
+    password = os.getenv("REDIS_PASSWORD")
 
-    redis_creds["port"] = os.getenv("REDIS_PORT", "")
-    redis_creds["password"] = os.getenv("REDIS_PASSWORD", "")
-    redis_creds["host"] = os.getenv("REDIS_HOST", "")
+    if host is None:
+        raise ValueError("`REDIS_HOST` is not set in env credentials!")
+    if port is None:
+        raise ValueError("`REDIS_PORT` is not set in env credentials!")
+    if password is None:
+        raise ValueError("`REDIS_PASSWORD` is not set in env credentials!")
 
+    redis_creds: dict[str, str] = {
+        "host": host,
+        "port": port,
+        "pasword": password,
+    }
     return redis_creds
 
 

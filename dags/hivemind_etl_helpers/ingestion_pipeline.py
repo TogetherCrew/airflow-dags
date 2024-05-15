@@ -4,13 +4,12 @@ from hivemind_etl_helpers.src.utils.credentials import load_redis_credentials
 from hivemind_etl_helpers.src.utils.mongo import get_mongo_uri
 from hivemind_etl_helpers.src.utils.qdrant import QdrantSingleton
 from hivemind_etl_helpers.src.utils.redis import RedisSingleton
-from llama_index.core import MockEmbedding
+from llama_index.core import Document, MockEmbedding
 from llama_index.core.ingestion import (
     DocstoreStrategy,
     IngestionCache,
     IngestionPipeline,
 )
-from llama_index.core import Document
 from llama_index.core.node_parser import SemanticSplitterNodeParser
 from llama_index.storage.docstore.mongodb import MongoDocumentStore
 from llama_index.storage.kvstore.redis import RedisKVStore as RedisCache
