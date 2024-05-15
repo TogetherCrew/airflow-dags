@@ -31,10 +31,6 @@ class CustomIngestionPipeline:
         self.collection_name = community_id
         self.platform_name = collection_name
 
-        # Database details
-        self.redis_host = self.redis_cred["host"]
-        self.redis_port = self.redis_cred["port"]
-
         self.embed_model = (
             CohereEmbedding() if not testing else MockEmbedding(embed_dim=1024)
         )
@@ -60,7 +56,7 @@ class CustomIngestionPipeline:
             ),
             vector_store=vector_store,
             cache=IngestionCache(
-                cache=RedisCache.from_host_and_port(self.redis_host, self.redis_port),
+                cache=RedisCache.from_redis_client(self.redis_client),
                 collection=f"{self.collection_name}_{self.platform_name}_ingestion_cache",
                 docstore_strategy=DocstoreStrategy.UPSERTS,
             ),

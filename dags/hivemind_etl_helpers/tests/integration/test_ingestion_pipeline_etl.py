@@ -11,7 +11,7 @@ class TestIngestionPipeline(unittest.TestCase):
         ingest_pipeline = Mock(IngestionPipeline)
         community = "1234"
         collection_name = "gdrive"
-        gdrive_pipeline = CustomIngestionPipeline(
+        ingestion_pipeline = CustomIngestionPipeline(
             community_id=community, collection_name=collection_name, testing=True
         )
         docs = [
@@ -25,18 +25,18 @@ class TestIngestionPipeline(unittest.TestCase):
             ),
         ]
 
-        processed_result = gdrive_pipeline.run_pipeline(docs)
+        processed_result = ingestion_pipeline.run_pipeline(docs)
         ingest_pipeline.run.return_value = processed_result
         self.assertEqual(len(processed_result), 2)
 
     def test_load_pipeline_run_exception(self):
-        gdrive_pipeline = CustomIngestionPipeline(
+        ingestion_pipeline = CustomIngestionPipeline(
             "1234", collection_name="gdrive", testing=True
         )
-        gdrive_pipeline.run_pipeline = Mock()
-        gdrive_pipeline.run_pipeline.side_effect = Exception("Test Exception")
+        ingestion_pipeline.run_pipeline = Mock()
+        ingestion_pipeline.run_pipeline.side_effect = Exception("Test Exception")
         docs = ["ww"]
         with self.assertRaises(Exception) as context:
-            gdrive_pipeline.run_pipeline(docs)
+            ingestion_pipeline.run_pipeline(docs)
         self.assertEqual(str(context.exception), "Test Exception")
-        gdrive_pipeline.run_pipeline.assert_called_with(docs)
+        ingestion_pipeline.run_pipeline.assert_called_with(docs)
