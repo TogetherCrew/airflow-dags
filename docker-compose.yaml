@@ -67,8 +67,8 @@ x-airflow-common: &airflow-common
       condition: service_healthy
     qdrant:
       condition: service_healthy
-    mongo:
-      condition: service_healthy
+    # mongo:
+    #   condition: service_healthy
 services:
   postgres:
     image: ankane/pgvector
@@ -83,7 +83,7 @@ services:
     # volumes:
     #   - postgres-db-volume:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "airflow"]
+      test: pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB
       interval: 10s
       retries: 5
       start_period: 5s
@@ -96,10 +96,11 @@ services:
     expose:
       - 6333:6333
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://qdrant:7201/metrics | grep qdrant_server_is_ready 1"]
+      test: ["CMD", "curl", "localhost:6333"]
       interval: 10s
       timeout: 15s
       retries: 3
+    restart: always
 
   redis:
     image: redis:latest
@@ -128,6 +129,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+    # restart: always
 
   neo4j:
     image: "neo4j:5.9.0"
