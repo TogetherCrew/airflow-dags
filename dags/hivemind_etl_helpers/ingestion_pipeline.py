@@ -10,6 +10,7 @@ from llama_index.core.ingestion import (
     IngestionCache,
     IngestionPipeline,
 )
+from llama_index.core import Document
 from llama_index.core.node_parser import SemanticSplitterNodeParser
 from llama_index.storage.docstore.mongodb import MongoDocumentStore
 from llama_index.storage.kvstore.redis import RedisKVStore as RedisCache
@@ -40,7 +41,7 @@ class CustomIngestionPipeline:
         )
         self.redis_client = RedisSingleton.get_instance().get_client()
 
-    def run_pipeline(self, docs):
+    def run_pipeline(self, docs: list[Document]):
         # qdrant is just collection based and doesn't have any database
         qdrant_collection_name = f"{self.collection_name}_{self.platform_name}"
         vector_store = QdrantVectorStore(
