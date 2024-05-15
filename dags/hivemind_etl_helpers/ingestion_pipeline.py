@@ -24,7 +24,6 @@ class CustomIngestionPipeline:
         self.community_id = community_id
         self.qdrant_client = QdrantSingleton.get_instance().client
 
-        self.cohere_model = CohereEmbedding()
         _, self.embedding_dim = load_model_hyperparams()
         self.pg_creds = load_postgres_credentials()
         self.redis_cred = load_redis_credentials()
@@ -32,7 +31,7 @@ class CustomIngestionPipeline:
         self.platform_name = collection_name
 
         self.embed_model = (
-            CohereEmbedding() if not testing else MockEmbedding(embed_dim=1024)
+            CohereEmbedding() if not testing else MockEmbedding(embed_dim=self.embedding_dim)
         )
         self.redis_client = RedisSingleton.get_instance().get_client()
 
@@ -46,8 +45,8 @@ class CustomIngestionPipeline:
 
         pipeline = IngestionPipeline(
             transformations=[
-                SemanticSplitterNodeParser(embed_model=self.cohere_model),
-                self.cohere_model,
+                SemanticSplitterNodeParser(embed_model=self.embed_model),
+                self.embed_model,
             ],
             docstore=MongoDocumentStore.from_uri(
                 uri=get_mongo_uri(),
