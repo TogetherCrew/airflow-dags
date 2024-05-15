@@ -58,7 +58,7 @@ def load_redis_credentials() -> dict[str, str]:
     redis_creds: dict[str, str] = {
         "host": host,
         "port": port,
-        "pasword": password,
+        "password": password,
     }
     return redis_creds
 
