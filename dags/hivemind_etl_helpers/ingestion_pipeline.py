@@ -1,63 +1,75 @@
-from dags.hivemind_etl_helpers.src.db.gdrive.db_utils import setup_db
-from dags.hivemind_etl_helpers.src.utils.redis import RedisSingleton
-from llama_index.core import MockEmbedding
+import logging
+
+from hivemind_etl_helpers.src.utils.credentials import load_redis_credentials
+from hivemind_etl_helpers.src.utils.mongo import get_mongo_uri
+from hivemind_etl_helpers.src.utils.qdrant import QdrantSingleton
+from hivemind_etl_helpers.src.utils.redis import RedisSingleton
 from llama_index.core.ingestion import (
     DocstoreStrategy,
     IngestionCache,
     IngestionPipeline,
 )
+from llama_index.core import MockEmbedding
 from llama_index.core.node_parser import SemanticSplitterNodeParser
-from llama_index.storage.docstore.postgres import PostgresDocumentStore
 from llama_index.storage.kvstore.redis import RedisKVStore as RedisCache
-from llama_index.vector_stores.postgres import PGVectorStore
+from llama_index.storage.docstore.mongodb import MongoDocumentStore
+from llama_index.vector_stores.qdrant import QdrantVectorStore
 from tc_hivemind_backend.db.credentials import load_postgres_credentials
 from tc_hivemind_backend.db.utils.model_hyperparams import load_model_hyperparams
 from tc_hivemind_backend.embeddings.cohere import CohereEmbedding
 
 
 class CustomIngestionPipeline:
-    def __init__(self, community_id: str, table_name: str, testing: bool = False):
-        self.postgres_credentials = load_postgres_credentials()
-        self.table_name = table_name
-        self.dbname = f"community_{community_id}"
+    def __init__(self, community_id: str, collection_name: str, testing: bool = False):
         self.community_id = community_id
+        self.qdrant_client = QdrantSingleton.get_instance().client
+
+        self.cohere_model = CohereEmbedding()
+        _, self.embedding_dim = load_model_hyperparams()
+        self.pg_creds = load_postgres_credentials()
+        self.redis_cred = load_redis_credentials()
+        self.collection_name = community_id
+        self.platform_name = collection_name
+
+        # Database details
+        self.redis_host = self.redis_cred["host"]
+        self.redis_port = self.redis_cred["port"]
+        
         self.embed_model = (
             CohereEmbedding() if not testing else MockEmbedding(embed_dim=1024)
         )
         self.redis_client = RedisSingleton.get_instance().get_client()
 
     def run_pipeline(self, docs):
-        _, embedding_dim = load_model_hyperparams()
-        setup_db(community_id=self.community_id)
+        # qdrant is just collection based and doesn't have any database
+        qdrant_collection_name = f"{self.collection_name}_{self.platform_name}"
+        vector_store = QdrantVectorStore(
+            client=self.qdrant_client,
+            collection_name=qdrant_collection_name,
+        )
+
         pipeline = IngestionPipeline(
             transformations=[
-                SemanticSplitterNodeParser(embed_model=self.embed_model),
-                self.embed_model,
+                SemanticSplitterNodeParser(embed_model=self.cohere_model),
+                self.cohere_model,
             ],
-            docstore=PostgresDocumentStore.from_params(
-                host=self.postgres_credentials["host"],
-                port=self.postgres_credentials["port"],
-                user=self.postgres_credentials["user"],
-                password=self.postgres_credentials["password"],
-                database=self.dbname,
-                table_name=self.table_name + "_docstore",
+            docstore=MongoDocumentStore.from_uri(
+                uri=get_mongo_uri(),
+                db_name=f"docstore_{self.collection_name}",
+                namespace=self.platform_name
             ),
-            vector_store=PGVectorStore.from_params(
-                host=self.postgres_credentials["host"],
-                port=self.postgres_credentials["port"],
-                user=self.postgres_credentials["user"],
-                password=self.postgres_credentials["password"],
-                database=self.dbname,
-                table_name=self.table_name,
-                embed_dim=embedding_dim,
-            ),
+            vector_store=vector_store,
             cache=IngestionCache(
-                cache=RedisCache.from_redis_client(self.redis_client),
-                collection=self.dbname + f"_{self.table_name}" + "_ingestion_cache",
+                cache=RedisCache.from_host_and_port(self.redis_host, self.redis_port),
+                collection=f"{self.collection_name}_{self.platform_name}_ingestion_cache",
+                docstore_strategy=DocstoreStrategy.UPSERTS,
             ),
             docstore_strategy=DocstoreStrategy.UPSERTS,
         )
-
-        nodes = pipeline.run(documents=docs, show_progress=True)
-
-        return nodes
+        try:
+            nodes = pipeline.run(documents=docs, show_progress=True)
+            return nodes
+        except Exception as e:
+            logging.error(
+                f"An error occurred while running the pipeline: {e}", exc_info=True
+            )
