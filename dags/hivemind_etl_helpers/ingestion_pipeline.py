@@ -31,7 +31,9 @@ class CustomIngestionPipeline:
         self.platform_name = collection_name
 
         self.embed_model = (
-            CohereEmbedding() if not testing else MockEmbedding(embed_dim=self.embedding_dim)
+            CohereEmbedding()
+            if not testing
+            else MockEmbedding(embed_dim=self.embedding_dim)
         )
         self.redis_client = RedisSingleton.get_instance().get_client()
 
