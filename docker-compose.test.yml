@@ -103,7 +103,8 @@ services:
       - 6333:6333
     healthcheck:
       # test: ["CMD", "curl", "--fail", "http://qdrant:6333/healthz"]
-      test: curl --fail http://qdrant:6333/healthz
+      # test: curl --fail http://qdrant:6333/healthz
+      test: curl --fail http://localhost:6333/healthz
       interval: 10s
       timeout: 10s
       retries: 3
