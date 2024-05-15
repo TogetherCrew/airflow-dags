@@ -57,15 +57,15 @@ class ModulesBase:
 
         return community_ids
 
-    def get_token(self, user: ObjectId, token_type: str) -> str:
+    def get_token(self, platform_id: ObjectId, token_type: str) -> str:
         """
-        get a specific type of token for a user
+        get a specific type of token for a platform
         This method is called when we needed a token for modules to extract its data
 
         Parameters
         ------------
-        user : ObjectId
-            the user that hold the token
+        platform_id : ObjectId
+            the platform id that we want their token
         token_type : str
             the type of token. i.e. `google_refresh`
 
@@ -76,6 +76,7 @@ class ModulesBase:
         """
         client = MongoSingleton.get_instance().client
 
+        user = self._get_platform_userid(platform_id)
         token_doc = client["Core"]["tokens"].find_one(
             {
                 "user": user,
@@ -93,3 +94,33 @@ class ModulesBase:
             )
         token = token_doc["token"]
         return token
+
+    def _get_platform_userid(self, platform_id: ObjectId) -> str:
+        """
+        get the userid that belongs to a platform
+
+        Parameters
+        -----------
+        platform_id : bson.ObjectId
+            the platform id we need their owner user id
+
+        Returns
+        ---------
+        user_id : str
+            the user id that the platform belongs to
+        """
+        client = MongoSingleton.get_instance().get_client()
+
+        platform = client["Core"]["platforms"].find_one(
+            {
+                "_id": platform_id,
+            },
+            {
+                "metadata.userId": 1,
+            },
+        )
+        if platform is None:
+            raise ValueError(f"No platform available given platform id: {platform_id}")
+
+        user_id = platform["metadata"]["userId"]
+        return ObjectId(user_id)

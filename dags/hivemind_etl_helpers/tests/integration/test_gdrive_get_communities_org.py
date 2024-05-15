@@ -10,6 +10,7 @@ class TestQueryGDriveModulesDB(unittest.TestCase):
     def setUp(self):
         client = MongoSingleton.get_instance().client
         client["Core"].drop_collection("modules")
+        client["Core"].drop_collection("platforms")
         client["Core"].drop_collection("tokens")
         self.client = client
         self.modules_gdrive = ModulesGDrive()
@@ -23,21 +24,39 @@ class TestQueryGDriveModulesDB(unittest.TestCase):
         single gdrive platform for one community
         """
         sample_user = ObjectId("5d7baf326c8a2e2400000000")
+        platform_id = ObjectId("6579c364f1120850414e0dc6")
+        community_id = ObjectId("6579c364f1120850414e0dc5")
         sample_refresh_token = "tokenid8899812"
+        self.client["Core"]["platforms"].insert_one(
+            {
+                "_id": platform_id,
+                "name": "google",
+                "metadata": {
+                    "id": "113445975232201081511",
+                    "userId": str(sample_user),
+                    "name": "John Doe",
+                    "picture": "random-image",
+                },
+                "community": community_id,
+                "disconnectedAt": None,
+                "connectedAt": datetime.now(),
+                "createdAt": datetime.now(),
+                "updatedAt": datetime.now(),
+            }
+        )
         self.client["Core"]["modules"].insert_one(
             {
                 "name": "hivemind",
-                "community": ObjectId("6579c364f1120850414e0dc5"),
+                "community": community_id,
                 "options": {
                     "platforms": [
                         {
-                            "platform": ObjectId("6579c364f1120850414e0dc6"),
+                            "platform": platform_id,
                             "name": "google",
                             "metadata": {
                                 "driveIds": ["1234"],
                                 "folderIds": ["111", "234"],
                                 "fileIds": ["124", "782"],
-                                "userId": sample_user,
                             },
                         }
                     ]
@@ -78,34 +97,71 @@ class TestQueryGDriveModulesDB(unittest.TestCase):
         two gdrive platform for one community
         """
         sample_user1 = ObjectId("5d7baf326c8a2e2400000000")
+        platform_id1 = ObjectId("6579c364f1120850414e0dc6")
         sample_refresh_token1 = "tokenid8899812"
 
         sample_user2 = ObjectId("5d7baf326c8a2e2400000001")
+        platform_id2 = ObjectId("6579c364f1120850414e0dc8")
         sample_refresh_token2 = "tokeni00000"
+
+        community_id = ObjectId("1009c364f1120850414e0dc5")
+
+        self.client["Core"]["platforms"].insert_one(
+            {
+                "_id": platform_id1,
+                "name": "google",
+                "metadata": {
+                    "id": "113445975232201081511",
+                    "userId": str(sample_user1),
+                    "name": "John Doe",
+                    "picture": "random-image",
+                },
+                "community": community_id,
+                "disconnectedAt": None,
+                "connectedAt": datetime.now(),
+                "createdAt": datetime.now(),
+                "updatedAt": datetime.now(),
+            }
+        )
+        self.client["Core"]["platforms"].insert_one(
+            {
+                "_id": platform_id2,
+                "name": "google",
+                "metadata": {
+                    "id": "113445975232201081511",
+                    "userId": str(sample_user2),
+                    "name": "Jane Doe",
+                    "picture": "random-image",
+                },
+                "community": community_id,
+                "disconnectedAt": None,
+                "connectedAt": datetime.now(),
+                "createdAt": datetime.now(),
+                "updatedAt": datetime.now(),
+            }
+        )
 
         self.client["Core"]["modules"].insert_one(
             {
                 "name": "hivemind",
-                "community": ObjectId("1009c364f1120850414e0dc5"),
+                "community": community_id,
                 "options": {
                     "platforms": [
                         {
-                            "platform": ObjectId("6579c364f1120850414e0dc6"),
+                            "platform": platform_id1,
                             "name": "google",
                             "metadata": {
                                 "driveIds": ["1234"],
                                 "folderIds": ["111", "234"],
                                 "fileIds": ["124", "782"],
-                                "userId": sample_user1,
                             },
                         },
                         {
-                            "platform": ObjectId("6579c364f1120850414e0dc8"),
+                            "platform": platform_id2,
                             "name": "google",
                             "metadata": {
                                 "driveIds": ["8438348"],
                                 "folderIds": ["9090"],
-                                "userId": sample_user2,
                             },
                         },
                     ]
@@ -169,20 +225,60 @@ class TestQueryGDriveModulesDB(unittest.TestCase):
         sample_user1 = ObjectId("5d7baf326c8a2e2400000000")
         sample_access_token1 = "tokenid12345"
         sample_refresh_token1 = "tokenid8899812"
+        platform_id1 = ObjectId("6579c364f1120850414e0dc6")
 
         sample_user2 = ObjectId("5d7baf326c8a2e2400000001")
         sample_access_token2 = "tokenid9999"
         sample_refresh_token2 = "tokeni00000"
+        platform_id2 = ObjectId("6579c364f1120850414e0dc8")
+
+        community_id1 = ObjectId("1009c364f1120850414e0dc5")
+        community_id2 = ObjectId("6579c364f1120850414e0dc5")
+
+        self.client["Core"]["platforms"].insert_one(
+            {
+                "_id": platform_id1,
+                "name": "google",
+                "metadata": {
+                    "id": "113445975232201081511",
+                    "userId": str(sample_user1),
+                    "name": "John Doe",
+                    "picture": "random-image",
+                },
+                "community": community_id1,
+                "disconnectedAt": None,
+                "connectedAt": datetime.now(),
+                "createdAt": datetime.now(),
+                "updatedAt": datetime.now(),
+            }
+        )
+        self.client["Core"]["platforms"].insert_one(
+            {
+                "_id": platform_id2,
+                "name": "google",
+                "metadata": {
+                    "id": "113445975232201081511",
+                    "userId": str(sample_user2),
+                    "name": "Jane Doe",
+                    "picture": "random-image",
+                },
+                "community": community_id2,
+                "disconnectedAt": None,
+                "connectedAt": datetime.now(),
+                "createdAt": datetime.now(),
+                "updatedAt": datetime.now(),
+            }
+        )
 
         self.client["Core"]["modules"].insert_many(
             [
                 {
                     "name": "hivemind",
-                    "community": ObjectId("1009c364f1120850414e0dc5"),
+                    "community": community_id1,
                     "options": {
                         "platforms": [
                             {
-                                "platform": ObjectId("6579c364f1120850414e0dc6"),
+                                "platform": platform_id1,
                                 "name": "google",
                                 "metadata": {
                                     "driveIds": ["1234"],
@@ -196,11 +292,11 @@ class TestQueryGDriveModulesDB(unittest.TestCase):
                 },
                 {
                     "name": "hivemind",
-                    "community": ObjectId("6579c364f1120850414e0dc5"),
+                    "community": community_id2,
                     "options": {
                         "platforms": [
                             {
-                                "platform": ObjectId("6579c364f1120850414e0dc8"),
+                                "platform": platform_id2,
                                 "name": "google",
                                 "metadata": {
                                     "driveIds": ["8438348"],
