@@ -102,7 +102,7 @@ services:
     expose:
       - 6333:6333
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://qdrant:7201/metrics | grep qdrant_server_is_ready 1"]
+      test: ["CMD", "curl", "localhost:6333"]
       interval: 10s
       timeout: 15s
       retries: 3
