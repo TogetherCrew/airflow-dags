@@ -37,7 +37,9 @@ with DAG(
             file_ids=file_ids, folder_ids=folder_ids, drive_ids=drive_ids
         )
 
-        ingest_data = CustomIngestionPipeline(community_id=community_id, collection_name="gdrive")
+        ingest_data = CustomIngestionPipeline(
+            community_id=community_id, collection_name="gdrive"
+        )
         ingest_data.run_pipeline(load_file_data)
 
     communities_info = get_gdrive_communities()

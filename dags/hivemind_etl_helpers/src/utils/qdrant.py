@@ -13,7 +13,7 @@ class QdrantSingleton:
             raise Exception("This class is a singleton!")
         else:
             creds = load_qdrandt_credentials()
-            
+
             # if no api_key was provided
             if creds["api_key"] == "":
                 self.client = QdrantClient(

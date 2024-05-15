@@ -42,7 +42,9 @@ def process_notion_etl(
         logging.info(f"No documents retrieved from notion! exp: {exp}")
 
     collection_name = "notion"
-    ingestion_pipeline = CustomIngestionPipeline(community_id, collection_name=collection_name)
+    ingestion_pipeline = CustomIngestionPipeline(
+        community_id, collection_name=collection_name
+    )
     try:
         ingestion_pipeline.run_pipeline(docs=documents)
     except Exception as e:

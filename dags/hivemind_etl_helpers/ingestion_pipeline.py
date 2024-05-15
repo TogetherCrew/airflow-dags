@@ -34,7 +34,7 @@ class CustomIngestionPipeline:
         # Database details
         self.redis_host = self.redis_cred["host"]
         self.redis_port = self.redis_cred["port"]
-        
+
         self.embed_model = (
             CohereEmbedding() if not testing else MockEmbedding(embed_dim=1024)
         )
@@ -56,7 +56,7 @@ class CustomIngestionPipeline:
             docstore=MongoDocumentStore.from_uri(
                 uri=get_mongo_uri(),
                 db_name=f"docstore_{self.collection_name}",
-                namespace=self.platform_name
+                namespace=self.platform_name,
             ),
             vector_store=vector_store,
             cache=IngestionCache(

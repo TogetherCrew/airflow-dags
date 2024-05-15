@@ -52,6 +52,7 @@ def load_redis_credentials() -> dict[str, str]:
 
     return redis_creds
 
+
 def load_qdrandt_credentials() -> dict[str, str]:
     """
     load qdrant database credentials
@@ -79,7 +80,7 @@ def load_qdrandt_credentials() -> dict[str, str]:
         raise ValueError("`QDRANT_PORT` is not set in env credentials!")
     if api_key is None:
         raise ValueError("`QDRANT_API_KEY` is not set in env credentials!")
-    
+
     qdrant_creds = {
         "host": host,
         "port": port,
