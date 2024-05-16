@@ -103,8 +103,8 @@ services:
     expose:
       - 6333:6333
     healthcheck:
-      # test: ["CMD-SHELL", "curl -v http://localhost:6333 > /proc/1/fd/1 2>/proc/1/fd/2"]
-      test: ["CMD-SHELL", "nc -z localhost 6333 || exit 1 > /proc/1/fd/1 2>/proc/1/fd/2"]
+      test: ["CMD-SHELL", "curl -v http://localhost:6333 > /proc/1/fd/1 2>/proc/1/fd/2"]
+      # test: ["CMD-SHELL", "nc -z localhost 6333 || exit 1 > /proc/1/fd/1 2>/proc/1/fd/2"]
       # test: ["CMD-SHELL", "wget --spider -S http://localhost:6333 > /proc/1/fd/1 2>/proc/1/fd/2"]
       interval: 10s
       timeout: 10s
