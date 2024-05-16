@@ -1,2 +1,0 @@
-FROM qdrant/qdrant:v1.9.2
-CMD ["apt-get", "update", "&&", "apt-get", "install", "-y", "curl"]

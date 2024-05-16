@@ -46,7 +46,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-      healthcheck:
+      qdrant-healthcheck:
         condition: service_healthy
   neo4j:
     image: "neo4j:5.9.0"
@@ -95,23 +95,6 @@ services:
       retries: 50
       start_period: 30s
     restart: always
-  # qdrant:
-  #   # build:
-  #   #   context: .
-  #   #   dockerfile: DockerfileQdrant
-  #   image: qdrant/qdrant:v1.9.2
-  #   ports:
-  #     - 6333:6333
-  #   expose:
-  #     - 6333:6333
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "curl -v http://localhost:6333 > /proc/1/fd/1 2>/proc/1/fd/2"]
-  #     # test: ["CMD-SHELL", "nc -z localhost 6333 || exit 1 > /proc/1/fd/1 2>/proc/1/fd/2"]
-  #     # test: ["CMD-SHELL", "wget --spider -S http://localhost:6333 > /proc/1/fd/1 2>/proc/1/fd/2"]
-  #     interval: 10s
-  #     timeout: 10s
-  #     retries: 3
-  #   restart: always
   qdrant:
     image: qdrant/qdrant:v1.9.2
     restart: always
@@ -125,7 +108,7 @@ services:
       - 6335
     volumes:
       - ./qdrant_data:/qdrant_data
-  healthcheck:
+  qdrant-healthcheck:
     restart: always
     image: curlimages/curl:latest
     entrypoint: ["/bin/sh", "-c", "--", "while true; do sleep 30; done;"]
