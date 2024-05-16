@@ -97,7 +97,7 @@ services:
     restart: always
   qdrant:
     # image: qdrant/qdrant:v1.9.2
-    build: DockerfileQdrant
+    build: /project/DockerfileQdrant
     ports:
       - 6333:6333
     expose:
