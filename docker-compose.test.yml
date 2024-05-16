@@ -96,7 +96,10 @@ services:
       start_period: 30s
     restart: always
   qdrant:
-    image: qdrant/qdrant:v1.9.2
+    build:
+      context: .
+      dockerfile: DockerfileQdrant
+    # image: qdrant/qdrant:v1.9.2
     # build: /project/DockerfileQdrant
     ports:
       - 6333:6333
