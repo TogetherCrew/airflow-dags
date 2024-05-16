@@ -3,7 +3,6 @@ USER root
 COPY . .
 RUN chmod +x init.sh
 USER airflow
-USER airflow
 RUN pip install --no-cache-dir apache-airflow==2.9.1 -r requirements.txt
 
 FROM python:3.11-bullseye AS test
