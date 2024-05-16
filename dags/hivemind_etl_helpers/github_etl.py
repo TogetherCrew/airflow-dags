@@ -2,6 +2,7 @@ import logging
 from datetime import datetime
 
 from dotenv import load_dotenv
+from hivemind_etl_helpers.ingestion_pipeline import CustomIngestionPipeline
 from hivemind_etl_helpers.src.db.github.extract import (
     GithubExtraction,
     fetch_issues,
@@ -11,7 +12,6 @@ from hivemind_etl_helpers.src.db.github.github_organization_repos import (
     get_github_organization_repos,
 )
 from hivemind_etl_helpers.src.db.github.transform import GitHubTransformation
-from hivemind_etl_helpers.ingestion_pipeline import CustomIngestionPipeline
 from llama_index.core import Document
 
 
