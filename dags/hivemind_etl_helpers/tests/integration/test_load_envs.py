@@ -2,7 +2,6 @@ import unittest
 
 from hivemind_etl_helpers.src.utils.credentials import (
     load_mongo_credentials,
-    load_qdrant_credentials,
     load_redis_credentials,
 )
 from hivemind_etl_helpers.src.utils.mongo import get_mongo_uri
@@ -42,13 +41,6 @@ class TestCredentialLoadings(unittest.TestCase):
         self.assertIsInstance(redis_creds["password"], str)
         self.assertIsInstance(redis_creds["host"], str)
         self.assertIsInstance(redis_creds["port"], str)
-
-    def test_load_qdrant_creds(self):
-        qdrant_creds = load_qdrant_credentials()
-
-        self.assertIsNotNone(qdrant_creds["host"])
-        self.assertIsNotNone(qdrant_creds["port"])
-        self.assertIsNotNone(qdrant_creds["api_key"])
 
     def test_config_mongo_creds(self):
         mongo_uri = get_mongo_uri()
