@@ -40,7 +40,8 @@ class CustomIngestionPipeline:
     def run_pipeline(self, docs: list[Document]):
         # qdrant is just collection based and doesn't have any database
         qdrant_collection_name = f"{self.collection_name}_{self.platform_name}"
-        vector_store = QDrantVectorAccess(collection_name=qdrant_collection_name)
+        vector_access = QDrantVectorAccess(collection_name=qdrant_collection_name)
+        vector_store = vector_access.setup_qdrant_vector_store()
 
         pipeline = IngestionPipeline(
             transformations=[
