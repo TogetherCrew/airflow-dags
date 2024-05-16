@@ -1,7 +1,7 @@
 import logging
 
-from dags.hivemind_etl_helpers.ingestion_pipeline import CustomIngestionPipeline
-from dags.hivemind_etl_helpers.src.db.notion.extractor import NotionExtractor
+from hivemind_etl_helpers.ingestion_pipeline import CustomIngestionPipeline
+from hivemind_etl_helpers.src.db.notion.extractor import NotionExtractor
 
 
 def process_notion_etl(
