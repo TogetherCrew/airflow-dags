@@ -2,7 +2,7 @@ import logging
 
 from qdrant_client import QdrantClient
 
-from .credentials import load_qdrandt_credentials
+from .credentials import load_qdrant_credentials
 
 
 class QdrantSingleton:
@@ -12,7 +12,7 @@ class QdrantSingleton:
         if QdrantSingleton.__instance is not None:
             raise Exception("This class is a singleton!")
         else:
-            creds = load_qdrandt_credentials()
+            creds = load_qdrant_credentials()
 
             # if no api_key was provided
             if creds["api_key"] == "":

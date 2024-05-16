@@ -63,7 +63,7 @@ def load_redis_credentials() -> dict[str, str]:
     return redis_creds
 
 
-def load_qdrandt_credentials() -> dict[str, str]:
+def load_qdrant_credentials() -> dict[str, str]:
     """
     load qdrant database credentials
 
