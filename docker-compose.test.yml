@@ -95,21 +95,44 @@ services:
       retries: 50
       start_period: 30s
     restart: always
+  # qdrant:
+  #   # build:
+  #   #   context: .
+  #   #   dockerfile: DockerfileQdrant
+  #   image: qdrant/qdrant:v1.9.2
+  #   ports:
+  #     - 6333:6333
+  #   expose:
+  #     - 6333:6333
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "curl -v http://localhost:6333 > /proc/1/fd/1 2>/proc/1/fd/2"]
+  #     # test: ["CMD-SHELL", "nc -z localhost 6333 || exit 1 > /proc/1/fd/1 2>/proc/1/fd/2"]
+  #     # test: ["CMD-SHELL", "wget --spider -S http://localhost:6333 > /proc/1/fd/1 2>/proc/1/fd/2"]
+  #     interval: 10s
+  #     timeout: 10s
+  #     retries: 3
+  #   restart: always
   qdrant:
-    build:
-      context: .
-      dockerfile: DockerfileQdrant
-    # image: qdrant/qdrant:v1.9.2
-    # build: /project/DockerfileQdrant
+    image: qdrant/qdrant:v1.9.2
+    restart: always
+    container_name: qdrant
     ports:
       - 6333:6333
+      - 6334:6334
     expose:
-      - 6333:6333
-    healthcheck:
-      test: ["CMD-SHELL", "curl -v http://localhost:6333 > /proc/1/fd/1 2>/proc/1/fd/2"]
-      # test: ["CMD-SHELL", "nc -z localhost 6333 || exit 1 > /proc/1/fd/1 2>/proc/1/fd/2"]
-      # test: ["CMD-SHELL", "wget --spider -S http://localhost:6333 > /proc/1/fd/1 2>/proc/1/fd/2"]
-      interval: 10s
-      timeout: 10s
-      retries: 3
+      - 6333
+      - 6334
+      - 6335
+    volumes:
+      - ./qdrant_data:/qdrant_data
+  healthcheck:
     restart: always
+    image: curlimages/curl:latest
+    entrypoint: ["/bin/sh", "-c", "--", "while true; do sleep 30; done;"]
+    depends_on:
+      - qdrant
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://qdrant:6333/readyz"]
+      interval: 10s
+      timeout: 2s
+      retries: 5
