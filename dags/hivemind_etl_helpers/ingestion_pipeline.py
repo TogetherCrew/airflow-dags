@@ -13,9 +13,9 @@ from llama_index.core.node_parser import SemanticSplitterNodeParser
 from llama_index.storage.docstore.mongodb import MongoDocumentStore
 from llama_index.storage.kvstore.redis import RedisKVStore as RedisCache
 from tc_hivemind_backend.db.credentials import load_postgres_credentials
+from tc_hivemind_backend.db.qdrant import QdrantSingleton
 from tc_hivemind_backend.db.utils.model_hyperparams import load_model_hyperparams
 from tc_hivemind_backend.embeddings.cohere import CohereEmbedding
-from tc_hivemind_backend.db.qdrant import QdrantSingleton
 from tc_hivemind_backend.qdrant_vector_access import QDrantVectorAccess
 
 
