@@ -4,6 +4,7 @@ from hivemind_etl_helpers.src.utils.credentials import (
     load_mongo_credentials,
     load_redis_credentials,
 )
+from hivemind_etl_helpers.src.utils.mongo import get_mongo_uri
 
 
 class TestCredentialLoadings(unittest.TestCase):
@@ -33,10 +34,17 @@ class TestCredentialLoadings(unittest.TestCase):
     def test_redis_envs_values(self):
         redis_creds = load_redis_credentials()
 
-        self.assertNotEqual(redis_creds["password"], "")
-        self.assertNotEqual(redis_creds["host"], "")
-        self.assertNotEqual(redis_creds["port"], "")
+        self.assertIsNotNone(redis_creds["password"])
+        self.assertIsNotNone(redis_creds["host"])
+        self.assertIsNotNone(redis_creds["port"])
 
         self.assertIsInstance(redis_creds["password"], str)
         self.assertIsInstance(redis_creds["host"], str)
         self.assertIsInstance(redis_creds["port"], str)
+
+    def test_config_mongo_creds(self):
+        mongo_uri = get_mongo_uri()
+
+        self.assertIsInstance(mongo_uri, str)
+        self.assertIn("mongodb://", mongo_uri)
+        self.assertNotIn("None", mongo_uri)

@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import Mock
 
-from dags.hivemind_etl_helpers.src.db.notion.extractor import NotionExtractor
+from hivemind_etl_helpers.src.db.notion.extractor import NotionExtractor
 
 
 class TestNotionExtractorLive(unittest.TestCase):

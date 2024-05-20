@@ -5,7 +5,7 @@ from datetime import datetime
 
 from airflow import DAG
 from airflow.decorators import task
-from hivemind_etl_helpers.gdrive_ingestion_etl import GoogleDriveIngestionPipeline
+from hivemind_etl_helpers.ingestion_pipeline import CustomIngestionPipeline
 from hivemind_etl_helpers.src.db.gdrive.gdrive_loader import GoogleDriveLoader
 from hivemind_etl_helpers.src.utils.modules import ModulesGDrive
 
@@ -37,7 +37,9 @@ with DAG(
             file_ids=file_ids, folder_ids=folder_ids, drive_ids=drive_ids
         )
 
-        ingest_data = GoogleDriveIngestionPipeline(community_id=community_id)
+        ingest_data = CustomIngestionPipeline(
+            community_id=community_id, collection_name="gdrive"
+        )
         ingest_data.run_pipeline(load_file_data)
 
     communities_info = get_gdrive_communities()
