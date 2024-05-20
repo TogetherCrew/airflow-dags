@@ -6,8 +6,8 @@ from llama_index.legacy.readers.base import BasePydanticReader
 from llama_index.legacy.schema import Document
 
 
-class WikipediaReader(BasePydanticReader):
-    """Wikipedia reader.
+class MediaWikiReader(BasePydanticReader):
+    """WikiMedia reader.
 
     Reads a page.
 
@@ -23,7 +23,7 @@ class WikipediaReader(BasePydanticReader):
             raise ImportError(
                 "`wikipedia` package not found, please run `pip install wikipedia`"
             )
-      
+
         if api_url:
             wikipedia.set_api_url(api_url)
 

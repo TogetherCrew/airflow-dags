@@ -1,11 +1,11 @@
 from typing import List
-from custom_wikipedia_reader import WikipediaReader
 
+from hivemind_etl_helpers.src.db.mediawiki.mediawiki_reader import MediaWikiReader
 
 # Define a function to test WikipediaReader with Wikivoyage
 def test_wikipedia_reader_with_wikivoyage(api_url: str, pages: List[str]):
     # Initialize the WikipediaReader with the given API URL
-    reader = WikipediaReader(api_url=api_url)
+    reader = MediaWikiReader(api_url=api_url)
 
     # Load data for the given pages
     documents = reader.load_data(pages)
