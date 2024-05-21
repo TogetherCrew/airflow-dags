@@ -1,4 +1,5 @@
 from typing import List, Optional
+
 from hivemind_etl_helpers.src.db.mediawiki.mediawiki_reader import MediaWikiReader
 from llama_index.core import Document
 

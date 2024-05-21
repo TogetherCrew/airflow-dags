@@ -26,11 +26,13 @@ with DAG(
     def start_mediawiki_vectorstore(community_info: dict[str, str | list[str]]):
         community_id = community_info["community_id"]
         page_titles = community_info["page_titles"]
+        api_url = community_info["base_url"]
 
         logging.info(f"Working on community, {community_id}")
         process_mediawiki_etl(
             community_id=community_id,  # type: ignore
-            page_ids=page_titles,  # type: ignore
+            page_titles=page_titles,  # type: ignore
+            api_url=api_url,  # type: ignore
         )
         logging.info(f"Community {community_id} Job finished!")
 
