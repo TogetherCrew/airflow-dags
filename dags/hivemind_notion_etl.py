@@ -5,7 +5,7 @@ from datetime import datetime
 
 from airflow import DAG
 from airflow.decorators import task
-from dags.hivemind_etl_helpers.notion_etl import process_notion_etl
+from hivemind_etl_helpers.notion_etl import process_notion_etl
 from hivemind_etl_helpers.src.utils.modules import ModulesNotion
 
 with DAG(

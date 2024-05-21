@@ -1,5 +1,4 @@
 import logging
-from typing import Any
 
 from pymongo import MongoClient
 
@@ -13,8 +12,7 @@ class MongoSingleton:
         if MongoSingleton.__instance is not None:
             raise Exception("This class is a singleton!")
         else:
-            creds = load_mongo_credentials()
-            connection_uri = config_mogno_creds(creds)
+            connection_uri = get_mongo_uri()
             self.client = MongoClient(connection_uri)
             MongoSingleton.__instance = self
 
@@ -34,7 +32,8 @@ class MongoSingleton:
         return self.client
 
 
-def config_mogno_creds(mongo_creds: dict[str, Any]):
+def get_mongo_uri() -> str:
+    mongo_creds = load_mongo_credentials()
     user = mongo_creds["user"]
     password = mongo_creds["password"]
     host = mongo_creds["host"]
