@@ -29,7 +29,7 @@ class TestMediaWikiExtractor(unittest.TestCase):
         self.mock_reader.load_data.return_value = mock_response
 
         test_pages = ["Python_(programming_language)", "OpenAI"]
-        documents = self.extractor.extract(pages=test_pages)
+        documents = self.extractor.extract(page_ids=test_pages)
         self.assertEqual(len(documents), len(mock_response))
         self.mock_reader.load_data.assert_called_once_with(pages=test_pages)
 
@@ -50,7 +50,7 @@ class TestMediaWikiExtractor(unittest.TestCase):
         invalid_pages = ["Non_existent_page"]
         self.mock_reader.load_data.return_value = []
 
-        documents = self.extractor.extract(pages=invalid_pages)
+        documents = self.extractor.extract(page_ids=invalid_pages)
         self.assertEqual(len(documents), 0)
         self.mock_reader.load_data.assert_called_with(pages=invalid_pages)
 
@@ -62,6 +62,6 @@ class TestMediaWikiExtractor(unittest.TestCase):
         test_pages = ["Python_(programming_language)"]
         self.mock_reader.load_data.side_effect = Exception("Mocked exception")
 
-        documents = self.extractor.extract(pages=test_pages)
+        documents = self.extractor.extract(page_ids=test_pages)
         self.assertEqual(len(documents), 0)
         self.mock_reader.load_data.assert_called_once_with(pages=test_pages)
