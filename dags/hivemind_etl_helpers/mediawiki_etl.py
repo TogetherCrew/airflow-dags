@@ -28,7 +28,7 @@ def process_mediawiki_etl(
     try:
         mediawiki_extractor = MediaWikiExtractor(api_url)
         documents = mediawiki_extractor.extract(
-            page_titles=page_titles,
+            page_ids=page_titles,
         )
     except TypeError as exp:
         logging.info(f"No documents retrieved from MediaWiki! exp: {exp}")

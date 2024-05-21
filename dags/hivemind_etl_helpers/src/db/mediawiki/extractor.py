@@ -17,18 +17,18 @@ class MediaWikiExtractor:
         self.api_url = api_url
         self.wikimedia_reader = MediaWikiReader(api_url=self.api_url)
 
-    def extract(self, pages: Optional[List[str]] = None) -> List[Document]:
+    def extract(self, page_ids: Optional[List[str]] = None) -> List[Document]:
         """
-        Extracts documents from Wikimedia pages specified by their titles.
+        Extracts documents from Wikimedia page_ids (their titles).
 
         Args:
-        pages (Optional[List[str]]): List of page titles to extract documents from.
+        pages (Optional[List[str]]): List of page_ids to extract documents from.
 
         Returns:
         List[Document]: A list of Document objects extracted from the specified Wikimedia pages.
         """
-        if pages:
-            return self.extract_from_pages(pages)
+        if page_ids:
+            return self.extract_from_pages(page_ids)
         return []
 
     def extract_from_pages(self, pages: List[str]) -> List[Document]:
