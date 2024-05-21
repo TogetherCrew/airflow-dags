@@ -1,7 +1,8 @@
 import unittest
 from unittest.mock import Mock
-from llama_index.core import Document
+
 from dags.hivemind_etl_helpers.src.db.mediawiki.extractor import MediaWikiExtractor
+from llama_index.core import Document
 
 
 class TestMediaWikiExtractor(unittest.TestCase):

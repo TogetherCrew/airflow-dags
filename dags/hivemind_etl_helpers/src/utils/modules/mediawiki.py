@@ -20,8 +20,9 @@ class ModulesMediaWiki(ModulesBase):
             example data output:
             ```
             [{
-            "community_id": "6579c364f1120850414e0dc5",
-            "page_titles": ["Main_Page", "Default_Page"],
+                "community_id": "6579c364f1120850414e0dc5",
+                "page_titles": ["Main_Page", "Default_Page"],
+                "base_url": "some_api_url",
             }]
             ```
         """
@@ -41,6 +42,7 @@ class ModulesMediaWiki(ModulesBase):
                     {
                         "community_id": str(community),
                         "page_titles": modules_options.get("page_titles", []),
+                        "base_url": modules_options.get("api_url"),
                     }
                 )
 

@@ -1,10 +1,6 @@
-import os
 from typing import List, Optional
-
-from dotenv import load_dotenv
-from llama_index.core import Document
-
 from hivemind_etl_helpers.src.db.mediawiki.mediawiki_reader import MediaWikiReader
+from llama_index.core import Document
 
 
 class MediaWikiExtractor:
@@ -17,12 +13,7 @@ class MediaWikiExtractor:
         api_url (Optional[str]): The Wikimedia API URL.
         If None, the URL is loaded from the 'WIKIMEDIA_API_URL' environment variable.
         """
-        if api_url is None:
-            load_dotenv()
-            self.api_url = os.getenv("WIKIMEDIA_API_URL")
-        else:
-            self.api_url = api_url
-
+        self.api_url = api_url
         self.wikimedia_reader = MediaWikiReader(api_url=self.api_url)
 
     def extract(self, pages: Optional[List[str]] = None) -> List[Document]:
@@ -55,12 +46,3 @@ class MediaWikiExtractor:
         except Exception as e:
             print(f"Failed to extract from pages {pages}: {str(e)}")
             return []
-
-
-# # Example usage
-# if __name__ == "__main__":
-#     # Example of initializing and using the extractor
-#     extractor = MediaWikiExtractor(api_url="https://en.wikipedia.org/w/api.php")
-#     documents = extractor.extract(pages=["Python (programming language)", "OpenAI"])
-#     for doc in documents:
-#         print(doc)

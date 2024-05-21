@@ -6,7 +6,8 @@ from dags.hivemind_etl_helpers.src.db.mediawiki.extractor import MediaWikiExtrac
 
 def process_mediawiki_etl(
     community_id: str,
-    page_titles: list[str] | None = None,
+    api_url: str,
+    page_titles: list[str],
 ) -> None:
     """
     Process the MediaWiki pages or categories
@@ -23,11 +24,9 @@ def process_mediawiki_etl(
     Note: The `page_titles` should be given.
     """
     if page_titles is None:
-        raise ValueError(
-            "The `page_titles` must be given!"
-        )
+        raise ValueError("The `page_titles` must be given!")
     try:
-        mediawiki_extractor = MediaWikiExtractor()
+        mediawiki_extractor = MediaWikiExtractor(api_url)
         documents = mediawiki_extractor.extract(
             page_titles=page_titles,
         )

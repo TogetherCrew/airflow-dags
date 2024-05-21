@@ -1,5 +1,6 @@
 from datetime import datetime
 from unittest import TestCase
+
 from bson import ObjectId
 from hivemind_etl_helpers.src.utils.modules import ModulesMediaWiki
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
@@ -48,6 +49,7 @@ class TestGetMediaWikiModules(TestCase):
                                     "Help:Contents",
                                     "Sandbox",
                                 ],
+                                "api_url": "http://example.com/api",
                             },
                         }
                     ]
@@ -68,6 +70,7 @@ class TestGetMediaWikiModules(TestCase):
                 "Sandbox",
             ],
         )
+        self.assertEqual(result[0]["base_url"], "http://example.com/api")
 
     def test_get_mediawiki_communities_data_multiple_platforms(self):
         """
@@ -91,6 +94,7 @@ class TestGetMediaWikiModules(TestCase):
                                     "Main_Page",
                                     "Help:Contents",
                                 ],
+                                "api_url": "http://example1.com/api",
                             },
                         },
                         {
@@ -101,6 +105,7 @@ class TestGetMediaWikiModules(TestCase):
                                     "Sandbox",
                                     "Wikipedia:About",
                                 ],
+                                "api_url": "http://example2.com/api",
                             },
                         },
                     ]
@@ -146,6 +151,7 @@ class TestGetMediaWikiModules(TestCase):
                     "Main_Page",
                     "Help:Contents",
                 ],
+                "base_url": "http://example1.com/api",
             },
         )
         self.assertEqual(
@@ -156,5 +162,6 @@ class TestGetMediaWikiModules(TestCase):
                     "Sandbox",
                     "Wikipedia:About",
                 ],
+                "base_url": "http://example2.com/api",
             },
         )

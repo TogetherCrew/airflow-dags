@@ -4,6 +4,7 @@ from typing import Any, List, Optional
 
 from llama_index.legacy.readers.base import BasePydanticReader
 from llama_index.legacy.schema import Document
+import wikipedia
 
 
 class MediaWikiReader(BasePydanticReader):
@@ -17,13 +18,6 @@ class MediaWikiReader(BasePydanticReader):
 
     def __init__(self, api_url: Optional[str] = None) -> None:
         """Initialize with parameters."""
-        try:
-            import wikipedia  # noqa
-        except ImportError:
-            raise ImportError(
-                "`wikipedia` package not found, please run `pip install wikipedia`"
-            )
-
         if api_url:
             wikipedia.set_api_url(api_url)
 
