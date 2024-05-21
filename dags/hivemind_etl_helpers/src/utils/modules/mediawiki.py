@@ -37,11 +37,15 @@ class ModulesMediaWiki(ModulesBase):
                 if platform["name"] != self.platform_name:
                     continue
 
+                page_ids = self.get_platform_metadata(
+                    platform_id=platform["platform"],
+                    metadata_name="pageIds",
+                )
                 modules_options = platform["metadata"]
                 communities_data.append(
                     {
                         "community_id": str(community),
-                        "page_titles": modules_options.get("page_titles", []),
+                        "page_titles": page_ids,
                         "base_url": modules_options.get("api_url"),
                     }
                 )

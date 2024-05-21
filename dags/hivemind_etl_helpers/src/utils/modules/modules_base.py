@@ -76,10 +76,11 @@ class ModulesBase:
         """
         client = MongoSingleton.get_instance().client
 
-        user = self._get_platform_userid(platform_id)
+        user_id = self.get_platform_metadata(platform_id, "userId")
+        user_id = ObjectId(user_id)
         token_doc = client["Core"]["tokens"].find_one(
             {
-                "user": user,
+                "user": user_id,
                 "type": token_type,
             },
             {
@@ -89,13 +90,13 @@ class ModulesBase:
         )
         if token_doc is None:
             raise ValueError(
-                f"No Token for the given user {user} "
+                f"No Token for the given user {user_id} "
                 "in tokens collection of the Core database!"
             )
         token = token_doc["token"]
         return token
 
-    def _get_platform_userid(self, platform_id: ObjectId) -> str:
+    def get_platform_metadata(self, platform_id: ObjectId, metadata_name: str) -> str:
         """
         get the userid that belongs to a platform
 
@@ -103,6 +104,8 @@ class ModulesBase:
         -----------
         platform_id : bson.ObjectId
             the platform id we need their owner user id
+        metadata_name : str
+            a specific field of metadata that we want
 
         Returns
         ---------
@@ -116,11 +119,11 @@ class ModulesBase:
                 "_id": platform_id,
             },
             {
-                "metadata.userId": 1,
+                f"metadata.{metadata_name}": 1,
             },
         )
         if platform is None:
             raise ValueError(f"No platform available given platform id: {platform_id}")
 
-        user_id = platform["metadata"]["userId"]
-        return ObjectId(user_id)
+        metadata_field = platform["metadata"][metadata_name]
+        return metadata_field
