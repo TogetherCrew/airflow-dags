@@ -33,8 +33,9 @@ def process_mediawiki_etl(
     except TypeError as exp:
         logging.info(f"No documents retrieved from MediaWiki! exp: {exp}")
 
-    table_name = "mediawiki"
-    ingestion_pipeline = CustomIngestionPipeline(community_id, table_name=table_name)
+    ingestion_pipeline = CustomIngestionPipeline(
+        community_id=community_id, collection_name="mediawiki"
+    )
     try:
         ingestion_pipeline.run_pipeline(docs=documents)
     except Exception as e:
