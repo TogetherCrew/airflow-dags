@@ -39,5 +39,14 @@ class MediaWikiReader(BasePydanticReader):
             wiki_page = wikipedia.page(page, **load_kwargs)
             page_content = wiki_page.content
             page_id = wiki_page.pageid
-            results.append(Document(id_=page_id, text=page_content))
+            doc = Document(
+                id_=page_id,
+                text=page_content,
+                metadata={
+                    "url": wiki_page.url,
+                },
+                excluded_embed_metadata_keys=["url"],
+                excluded_llm_metadata_keys=["url"],
+            )
+            results.append(doc)
         return results
