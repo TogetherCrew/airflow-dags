@@ -5,7 +5,7 @@ from datetime import datetime
 
 from airflow import DAG
 from airflow.decorators import task
-from dags.hivemind_etl_helpers.mediawiki_etl import process_mediawiki_etl
+from hivemind_etl_helpers.mediawiki_etl import process_mediawiki_etl
 from hivemind_etl_helpers.src.utils.modules import ModulesMediaWiki
 
 with DAG(
