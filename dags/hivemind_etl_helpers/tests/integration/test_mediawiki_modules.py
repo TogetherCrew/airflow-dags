@@ -25,7 +25,7 @@ class TestGetMediaWikiModules(TestCase):
         self.client["Core"]["platforms"].insert_one(
             {
                 "_id": platform_id,
-                "name": "mediawiki",
+                "name": "mediaWiki",
                 "metadata": {
                     "pageIds": [
                         "Main_Page",
@@ -48,7 +48,7 @@ class TestGetMediaWikiModules(TestCase):
                     "platforms": [
                         {
                             "platform": platform_id,
-                            "name": "mediawiki",
+                            "name": "mediaWiki",
                             "metadata": {
                                 "api_url": "http://example.com/api",
                             },
@@ -89,14 +89,14 @@ class TestGetMediaWikiModules(TestCase):
                     "platforms": [
                         {
                             "platform": platform_id1,
-                            "name": "mediawiki",
+                            "name": "mediaWiki",
                             "metadata": {
                                 "api_url": "http://example1.com/api",
                             },
                         },
                         {
                             "platform": platform_id2,
-                            "name": "mediawiki",
+                            "name": "mediaWiki",
                             "metadata": {
                                 "api_url": "http://example2.com/api",
                             },
@@ -109,7 +109,7 @@ class TestGetMediaWikiModules(TestCase):
         self.client["Core"]["platforms"].insert_one(
             {
                 "_id": platform_id1,
-                "name": "mediawiki",
+                "name": "mediaWiki",
                 "metadata": {
                     "pageIds": [
                         "Main_Page",
@@ -127,7 +127,7 @@ class TestGetMediaWikiModules(TestCase):
         self.client["Core"]["platforms"].insert_one(
             {
                 "_id": platform_id2,
-                "name": "mediawiki",
+                "name": "mediaWiki",
                 "metadata": {
                     "pageIds": [
                         "Sandbox",
