@@ -3,7 +3,7 @@ from .modules_base import ModulesBase
 
 class ModulesMediaWiki(ModulesBase):
     def __init__(self) -> None:
-        self.platform_name = "mediawiki"
+        self.platform_name = "mediaWiki"
         super().__init__()
 
     def get_learning_platforms(
