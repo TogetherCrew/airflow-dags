@@ -7,7 +7,7 @@ psycopg2-binary==2.9.9
 sqlalchemy[asyncio]
 async-sqlalchemy
 python-pptx
-tc-neo4j-lib
+tc-neo4j-lib==1.0.2
 google-api-python-client
 unstructured
 cohere==4.56
