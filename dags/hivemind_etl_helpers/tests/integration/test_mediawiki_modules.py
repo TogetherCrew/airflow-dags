@@ -27,11 +27,7 @@ class TestGetMediaWikiModules(TestCase):
                 "_id": platform_id,
                 "name": "mediaWiki",
                 "metadata": {
-                    "pageIds": [
-                        "Main_Page",
-                        "Help:Contents",
-                        "Sandbox",
-                    ],
+                    "baseURL": "http://example.com/api",
                 },
                 "community": community_id,
                 "disconnectedAt": None,
@@ -50,7 +46,11 @@ class TestGetMediaWikiModules(TestCase):
                             "platform": platform_id,
                             "name": "mediaWiki",
                             "metadata": {
-                                "api_url": "http://example.com/api",
+                                "pageIds": [
+                                    "Main_Page",
+                                    "Help:Contents",
+                                    "Sandbox",
+                                ],
                             },
                         }
                     ]
@@ -91,14 +91,20 @@ class TestGetMediaWikiModules(TestCase):
                             "platform": platform_id1,
                             "name": "mediaWiki",
                             "metadata": {
-                                "api_url": "http://example1.com/api",
+                                "pageIds": [
+                                    "Main_Page",
+                                    "Help:Contents",
+                                ],
                             },
                         },
                         {
                             "platform": platform_id2,
                             "name": "mediaWiki",
                             "metadata": {
-                                "api_url": "http://example2.com/api",
+                                "pageIds": [
+                                    "Sandbox",
+                                    "Wikipedia:About",
+                                ],
                             },
                         },
                     ]
@@ -111,10 +117,7 @@ class TestGetMediaWikiModules(TestCase):
                 "_id": platform_id1,
                 "name": "mediaWiki",
                 "metadata": {
-                    "pageIds": [
-                        "Main_Page",
-                        "Help:Contents",
-                    ],
+                    "baseURL": "http://example1.com/api",
                 },
                 "community": community_id,
                 "disconnectedAt": None,
@@ -129,10 +132,7 @@ class TestGetMediaWikiModules(TestCase):
                 "_id": platform_id2,
                 "name": "mediaWiki",
                 "metadata": {
-                    "pageIds": [
-                        "Sandbox",
-                        "Wikipedia:About",
-                    ],
+                    "baseURL": "http://example2.com/api",
                 },
                 "community": community_id,
                 "disconnectedAt": None,
