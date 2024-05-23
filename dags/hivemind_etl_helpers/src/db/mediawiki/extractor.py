@@ -42,7 +42,9 @@ class MediaWikiExtractor:
         List[Document]: A list of Document objects extracted from the specified pages.
         """
         try:
-            response = self.wikimedia_reader.load_data(pages=pages)
+            response = self.wikimedia_reader.load_data(pages=pages,
+                                                       auto_suggest=False
+                                                       )
             return response
         except Exception as e:
             print(f"Failed to extract from pages {pages}: {str(e)}")
