@@ -25,18 +25,14 @@ def process_mediawiki_etl(
     """
     if page_titles is None:
         raise ValueError("The `page_titles` must be given!")
-    try:
-        mediawiki_extractor = MediaWikiExtractor(api_url)
-        documents = mediawiki_extractor.extract(
-            page_ids=page_titles,
-        )
-    except TypeError as exp:
-        logging.info(f"No documents retrieved from MediaWiki! exp: {exp}")
+
+    logging.info(f"Processing community id: {community_id}")
+    mediawiki_extractor = MediaWikiExtractor(api_url)
+    documents = mediawiki_extractor.extract(
+        page_ids=page_titles,
+    )
 
     ingestion_pipeline = CustomIngestionPipeline(
         community_id=community_id, collection_name="mediawiki"
     )
-    try:
-        ingestion_pipeline.run_pipeline(docs=documents)
-    except Exception as e:
-        logging.info(f"Error while trying to run MediaWikiIngestionPipeline! exp: {e}")
+    ingestion_pipeline.run_pipeline(docs=documents)

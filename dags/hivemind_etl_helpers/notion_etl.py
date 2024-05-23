@@ -33,19 +33,14 @@ def process_notion_etl(
         raise ValueError(
             "At least one of the `database_ids` or `page_ids` must be given!"
         )
-    try:
-        notion_extractor = NotionExtractor(notion_token=access_token)
-        documents = notion_extractor.extract(
-            page_ids=page_ids, database_ids=database_ids
-        )
-    except TypeError as exp:
-        logging.info(f"No documents retrieved from notion! exp: {exp}")
 
+    logging.info(f"Processing community id: {community_id}")
+    notion_extractor = NotionExtractor(notion_token=access_token)
+    documents = notion_extractor.extract(
+        page_ids=page_ids, database_ids=database_ids
+    )
     collection_name = "notion"
     ingestion_pipeline = CustomIngestionPipeline(
         community_id, collection_name=collection_name
     )
-    try:
-        ingestion_pipeline.run_pipeline(docs=documents)
-    except Exception as e:
-        logging.info(f"Error while trying to run NotionIngestionPipeline! exp: {e}")
+    ingestion_pipeline.run_pipeline(docs=documents)
