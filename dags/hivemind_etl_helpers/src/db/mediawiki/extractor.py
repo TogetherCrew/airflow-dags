@@ -49,3 +49,4 @@ class MediaWikiExtractor:
         except Exception as e:
             print(f"Failed to extract from pages {pages}: {str(e)}")
             return []
+
