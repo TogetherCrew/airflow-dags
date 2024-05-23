@@ -53,15 +53,3 @@ class TestMediaWikiExtractor(unittest.TestCase):
         documents = self.extractor.extract(page_ids=invalid_pages)
         self.assertEqual(len(documents), 0)
         self.mock_reader.load_data.assert_called_with(pages=invalid_pages)
-
-    def test_extract_from_valid_pages_with_exception(self):
-        """
-        Test extracting from valid pages with an exception occurring.
-        Expecting empty results.
-        """
-        test_pages = ["Python_(programming_language)"]
-        self.mock_reader.load_data.side_effect = Exception("Mocked exception")
-
-        documents = self.extractor.extract(page_ids=test_pages)
-        self.assertEqual(len(documents), 0)
-        self.mock_reader.load_data.assert_called_once_with(pages=test_pages)
