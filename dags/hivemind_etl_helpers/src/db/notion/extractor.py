@@ -61,12 +61,8 @@ class NotionExtractor:
         Returns:
         List[Document]: A list of Document objects extracted from the specified database.
         """
-        try:
-            response = self.notion_page_reader.load_data(database_id=database_id)
-            return response
-        except Exception as e:
-            print(f"Failed to extract from database {database_id}: {str(e)}")
-            return []
+        response = self.notion_page_reader.load_data(database_id=database_id)
+        return response
 
     def extract_from_pages(self, page_ids: List[str]) -> List[Document]:
         """
@@ -78,9 +74,5 @@ class NotionExtractor:
         Returns:
         List[Document]: A list of Document objects extracted from the specified pages.
         """
-        try:
-            response = self.notion_page_reader.load_data(page_ids=page_ids)
-            return response
-        except Exception as e:
-            print(f"Failed to extract from pages {page_ids}: {str(e)}")
-            return []
+        response = self.notion_page_reader.load_data(page_ids=page_ids)
+        return response

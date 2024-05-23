@@ -3,8 +3,8 @@
 from typing import Any, List, Optional
 
 import wikipedia
+from llama_index.core import Document
 from llama_index.legacy.readers.base import BasePydanticReader
-from llama_index.legacy.schema import Document
 
 
 class MediaWikiReader(BasePydanticReader):

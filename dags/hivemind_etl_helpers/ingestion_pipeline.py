@@ -65,10 +65,6 @@ class CustomIngestionPipeline:
             docstore_strategy=DocstoreStrategy.UPSERTS,
         )
         logging.info("Pipeline created, now inserting documents into pipeline!")
-        try:
-            nodes = pipeline.run(documents=docs, show_progress=True)
-            return nodes
-        except Exception as e:
-            logging.error(
-                f"An error occurred while running the pipeline: {e}", exc_info=True
-            )
+
+        nodes = pipeline.run(documents=docs, show_progress=True)
+        return nodes
