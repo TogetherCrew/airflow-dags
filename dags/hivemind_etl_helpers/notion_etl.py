@@ -36,9 +36,7 @@ def process_notion_etl(
 
     logging.info(f"Processing community id: {community_id}")
     notion_extractor = NotionExtractor(notion_token=access_token)
-    documents = notion_extractor.extract(
-        page_ids=page_ids, database_ids=database_ids
-    )
+    documents = notion_extractor.extract(page_ids=page_ids, database_ids=database_ids)
     collection_name = "notion"
     ingestion_pipeline = CustomIngestionPipeline(
         community_id, collection_name=collection_name
