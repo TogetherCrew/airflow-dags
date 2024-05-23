@@ -5,6 +5,7 @@ from datetime import datetime
 
 from airflow import DAG
 from airflow.decorators import task
+from hivemind_etl_helpers.debugs import pring_qdrant_creds
 from hivemind_etl_helpers.mediawiki_etl import process_mediawiki_etl
 from hivemind_etl_helpers.src.utils.modules import ModulesMediaWiki
 
@@ -19,6 +20,8 @@ with DAG(
         """
         Getting all communities having mediawiki from database
         """
+        # TODO: REMOVE!!!
+        pring_qdrant_creds()
         communities = ModulesMediaWiki().get_learning_platforms()
         return communities
 
