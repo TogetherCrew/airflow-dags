@@ -39,6 +39,9 @@ class CustomIngestionPipeline:
 
     def run_pipeline(self, docs: list[Document]):
         # qdrant is just collection based and doesn't have any database
+        logging.info(
+            f"{len(docs)} docuemnts was extracted and now loading into QDrant DB!"
+        )
         qdrant_collection_name = f"{self.collection_name}_{self.platform_name}"
         vector_access = QDrantVectorAccess(collection_name=qdrant_collection_name)
         vector_store = vector_access.setup_qdrant_vector_store()
@@ -61,6 +64,7 @@ class CustomIngestionPipeline:
             ),
             docstore_strategy=DocstoreStrategy.UPSERTS,
         )
+        logging.info("Pipeline created, now inserting documents into pipeline!")
         try:
             nodes = pipeline.run(documents=docs, show_progress=True)
             return nodes
