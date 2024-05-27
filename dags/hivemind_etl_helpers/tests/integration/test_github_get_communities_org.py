@@ -10,6 +10,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
     def setUp(self):
         client = MongoSingleton.get_instance().client
         client["Core"].drop_collection("modules")
+        client["Core"].drop_collection("platforms")
         self.modules_github = ModulesGitHub()
 
         self.client = client
@@ -22,18 +23,37 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
         """
         single github platform for one community
         """
+        platform_id = ObjectId("6579c364f1120850414e0dc6")
+        community_id = ObjectId("6579c364f1120850414e0dc5")
+
+        self.client["Core"]["platforms"].insert_one(
+            {
+                "_id": platform_id,
+                "name": "github",
+                "metadata": {
+                    "installationId": "345678",
+                    "account": {},
+                },
+                "community": community_id,
+                "disconnectedAt": None,
+                "connectedAt": datetime.now(),
+                "createdAt": datetime.now(),
+                "updatedAt": datetime.now(),
+            }
+        )
+
         self.client["Core"]["modules"].insert_one(
             {
                 "name": "hivemind",
-                "community": ObjectId("6579c364f1120850414e0dc5"),
+                "community": community_id,
                 "options": {
                     "platforms": [
                         {
-                            "platform": ObjectId("6579c364f1120850414e0dc6"),
+                            "platform": platform_id,
                             "name": "github",
                             "metadata": {
-                                "fromDate": datetime(2024, 1, 1),
-                                "organizationId": ["1234"],
+                                # "fromDate": datetime(2024, 1, 1),
+                                # "organizationId": ["1234"],
                                 "repoIds": ["111", "234"],
                             },
                         }
@@ -52,9 +72,9 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
             result[0],
             {
                 "community_id": "6579c364f1120850414e0dc5",
-                "organization_ids": ["1234"],
+                "organization_ids": ["345678"],
                 "repo_ids": ["111", "234"],
-                "from_date": datetime(2024, 1, 1),
+                # "from_date": datetime(2024, 1, 1),
             },
         )
 
@@ -62,28 +82,59 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
         """
         two github platform for one community
         """
+        platform_id = ObjectId("6579c364f1120850414e0dc6")
+        platform_id2 = ObjectId("6579c364f1120850414e0dc7")
+        community_id = ObjectId("6579c364f1120850414e0dc5")
+
+        self.client["Core"]["platforms"].insert_one(
+            {
+                "_id": platform_id,
+                "name": "github",
+                "metadata": {
+                    "installationId": "11111",
+                    "account": {},
+                },
+                "community": community_id,
+                "disconnectedAt": None,
+                "connectedAt": datetime.now(),
+                "createdAt": datetime.now(),
+                "updatedAt": datetime.now(),
+            }
+        )
+        self.client["Core"]["platforms"].insert_one(
+            {
+                "_id": platform_id2,
+                "name": "github",
+                "metadata": {
+                    "installationId": "222222",
+                    "account": {},
+                },
+                "community": community_id,
+                "disconnectedAt": None,
+                "connectedAt": datetime.now(),
+                "createdAt": datetime.now(),
+                "updatedAt": datetime.now(),
+            }
+        )
         self.client["Core"]["modules"].insert_one(
             {
                 "name": "hivemind",
-                "community": ObjectId("1009c364f1120850414e0dc5"),
+                "community": community_id,
                 "options": {
                     "platforms": [
                         {
-                            "platform": ObjectId("6579c364f1120850414e0dc6"),
+                            "platform": platform_id,
                             "name": "github",
                             "metadata": {
-                                "fromDate": datetime(2024, 1, 1),
-                                "organizationId": ["1234"],
-                                "repoIds": ["111", "234"],
+                                # "repoIds": ["111", "234"],
                             },
                         },
                         {
-                            "platform": ObjectId("6579c364f1120850414e0dc7"),
+                            "platform": platform_id2,
                             "name": "github",
                             "metadata": {
-                                "fromDate": datetime(2024, 2, 2),
-                                "organizationId": ["4321"],
-                                "repoIds": ["2132", "8888"],
+                                # "fromDate": datetime(2024, 2, 2),
+                                # "repoIds": ["2132", "8888"],
                             },
                         },
                     ]
@@ -96,22 +147,24 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
         self.assertIsInstance(result, list)
         self.assertEqual(len(result), 2)
 
+        print(result[0])
+
         self.assertEqual(
             result[0],
             {
-                "community_id": "1009c364f1120850414e0dc5",
-                "organization_ids": ["1234"],
-                "repo_ids": ["111", "234"],
-                "from_date": datetime(2024, 1, 1),
+                "community_id": str(community_id),
+                "organization_ids": ["11111"],
+                "repo_ids": [],
+                # "from_date": datetime(2024, 1, 1),
             },
         )
         self.assertEqual(
             result[1],
             {
-                "community_id": "1009c364f1120850414e0dc5",
-                "organization_ids": ["4321"],
-                "repo_ids": ["2132", "8888"],
-                "from_date": datetime(2024, 2, 2),
+                "community_id": str(community_id),
+                "organization_ids": ["222222"],
+                "repo_ids": [],
+                # "from_date": datetime(2024, 2, 2),
             },
         )
 
@@ -121,27 +174,94 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
         """
         two github platform for two separate communities
         """
+        platform_id = ObjectId("6579c364f1120850414e0dc6")
+        platform_id2 = ObjectId("6579c364f1120850414e0dc7")
+        platform_id3 = ObjectId("6579c364f1120850414e0dc8")
+        platform_id4 = ObjectId("6579c364f1120850414e0dc9")
+        community_id = ObjectId("6579c364f1120850414e0dc5")
+        community_id2 = ObjectId("2009c364f1120850414e0dc5")
+
+        self.client["Core"]["platforms"].insert_one(
+            {
+                "_id": platform_id,
+                "name": "github",
+                "metadata": {
+                    "installationId": "11111",
+                    "account": {},
+                },
+                "community": community_id,
+                "disconnectedAt": None,
+                "connectedAt": datetime.now(),
+                "createdAt": datetime.now(),
+                "updatedAt": datetime.now(),
+            }
+        )
+        self.client["Core"]["platforms"].insert_one(
+            {
+                "_id": platform_id2,
+                "name": "github",
+                "metadata": {
+                    "installationId": "222222",
+                    "account": {},
+                },
+                "community": community_id,
+                "disconnectedAt": None,
+                "connectedAt": datetime.now(),
+                "createdAt": datetime.now(),
+                "updatedAt": datetime.now(),
+            }
+        )
+        self.client["Core"]["platforms"].insert_one(
+            {
+                "_id": platform_id3,
+                "name": "github",
+                "metadata": {
+                    "installationId": "333333",
+                    "account": {},
+                },
+                "community": community_id2,
+                "disconnectedAt": None,
+                "connectedAt": datetime.now(),
+                "createdAt": datetime.now(),
+                "updatedAt": datetime.now(),
+            }
+        )
+        self.client["Core"]["platforms"].insert_one(
+            {
+                "_id": platform_id4,
+                "name": "discord",
+                "metadata": {
+                    "learning": {},
+                    "answering": {},
+                },
+                "community": community_id2,
+                "disconnectedAt": None,
+                "connectedAt": datetime.now(),
+                "createdAt": datetime.now(),
+                "updatedAt": datetime.now(),
+            }
+        )
+
         self.client["Core"]["modules"].insert_many(
             [
                 {
                     "name": "hivemind",
-                    "community": ObjectId("1009c364f1120850414e0dc5"),
+                    "community": community_id,
                     "options": {
                         "platforms": [
                             {
-                                "platform": ObjectId("6579c364f1120850414e0dc6"),
+                                "platform": platform_id,
                                 "name": "github",
                                 "metadata": {
-                                    "fromDate": datetime(2024, 1, 1),
-                                    "organizationId": ["1234"],
+                                    # "fromDate": datetime(2024, 1, 1),
                                 },
                             },
                             {
-                                "platform": ObjectId("6579c364f1120850414e0dc7"),
+                                "platform": platform_id2,
                                 "name": "github",
                                 "metadata": {
-                                    "fromDate": datetime(2024, 2, 2),
-                                    "repoIds": ["1111"],
+                                    # "fromDate": datetime(2024, 2, 2),
+                                    "repoIds": ["AAAAA"],
                                 },
                             },
                         ]
@@ -149,22 +269,22 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                 },
                 {
                     "name": "hivemind",
-                    "community": ObjectId("2009c364f1120850414e0dc5"),
+                    "community": community_id2,
                     "options": {
                         "platforms": [
                             {
-                                "platform": ObjectId("6579c364f1120850414e0db5"),
+                                "platform": platform_id3,
                                 "name": "github",
                                 "metadata": {
-                                    "fromDate": datetime(2024, 3, 1),
-                                    "organizationId": ["111111"],
+                                    # "fromDate": datetime(2024, 3, 1),
+                                    # "organizationId": ["111111"],
                                 },
                             },
                             {
-                                "platform": ObjectId("6579c364f1120850414e0dc7"),
+                                "platform": platform_id4,
                                 "name": "discord",
                                 "metadata": {
-                                    "fromDate": datetime(2024, 3, 1),
+                                    # "fromDate": datetime(2024, 3, 1),
                                     "selectedChannels": ["666", "777"],
                                 },
                             },
@@ -180,34 +300,35 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
         self.assertEqual(len(results), 3)
 
         for res in results:
-            if res["organization_ids"] == ["1234"]:
+            print(res, "|||", str(community_id))
+            if res["organization_ids"] == ["11111"]:
                 self.assertEqual(
                     res,
                     {
-                        "community_id": "1009c364f1120850414e0dc5",
-                        "organization_ids": ["1234"],
+                        "community_id": str(community_id),
+                        "organization_ids": ["11111"],
                         "repo_ids": [],
-                        "from_date": datetime(2024, 1, 1),
+                        # "from_date": datetime(2024, 1, 1),
                     },
                 )
-            elif res["organization_ids"] == []:
+            elif res["organization_ids"] == ["222222"]:
                 self.assertEqual(
                     res,
                     {
-                        "community_id": "1009c364f1120850414e0dc5",
-                        "organization_ids": [],
-                        "repo_ids": ["1111"],
-                        "from_date": datetime(2024, 2, 2),
+                        "community_id": str(community_id),
+                        "organization_ids": ["222222"],
+                        "repo_ids": ["AAAAA"],
+                        # "from_date": datetime(2024, 2, 2),
                     },
                 )
-            elif res["organization_ids"] == ["111111"]:
+            elif res["organization_ids"] == ["333333"]:
                 self.assertEqual(
                     res,
                     {
-                        "community_id": "2009c364f1120850414e0dc5",
-                        "organization_ids": ["111111"],
+                        "community_id": str(community_id2),
+                        "organization_ids": ["333333"],
                         "repo_ids": [],
-                        "from_date": datetime(2024, 3, 1),
+                        # "from_date": datetime(2024, 3, 1),
                     },
                 )
             else:
