@@ -39,14 +39,19 @@ class ModulesGitHub(ModulesBase):
                 if platform["name"] != self.platform_name:
                     continue
 
+                platform_id = platform["platform"]
+                organization_id = self.get_platform_metadata(
+                    platform_id=platform_id,
+                    metadata_name="installationId",
+                )
                 modules_options = platform["metadata"]
 
                 platforms_data.append(
                     {
                         "community_id": str(community),
-                        "organization_ids": modules_options.get("organizationId", []),
+                        "organization_ids": [organization_id],
                         "repo_ids": modules_options.get("repoIds", []),
-                        "from_date": modules_options["fromDate"],
+                        # "from_date": modules_options["fromDate"],
                     }
                 )
 
