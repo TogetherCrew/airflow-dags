@@ -75,6 +75,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                 "organization_ids": ["345678"],
                 "repo_ids": ["111", "234"],
                 # "from_date": datetime(2024, 1, 1),
+                "from_date": None,
             },
         )
 
@@ -156,6 +157,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                 "organization_ids": ["11111"],
                 "repo_ids": [],
                 # "from_date": datetime(2024, 1, 1),
+                "from_date": None,
             },
         )
         self.assertEqual(
@@ -165,6 +167,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                 "organization_ids": ["222222"],
                 "repo_ids": [],
                 # "from_date": datetime(2024, 2, 2),
+                "from_date": None,
             },
         )
 
@@ -309,6 +312,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                         "organization_ids": ["11111"],
                         "repo_ids": [],
                         # "from_date": datetime(2024, 1, 1),
+                        "from_date": None,
                     },
                 )
             elif res["organization_ids"] == ["222222"]:
@@ -319,6 +323,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                         "organization_ids": ["222222"],
                         "repo_ids": ["AAAAA"],
                         # "from_date": datetime(2024, 2, 2),
+                        "from_date": None,
                     },
                 )
             elif res["organization_ids"] == ["333333"]:
@@ -329,6 +334,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                         "organization_ids": ["333333"],
                         "repo_ids": [],
                         # "from_date": datetime(2024, 3, 1),
+                        "from_date": None,
                     },
                 )
             else:
