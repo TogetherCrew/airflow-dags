@@ -26,7 +26,7 @@ def process_mediawiki_etl(
     if page_titles is None:
         raise ValueError("The `page_titles` must be given!")
 
-    logging.info(f"Processing community id: {community_id}")
+    logging.info(f"Processing community id: {community_id} | given page ids: {page_titles}")
     mediawiki_extractor = MediaWikiExtractor(api_url)
     documents = mediawiki_extractor.extract(
         page_ids=page_titles,

@@ -117,6 +117,7 @@ class ModulesBase:
         platform = client["Core"]["platforms"].find_one(
             {
                 "_id": platform_id,
+                "disconnectedAt": None,
             },
             {
                 f"metadata.{metadata_name}": 1,
