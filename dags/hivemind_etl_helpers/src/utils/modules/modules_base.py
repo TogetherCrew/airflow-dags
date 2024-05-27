@@ -86,7 +86,7 @@ class ModulesBase:
             {
                 "token": 1,
             },
-            sort=[("createdAt", 1)],
+            sort=[("createdAt", -1)],
         )
         if token_doc is None:
             raise ValueError(
