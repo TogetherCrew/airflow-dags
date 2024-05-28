@@ -260,6 +260,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                                 "name": "github",
                                 "metadata": {
                                     # "fromDate": datetime(2024, 1, 1),
+                                    "activated": True,
                                 },
                             },
                             {
@@ -431,6 +432,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                                 "platform": platform_id,
                                 "name": "github",
                                 "metadata": {
+                                    "activated": True,
                                     # "fromDate": datetime(2024, 1, 1),
                                 },
                             },
@@ -478,7 +480,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
 
         self.assertIsInstance(results, list)
         # two communities we have
-        self.assertEqual(len(results), 3)
+        self.assertEqual(len(results), 2)
 
         for res in results:
             if res["organization_ids"] == ["11111"]:
@@ -500,17 +502,6 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                         "organization_ids": ["222222"],
                         # "repo_ids": ["AAAAA"],
                         # "from_date": datetime(2024, 2, 2),
-                        "from_date": None,
-                    },
-                )
-            elif res["organization_ids"] == ["333333"]:
-                self.assertEqual(
-                    res,
-                    {
-                        "community_id": str(community_id2),
-                        "organization_ids": ["333333"],
-                        # "repo_ids": [],
-                        # "from_date": datetime(2024, 3, 1),
                         "from_date": None,
                     },
                 )

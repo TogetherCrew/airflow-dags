@@ -53,7 +53,7 @@ class ModulesGitHub(ModulesBase):
                         {
                             "community_id": str(community),
                             "organization_ids": [organization_id],
-                            "repo_ids": modules_options.get("repoIds", []),
+                            # "repo_ids": modules_options.get("repoIds", []),
                             # "from_date": modules_options["fromDate"],
                             "from_date": None,
                         }
