@@ -346,10 +346,10 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
             else:
                 # should never reach here
                 raise ValueError("No more organizations we had!")
-            
+
     def test_get_github_communities_data_multiple_platforms_multiple_communities_one_disabled(
-            self,
-        ):
+        self,
+    ):
         """
         two github platform for two separate communities
         """
@@ -508,4 +508,3 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
             else:
                 # should never reach here
                 raise ValueError("No more organizations we had!")
-
