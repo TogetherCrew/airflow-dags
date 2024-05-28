@@ -1,3 +1,5 @@
+import logging
+
 from .modules_base import ModulesBase
 
 
@@ -37,23 +39,29 @@ class ModulesMediaWiki(ModulesBase):
                 if platform["name"] != self.platform_name:
                     continue
 
-                # TODO: retrieve baseURL and path in 1 db call
-                base_url = self.get_platform_metadata(
-                    platform_id=platform["platform"],
-                    metadata_name="baseURL",
-                )
-                path = self.get_platform_metadata(
-                    platform_id=platform["platform"],
-                    metadata_name="path",
-                )
+                try:
+                    # TODO: retrieve baseURL and path in 1 db call
+                    base_url = self.get_platform_metadata(
+                        platform_id=platform["platform"],
+                        metadata_name="baseURL",
+                    )
+                    path = self.get_platform_metadata(
+                        platform_id=platform["platform"],
+                        metadata_name="path",
+                    )
 
-                modules_options = platform["metadata"]
-                communities_data.append(
-                    {
-                        "community_id": str(community),
-                        "page_titles": modules_options.get("pageIds", []),
-                        "base_url": base_url + path,
-                    }
-                )
+                    modules_options = platform["metadata"]
+                    communities_data.append(
+                        {
+                            "community_id": str(community),
+                            "page_titles": modules_options.get("pageIds", []),
+                            "base_url": base_url + path,
+                        }
+                    )
+                except Exception as exp:
+                    logging.error(
+                        "Exception while fetching mediaWiki modules "
+                        f"for platform: {platform['platform']} | exception: {exp}"
+                    )
 
         return communities_data
