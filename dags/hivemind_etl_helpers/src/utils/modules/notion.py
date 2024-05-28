@@ -46,8 +46,8 @@ class ModulesNotion(ModulesBase):
                 communities_data.append(
                     {
                         "community_id": str(community),
-                        "database_ids": modules_options.get("database_ids", []),
-                        "page_ids": modules_options.get("page_ids", []),
+                        "database_ids": modules_options.get("databaseIds", []),
+                        "page_ids": modules_options.get("pageIds", []),
                         "access_token": token,
                     }
                 )
