@@ -27,7 +27,8 @@ class TestGetMediaWikiModules(TestCase):
                 "_id": platform_id,
                 "name": "mediaWiki",
                 "metadata": {
-                    "baseURL": "http://example.com/api",
+                    "baseURL": "http://example.com",
+                    "path": "/api",
                 },
                 "community": community_id,
                 "disconnectedAt": None,
@@ -117,7 +118,8 @@ class TestGetMediaWikiModules(TestCase):
                 "_id": platform_id1,
                 "name": "mediaWiki",
                 "metadata": {
-                    "baseURL": "http://example1.com/api",
+                    "baseURL": "http://example1.com",
+                    "path": "/api",
                 },
                 "community": community_id,
                 "disconnectedAt": None,
@@ -132,7 +134,8 @@ class TestGetMediaWikiModules(TestCase):
                 "_id": platform_id2,
                 "name": "mediaWiki",
                 "metadata": {
-                    "baseURL": "http://example2.com/api",
+                    "baseURL": "http://example2.com",
+                    "path": "/api",
                 },
                 "community": community_id,
                 "disconnectedAt": None,
