@@ -64,12 +64,12 @@ class TestGetNotionModules(TestCase):
                             "platform": platform_id,
                             "name": "notion",
                             "metadata": {
-                                "database_ids": [
+                                "databaseIds": [
                                     "dadd27f1dc1e4fa6b5b9dea76858dabe",
                                     "eadd27f1dc1e4fa6b5b9dea76858dabe",
                                     "fadd27f1dc1e4fa6b5b9dea76858dabe",
                                 ],
-                                "page_ids": [
+                                "pageIds": [
                                     "6a3c20b6861145b29030292120aa03e6",
                                     "7a3c20b6861145b29030292120aa03e6",
                                     "8a3c20b6861145b29030292120aa03e6",
@@ -139,11 +139,11 @@ class TestGetNotionModules(TestCase):
                             "platform": platform_id1,
                             "name": "notion",
                             "metadata": {
-                                "database_ids": [
+                                "databaseIds": [
                                     "dadd27f1dc1e4fa6b5b9dea76858dabe",
                                     "384d0d271c8d4668a79db40aca9e15de",
                                 ],
-                                "page_ids": [
+                                "pageIds": [
                                     "6a3c20b6861145b29030292120aa03e6",
                                     "e479ee3eef9a4eefb3a393848af9ed9d",
                                 ],
@@ -153,11 +153,11 @@ class TestGetNotionModules(TestCase):
                             "platform": platform_id2,
                             "name": "notion",
                             "metadata": {
-                                "database_ids": [
+                                "databaseIds": [
                                     "eadd27f1dc1e4fa6b5b9dea76858dabe",
                                     "484d0d271c8d4668a79db40aca9e15de",
                                 ],
-                                "page_ids": [
+                                "pageIds": [
                                     "7a3c20b6861145b29030292120aa03e6",
                                     "f479ee3eef9a4eefb3a393848af9ed9d",
                                 ],
