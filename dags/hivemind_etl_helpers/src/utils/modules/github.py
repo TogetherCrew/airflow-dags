@@ -47,14 +47,16 @@ class ModulesGitHub(ModulesBase):
                 )
                 modules_options = platform["metadata"]
 
-                platforms_data.append(
-                    {
-                        "community_id": str(community),
-                        "organization_ids": [organization_id],
-                        "repo_ids": modules_options.get("repoIds", []),
-                        # "from_date": modules_options["fromDate"],
-                        "from_date": None,
-                    }
-                )
+                # if github modules was activated
+                if modules_options["activated"] is True:
+                    platforms_data.append(
+                        {
+                            "community_id": str(community),
+                            "organization_ids": [organization_id],
+                            "repo_ids": modules_options.get("repoIds", []),
+                            # "from_date": modules_options["fromDate"],
+                            "from_date": None,
+                        }
+                    )
 
         return platforms_data
