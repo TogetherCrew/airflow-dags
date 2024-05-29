@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 
 from .modules_base import ModulesBase
@@ -40,18 +41,26 @@ class ModulesGDrive(ModulesBase):
                 if platform["name"] != self.platform_name:
                     continue
 
-                modules_options = platform["metadata"]
-                refresh_token = self.get_token(
-                    platform_id=platform["platform"], token_type="google_refresh"
-                )
-                platforms_data.append(
-                    {
-                        "community_id": str(community),
-                        "drive_ids": modules_options.get("driveIds", []),
-                        "folder_ids": modules_options.get("folderIds", []),
-                        "file_ids": modules_options.get("fileIds", []),
-                        "refresh_token": refresh_token,
-                    }
-                )
+                platform_id = platform["platform"]
+
+                try:
+                    modules_options = platform["metadata"]
+                    refresh_token = self.get_token(
+                        platform_id=platform_id, token_type="google_refresh"
+                    )
+                    platforms_data.append(
+                        {
+                            "community_id": str(community),
+                            "drive_ids": modules_options.get("driveIds", []),
+                            "folder_ids": modules_options.get("folderIds", []),
+                            "file_ids": modules_options.get("fileIds", []),
+                            "refresh_token": refresh_token,
+                        }
+                    )
+                except Exception as exp:
+                    logging.error(
+                        "Exception while fetching mediaWiki modules "
+                        f"for platform: {platform_id} | exception: {exp}"
+                    )
 
         return platforms_data
