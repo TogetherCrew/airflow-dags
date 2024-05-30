@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 
 from .modules_base import ModulesBase
@@ -41,22 +42,29 @@ class ModulesGitHub(ModulesBase):
                     continue
 
                 platform_id = platform["platform"]
-                organization_id = self.get_platform_metadata(
-                    platform_id=platform_id,
-                    metadata_name="installationId",
-                )
-                modules_options = platform["metadata"]
 
-                # if github modules was activated
-                if modules_options["activated"] is True:
-                    platforms_data.append(
-                        {
-                            "community_id": str(community),
-                            "organization_ids": [organization_id],
-                            # "repo_ids": modules_options.get("repoIds", []),
-                            # "from_date": modules_options["fromDate"],
-                            "from_date": None,
-                        }
+                try:
+                    organization_id = self.get_platform_metadata(
+                        platform_id=platform_id,
+                        metadata_name="installationId",
+                    )
+                    modules_options = platform["metadata"]
+
+                    # if github modules was activated
+                    if modules_options["activated"] is True:
+                        platforms_data.append(
+                            {
+                                "community_id": str(community),
+                                "organization_ids": [organization_id],
+                                # "repo_ids": modules_options.get("repoIds", []),
+                                # "from_date": modules_options["fromDate"],
+                                "from_date": None,
+                            }
+                        )
+                except Exception as exp:
+                    logging.error(
+                        "Exception while fetching mediaWiki modules "
+                        f"for platform: {platform_id} | exception: {exp}"
                     )
 
         return platforms_data

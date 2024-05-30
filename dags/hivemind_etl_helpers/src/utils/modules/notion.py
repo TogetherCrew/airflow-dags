@@ -1,3 +1,5 @@
+import logging
+
 from .modules_base import ModulesBase
 
 
@@ -38,18 +40,24 @@ class ModulesNotion(ModulesBase):
                 if platform["name"] != self.platform_name:
                     continue
 
-                modules_options = platform["metadata"]
-                token = self.get_token(
-                    platform_id=platform["platform"],
-                    token_type="notion_access",
-                )
-                communities_data.append(
-                    {
-                        "community_id": str(community),
-                        "database_ids": modules_options.get("databaseIds", []),
-                        "page_ids": modules_options.get("pageIds", []),
-                        "access_token": token,
-                    }
-                )
+                try:
+                    modules_options = platform["metadata"]
+                    token = self.get_token(
+                        platform_id=platform["platform"],
+                        token_type="notion_access",
+                    )
+                    communities_data.append(
+                        {
+                            "community_id": str(community),
+                            "database_ids": modules_options.get("databaseIds", []),
+                            "page_ids": modules_options.get("pageIds", []),
+                            "access_token": token,
+                        }
+                    )
+                except Exception as exp:
+                    logging.error(
+                        "Exception while fetching mediaWiki modules "
+                        f"for platform: {platform['platform']} | exception: {exp}"
+                    )
 
         return communities_data

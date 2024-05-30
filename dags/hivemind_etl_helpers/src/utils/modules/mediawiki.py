@@ -39,14 +39,16 @@ class ModulesMediaWiki(ModulesBase):
                 if platform["name"] != self.platform_name:
                     continue
 
+                platform_id = platform["platform"]
+
                 try:
                     # TODO: retrieve baseURL and path in 1 db call
                     base_url = self.get_platform_metadata(
-                        platform_id=platform["platform"],
+                        platform_id=platform_id,
                         metadata_name="baseURL",
                     )
                     path = self.get_platform_metadata(
-                        platform_id=platform["platform"],
+                        platform_id=platform_id,
                         metadata_name="path",
                     )
 
@@ -61,7 +63,7 @@ class ModulesMediaWiki(ModulesBase):
                 except Exception as exp:
                     logging.error(
                         "Exception while fetching mediaWiki modules "
-                        f"for platform: {platform['platform']} | exception: {exp}"
+                        f"for platform: {platform_id} | exception: {exp}"
                     )
 
         return communities_data
