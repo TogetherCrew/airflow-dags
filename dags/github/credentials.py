@@ -21,6 +21,6 @@ def load_smart_proxy_url() -> str:
     if user is None or password is None or host is None:
         raise EnvironmentError("One of the smart proxy env variables was not set!")
 
-    url = f"{password}:{user}@{host}"
+    url = f"{user}:{password}@{host}"
 
     return url
