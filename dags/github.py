@@ -64,6 +64,7 @@ with DAG(
     start_date=datetime(2022, 12, 1, 14),
     schedule_interval=timedelta(hours=6),
     catchup=False,
+    max_active_runs=1,
 ) as dag:
 
     @task

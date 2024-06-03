@@ -11,6 +11,8 @@ with DAG(
     dag_id="discourse_vector_store",
     start_date=datetime(2024, 3, 1),
     schedule_interval="0 2 * * *",
+    catchup=False,
+    max_active_runs=1,
 ) as dag:
 
     @task
@@ -39,7 +41,10 @@ with DAG(
     dag_id="discourse_summary_vector_store",
     start_date=datetime(2024, 2, 21),
     schedule_interval="0 2 * * *",
+    catchup=False,
+    max_active_runs=1,
 ) as dag:
+    dag.max_active_runs = 1
 
     @task
     def get_discourse_communities_info():
