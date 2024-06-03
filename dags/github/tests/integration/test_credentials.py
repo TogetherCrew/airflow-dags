@@ -1,4 +1,3 @@
-import os
 from unittest import TestCase
 
 from github.credentials import load_smart_proxy_url

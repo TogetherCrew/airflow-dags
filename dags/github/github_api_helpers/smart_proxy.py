@@ -2,8 +2,6 @@ import logging
 import random
 
 import requests
-from requests import Response
-
 from github.credentials import load_smart_proxy_url
 
 
@@ -38,7 +36,7 @@ class UniqueRandomNumbers:
         random.shuffle(self.numbers)
 
 
-def get(url: str, params=None) -> Response:
+def get(url: str, params=None) -> requests.Response:
     """
     Sends a GET request with Smart Proxy and retries up to 10 times if necessary.
 
