@@ -38,7 +38,7 @@ with DAG(
         )
 
         ingest_data = CustomIngestionPipeline(
-            community_id=community_id, collection_name="gdrive"
+            community_id=community_id, collection_name="google"
         )
         ingest_data.run_pipeline(load_file_data)
 
