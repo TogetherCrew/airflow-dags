@@ -81,9 +81,7 @@ def get(url: str, params=None) -> requests.Response:
                 f"for the url: {url}. Error: {http_err}"
             )
         except Exception as err:
-            logging.error(
-                f"Exception occured while fetching url: {url}, Error: {err}"
-            )
+            logging.error(f"Exception occured while fetching url: {url}, Error: {err}")
 
         attempt += 1
     raise Exception("All attempts failed using smart proxy!")
