@@ -10,7 +10,7 @@ class TestIngestionPipeline(unittest.TestCase):
     def test_run_pipeline(self):
         ingest_pipeline = Mock(IngestionPipeline)
         community = "1234"
-        collection_name = "gdrive"
+        collection_name = "google"
         ingestion_pipeline = CustomIngestionPipeline(
             community_id=community, collection_name=collection_name, testing=True
         )
@@ -31,7 +31,7 @@ class TestIngestionPipeline(unittest.TestCase):
 
     def test_load_pipeline_run_exception(self):
         ingestion_pipeline = CustomIngestionPipeline(
-            "1234", collection_name="gdrive", testing=True
+            "1234", collection_name="google", testing=True
         )
         ingestion_pipeline.run_pipeline = Mock()
         ingestion_pipeline.run_pipeline.side_effect = Exception("Test Exception")
