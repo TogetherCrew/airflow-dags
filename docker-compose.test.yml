@@ -35,6 +35,9 @@ services:
       - QDRANT_HOST=qdrant
       - QDRANT_PORT=6333
       - QDRANT_API_KEY=
+      - SMART_PROXY_USER=user1
+      - SMART_PROXY_PASSWORD=password
+      - SMART_PROXY_HOST=sample_smart_proxy_host
     volumes:
       - ./coverage:/project/coverage
     depends_on:

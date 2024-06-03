@@ -4,6 +4,8 @@ import random
 import requests
 from requests import Response
 
+from github.credentials import load_smart_proxy_url
+
 
 class UniqueRandomNumbers:
     _instance = None
@@ -52,7 +54,8 @@ def get(url: str, params=None) -> Response:
 
     while attempt < max_attempts:
         random_port = urn.get_unique_number()
-        proxy_url = f"http://spusfxy185:TwinTwinTwin@eu.dc.smartproxy.com:{random_port}"
+        url = load_smart_proxy_url()
+        proxy_url = f"{url}:{random_port}"
         logging.info(f"Attempt {attempt + 1}: Using proxy {proxy_url}")
         proxies = {
             "http": proxy_url,
