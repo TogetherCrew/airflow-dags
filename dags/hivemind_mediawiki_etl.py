@@ -12,6 +12,8 @@ with DAG(
     dag_id="mediawiki_vector_store_update",
     start_date=datetime(2024, 2, 21),
     schedule_interval="0 4 * * *",
+    catchup=False,
+    max_active_runs=1,
 ) as dag:
 
     @task

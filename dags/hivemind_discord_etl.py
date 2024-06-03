@@ -15,6 +15,7 @@ with DAG(
     start_date=datetime(2024, 1, 1),
     schedule_interval="0 2 * * *",
     catchup=False,
+    max_active_runs=1,
 ) as dag:
 
     @task
@@ -56,6 +57,8 @@ with DAG(
     dag_id="discord_summary_vector_store",
     start_date=datetime(2024, 1, 1),
     schedule_interval="0 2 * * *",
+    catchup=False,
+    max_active_runs=1,
 ) as dag:
 
     @task
