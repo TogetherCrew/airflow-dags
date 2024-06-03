@@ -52,9 +52,12 @@ def get(url: str, params=None) -> requests.Response:
 
     while attempt < max_attempts:
         random_port = urn.get_unique_number()
-        url = load_smart_proxy_url()
-        proxy_url = f"{url}:{random_port}"
-        logging.info(f"Attempt {attempt + 1}/{max_attempts}: Using smart proxy!")
+        smart_proxy_base_url = load_smart_proxy_url()
+        proxy_url = f"{smart_proxy_base_url}:{random_port}"
+        logging.info(
+            f"Attempt {attempt + 1}/{max_attempts} "
+            f"Using smart proxy for port: {random_port}!"
+        )
         proxies = {
             "http": proxy_url,
             "https": proxy_url,
@@ -67,16 +70,20 @@ def get(url: str, params=None) -> requests.Response:
                 return response
             else:
                 logging.error(
-                    f"Failed to do get using smart proxy with status code {response.status_code}"
+                    f"Failed to fetch url: {url} "
+                    f"with status code {response.status_code}"
                 )
                 logging.error(f"Response: {response.text}")
 
         except requests.exceptions.HTTPError as http_err:
             logging.error(
-                f"HTTP error occurred، Failed to get using smart proxy. Error: {http_err}"
+                "HTTP error occurred، Failed to get using smart proxy "
+                f"for the url: {url}. Error: {http_err}"
             )
         except Exception as err:
-            logging.error(f"Exception occurred while using smart proxy. Error: {err}")
+            logging.error(
+                f"Exception occured while fetching url: {url}, Error: {err}"
+            )
 
         attempt += 1
     raise Exception("All attempts failed using smart proxy!")
