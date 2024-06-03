@@ -44,7 +44,6 @@ with DAG(
     catchup=False,
     max_active_runs=1,
 ) as dag:
-    dag.max_active_runs = 1
 
     @task
     def get_discourse_communities_info():
