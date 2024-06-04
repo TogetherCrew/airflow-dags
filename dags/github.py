@@ -684,7 +684,7 @@ with DAG(
     )
     load_orgs >> load_orgs_members
 
-    repos = extract_github_repos(org_data=orgs_info)
+    repos = extract_github_repos.expand(org_data=orgs_info)
     transform_repos = transform_github_repos.expand(repo=repos)
     load_repos = load_github_org_repos.expand(org_data=transform_repos)
     load_orgs >> load_repos
