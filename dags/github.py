@@ -185,7 +185,7 @@ with DAG(
             repos = get_all_org_repos(org_name=org["login"])
             org["repos"] = repos
 
-        return organizations
+        return org_data
 
     @task
     def transform_github_repos(repo):
@@ -204,7 +204,7 @@ with DAG(
                     f"{idx + 1}/{len(repos)} | repo_id: {repo['id']}"
                 )
                 save_repo_to_neo4j(repo)
-        return repo
+        return org_data
 
     @task
     def load_github_repo(repo):
