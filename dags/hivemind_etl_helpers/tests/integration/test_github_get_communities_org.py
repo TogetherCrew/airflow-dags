@@ -31,8 +31,11 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                 "_id": platform_id,
                 "name": "github",
                 "metadata": {
-                    "installationId": "345678",
-                    "account": {"login": "org1"},
+                    "installationId": "12112",
+                    "account": {
+                        "login": "org1",
+                        "id": "345678",
+                    },
                 },
                 "community": community_id,
                 "disconnectedAt": None,
@@ -74,7 +77,6 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
             {
                 "community_id": "6579c364f1120850414e0dc5",
                 "organization_ids": ["345678"],
-                "organization_names": ["org1"],
                 # "repo_ids": ["111", "234"],
                 # "from_date": datetime(2024, 1, 1),
                 "from_date": None,
@@ -94,8 +96,11 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                 "_id": platform_id,
                 "name": "github",
                 "metadata": {
-                    "installationId": "11111",
-                    "account": {"login": "org1"},
+                    "installationId": "8888",
+                    "account": {
+                        "login": "org1",
+                        "id": "11111",
+                    },
                 },
                 "community": community_id,
                 "disconnectedAt": None,
@@ -109,8 +114,11 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                 "_id": platform_id2,
                 "name": "github",
                 "metadata": {
-                    "installationId": "222222",
-                    "account": {"login": "org2"},
+                    "installationId": "45678",
+                    "account": {
+                        "login": "org2",
+                        "id": "222222",
+                    },
                 },
                 "community": community_id,
                 "disconnectedAt": None,
@@ -159,7 +167,6 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
             {
                 "community_id": str(community_id),
                 "organization_ids": ["11111"],
-                "organization_names": ["org1"],
                 # "repo_ids": [],
                 # "from_date": datetime(2024, 1, 1),
                 "from_date": None,
@@ -170,7 +177,6 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
             {
                 "community_id": str(community_id),
                 "organization_ids": ["222222"],
-                "organization_names": ["org2"],
                 # "repo_ids": [],
                 # "from_date": datetime(2024, 2, 2),
                 "from_date": None,
@@ -195,8 +201,11 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                 "_id": platform_id,
                 "name": "github",
                 "metadata": {
-                    "installationId": "11111",
-                    "account": {"login": "org1"},
+                    "installationId": "33241",
+                    "account": {
+                        "login": "org1",
+                        "id": "11111",
+                    },
                 },
                 "community": community_id,
                 "disconnectedAt": None,
@@ -210,8 +219,11 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                 "_id": platform_id2,
                 "name": "github",
                 "metadata": {
-                    "installationId": "222222",
-                    "account": {"login": "org2"},
+                    "installationId": "9827138",
+                    "account": {
+                        "login": "org2",
+                        "id": "222222",
+                    },
                 },
                 "community": community_id,
                 "disconnectedAt": None,
@@ -225,8 +237,11 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                 "_id": platform_id3,
                 "name": "github",
                 "metadata": {
-                    "installationId": "333333",
-                    "account": {"login": "org3"},
+                    "installationId": "901298",
+                    "account": {
+                        "login": "org3",
+                        "id": "333333",
+                    },
                 },
                 "community": community_id2,
                 "disconnectedAt": None,
@@ -319,7 +334,6 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                     {
                         "community_id": str(community_id),
                         "organization_ids": ["11111"],
-                        "organization_names": ["org1"],
                         # "repo_ids": [],
                         # "from_date": datetime(2024, 1, 1),
                         "from_date": None,
@@ -331,7 +345,6 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                     {
                         "community_id": str(community_id),
                         "organization_ids": ["222222"],
-                        "organization_names": ["org2"],
                         # "repo_ids": ["AAAAA"],
                         # "from_date": datetime(2024, 2, 2),
                         "from_date": None,
@@ -343,7 +356,6 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                     {
                         "community_id": str(community_id2),
                         "organization_ids": ["333333"],
-                        "organization_names": ["org3"],
                         # "repo_ids": [],
                         # "from_date": datetime(2024, 3, 1),
                         "from_date": None,
@@ -371,8 +383,11 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                 "_id": platform_id,
                 "name": "github",
                 "metadata": {
-                    "installationId": "11111",
-                    "account": {"login": "org1"},
+                    "installationId": "901298",
+                    "account": {
+                        "login": "org1",
+                        "id": "11111",
+                    },
                 },
                 "community": community_id,
                 "disconnectedAt": None,
@@ -386,8 +401,11 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                 "_id": platform_id2,
                 "name": "github",
                 "metadata": {
-                    "installationId": "222222",
-                    "account": {"login": "org2"},
+                    "installationId": "7218",
+                    "account": {
+                        "login": "org2",
+                        "id": "222222",
+                    },
                 },
                 "community": community_id,
                 "disconnectedAt": None,
@@ -401,8 +419,11 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                 "_id": platform_id3,
                 "name": "github",
                 "metadata": {
-                    "installationId": "333333",
-                    "account": {"login": "org3"},
+                    "installationId": "81279",
+                    "account": {
+                        "login": "org3",
+                        "id": "333333",
+                    },
                 },
                 "community": community_id2,
                 "disconnectedAt": None,
@@ -495,7 +516,6 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                     {
                         "community_id": str(community_id),
                         "organization_ids": ["11111"],
-                        "organization_names": ["org1"],
                         # "repo_ids": [],
                         # "from_date": datetime(2024, 1, 1),
                         "from_date": None,
@@ -507,7 +527,6 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                     {
                         "community_id": str(community_id),
                         "organization_ids": ["222222"],
-                        "organization_names": ["org2"],
                         # "repo_ids": ["AAAAA"],
                         # "from_date": datetime(2024, 2, 2),
                         "from_date": None,
