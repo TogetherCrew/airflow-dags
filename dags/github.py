@@ -146,9 +146,9 @@ with DAG(
             logging.info(
                 "Extracting organization members iteration "
                 f"{iter + 1}/{len(organization['organizations_info'])} | "
-                f"org name: `{org['name']}` members"
+                f"org name: `{org['login']}` members"
             )
-            org_name = org["name"]
+            org_name = org["login"]
             members = get_all_org_members(org=org_name)
             org["members"] = members
 
@@ -182,7 +182,7 @@ with DAG(
                 f"Iter {i + 1}/{len(organizations)} | "
                 f"extracting github org {org['name']} repos!"
             )
-            repos = get_all_org_repos(org_name=org["name"])
+            repos = get_all_org_repos(org_name=org["login"])
             org["repos"] = repos
 
         return organizations
