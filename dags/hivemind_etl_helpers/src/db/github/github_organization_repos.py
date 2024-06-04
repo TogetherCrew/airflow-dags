@@ -4,13 +4,13 @@ from github.neo4j_storage.neo4j_connection import Neo4jConnection
 from github.neo4j_storage.neo4j_enums import Node
 
 
-def get_github_organization_repos(github_organization_ids: list[str]) -> list[int]:
+def get_github_organization_repos(github_org_names: list[str]) -> list[int]:
     """
     get repositories of given organization id list
 
     Parameters
     ------------
-    github_organization_ids : list[str]
+    github_org_names : list[str]
         a list of github organization to fetch their repositories
 
     Returns
@@ -25,12 +25,12 @@ def get_github_organization_repos(github_organization_ids: list[str]) -> list[in
         query = (
             f"MATCH (go:{Node.GitHubOrganization.value})"
             f"<-[:IS_WITHIN]-(repo:{Node.Repository.value})"
-            f"WHERE go.id IN $org_ids"
+            f"WHERE go.id IN $org_names"
             " RETURN COLLECT(repo.id) as repoIds"
         )
         try:
             results = session.execute_read(
-                lambda tx: list(tx.run(query, org_ids=github_organization_ids))
+                lambda tx: list(tx.run(query, org_names=github_org_names))
             )
         except Exception as exp:
             logging.error(

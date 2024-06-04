@@ -73,12 +73,12 @@ with DAG(
 
         modules_info = []
         for config in modules_configs:
-            org_ids = config["organization_ids"]
+            org_names = config["organization_names"]
             # repo_ids = config["repo_ids"]
 
             modules_info.append(
                 {
-                    "organization_ids": org_ids,
+                    "organization_names": org_names,
                     # "repo_ids": repo_ids,
                 }
             )
@@ -108,12 +108,12 @@ with DAG(
     # region organization ETL
     @task
     def extract_github_organization(module_info):
-        org_ids = module_info["organization_ids"]
-        if org_ids != []:
-            logging.info(f"organizations with ids of {org_ids} to fetch")
+        org_names = module_info["organization_names"]
+        if org_names != []:
+            logging.info(f"organizations {org_names} to fetch")
             org_info = []
-            for org_id in org_ids:
-                org = fetch_org_details(org_id=org_id)
+            for org_name in org_names:
+                org = fetch_org_details(org_name=org_name)
                 org_info.append(org)
             return {"organizations_info": org_info}
         else:
