@@ -31,8 +31,11 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                 "_id": platform_id,
                 "name": "github",
                 "metadata": {
-                    "installationId": "345678",
-                    "account": {},
+                    "installationId": "12112",
+                    "account": {
+                        "login": "org1",
+                        "id": "345678",
+                    },
                 },
                 "community": community_id,
                 "disconnectedAt": None,
@@ -93,8 +96,11 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                 "_id": platform_id,
                 "name": "github",
                 "metadata": {
-                    "installationId": "11111",
-                    "account": {},
+                    "installationId": "8888",
+                    "account": {
+                        "login": "org1",
+                        "id": "11111",
+                    },
                 },
                 "community": community_id,
                 "disconnectedAt": None,
@@ -108,8 +114,11 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                 "_id": platform_id2,
                 "name": "github",
                 "metadata": {
-                    "installationId": "222222",
-                    "account": {},
+                    "installationId": "45678",
+                    "account": {
+                        "login": "org2",
+                        "id": "222222",
+                    },
                 },
                 "community": community_id,
                 "disconnectedAt": None,
@@ -192,8 +201,11 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                 "_id": platform_id,
                 "name": "github",
                 "metadata": {
-                    "installationId": "11111",
-                    "account": {},
+                    "installationId": "33241",
+                    "account": {
+                        "login": "org1",
+                        "id": "11111",
+                    },
                 },
                 "community": community_id,
                 "disconnectedAt": None,
@@ -207,8 +219,11 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                 "_id": platform_id2,
                 "name": "github",
                 "metadata": {
-                    "installationId": "222222",
-                    "account": {},
+                    "installationId": "9827138",
+                    "account": {
+                        "login": "org2",
+                        "id": "222222",
+                    },
                 },
                 "community": community_id,
                 "disconnectedAt": None,
@@ -222,8 +237,11 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                 "_id": platform_id3,
                 "name": "github",
                 "metadata": {
-                    "installationId": "333333",
-                    "account": {},
+                    "installationId": "901298",
+                    "account": {
+                        "login": "org3",
+                        "id": "333333",
+                    },
                 },
                 "community": community_id2,
                 "disconnectedAt": None,
@@ -365,8 +383,11 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                 "_id": platform_id,
                 "name": "github",
                 "metadata": {
-                    "installationId": "11111",
-                    "account": {},
+                    "installationId": "901298",
+                    "account": {
+                        "login": "org1",
+                        "id": "11111",
+                    },
                 },
                 "community": community_id,
                 "disconnectedAt": None,
@@ -380,8 +401,11 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                 "_id": platform_id2,
                 "name": "github",
                 "metadata": {
-                    "installationId": "222222",
-                    "account": {},
+                    "installationId": "7218",
+                    "account": {
+                        "login": "org2",
+                        "id": "222222",
+                    },
                 },
                 "community": community_id,
                 "disconnectedAt": None,
@@ -395,8 +419,11 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                 "_id": platform_id3,
                 "name": "github",
                 "metadata": {
-                    "installationId": "333333",
-                    "account": {},
+                    "installationId": "81279",
+                    "account": {
+                        "login": "org3",
+                        "id": "333333",
+                    },
                 },
                 "community": community_id2,
                 "disconnectedAt": None,

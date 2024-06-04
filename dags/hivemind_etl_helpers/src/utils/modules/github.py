@@ -44,10 +44,11 @@ class ModulesGitHub(ModulesBase):
                 platform_id = platform["platform"]
 
                 try:
-                    organization_id = self.get_platform_metadata(
+                    account = self.get_platform_metadata(
                         platform_id=platform_id,
-                        metadata_name="installationId",
+                        metadata_name="account",
                     )
+                    organization_id = account["id"]
                     modules_options = platform["metadata"]
 
                     # if github modules was activated
