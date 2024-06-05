@@ -32,7 +32,7 @@ class ModulesGitHub(ModulesBase):
             ```
         """
         modules = self.query(platform=self.platform_name, projection={"name": 0})
-        platforms_data: list[dict[str, str | datetime | list[str]]] = []
+        platforms_data: list[dict[str, str | datetime | list[str] | None]] = []
 
         # for each community module
         for module in modules:
