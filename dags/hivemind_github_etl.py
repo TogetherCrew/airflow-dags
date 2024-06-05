@@ -24,8 +24,8 @@ with DAG(
     @task
     def process_github_community(community_information: dict[str, str | datetime]):
         community_id = community_information["community_id"]
-        organization_ids = community_information["organization_ids"]
-        repo_ids = community_information["repo_ids"]
+        organization_ids = community_information.get("organization_ids", [])
+        repo_ids = community_information.get("repo_ids", [])
         from_date = community_information["from_date"]
 
         logging.info(f"Starting Github ETL | community_id: {community_id}")
