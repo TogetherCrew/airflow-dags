@@ -60,7 +60,7 @@ class ModulesMediaWiki(ModulesBase):
                         {
                             "community_id": str(community),
                             "page_titles": modules_options.get("pageIds", []),
-                            "base_url": base_url + path,
+                            "base_url": base_url + path,  # type: ignore
                         }
                     )
                 except Exception as exp:
