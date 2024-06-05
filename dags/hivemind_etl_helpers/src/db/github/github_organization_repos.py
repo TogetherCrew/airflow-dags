@@ -21,6 +21,8 @@ def get_github_organization_repos(github_organization_ids: list[str]) -> list[in
     neo4j_connection = Neo4jConnection()
     neo4j_driver = neo4j_connection.connect_neo4j()
 
+    org_ids = [int(org) for org in github_organization_ids]
+
     with neo4j_driver.session() as session:
         query = (
             f"MATCH (go:{Node.GitHubOrganization.value})"
@@ -30,7 +32,7 @@ def get_github_organization_repos(github_organization_ids: list[str]) -> list[in
         )
         try:
             results = session.execute_read(
-                lambda tx: list(tx.run(query, org_ids=github_organization_ids))
+                lambda tx: list(tx.run(query, org_ids=org_ids))
             )
         except Exception as exp:
             logging.error(
