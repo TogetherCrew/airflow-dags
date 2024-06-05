@@ -9,7 +9,9 @@ class ModulesGitHub(ModulesBase):
         self.platform_name = "github"
         super().__init__()
 
-    def get_learning_platforms(self):
+    def get_learning_platforms(
+        self,
+    ) -> list[dict[str, str | datetime | list[str] | None]]:
         """
         get discourse learning platforms with their forum endpoint
 
@@ -30,7 +32,7 @@ class ModulesGitHub(ModulesBase):
             ```
         """
         modules = self.query(platform=self.platform_name, projection={"name": 0})
-        platforms_data: list[dict[str, str | datetime]] = []
+        platforms_data: list[dict[str, str | datetime | list[str]]] = []
 
         # for each community module
         for module in modules:
