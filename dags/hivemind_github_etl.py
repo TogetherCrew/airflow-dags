@@ -22,11 +22,13 @@ with DAG(
         return github_communities
 
     @task
-    def process_github_community(community_information: dict[str, str | datetime]):
-        community_id = community_information["community_id"]
-        organization_ids = community_information["organization_ids"]
-        repo_ids = community_information["repo_ids"]
-        from_date = community_information["from_date"]
+    def process_github_community(
+        community_information: dict[str, str | datetime | list[str] | None]
+    ):
+        community_id: str = community_information["community_id"]  # type: ignore
+        organization_ids: list[str] = community_information.get("organization_ids", [])  # type: ignore
+        repo_ids: list[str] = community_information.get("repo_ids", [])  # type: ignore
+        from_date: datetime | None = community_information["from_date"]  # type: ignore
 
         logging.info(f"Starting Github ETL | community_id: {community_id}")
         process_github_vectorstore(

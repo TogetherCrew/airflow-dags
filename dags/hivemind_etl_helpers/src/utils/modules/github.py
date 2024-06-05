@@ -9,7 +9,9 @@ class ModulesGitHub(ModulesBase):
         self.platform_name = "github"
         super().__init__()
 
-    def get_learning_platforms(self):
+    def get_learning_platforms(
+        self,
+    ) -> list[dict[str, str | datetime | list[str] | None]]:
         """
         get discourse learning platforms with their forum endpoint
 
@@ -30,7 +32,7 @@ class ModulesGitHub(ModulesBase):
             ```
         """
         modules = self.query(platform=self.platform_name, projection={"name": 0})
-        platforms_data: list[dict[str, str | datetime]] = []
+        platforms_data: list[dict[str, str | datetime | list[str] | None]] = []
 
         # for each community module
         for module in modules:
@@ -48,6 +50,9 @@ class ModulesGitHub(ModulesBase):
                         platform_id=platform_id,
                         metadata_name="account",
                     )
+                    if not isinstance(account, dict):
+                        raise ValueError("Wrong format for `account` field!")
+
                     organization_id = account["id"]
                     modules_options = platform["metadata"]
 
@@ -64,7 +69,7 @@ class ModulesGitHub(ModulesBase):
                         )
                 except Exception as exp:
                     logging.error(
-                        "Exception while fetching mediaWiki modules "
+                        "Exception while fetching GitHub modules "
                         f"for platform: {platform_id} | exception: {exp}"
                     )
 
