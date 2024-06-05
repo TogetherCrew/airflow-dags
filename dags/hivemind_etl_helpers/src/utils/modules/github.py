@@ -66,7 +66,7 @@ class ModulesGitHub(ModulesBase):
                         )
                 except Exception as exp:
                     logging.error(
-                        "Exception while fetching mediaWiki modules "
+                        "Exception while fetching GitHub modules "
                         f"for platform: {platform_id} | exception: {exp}"
                     )
 
