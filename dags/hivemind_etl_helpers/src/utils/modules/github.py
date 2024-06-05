@@ -50,6 +50,9 @@ class ModulesGitHub(ModulesBase):
                         platform_id=platform_id,
                         metadata_name="account",
                     )
+                    if not isinstance(account, dict):
+                        raise ValueError("Wrong format for `account` field!")
+
                     organization_id = account["id"]
                     modules_options = platform["metadata"]
 

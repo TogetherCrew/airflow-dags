@@ -52,6 +52,9 @@ class ModulesMediaWiki(ModulesBase):
                         metadata_name="path",
                     )
 
+                    if not isinstance(path, str) and not isinstance(base_url, str):
+                        raise ValueError("Wrong format for `path` and `base_url`!")
+
                     modules_options = platform["metadata"]
                     communities_data.append(
                         {

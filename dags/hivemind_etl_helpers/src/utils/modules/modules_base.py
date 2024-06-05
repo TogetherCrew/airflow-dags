@@ -96,7 +96,9 @@ class ModulesBase:
         token = token_doc["token"]
         return token
 
-    def get_platform_metadata(self, platform_id: ObjectId, metadata_name: str) -> str | dict:
+    def get_platform_metadata(
+        self, platform_id: ObjectId, metadata_name: str
+    ) -> str | dict:
         """
         get the userid that belongs to a platform
 
