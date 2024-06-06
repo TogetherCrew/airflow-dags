@@ -33,7 +33,7 @@ class TestGithubTransformPRs(TestCase):
         self.assertIsInstance(documents, list)
         self.assertIsInstance(documents[0], Document)
         self.assertEqual(documents[0].text, "sample title")
-        self.assertEqual(documents[0].id_, 1)
+        self.assertEqual(documents[0].id_, "1")
 
         self.assertEqual(
             documents[0].metadata,
@@ -102,16 +102,12 @@ class TestGithubTransformPRs(TestCase):
         documents = transform_prs(input_data)
         self.assertEqual(len(documents), 3)
         self.assertIsInstance(documents, list)
-        for idx, doc in enumerate(documents):
+        for doc in documents:
             self.assertIsInstance(doc, Document)
-            if idx == 1:
-                self.assertEqual(doc.id_, 1)
-            elif idx == 2:
-                self.assertEqual(doc.id_, 2)
-            elif idx == 3:
-                self.assertEqual(doc.id_, 3)
-            else:
-                raise ValueError("Would never reach here!")
+
+        self.assertEqual(documents[0].id_, "1")
+        self.assertEqual(documents[1].id_, "2")
+        self.assertEqual(documents[2].id_, "3")
 
         self.assertEqual(
             documents[0].metadata,
