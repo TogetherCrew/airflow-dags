@@ -1,4 +1,5 @@
-from dags.analyzer_helper.discord.transform_raw_members_base import TransformRawMembersBase
+import logging
+from analyzer_helper.discord.transform_raw_members_base import TransformRawMembersBase
 
 
 class DiscordTransformRawMembers(TransformRawMembersBase):
@@ -10,8 +11,11 @@ class DiscordTransformRawMembers(TransformRawMembersBase):
         transformed_members = []
 
         for member in raw_members:
-            transformed_member = self.transform_member(member)
-            transformed_members.append(transformed_member)
+            try:
+                transformed_member = self.transform_member(member)
+                transformed_members.append(transformed_member)
+            except Exception as e:
+                logging.error(f"Error transforming raw discord member {member}: {e}")
 
         return transformed_members
 
@@ -26,13 +30,13 @@ class DiscordTransformRawMembers(TransformRawMembersBase):
             "left_at": member.deletedAt,
             "joined_at": member.joinedAt,
             "options": {
-                "username": member.username,
-                "avatar": member.avatar,
-                "roles": member.roles,
-                "discriminator": member.discriminator,
-                "permissions": member.permissions,
-                "global_name": member.globalName,
-                "nickname": member.nickname,
+                # "username": member.username,
+                # "avatar": member.avatar,
+                # "roles": member.roles,
+                # "discriminator": member.discriminator,
+                # "permissions": member.permissions,
+                # "global_name": member.globalName,
+                # "nickname": member.nickname,
                 }
         }
 

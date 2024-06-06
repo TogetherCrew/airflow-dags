@@ -1,5 +1,5 @@
 import unittest
-from dags.analyzer_helper.discord.extract_raw_member_base import ExtractRawMembersBase
+from analyzer_helper.discord.extract_raw_member_base import ExtractRawMembersBase
 
 
 class TestExtractRawMembersBase(unittest.TestCase):

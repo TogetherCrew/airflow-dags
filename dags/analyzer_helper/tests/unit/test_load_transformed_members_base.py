@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 
-from dags.analyzer_helper.discord.load_transformed_members_base import LoadTransformedMembersBase
+from analyzer_helper.discord.load_transformed_members_base import LoadTransformedMembersBase
 
 
 class TestLoadTransformedMembersBase(unittest.TestCase):
@@ -23,7 +23,7 @@ class TestLoadTransformedMembersBase(unittest.TestCase):
         """
         self.assertEqual(self.test_instance.get_platform_id(), self.platform_id)
 
-    @patch('from dags.analyzer_helper.discord.load_transformed_members_base.LoadTransformedMembersBase')
+    @patch.object(LoadTransformedMembersBase, 'load_impl')
     def test_load(self, mock_load_impl):
         """
         Tests that the load method calls the load_impl method with the correct arguments
@@ -31,7 +31,7 @@ class TestLoadTransformedMembersBase(unittest.TestCase):
         self.test_instance.load(self.processed_data)
         mock_load_impl.assert_called_once_with(self.processed_data, self.platform_id, False)
 
-    @patch('from dags.analyzer_helper.discord.load_transformed_members_base.LoadTransformedMembersBase')
+    @patch.object(LoadTransformedMembersBase, 'load_impl')
     def test_load_with_recompute(self, mock_load_impl):
         """
         Tests that the load method calls the load_impl method with recompute=True when specified

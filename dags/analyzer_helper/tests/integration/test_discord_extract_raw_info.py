@@ -1,27 +1,20 @@
 import unittest
 from datetime import datetime
-
-from dags.analyzer_helper.discord.discord_extract_raw_infos import DiscordExtractRawInfos
+from analyzer_helper.discord.discord_extract_raw_infos import DiscordExtractRawInfos
 from dags.hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
 class TestDiscordExtractRawInfos(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.client = MongoSingleton.get_instance().client
-        cls.db = cls.client['discord_platform']
-        cls.collection = cls.db['rawmemberactivities']
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.collection.delete_many({})
-        cls.client.close()
 
     def setUp(self):
+        self.client = MongoSingleton.get_instance().client
+        self.db = self.client['discord_platform']
+        self.collection = self.db['rawmemberactivities']
         self.collection.delete_many({})
 
     def tearDown(self):
         self.collection.delete_many({})
+        self.client.close()
 
     def test_extract_recompute_true(self):
         sample_data = [

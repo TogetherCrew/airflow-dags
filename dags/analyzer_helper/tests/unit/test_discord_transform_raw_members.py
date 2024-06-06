@@ -1,7 +1,7 @@
-from datetime import datetime
 import unittest
+from datetime import datetime
 
-from dags.analyzer_helper.discord.discord_transform_raw_members import DiscordTransformRawMembers
+from analyzer_helper.discord.discord_transform_raw_members import DiscordTransformRawMembers
 
 
 class TestDiscordTransformRawMembers(unittest.TestCase):
@@ -23,6 +23,7 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
             "discordId": "123456789012345678",
             "isBot": False,
             "joinedAt": datetime(2023, 1, 1),
+            "deletedAt": None,
             "username": "test_user",
             "avatar": "avatar_url",
             "roles": ["role1", "role2"],
@@ -36,15 +37,7 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
             "is_bot": False,
             "left_at": None,
             "joined_at": datetime(2023, 1, 1),
-            "options": {
-                "username": "test_user",
-                "avatar": "avatar_url",
-                "roles": ["role1", "role2"],
-                "discriminator": "1234",
-                "permissions": "some_permissions",
-                "global_name": "Global Username",
-                "nickname": "Test Nickname"
-            }
+            "options": {}
         }
         result = transformer.transform([raw_member])
         self.assertEqual(result, [expected_result])
@@ -58,6 +51,7 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
             "discordId": "123456789012345678",
             "isBot": True,
             "joinedAt": datetime(2022, 12, 31),
+            "deletedAt": None,
             "username": "bot_user",
             "avatar": None,
             "roles": ["admin"],
@@ -70,6 +64,7 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
             "discordId": "987654321098765432",
             "isBot": False,
             "joinedAt": datetime(2023, 1, 2),
+            "deletedAt": None,
             "username": "regular_user",
             "avatar": "user_avatar.jpg",
             "roles": ["member", "vip"],
@@ -83,28 +78,14 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
             "is_bot": True,
             "left_at": None,
             "joined_at": datetime(2022, 12, 31),
-            "options": {
-                "username": "bot_user",
-                "avatar": None,
-                "roles": ["admin"],
-                "discriminator": "9999",
-                "permissions": "all",
-                "global_name": None,
-                "nickname": None
-            }
+            "options": {}
         }
         expected_result2 = {
             "id": 987654321098765432,
             "is_bot": False,
             "left_at": None,
             "joined_at": datetime(2023, 1, 2),
-            "options": {
-                "username": "regular_user",
-                "avatar": "user_avatar.jpg",
-                "roles": ["member", "vip"],
-                "discriminator": "0000",
-                "permissions": "read_messages",
-                }
+            "options": {}
         }
         result = transformer.transform([raw_member1, raw_member2])
         self.assertEqual(result, [expected_result1, expected_result2])

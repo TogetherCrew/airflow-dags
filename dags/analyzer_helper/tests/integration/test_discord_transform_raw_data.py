@@ -1,7 +1,7 @@
 import unittest
 from datetime import datetime
 
-from dags.analyzer_helper.discord.discord_transform_raw_data import DiscordTransformRawData
+from analyzer_helper.discord.discord_transform_raw_data import DiscordTransformRawData
 
 
 class TestDiscordTransformRawData(unittest.TestCase):
@@ -11,17 +11,20 @@ class TestDiscordTransformRawData(unittest.TestCase):
         self.platform_id = 'discord_platform'
         self.period = datetime(2023, 1, 1)
 
-    def test_transform_data_with_replied(self):
+    def tearDown(self):
+        self.collection.delete_many({})
+        self.client.close()
+
+    def test_transform_data_with_replied_user(self):
         raw_data = [
             {
                 "author": "user123",
-                "replied": "user789",
+                "replied_user": "user789",
                 "messageId": "msg123",
                 "channelId": "channel456",
-                "channelName": "general",
-                "threadId": "thread123",
-                "threadName": "discussion",
-                "isGeneratedByWebhook": False
+                "isGeneratedByWebhook": False,
+                "botActivity": False,
+                "threadId": "thread123"
             }
         ]
 
@@ -29,14 +32,11 @@ class TestDiscordTransformRawData(unittest.TestCase):
             {
                 "author_id": "user123",
                 "date": self.period,
-                "source_id": self.platform_id,
+                "source_id": "msg123",
                 "metadata": {
                     "channel_id": "channel456",
-                    "channel_name": "general",
                     "thread_id": "thread123",
-                    "thread_name": "discussion",
-                    "message_id": "msg123",
-                    "is_generated_by_webhook": False
+                    "bot_activity": False,
                 },
                 "actions": [
                     {
@@ -48,9 +48,26 @@ class TestDiscordTransformRawData(unittest.TestCase):
                     {
                         "name": "reply",
                         "users_engaged_id": ["user789"],
-                        "type": "receiver"
+                        "type": "emitter"
                     }
                 ]
+            },
+            {
+                "author_id": "user789",
+                "date": self.period,
+                "source_id": "msg123",
+                "metadata": {
+                    "channel_id": "channel456",
+                    "thread_id": "thread123",
+                    "bot_activity": False,
+                },
+                "actions": [
+                    {
+                        "name": "reply",
+                        "type": "receiver"
+                    }
+                ],
+                "interactions": []
             }
         ]
 
@@ -64,10 +81,9 @@ class TestDiscordTransformRawData(unittest.TestCase):
                 "user_mentions": ["user456"],
                 "messageId": "msg123",
                 "channelId": "channel456",
-                "channelName": "general",
-                "threadId": "thread123",
-                "threadName": "discussion",
-                "isGeneratedByWebhook": False
+                "isGeneratedByWebhook": False,
+                "botActivity": False,
+                "threadId": "thread123"
             }
         ]
 
@@ -75,14 +91,11 @@ class TestDiscordTransformRawData(unittest.TestCase):
             {
                 "author_id": "user123",
                 "date": self.period,
-                "source_id": self.platform_id,
+                "source_id": "msg123",
                 "metadata": {
                     "channel_id": "channel456",
-                    "channel_name": "general",
                     "thread_id": "thread123",
-                    "thread_name": "discussion",
-                    "message_id": "msg123",
-                    "is_generated_by_webhook": False
+                    "bot_activity": False,
                 },
                 "actions": [
                     {
@@ -110,10 +123,9 @@ class TestDiscordTransformRawData(unittest.TestCase):
                 "reactions": ["user1, user2, :laugh:"],
                 "messageId": "msg123",
                 "channelId": "channel456",
-                "channelName": "general",
-                "threadId": "thread123",
-                "threadName": "discussion",
-                "isGeneratedByWebhook": False
+                "isGeneratedByWebhook": False,
+                "botActivity": False,
+                "threadId": "thread123"
             }
         ]
 
@@ -121,14 +133,11 @@ class TestDiscordTransformRawData(unittest.TestCase):
             {
                 "author_id": "user123",
                 "date": self.period,
-                "source_id": self.platform_id,
+                "source_id": "msg123",
                 "metadata": {
                     "channel_id": "channel456",
-                    "channel_name": "general",
                     "thread_id": "thread123",
-                    "thread_name": "discussion",
-                    "message_id": "msg123",
-                    "is_generated_by_webhook": False
+                    "bot_activity": False,
                 },
                 "actions": [
                     {
@@ -140,9 +149,43 @@ class TestDiscordTransformRawData(unittest.TestCase):
                     {
                         "name": "reaction",
                         "users_engaged_id": ["user1", "user2"],
-                        "type": "emitter"
+                        "type": "receiver"
                     }
                 ]
+            },
+            {
+                "author_id": "user1",
+                "date": self.period,
+                "source_id": "msg123",
+                "metadata": {
+                    "channel_id": "channel456",
+                    "thread_id": "thread123",
+                    "bot_activity": False,
+                },
+                "actions": [
+                    {
+                        "name": "reaction",
+                        "type": "emitter"
+                    }
+                ],
+                "interactions": []
+            },
+            {
+                "author_id": "user2",
+                "date": self.period,
+                "source_id": "msg123",
+                "metadata": {
+                    "channel_id": "channel456",
+                    "thread_id": "thread123",
+                    "bot_activity": False,
+                },
+                "actions": [
+                    {
+                        "name": "reaction",
+                        "type": "emitter"
+                    }
+                ],
+                "interactions": []
             }
         ]
 

@@ -1,7 +1,7 @@
 import unittest
 from datetime import datetime
 
-from dags.analyzer_helper.discord.transform_raw_data_base import TransformRawDataBase
+from analyzer_helper.discord.transform_raw_data_base import TransformRawDataBase
 
 
 class TestTransformRawDataBase(unittest.TestCase):

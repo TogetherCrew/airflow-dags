@@ -1,4 +1,4 @@
-from dags.analyzer_helper.discord.extract_raw_member_base import ExtractRawMembersBase
+from analyzer_helper.discord.extract_raw_member_base import ExtractRawMembersBase
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 

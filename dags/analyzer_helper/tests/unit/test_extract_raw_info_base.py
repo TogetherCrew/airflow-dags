@@ -1,7 +1,7 @@
 import unittest
 from datetime import datetime
 
-from dags.analyzer_helper.discord.extract_raw_info_base import ExtractRawInfosBase
+from analyzer_helper.discord.extract_raw_info_base import ExtractRawInfosBase
 
 
 class TestExtractRawInfosBase(unittest.TestCase):

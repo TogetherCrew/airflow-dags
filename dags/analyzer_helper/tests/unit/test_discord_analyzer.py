@@ -1,6 +1,6 @@
 import unittest
 
-from dags.analyzer_helper.discord.discord_analyze import Analyzer
+from analyzer_helper.discord.discord_analyze import Analyzer
 
 
 class TestAnalyzer(unittest.TestCase):
