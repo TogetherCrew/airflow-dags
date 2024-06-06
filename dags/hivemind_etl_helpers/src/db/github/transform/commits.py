@@ -22,6 +22,7 @@ def transform_commits(data: list[GitHubCommit]) -> list[Document]:
         metadata = sample.to_dict()
         del metadata["message"]
         document = Document(
+            id_=sample.sha,
             text=sample.message,
             metadata=metadata,
             # all metadata to be excluded from embedding model

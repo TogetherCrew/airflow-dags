@@ -33,6 +33,7 @@ class TestGithubTransformIssues(TestCase):
         self.assertEqual(len(documents), 1)
         self.assertIsInstance(documents, list)
         self.assertIsInstance(documents[0], Document)
+        self.assertIsInstance(documents[0].id_, 1)
         self.assertEqual(documents[0].text, "sample title")
 
         self.assertEqual(
@@ -73,11 +74,12 @@ class TestGithubTransformIssues(TestCase):
                 "type": "comment",
             },
         )
+        self.assertIsInstance(issue_comment_docs[0].id_, 111)
 
     def test_multiple_documents(self):
         input_data = [
             GitHubIssue(
-                id=1234567899,
+                id=1234567890,
                 author_name="author #1",
                 title="sample title #1",
                 text="sample text #1",
@@ -91,7 +93,7 @@ class TestGithubTransformIssues(TestCase):
                 repository_name="SampleRepo",
             ),
             GitHubIssue(
-                id=2234567899,
+                id=2234567891,
                 author_name="author #2",
                 title="sample title #2",
                 text="sample text #2",
@@ -105,7 +107,7 @@ class TestGithubTransformIssues(TestCase):
                 repository_name="SampleRepo",
             ),
             GitHubIssue(
-                id=3234567899,
+                id=3234567892,
                 author_name="author #3",
                 title="sample title #3",
                 text="sample text #3",
@@ -126,10 +128,14 @@ class TestGithubTransformIssues(TestCase):
         for doc in documents:
             self.assertIsInstance(doc, Document)
 
+        self.assertIsInstance(documents[0].id_, 1234567890)
+        self.assertIsInstance(documents[1].id_, 1234567891)
+        self.assertIsInstance(documents[2].id_, 1234567892)
+
         self.assertEqual(
             documents[0].metadata,
             {
-                "id": 1234567899,
+                "id": 1234567890,
                 "author_name": "author #1",
                 "text": "sample text #1",
                 "state": "open",
@@ -147,7 +153,7 @@ class TestGithubTransformIssues(TestCase):
         self.assertEqual(
             documents[1].metadata,
             {
-                "id": 2234567899,
+                "id": 1234567891,
                 "author_name": "author #2",
                 "text": "sample text #2",
                 "state": "open",
@@ -165,7 +171,7 @@ class TestGithubTransformIssues(TestCase):
         self.assertEqual(
             documents[2].metadata,
             {
-                "id": 3234567899,
+                "id": 1234567892,
                 "author_name": "author #3",
                 "text": "sample text #3",
                 "state": "open",
@@ -189,11 +195,15 @@ class TestGithubTransformIssues(TestCase):
         self.assertEqual(issue_comment_docs[1].text, "sample text #2")
         self.assertEqual(issue_comment_docs[2].text, "sample text #3")
 
+        self.assertIsInstance(issue_comment_docs[0].id_, 1114567890)
+        self.assertIsInstance(issue_comment_docs[1].id_, 3234567891)
+        self.assertIsInstance(issue_comment_docs[2].id_, 3234567892)
+
         self.assertEqual(
             issue_comment_docs[0].metadata,
             {
                 "author_name": "author #1",
-                "id": 1114567899,
+                "id": 1114567890,
                 "repository_name": "SampleRepo",
                 "url": "https://github.com/repo/issue/1",
                 "created_at": "2023-11-01 00:00:00",
@@ -210,7 +220,7 @@ class TestGithubTransformIssues(TestCase):
             issue_comment_docs[1].metadata,
             {
                 "author_name": "author #2",
-                "id": 1114567899,
+                "id": 1114567891,
                 "repository_name": "SampleRepo",
                 "url": "https://github.com/repo/issue/2",
                 "created_at": "2023-11-02 00:00:00",
@@ -227,7 +237,7 @@ class TestGithubTransformIssues(TestCase):
             issue_comment_docs[2].metadata,
             {
                 "author_name": "author #3",
-                "id": 1114567899,
+                "id": 1114567892,
                 "repository_name": "SampleRepo#5",
                 "url": "https://github.com/repo/issue/3",
                 "created_at": "2023-11-03 00:00:00",
