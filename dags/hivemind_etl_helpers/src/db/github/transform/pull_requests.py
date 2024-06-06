@@ -27,6 +27,7 @@ def transform_prs(data: list[GitHubPullRequest]) -> list[Document]:
         exclude_embed_metadata.remove("state")
 
         document = Document(
+            id_=sample.id,
             text=sample.title,
             metadata=metadata,
             excluded_embed_metadata_keys=exclude_embed_metadata,

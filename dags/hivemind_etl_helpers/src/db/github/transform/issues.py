@@ -29,6 +29,7 @@ def transform_issues(data: list[GitHubIssue]) -> tuple[list[Document], list[Docu
 
         # title of the issue is the text for document
         document = Document(
+            id_=sample.id,
             text=sample.title,
             metadata=metadata,
             excluded_embed_metadata_keys=exclude_embed_metadata,
@@ -78,6 +79,7 @@ def transform_comment_of_issue(data: GitHubIssue) -> Document:
         "type": "comment",
     }
     document = Document(
+        id_=manual_comment_id,
         text=data.text,
         metadata=metadata,
         excluded_embed_metadata_keys=list(metadata.keys()),

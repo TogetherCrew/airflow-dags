@@ -23,6 +23,7 @@ def transform_comments(data: list[GitHubComment]) -> list[Document]:
         # text would not be in metadata
         del metadata["text"]
         document = Document(
+            id_=sample.id,
             text=sample.text,
             metadata=metadata,
             # all metadata to be excluded from embedding model

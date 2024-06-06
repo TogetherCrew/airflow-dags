@@ -33,6 +33,7 @@ class TestGithubTransformPRs(TestCase):
         self.assertIsInstance(documents, list)
         self.assertIsInstance(documents[0], Document)
         self.assertEqual(documents[0].text, "sample title")
+        self.assertEqual(documents[0].id_, "1")
 
         self.assertEqual(
             documents[0].metadata,
@@ -103,6 +104,10 @@ class TestGithubTransformPRs(TestCase):
         self.assertIsInstance(documents, list)
         for doc in documents:
             self.assertIsInstance(doc, Document)
+
+        self.assertEqual(documents[0].id_, "1")
+        self.assertEqual(documents[1].id_, "2")
+        self.assertEqual(documents[2].id_, "3")
 
         self.assertEqual(
             documents[0].metadata,

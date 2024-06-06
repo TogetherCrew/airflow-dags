@@ -31,6 +31,7 @@ class TestGithubTransformCommits(TestCase):
         self.assertEqual(len(documents), 1)
         self.assertIsInstance(documents, list)
         self.assertIsInstance(documents[0], Document)
+        self.assertEqual(documents[0].id_, "sha#1000000")
         self.assertEqual(documents[0].text, "sample message")
 
         self.assertEqual(
@@ -100,6 +101,10 @@ class TestGithubTransformCommits(TestCase):
         self.assertIsInstance(documents, list)
         for doc in documents:
             self.assertIsInstance(doc, Document)
+
+        self.assertEqual(documents[0].id_, "sha#1000000")
+        self.assertEqual(documents[1].id_, "sha#1000001")
+        self.assertEqual(documents[2].id_, "sha#1000002")
 
         self.assertEqual(
             documents[0].metadata,
