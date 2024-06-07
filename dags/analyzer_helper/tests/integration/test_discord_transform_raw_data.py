@@ -11,10 +11,6 @@ class TestDiscordTransformRawData(unittest.TestCase):
         self.platform_id = 'discord_platform'
         self.period = datetime(2023, 1, 1)
 
-    def tearDown(self):
-        self.collection.delete_many({})
-        self.client.close()
-
     def test_transform_data_with_replied_user(self):
         raw_data = [
             {
