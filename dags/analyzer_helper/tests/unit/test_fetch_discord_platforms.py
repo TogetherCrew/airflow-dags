@@ -1,8 +1,7 @@
 import unittest
 from unittest.mock import patch, MagicMock
 from datetime import datetime
-
-from analyzer_helper.fetch_discord_platforms import FetchDiscordPlatforms
+from analyzer_helper.discord.fetch_discord_platforms import FetchDiscordPlatforms
 
 
 class TestFetchDiscordPlatformsUnit(unittest.TestCase):

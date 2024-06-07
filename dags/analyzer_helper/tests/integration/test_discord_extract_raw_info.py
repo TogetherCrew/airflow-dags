@@ -1,7 +1,7 @@
 import unittest
 from datetime import datetime
 from analyzer_helper.discord.discord_extract_raw_infos import DiscordExtractRawInfos
-from dags.hivemind_etl_helpers.src.utils.mongo import MongoSingleton
+from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
 class TestDiscordExtractRawInfos(unittest.TestCase):

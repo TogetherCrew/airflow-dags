@@ -1,7 +1,7 @@
 import unittest
 from datetime import datetime
 
-from analyzer_helper.fetch_discord_platforms import FetchDiscordPlatforms
+from analyzer_helper.discord.fetch_discord_platforms import FetchDiscordPlatforms
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
