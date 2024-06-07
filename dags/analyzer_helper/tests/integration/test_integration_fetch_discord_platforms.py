@@ -14,7 +14,6 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
 
     def tearDown(self):
         self.collection.delete_many({})
-        self.client.close()
 
     def test_fetch_all(self):
         sample_data = [

@@ -16,7 +16,6 @@ class TestDiscordExtractRawMembers(unittest.TestCase):
 
     def tearDown(self):
         self.collection.delete_many({})
-        self.client.close()
 
     def test_extract_recompute_true(self):
         sample_data = [

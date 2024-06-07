@@ -14,7 +14,6 @@ class TestDiscordLoadTransformedMembers(unittest.TestCase):
 
     def tearDown(self):
         self.collection.delete_many({})
-        self.client.close()
 
     def test_load_recompute_true(self):
         """
