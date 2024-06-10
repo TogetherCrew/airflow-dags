@@ -17,16 +17,18 @@ class DiscordExtractRawMembers(ExtractRawMembersBase):
         """
         Extract members data
         if recompute = True, then extract the whole members
-        else, start extracting from latest saved member's `joined_at` date
+        else, start extracting from the latest saved member's `joined_at` date
 
         Note: if the user id was duplicate, then replace.
         """
         if recompute:
             return list(self.collection.find({}))
         else:
-            latest_member = self.collection.find().sort("joinedAt", -1).limit(1)
-            if latest_member.count() > 0:
-                latest_joined_at = latest_member[0]['joinedAt']
+            # Fetch the latest joined date
+            latest_member = self.collection.find_one(sort=[("joinedAt", -1)])
+            latest_joined_at = latest_member["joinedAt"] if latest_member else None
+
+            if latest_joined_at:
                 return list(self.collection.find({"joinedAt": {"$gte": latest_joined_at}}))
             else:
                 return list(self.collection.find({}))

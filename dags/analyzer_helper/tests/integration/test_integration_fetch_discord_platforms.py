@@ -104,6 +104,46 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
                 'connectedAt': datetime(2023, 7, 7, 8, 47, 49, 96000),
                 'createdAt': datetime(2023, 12, 22, 8, 49, 48, 677000),
                 'updatedAt': datetime(2024, 6, 5, 0, 0, 1, 984000)
+            },
+            {
+                '_id': '3',
+                'name': 'telegram',
+                'metadata': {
+                    'id': '999999999999999',
+                    'isInProgress': False,
+                    'period': datetime(2023, 10, 20),
+                    'icon': 'e160861192ed8c2a6fa65a8ab6ac337e',
+                    'selectedChannels': [
+                        '1067517728543477920'
+                    ],
+                    'name': 'TelegramPlatform',
+                    'analyzerStartedAt': datetime(2024, 4, 17, 13, 29, 16, 157000)
+                },
+                'community': '6579c364f1120850414e0dc7',
+                'disconnectedAt': None,
+                'connectedAt': datetime(2023, 7, 7, 8, 47, 49, 96000),
+                'createdAt': datetime(2023, 12, 22, 8, 49, 48, 677000),
+                'updatedAt': datetime(2024, 6, 5, 0, 0, 1, 984000)
+            },
+            {
+                '_id': '4',
+                'name': 'discourse',
+                'metadata': {
+                    'id': '101010101010101',
+                    'isInProgress': False,
+                    'period': datetime(2023, 10, 20),
+                    'icon': 'e160861192ed8c2a6fa65a8ab6ac337e',
+                    'selectedChannels': [
+                        '1067517728543477920'
+                    ],
+                    'name': 'DiscoursePlatform',
+                    'analyzerStartedAt': datetime(2024, 4, 17, 13, 29, 16, 157000)
+                },
+                'community': '6579c364f1120850414e0dc8',
+                'disconnectedAt': None,
+                'connectedAt': datetime(2023, 7, 7, 8, 47, 49, 96000),
+                'createdAt': datetime(2023, 12, 22, 8, 49, 48, 677000),
+                'updatedAt': datetime(2024, 6, 5, 0, 0, 1, 984000)
             }
         ]
 
@@ -224,7 +264,7 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
                     'STILL_O_THR': 2,
                     'DROP_H_THR': 2,
                     'DROP_I_THR': 1
-                },
+                    },
                 'window': {
                     'period_size': 7,
                     'step_size': 1
@@ -239,17 +279,17 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
                     '1177090385307254844',
                     '1177728302123851846',
                     '1194381466663141519',
-                    '1194381535734935602'
+                    '1194381535734935602',
                 ],
                 'name': 'PlatformName',
                 'analyzerStartedAt': datetime(2024, 4, 17, 13, 29, 16, 157000)
-            },
-            'community': '6579c364f1120850414e0dc5',
-            'disconnectedAt': None,
-            'connectedAt': datetime(2023, 7, 7, 8, 47, 49, 96000),
-            'createdAt': datetime(2023, 12, 22, 8, 49, 48, 677000),
-            'updatedAt': datetime(2024, 6, 5, 0, 0, 1, 984000)
-        }
+                    },
+                'community': '6579c364f1120850414e0dc5',
+                'disconnectedAt': None,
+                'connectedAt': datetime(2023, 7, 7, 8, 47, 49, 96000),
+                'createdAt': datetime(2023, 12, 22, 8, 49, 48, 677000),
+                'updatedAt': datetime(2024, 6, 5, 0, 0, 1, 984000)
+            }
 
         self.collection.insert_one(sample_data)
 

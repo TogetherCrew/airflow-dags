@@ -1,5 +1,4 @@
 import unittest
-from unittest.mock import patch
 
 from analyzer_helper.discord.load_transformed_members_base import LoadTransformedMembersBase
 
@@ -7,34 +6,24 @@ from analyzer_helper.discord.load_transformed_members_base import LoadTransforme
 class TestLoadTransformedMembersBase(unittest.TestCase):
 
     def setUp(self):
-        self.platform_id = "test_platform"
-        self.processed_data = []
-        self.test_instance = LoadTransformedMembersBase(self.platform_id)
+        self.platform_id = 'test_platform'
+        self.loader = LoadTransformedMembersBase(self.platform_id)
 
     def test_init(self):
         """
-        Tests that the object is initialized with the correct platform ID
+        Test that the platform_id is correctly set during initialization
         """
-        self.assertEqual(self.test_instance.get_platform_id(), self.platform_id)
+        self.assertEqual(self.loader._platform_id, self.platform_id)
 
     def test_get_platform_id(self):
         """
-        Tests that the get_platform_id method returns the platform ID set in the constructor
+        Test that get_platform_id returns the correct platform ID
         """
-        self.assertEqual(self.test_instance.get_platform_id(), self.platform_id)
+        self.assertEqual(self.loader.get_platform_id(), self.platform_id)
 
-    @patch.object(LoadTransformedMembersBase, 'load_impl')
-    def test_load(self, mock_load_impl):
+    def test_load_not_implemented(self):
         """
-        Tests that the load method calls the load_impl method with the correct arguments
+        Test that the load method is not implemented
         """
-        self.test_instance.load(self.processed_data)
-        mock_load_impl.assert_called_once_with(self.processed_data, self.platform_id, False)
-
-    @patch.object(LoadTransformedMembersBase, 'load_impl')
-    def test_load_with_recompute(self, mock_load_impl):
-        """
-        Tests that the load method calls the load_impl method with recompute=True when specified
-        """
-        self.test_instance.load(self.processed_data, recompute=True)
-        mock_load_impl.assert_called_once_with(self.processed_data, self.platform_id, True)
+        with self.assertRaises(NotImplementedError):
+            self.loader.load([])

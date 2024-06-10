@@ -57,13 +57,14 @@ class TestDiscordTransformRawData(unittest.TestCase):
                     "thread_id": "thread123",
                     "bot_activity": False,
                 },
-                "actions": [
+                "actions": [],
+                "interactions": [
                     {
                         "name": "reply",
+                        "users_engaged_id": ["user123"],                        
                         "type": "receiver"
                     }
-                ],
-                "interactions": []
+                ]
             }
         ]
 

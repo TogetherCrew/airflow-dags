@@ -4,7 +4,7 @@ class LoadTransformedMembersBase:
 		initialize the load class for a specific platform
 		"""
 		self._platform_id = platform_id
-	
+
 	def get_platform_id(self) -> str:
 		"""
 		returns the platform ID for subclasses

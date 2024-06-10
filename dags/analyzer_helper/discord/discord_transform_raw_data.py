@@ -22,7 +22,7 @@ class DiscordTransformRawData(TransformRawDataBase):
                     # Create another document for the receiver
                     receiver_interaction = {
                         "author_id": data["replied_user"],
-                        "date": period,
+                        "date": data["createdDate"]["$date"],
                         "source_id": data["messageId"],
                         "metadata": {
                             "thread_id": data["threadId"],
@@ -31,13 +31,14 @@ class DiscordTransformRawData(TransformRawDataBase):
                             # "channel_name": data["channelName"],
                             # "thread_name": data["threadName"],
                         },
-                        "actions": [
+                        "actions": [],
+                        "interactions": [
                             {
                                 "name": "reply",
+                                "users_engaged_id": [data["author"]],
                                 "type": "receiver"
                             }
-                        ],
-                        "interactions": []
+                        ]
                     }
                     transformed_data.append(receiver_interaction)
 
@@ -47,6 +48,29 @@ class DiscordTransformRawData(TransformRawDataBase):
                         "users_engaged_id": data["user_mentions"],
                         "type": "emitter"
                     })
+                    # Create a document for each mentioned user with type receiver
+                    for mentioned_user in data["user_mentions"]:
+                        mentioned_user_interaction = {
+                            "author_id": mentioned_user,
+                            "date": data["createdDate"]["$date"],
+                            "source_id": data["messageId"],
+                            "metadata": {
+                                "thread_id": data["threadId"],
+                                "channel_id": data["channelId"],
+                                "bot_activity": data["isGeneratedByWebhook"] or data["botActivity"],
+                                # "channel_name": data["channelName"],
+                                # "thread_name": data["threadName"],
+                            },
+                            "actions": [],
+                            "interactions": [
+                                {
+                                    "name": "mention",
+                                    "users_engaged_id": [data["author"]],
+                                    "type": "receiver"
+                                }
+                            ]
+                        }
+                        transformed_data.append(mentioned_user_interaction)
 
                 all_reaction_users = []
                 if data.get("reactions"):
@@ -75,13 +99,14 @@ class DiscordTransformRawData(TransformRawDataBase):
                                 # "channel_name": data["channelName"],
                                 # "thread_name": data["threadName"],
                             },
-                            "actions": [
+                            "actions": [],
+                            "interactions": [
                                 {
                                     "name": "reaction",
+                                    "users_engaged_id": [data["author"]],
                                     "type": "emitter"
                                 }
-                            ],
-                            "interactions": []
+                            ]
                         }
                         transformed_data.append(emitter_interaction)
 

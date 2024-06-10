@@ -50,13 +50,14 @@ class TestDiscordLoadTransformedData(unittest.TestCase):
                     "channel_id": "1088165451651092635",
                     "bot_activity": False,
                 },
-                "actions": [
+                "actions": [],
+                "interactions": [
                     {
                         "name": "reply",
+                        "users_engaged_id": ["159985870458322944"],
                         "type": "receiver"
                     }
-                ],
-                "interactions": []
+                ]
             }
         ]
 
@@ -102,12 +103,14 @@ class TestDiscordLoadTransformedData(unittest.TestCase):
                     "bot_activity": False,
                 },
                 "actions": [
+                ],
+                "interactions": [
                     {
                         "name": "reply",
+                        "users_engaged_id": ["159985870458322944"],
                         "type": "receiver"
                     }
-                ],
-                "interactions": []
+                ]
             }
         ]
 
@@ -129,7 +132,7 @@ class TestDiscordLoadTransformedData(unittest.TestCase):
                 ],
                 "interactions": [
                     {
-                        "name": "initial_reply",
+                        "name": "reply",
                         "users_engaged_id": ["initial_user_engaged"],
                         "type": "receiver"
                     }
