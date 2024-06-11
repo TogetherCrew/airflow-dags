@@ -1,7 +1,7 @@
 from datetime import datetime
 import unittest
 
-from dags.analyzer_helper.discord.discord_transform_raw_data import DiscordTransformRawData
+from analyzer_helper.discord.discord_transform_raw_data import DiscordTransformRawData
 
 
 class DiscordTransformRawDataUnitTest(unittest.TestCase):

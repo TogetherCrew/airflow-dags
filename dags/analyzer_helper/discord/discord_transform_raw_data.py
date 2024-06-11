@@ -2,7 +2,7 @@ from datetime import datetime
 from analyzer_helper.discord.transform_raw_data_base import TransformRawDataBase
 import logging
 
-from dags.analyzer_helper.discord.utils.is_user_bot import UserBotChecker
+from analyzer_helper.discord.utils.is_user_bot import UserBotChecker
 
 
 class DiscordTransformRawData(TransformRawDataBase):

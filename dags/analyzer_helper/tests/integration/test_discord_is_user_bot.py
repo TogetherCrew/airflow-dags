@@ -1,6 +1,6 @@
 import unittest
-from dags.analyzer_helper.discord.utils.is_user_bot import UserBotChecker
-from dags.hivemind_etl_helpers.src.utils.mongo import MongoSingleton
+from analyzer_helper.discord.utils.is_user_bot import UserBotChecker
+from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
 class TestUserBotChecker(unittest.TestCase):
