@@ -2,8 +2,86 @@ from datetime import datetime
 from analyzer_helper.discord.transform_raw_data_base import TransformRawDataBase
 import logging
 
+from dags.analyzer_helper.discord.utils.is_user_bot import UserBotChecker
+
 
 class DiscordTransformRawData(TransformRawDataBase):
+
+    def __init__(self):
+        """
+        Initializes the class with a bot checker.
+        """
+        self.user_bot_checker = UserBotChecker()
+
+    def create_interaction(self, interaction_type, users_engaged_id, interaction_role):
+        return {
+            "name": interaction_type,
+            "users_engaged_id": users_engaged_id,
+            "type": interaction_role,
+        }
+
+    def create_receiver_interaction(self, data, interaction_type, engaged_user, author):
+        is_bot = self.user_bot_checker(author)
+        return {
+            "author_id": engaged_user,
+            "date": data["createdDate"]["$date"],
+            "source_id": data["messageId"],
+            "metadata": {
+                "thread_id": data["threadId"],
+                "channel_id": data["channelId"],
+                "bot_activity": data["isGeneratedByWebhook"] or is_bot,
+            },
+            "actions": [],
+            "interactions": [
+                {
+                    "name": interaction_type,
+                    "users_engaged_id": [author],
+                    "type": "receiver",
+                }
+            ]
+        }
+
+    def create_emitter_interaction(self, user, period, data, interaction_type, engaged_user):
+        is_bot = self.user_bot_checker(engaged_user)
+        return {
+            "author_id": user,
+            "date": period,
+            "source_id": data["messageId"],
+            "metadata": {
+                "thread_id": data["threadId"],
+                "channel_id": data["channelId"],
+                "bot_activity": data["isGeneratedByWebhook"] or is_bot,
+            },
+            "actions": [],
+            "interactions": [
+                {
+                    "name": interaction_type,
+                    "users_engaged_id": [engaged_user],
+                    "type": "emitter",
+                }
+            ]
+        }
+
+    def create_transformed_item(self, data, period, interactions):
+        is_bot = self.user_bot_checker(data["author"])
+        return {
+            "author_id": data["author"],
+            "date": period,
+            "source_id": data["messageId"],
+            "metadata": {
+                "thread_id": data["threadId"],
+                "channel_id": data["channelId"],
+                "bot_activity": data["isGeneratedByWebhook"] or is_bot,
+            },
+            "actions": [
+                {
+                    "name": "message",
+                    "type": "emitter",
+                }
+            ],
+            "interactions": interactions
+        }
+
     def transform(self, raw_data: list, platform_id: str, period: datetime) -> list[dict]:
         transformed_data = []
         for data in raw_data:
@@ -14,62 +92,14 @@ class DiscordTransformRawData(TransformRawDataBase):
                 interactions = []
 
                 if data.get("replied_user"):
-                    interactions.append({
-                        "name": "reply",
-                        "users_engaged_id": [data["replied_user"]],
-                        "type": "emitter"
-                    })
-                    # Create another document for the receiver
-                    receiver_interaction = {
-                        "author_id": data["replied_user"],
-                        "date": data["createdDate"]["$date"],
-                        "source_id": data["messageId"],
-                        "metadata": {
-                            "thread_id": data["threadId"],
-                            "channel_id": data["channelId"],
-                            "bot_activity": data["isGeneratedByWebhook"] or data["botActivity"],
-                            # "channel_name": data["channelName"],
-                            # "thread_name": data["threadName"],
-                        },
-                        "actions": [],
-                        "interactions": [
-                            {
-                                "name": "reply",
-                                "users_engaged_id": [data["author"]],
-                                "type": "receiver"
-                            }
-                        ]
-                    }
+                    interactions.append(self.create_interaction("reply", [data["replied_user"]], "emitter"))
+                    receiver_interaction = self.create_receiver_interaction(data, "reply", data["replied_user"], data["author"])
                     transformed_data.append(receiver_interaction)
 
                 if data.get("user_mentions"):
-                    interactions.append({
-                        "name": "mention",
-                        "users_engaged_id": data["user_mentions"],
-                        "type": "emitter"
-                    })
-                    # Create a document for each mentioned user with type receiver
+                    interactions.append(self.create_interaction("mention", data["user_mentions"], "emitter"))
                     for mentioned_user in data["user_mentions"]:
-                        mentioned_user_interaction = {
-                            "author_id": mentioned_user,
-                            "date": data["createdDate"]["$date"],
-                            "source_id": data["messageId"],
-                            "metadata": {
-                                "thread_id": data["threadId"],
-                                "channel_id": data["channelId"],
-                                "bot_activity": data["isGeneratedByWebhook"] or data["botActivity"],
-                                # "channel_name": data["channelName"],
-                                # "thread_name": data["threadName"],
-                            },
-                            "actions": [],
-                            "interactions": [
-                                {
-                                    "name": "mention",
-                                    "users_engaged_id": [data["author"]],
-                                    "type": "receiver"
-                                }
-                            ]
-                        }
+                        mentioned_user_interaction = self.create_receiver_interaction(data, "mention", mentioned_user, data["author"])
                         transformed_data.append(mentioned_user_interaction)
 
                 all_reaction_users = []
@@ -80,58 +110,12 @@ class DiscordTransformRawData(TransformRawDataBase):
                             all_reaction_users.extend(parts[:-1])
 
                     if all_reaction_users:
-                        interactions.append({
-                            "name": "reaction",
-                            "users_engaged_id": all_reaction_users,
-                            "type": "receiver"
-                        })
+                        interactions.append(self.create_interaction("reaction", all_reaction_users, "receiver"))
+                        for user in all_reaction_users:
+                            emitter_interaction = self.create_emitter_interaction(user, period, data, "reaction", data["author"])
+                            transformed_data.append(emitter_interaction)
 
-                    # Create a document for each user in reactions with type emitter
-                    for user in all_reaction_users:
-                        emitter_interaction = {
-                            "author_id": user,
-                            "date": period,
-                            "source_id": data["messageId"],
-                            "metadata": {
-                                "thread_id": data["threadId"],
-                                "channel_id": data["channelId"],
-                                "bot_activity": data["isGeneratedByWebhook"] or data["botActivity"],
-                                # "channel_name": data["channelName"],
-                                # "thread_name": data["threadName"],
-                            },
-                            "actions": [],
-                            "interactions": [
-                                {
-                                    "name": "reaction",
-                                    "users_engaged_id": [data["author"]],
-                                    "type": "emitter"
-                                }
-                            ]
-                        }
-                        transformed_data.append(emitter_interaction)
-
-                action_name = "message"
-                action_type = "emitter"
-
-                transformed_item = {
-                    "author_id": data["author"],
-                    "date": period,
-                    "source_id": data["messageId"],
-                    "metadata": {
-                            "thread_id": data["threadId"],
-                            "channel_id": data["channelId"],
-                            "bot_activity": data["isGeneratedByWebhook"] or data["botActivity"],
-                            # "channel_name": data["channelName"],
-                            # "thread_name": data["threadName"],
-                    },
-                    "actions": [
-                        {
-                            "name": action_name,
-                            "type": action_type
-                        }
-                    ],
-                    "interactions": interactions
-                }
+                transformed_item = self.create_transformed_item(data, period, interactions)
                 transformed_data.append(transformed_item)
             except Exception as e:
                 logging.error(f"Error transforming raw discord data. Error: {e}")

@@ -9,8 +9,8 @@ class TestDiscordExtractRawInfos(unittest.TestCase):
 
     def setUp(self):
         self.client = MongoSingleton.get_instance().client
-        self.db = self.client['discord_platform']
-        self.collection = self.db['rawmemberactivities']
+        self.db = self.client['discord']
+        self.collection = self.db['rawinfos']
         self.collection.delete_many({})
 
     @classmethod
@@ -39,7 +39,7 @@ class TestDiscordExtractRawInfos(unittest.TestCase):
         ]
         self.collection.insert_many(sample_data)
 
-        extractor = DiscordExtractRawInfos('discord_platform')
+        extractor = DiscordExtractRawInfos('discord')
         result = extractor.extract(datetime(2023, 6, 30), recompute=True)
 
         expected_result = sample_data
@@ -68,7 +68,7 @@ class TestDiscordExtractRawInfos(unittest.TestCase):
         ]
         self.collection.insert_many(sample_data)
 
-        extractor = DiscordExtractRawInfos('discord_platform')
+        extractor = DiscordExtractRawInfos('discord')
         result = extractor.extract(datetime(2023, 6, 30), recompute=False)
 
         expected_result = sample_data
@@ -76,7 +76,7 @@ class TestDiscordExtractRawInfos(unittest.TestCase):
         self.assertEqual(result, expected_result)
 
     def test_extract_empty_data(self):
-        extractor = DiscordExtractRawInfos('discord_platform')
+        extractor = DiscordExtractRawInfos('discord')
         result = extractor.extract(datetime(2023, 1, 1), recompute=False)
 
         expected_result = []

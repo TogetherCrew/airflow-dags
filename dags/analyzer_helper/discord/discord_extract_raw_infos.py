@@ -16,11 +16,11 @@ class DiscordExtractRawInfos(ExtractRawInfosBase):
         super().__init__(platform_id)
         self.client = MongoSingleton.get_instance().client
         self.db = self.client[self.get_platform_id()]
-        self.collection = self.db['rawmemberactivities']
+        self.collection = self.db['rawinfos']
 
     def extract(self, period: datetime, recompute: bool = False) -> list:
         """
-        Extracts raw information data from the 'rawmemberactivities' collection.
+        Extracts raw information data from the 'rawinfos' collection.
 
         Parameters
         ----------
@@ -33,7 +33,7 @@ class DiscordExtractRawInfos(ExtractRawInfosBase):
         Returns
         -------
         list
-            A list of documents from the 'rawmemberactivities' collection.
+            A list of documents from the 'rawinfos' collection.
         """
         if recompute:
             data = list(self.collection.find({}))

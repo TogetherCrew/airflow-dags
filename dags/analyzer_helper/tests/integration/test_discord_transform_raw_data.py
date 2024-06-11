@@ -61,7 +61,7 @@ class TestDiscordTransformRawData(unittest.TestCase):
                 "interactions": [
                     {
                         "name": "reply",
-                        "users_engaged_id": ["user123"],                        
+                        "users_engaged_id": ["user123"],
                         "type": "receiver"
                     }
                 ]
