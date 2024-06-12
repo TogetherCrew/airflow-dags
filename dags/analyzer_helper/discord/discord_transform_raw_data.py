@@ -38,10 +38,12 @@ class DiscordTransformRawData(TransformRawDataBase):
                     "users_engaged_id": [author],
                     "type": "receiver",
                 }
-            ]
+            ],
         }
 
-    def create_emitter_interaction(self, user, period, data, interaction_type, engaged_user):
+    def create_emitter_interaction(
+        self, user, period, data, interaction_type, engaged_user
+    ):
         is_bot = self.user_bot_checker(engaged_user)
         return {
             "author_id": user,
@@ -59,7 +61,7 @@ class DiscordTransformRawData(TransformRawDataBase):
                     "users_engaged_id": [engaged_user],
                     "type": "emitter",
                 }
-            ]
+            ],
         }
 
     def create_transformed_item(self, data, period, interactions):
@@ -79,10 +81,12 @@ class DiscordTransformRawData(TransformRawDataBase):
                     "type": "emitter",
                 }
             ],
-            "interactions": interactions
+            "interactions": interactions,
         }
 
-    def transform(self, raw_data: list, platform_id: str, period: datetime) -> list[dict]:
+    def transform(
+        self, raw_data: list, platform_id: str, period: datetime
+    ) -> list[dict]:
         transformed_data = []
         for data in raw_data:
             try:
@@ -92,14 +96,26 @@ class DiscordTransformRawData(TransformRawDataBase):
                 interactions = []
 
                 if data.get("replied_user"):
-                    interactions.append(self.create_interaction("reply", [data["replied_user"]], "emitter"))
-                    receiver_interaction = self.create_receiver_interaction(data, "reply", data["replied_user"], data["author"])
+                    interactions.append(
+                        self.create_interaction(
+                            "reply", [data["replied_user"]], "emitter"
+                        )
+                    )
+                    receiver_interaction = self.create_receiver_interaction(
+                        data, "reply", data["replied_user"], data["author"]
+                    )
                     transformed_data.append(receiver_interaction)
 
                 if data.get("user_mentions"):
-                    interactions.append(self.create_interaction("mention", data["user_mentions"], "emitter"))
+                    interactions.append(
+                        self.create_interaction(
+                            "mention", data["user_mentions"], "emitter"
+                        )
+                    )
                     for mentioned_user in data["user_mentions"]:
-                        mentioned_user_interaction = self.create_receiver_interaction(data, "mention", mentioned_user, data["author"])
+                        mentioned_user_interaction = self.create_receiver_interaction(
+                            data, "mention", mentioned_user, data["author"]
+                        )
                         transformed_data.append(mentioned_user_interaction)
 
                 all_reaction_users = []
@@ -110,12 +126,20 @@ class DiscordTransformRawData(TransformRawDataBase):
                             all_reaction_users.extend(parts[:-1])
 
                     if all_reaction_users:
-                        interactions.append(self.create_interaction("reaction", all_reaction_users, "receiver"))
+                        interactions.append(
+                            self.create_interaction(
+                                "reaction", all_reaction_users, "receiver"
+                            )
+                        )
                         for user in all_reaction_users:
-                            emitter_interaction = self.create_emitter_interaction(user, period, data, "reaction", data["author"])
+                            emitter_interaction = self.create_emitter_interaction(
+                                user, period, data, "reaction", data["author"]
+                            )
                             transformed_data.append(emitter_interaction)
 
-                transformed_item = self.create_transformed_item(data, period, interactions)
+                transformed_item = self.create_transformed_item(
+                    data, period, interactions
+                )
                 transformed_data.append(transformed_item)
             except Exception as e:
                 logging.error(f"Error transforming raw discord data. Error: {e}")

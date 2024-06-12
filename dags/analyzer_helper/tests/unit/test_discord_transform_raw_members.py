@@ -1,7 +1,9 @@
 import unittest
 from datetime import datetime
 
-from analyzer_helper.discord.discord_transform_raw_members import DiscordTransformRawMembers
+from analyzer_helper.discord.discord_transform_raw_members import (
+    DiscordTransformRawMembers,
+)
 
 
 class TestDiscordTransformRawMembers(unittest.TestCase):
@@ -30,14 +32,14 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
             "discriminator": "1234",
             "permissions": "some_permissions",
             "globalName": "Global Username",
-            "nickname": "Test Nickname"
+            "nickname": "Test Nickname",
         }
         expected_result = {
             "id": 123456789012345678,
             "is_bot": False,
             "left_at": None,
             "joined_at": datetime(2023, 1, 1),
-            "options": {}
+            "options": {},
         }
         result = transformer.transform([raw_member])
         self.assertEqual(result, [expected_result])
@@ -58,7 +60,7 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
             "discriminator": "9999",
             "permissions": "all",
             "globalName": None,
-            "nickname": None
+            "nickname": None,
         }
         raw_member2 = {
             "discordId": "987654321098765432",
@@ -71,21 +73,21 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
             "discriminator": "0000",
             "permissions": "read_messages",
             "globalName": "GlobalUser",
-            "nickname": "Regular"
+            "nickname": "Regular",
         }
         expected_result1 = {
             "id": 123456789012345678,
             "is_bot": True,
             "left_at": None,
             "joined_at": datetime(2022, 12, 31),
-            "options": {}
+            "options": {},
         }
         expected_result2 = {
             "id": 987654321098765432,
             "is_bot": False,
             "left_at": None,
             "joined_at": datetime(2023, 1, 2),
-            "options": {}
+            "options": {},
         }
         result = transformer.transform([raw_member1, raw_member2])
         self.assertEqual(result, [expected_result1, expected_result2])

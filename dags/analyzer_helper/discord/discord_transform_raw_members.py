@@ -37,7 +37,7 @@ class DiscordTransformRawMembers(TransformRawMembersBase):
                 # "permissions": member.permissions,
                 # "global_name": member.globalName,
                 # "nickname": member.nickname,
-                }
+            },
         }
 
         return guild_member

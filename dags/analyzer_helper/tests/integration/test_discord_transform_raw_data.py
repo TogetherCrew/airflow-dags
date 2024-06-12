@@ -8,7 +8,7 @@ class TestDiscordTransformRawData(unittest.TestCase):
 
     def setUp(self):
         self.transformer = DiscordTransformRawData()
-        self.platform_id = 'discord_platform1'
+        self.platform_id = "discord_platform1"
         self.period = datetime(2023, 1, 1)
 
     def test_transform_data_with_replied_user(self):
@@ -20,7 +20,7 @@ class TestDiscordTransformRawData(unittest.TestCase):
                 "channelId": "channel456",
                 "isGeneratedByWebhook": False,
                 "botActivity": False,
-                "threadId": "thread123"
+                "threadId": "thread123",
             }
         ]
 
@@ -34,19 +34,14 @@ class TestDiscordTransformRawData(unittest.TestCase):
                     "thread_id": "thread123",
                     "bot_activity": False,
                 },
-                "actions": [
-                    {
-                        "name": "message",
-                        "type": "emitter"
-                    }
-                ],
+                "actions": [{"name": "message", "type": "emitter"}],
                 "interactions": [
                     {
                         "name": "reply",
                         "users_engaged_id": ["user789"],
-                        "type": "emitter"
+                        "type": "emitter",
                     }
-                ]
+                ],
             },
             {
                 "author_id": "user789",
@@ -62,10 +57,10 @@ class TestDiscordTransformRawData(unittest.TestCase):
                     {
                         "name": "reply",
                         "users_engaged_id": ["user123"],
-                        "type": "receiver"
+                        "type": "receiver",
                     }
-                ]
-            }
+                ],
+            },
         ]
 
         result = self.transformer.transform(raw_data, self.platform_id, self.period)
@@ -80,7 +75,7 @@ class TestDiscordTransformRawData(unittest.TestCase):
                 "channelId": "channel456",
                 "isGeneratedByWebhook": False,
                 "botActivity": False,
-                "threadId": "thread123"
+                "threadId": "thread123",
             }
         ]
 
@@ -94,19 +89,14 @@ class TestDiscordTransformRawData(unittest.TestCase):
                     "thread_id": "thread123",
                     "bot_activity": False,
                 },
-                "actions": [
-                    {
-                        "name": "message",
-                        "type": "emitter"
-                    }
-                ],
+                "actions": [{"name": "message", "type": "emitter"}],
                 "interactions": [
                     {
                         "name": "mention",
                         "users_engaged_id": ["user456"],
-                        "type": "emitter"
+                        "type": "emitter",
                     }
-                ]
+                ],
             }
         ]
 
@@ -122,7 +112,7 @@ class TestDiscordTransformRawData(unittest.TestCase):
                 "channelId": "channel456",
                 "isGeneratedByWebhook": False,
                 "botActivity": False,
-                "threadId": "thread123"
+                "threadId": "thread123",
             }
         ]
 
@@ -136,19 +126,14 @@ class TestDiscordTransformRawData(unittest.TestCase):
                     "thread_id": "thread123",
                     "bot_activity": False,
                 },
-                "actions": [
-                    {
-                        "name": "message",
-                        "type": "emitter"
-                    }
-                ],
+                "actions": [{"name": "message", "type": "emitter"}],
                 "interactions": [
                     {
                         "name": "reaction",
                         "users_engaged_id": ["user1", "user2"],
-                        "type": "receiver"
+                        "type": "receiver",
                     }
-                ]
+                ],
             },
             {
                 "author_id": "user1",
@@ -159,13 +144,8 @@ class TestDiscordTransformRawData(unittest.TestCase):
                     "thread_id": "thread123",
                     "bot_activity": False,
                 },
-                "actions": [
-                    {
-                        "name": "reaction",
-                        "type": "emitter"
-                    }
-                ],
-                "interactions": []
+                "actions": [{"name": "reaction", "type": "emitter"}],
+                "interactions": [],
             },
             {
                 "author_id": "user2",
@@ -176,14 +156,9 @@ class TestDiscordTransformRawData(unittest.TestCase):
                     "thread_id": "thread123",
                     "bot_activity": False,
                 },
-                "actions": [
-                    {
-                        "name": "reaction",
-                        "type": "emitter"
-                    }
-                ],
-                "interactions": []
-            }
+                "actions": [{"name": "reaction", "type": "emitter"}],
+                "interactions": [],
+            },
         ]
 
         result = self.transformer.transform(raw_data, self.platform_id, self.period)

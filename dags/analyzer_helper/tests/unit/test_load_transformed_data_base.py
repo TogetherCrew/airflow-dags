@@ -6,7 +6,7 @@ from analyzer_helper.discord.load_transformed_data_base import LoadTransformedDa
 class TestLoadTransformedDataBase(unittest.TestCase):
 
     def setUp(self):
-        self.platform_id = 'test_platform'
+        self.platform_id = "test_platform"
         self.loader = LoadTransformedDataBase(self.platform_id)
 
     def test_init(self):

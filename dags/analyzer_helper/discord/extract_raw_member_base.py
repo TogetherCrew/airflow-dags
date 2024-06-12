@@ -1,4 +1,3 @@
-
 class ExtractRawMembersBase:
 
     def __init__(self, platform_id: str):

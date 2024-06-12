@@ -11,7 +11,7 @@ class FetchDiscordPlatforms:
         collection (Collection): The MongoDB collection.
     """
 
-    def __init__(self, db_name='Core', collection='platforms'):
+    def __init__(self, db_name="Core", collection="platforms"):
         """
         Initializes the FetchDiscordPlatforms class.
 
@@ -33,14 +33,14 @@ class FetchDiscordPlatforms:
                 - metadata: A dictionary containing action, window, period, selectedChannels, and id.
                 - recompute: A boolean set to False.
         """
-        query = {'platform': 'discord'}
+        query = {"platform": "discord"}
         projection = {
-            '_id': 1,
-            'metadata.action': 1,
-            'metadata.window': 1,
-            'metadata.period': 1,
-            'metadata.selectedChannels': 1,
-            'metadata.id': 1,
+            "_id": 1,
+            "metadata.action": 1,
+            "metadata.window": 1,
+            "metadata.period": 1,
+            "metadata.selectedChannels": 1,
+            "metadata.id": 1,
         }
 
         cursor = self.collection.find(query, projection)
@@ -48,15 +48,17 @@ class FetchDiscordPlatforms:
 
         for doc in cursor:
             platform_data = {
-                'platform_id': str(doc['_id']),
-                'metadata': {
-                    'action': doc.get('metadata', {}).get('action', None),
-                    'window': doc.get('metadata', {}).get('window', None),
-                    'period': doc.get('metadata', {}).get('period', None),
-                    'selectedChannels': doc.get('metadata', {}).get('selectedChannels', None),
-                    'id': doc.get('metadata', {}).get('id', None)
+                "platform_id": str(doc["_id"]),
+                "metadata": {
+                    "action": doc.get("metadata", {}).get("action", None),
+                    "window": doc.get("metadata", {}).get("window", None),
+                    "period": doc.get("metadata", {}).get("period", None),
+                    "selectedChannels": doc.get("metadata", {}).get(
+                        "selectedChannels", None
+                    ),
+                    "id": doc.get("metadata", {}).get("id", None),
                 },
-                'recompute': False
+                "recompute": False,
             }
             platforms.append(platform_data)
 

@@ -1,12 +1,14 @@
 import unittest
 
-from analyzer_helper.discord.load_transformed_members_base import LoadTransformedMembersBase
+from analyzer_helper.discord.load_transformed_members_base import (
+    LoadTransformedMembersBase,
+)
 
 
 class TestLoadTransformedMembersBase(unittest.TestCase):
 
     def setUp(self):
-        self.platform_id = 'test_platform'
+        self.platform_id = "test_platform"
         self.loader = LoadTransformedMembersBase(self.platform_id)
 
     def test_init(self):

@@ -11,7 +11,7 @@ class DiscordExtractRawMembers(ExtractRawMembersBase):
         self.guild_id = guild_id
         self.client = MongoSingleton.get_instance().client
         self.db = self.client[guild_id]
-        self.collection = self.db['guildmembers']
+        self.collection = self.db["guildmembers"]
 
     def extract(self, recompute: bool = False) -> list:
         """
@@ -29,6 +29,8 @@ class DiscordExtractRawMembers(ExtractRawMembersBase):
             latest_joined_at = latest_member["joinedAt"] if latest_member else None
 
             if latest_joined_at:
-                return list(self.collection.find({"joinedAt": {"$gte": latest_joined_at}}))
+                return list(
+                    self.collection.find({"joinedAt": {"$gte": latest_joined_at}})
+                )
             else:
                 return list(self.collection.find({}))
