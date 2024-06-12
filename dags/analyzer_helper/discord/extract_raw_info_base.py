@@ -19,4 +19,4 @@ class ExtractRawInfosBase:
         Extract raw information for a specific platform
         If recompute is True, then ignore the period, and extract the whole data
         """
-        pass
+        raise NotImplementedError("This method should be overridden by subclasses")

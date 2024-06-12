@@ -1,4 +1,5 @@
 from datetime import datetime
+
 from analyzer_helper.discord.extract_raw_info_base import ExtractRawInfosBase
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 

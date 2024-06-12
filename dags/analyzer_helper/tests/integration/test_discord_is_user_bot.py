@@ -1,4 +1,5 @@
 import unittest
+
 from analyzer_helper.discord.utils.is_user_bot import UserBotChecker
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
@@ -24,7 +25,8 @@ class TestUserBotChecker(unittest.TestCase):
         self.collection.delete_many({})
 
     def tearDown(self):
-        self.collection.delete_many({})
+        self.rawinfo_collection.delete_many({})
+        self.guildmembers_collection.delete_many({})
 
     def test_is_user_bot(self):
         checker = UserBotChecker("discord")
@@ -34,3 +36,4 @@ class TestUserBotChecker(unittest.TestCase):
         self.assertTrue(checker.is_user_bot("user2"))
 
         self.assertFalse(checker.is_user_bot("user3"))
+

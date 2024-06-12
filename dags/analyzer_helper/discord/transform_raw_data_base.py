@@ -8,4 +8,4 @@ class TransformRawDataBase:
         """
         Transform raw data to the given structure
         """
-        pass
+        raise NotImplementedError("This method should be overridden by subclasses")

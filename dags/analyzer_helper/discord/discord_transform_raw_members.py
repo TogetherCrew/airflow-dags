@@ -1,4 +1,5 @@
 import logging
+
 from analyzer_helper.discord.transform_raw_members_base import TransformRawMembersBase
 
 
@@ -23,21 +24,20 @@ class DiscordTransformRawMembers(TransformRawMembersBase):
         """
         Transform a single member's data to the guildmember structure.
         """
-
         guild_member = {
-            "id": int(member.discordId),
-            "is_bot": member.isBot if member.isBot is not None else False,
-            "left_at": member.deletedAt,
-            "joined_at": member.joinedAt,
+            "id": int(member.get("discordId")),
+            "is_bot": member.get("isBot", False),
+            "left_at": member.get("deletedAt"),
+            "joined_at": member.get("joinedAt"),
             "options": {
-                # "username": member.username,
-                # "avatar": member.avatar,
-                # "roles": member.roles,
-                # "discriminator": member.discriminator,
-                # "permissions": member.permissions,
-                # "global_name": member.globalName,
-                # "nickname": member.nickname,
+                # "username": member.get("username"),
+                # "avatar": member.get("avatar"),
+                # "roles": member.get("roles"),
+                # "discriminator": member.get("discriminator"),
+                # "permissions": member.get("permissions"),
+                # "global_name": member.get("globalName"),
+                # "nickname": member.get("nickname"),
             },
-        }
+        },
 
         return guild_member

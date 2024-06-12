@@ -11,6 +11,7 @@ class TestDiscordLoadTransformedMembers(unittest.TestCase):
     def setUp(self):
         self.client = MongoSingleton.get_instance().client
         self.db = self.client["discord_platform"]
+        self.platform_id = "discord"
         self.collection = self.db["rawmembers"]
         self.collection.delete_many({})
 
@@ -113,3 +114,4 @@ class TestDiscordLoadTransformedMembers(unittest.TestCase):
         )  # Exclude '_id' field for comparison
         expected_result = initial_data + processed_data
         self.assertEqual(result, expected_result)
+

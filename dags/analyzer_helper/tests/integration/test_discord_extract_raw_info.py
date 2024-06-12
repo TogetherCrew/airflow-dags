@@ -1,7 +1,8 @@
 import unittest
 from datetime import datetime
-from bson import ObjectId
+
 from analyzer_helper.discord.discord_extract_raw_infos import DiscordExtractRawInfos
+from bson import ObjectId
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
@@ -14,8 +15,8 @@ class TestDiscordExtractRawInfos(unittest.TestCase):
         self.collection.delete_many({})
 
     @classmethod
-    def tearDownClass(cls):
-        cls.client.close()
+    def tearDownClass(self):
+        self.client.close()
 
     def test_extract_recompute_true(self):
         sample_data = [

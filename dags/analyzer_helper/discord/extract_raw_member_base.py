@@ -20,4 +20,4 @@ class ExtractRawMembersBase:
 
         Note: if the user id was duplicate, then replace.
         """
-        pass
+        raise NotImplementedError("This method should be overridden by subclasses")

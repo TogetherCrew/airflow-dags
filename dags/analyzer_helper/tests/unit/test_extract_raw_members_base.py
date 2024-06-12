@@ -1,4 +1,5 @@
 import unittest
+
 from analyzer_helper.discord.extract_raw_member_base import ExtractRawMembersBase
 
 

@@ -1,6 +1,7 @@
 import unittest
-from unittest.mock import patch, MagicMock
 from datetime import datetime
+from unittest.mock import MagicMock, patch
+
 from analyzer_helper.discord.fetch_discord_platforms import FetchDiscordPlatforms
 
 

@@ -1,5 +1,5 @@
-from datetime import datetime
 import unittest
+from datetime import datetime
 
 from analyzer_helper.discord.discord_load_transformed_data import (
     DiscordLoadTransformedData,

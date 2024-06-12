@@ -4,4 +4,4 @@ class TransformRawMembersBase:
         """
         transform members data to the given structure
         """
-        pass
+        raise NotImplementedError("This method should be overridden by subclasses")
