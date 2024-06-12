@@ -4,11 +4,11 @@ from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
 class TestUserBotChecker(unittest.TestCase):
-    @classmethod
-    def setUpClass(self):
+    def setUp(self):
+
         self.client = MongoSingleton.get_instance().client
         self.platform_id = 'discord'
-        self.guild_id = 'discord_guild'
+        self.guild_id = 'discord_guild1'
         self.db = self.client[self.guild_id]
         self.rawinfo_collection = self.db["rawinfos"]
         self.guildmembers_collection = self.db["guildmembers"]
@@ -22,11 +22,6 @@ class TestUserBotChecker(unittest.TestCase):
             {"discordId": "user1", "isBot": False},
             {"discordId": "user2", "isBot": True}
         ])
-
-    def setUp(self):
-
-        self.db = self.client[self.guild_id]
-        self.collection = self.db['guildmembers']
         self.collection.delete_many({})
 
     def tearDown(self):

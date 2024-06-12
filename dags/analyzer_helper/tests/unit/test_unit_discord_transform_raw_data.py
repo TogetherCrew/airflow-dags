@@ -8,10 +8,10 @@ class DiscordTransformRawDataUnitTest(unittest.TestCase):
 
     def test_create_interaction_valid_data(self):
         transformer = DiscordTransformRawData()
-        interaction = transformer.create_interaction("reply", ["user123"], "emitter")
+        interaction = transformer.create_interaction("reply", ["user1234"], "emitter")
         self.assertEqual(interaction, {
             "name": "reply",
-            "users_engaged_id": ["user123"],
+            "users_engaged_id": ["user1234"],
             "type": "emitter",
         })
 

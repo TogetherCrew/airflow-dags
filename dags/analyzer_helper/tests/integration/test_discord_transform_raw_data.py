@@ -8,7 +8,7 @@ class TestDiscordTransformRawData(unittest.TestCase):
 
     def setUp(self):
         self.transformer = DiscordTransformRawData()
-        self.platform_id = 'discord_platform'
+        self.platform_id = 'discord_platform1'
         self.period = datetime(2023, 1, 1)
 
     def test_transform_data_with_replied_user(self):
