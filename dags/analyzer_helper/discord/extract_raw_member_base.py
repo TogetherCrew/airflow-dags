@@ -1,16 +1,16 @@
 class ExtractRawMembersBase:
 
-    def __init__(self, platform_id: str):
+    def __init__(self, guild_id: str):
         """
-        initialize the class for a specific platform
+        initialize the class for a specific guild
         """
-        self._platform_id = platform_id
+        self._guild_id = guild_id
 
-    def get_platform_id(self) -> str:
+    def get_guild_id(self) -> str:
         """
-        Returns the platform ID for subclasses
+        Returns the guild ID for subclasses
         """
-        return self._platform_id
+        return self._guild_id
 
     def extract(self, recompute: bool = False) -> list:
         """

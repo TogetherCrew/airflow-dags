@@ -8,14 +8,18 @@ from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 class TestDiscordExtractRawMembers(unittest.TestCase):
     def setUp(self):
         self.client = MongoSingleton.get_instance().client
-        self.platform_id = "discord_platform"
         self.guild_id = "discord_guild"
-        self.db = self.client[self.guild_id]
-        self.collection = self.db["guildmembers"]
-        self.collection.delete_many({})
+        self.platform_id = "platform_db"
+        self.guild_db = self.client[self.guild_id]
+        self.platform_db = self.client[self.platform_id]
+        self.guild_collection = self.guild_db["guildmemberstest"]
+        self.rawmembers_collection = self.platform_db["rawmemberstest"]
+        self.guild_collection.delete_many({})
+        self.rawmembers_collection.delete_many({})
 
     def tearDown(self):
-        self.collection.delete_many({})
+        self.guild_collection.delete_many({})
+        self.rawmembers_collection.delete_many({})
 
     def test_extract_recompute_true(self):
         sample_data = [
@@ -46,9 +50,9 @@ class TestDiscordExtractRawMembers(unittest.TestCase):
                 "nickname": "TestNick",
             },
         ]
-        self.collection.insert_many(sample_data)
+        self.guild_collection.insert_many(sample_data)
 
-        extractor = DiscordExtractRawMembers(self.platform_id, self.guild_id)
+        extractor = DiscordExtractRawMembers(self.guild_id, self.platform_id)
         result = extractor.extract(recompute=True)
 
         expected_result = sample_data
@@ -56,7 +60,7 @@ class TestDiscordExtractRawMembers(unittest.TestCase):
         self.assertEqual(result, expected_result)
 
     def test_extract_recompute_false(self):
-        sample_data = [
+        rawmember_data = [
             {
                 "discordId": "159985870458322944",
                 "username": "MEE6",
@@ -69,7 +73,11 @@ class TestDiscordExtractRawMembers(unittest.TestCase):
                 "deletedAt": None,
                 "globalName": None,
                 "nickname": None,
-            },
+            }
+        ]
+        self.rawmembers_collection.insert_many(rawmember_data)
+
+        sample_data = [
             {
                 "discordId": "159985870458322945",
                 "username": "TestUser",
@@ -84,12 +92,12 @@ class TestDiscordExtractRawMembers(unittest.TestCase):
                 "nickname": "TestNick",
             },
         ]
-        self.collection.insert_many(sample_data)
+        self.guild_collection.insert_many(sample_data)
 
-        extractor = DiscordExtractRawMembers(self.platform_id, self.guild_id)
+        extractor = DiscordExtractRawMembers(self.guild_id, self.platform_id)
         result = extractor.extract(recompute=False)
 
-        expected_result = []
+        expected_result = sample_data
 
         self.assertEqual(result, expected_result)
 
@@ -106,7 +114,7 @@ class TestDiscordExtractRawMembers(unittest.TestCase):
             "globalName": "GlobalNewUser",
             "nickname": "NewNick",
         }
-        self.collection.insert_one(new_data)
+        self.guild_collection.insert_one(new_data)
 
         result = extractor.extract(recompute=False)
         expected_result = [new_data]

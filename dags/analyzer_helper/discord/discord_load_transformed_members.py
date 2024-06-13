@@ -9,7 +9,7 @@ class DiscordLoadTransformedMembers(LoadTransformedMembersBase):
         super().__init__(platform_id)
         self.client = MongoSingleton.get_instance().client
         self.db = self.client[self.get_platform_id()]
-        self.collection = self.db["rawmembers"]
+        self.collection = self.db["members"]
 
     def load(self, processed_data: list[dict], recompute: bool = False):
         # Probably too aggressive, we need to define another DAG for it

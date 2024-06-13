@@ -17,4 +17,4 @@ class LoadTransformedMembersBase:
         respective collection under platform_id database
         if recompute is True, then replace the whole data with the processed data
         """
-        pass
+        raise NotImplementedError("This method should be overridden by subclasses")

@@ -5,19 +5,23 @@ from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
 class DiscordExtractRawInfos(ExtractRawInfosBase):
-    def __init__(self, platform_id: str):
+    def __init__(self, guild_id: str, platform_id: str):
         """
-        Initializes the class with a specific platform identifier.
+        Initializes the class with a specific guild and platform identifier.
 
         Parameters
         ----------
+        guild_id : str
+            The identifier for the guild.
         platform_id : str
             The identifier for the platform.
         """
-        super().__init__(platform_id)
+        super().__init__(guild_id)
         self.client = MongoSingleton.get_instance().client
-        self.db = self.client[self.get_platform_id()]
-        self.collection = self.db["rawinfos"]
+        self.guild_db = self.client[self.get_guild_id()]
+        self.platform_db = self.client[platform_id]
+        self.collection = self.guild_db["rawinfos"]
+        self.rawmemberactivities_collection = self.platform_db["rawmemberactivities"]
 
     def extract(self, period: datetime, recompute: bool = False) -> list:
         """
@@ -36,15 +40,16 @@ class DiscordExtractRawInfos(ExtractRawInfosBase):
         list
             A list of documents from the 'rawinfos' collection.
         """
+        data = []
         if recompute:
             data = list(self.collection.find({}))
         else:
-            # Fetch the latest date
-            latest_record = self.collection.find_one(sort=[("createdDate", -1)])
-            latest_date = latest_record["createdDate"] if latest_record else None
+            # Fetch the latest joined date from rawmemberactivities collection
+            latest_activity = self.rawmemberactivities_collection.find_one(sort=[("joinedAt", -1)])
+            latest_joined_at = latest_activity["joinedAt"] if latest_activity else None
 
-            if latest_date and latest_date > period:
-                data = list(self.collection.find({"createdDate": {"$gt": latest_date}}))
+            if latest_joined_at and latest_joined_at > period:
+                data = list(self.collection.find({"createdDate": {"$gt": latest_joined_at}}))
             else:
                 data = list(self.collection.find({"createdDate": {"$gte": period}}))
 
