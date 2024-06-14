@@ -6,7 +6,6 @@ from analyzer_helper.discord.load_transformed_members_base import (
 
 
 class TestLoadTransformedMembersBase(unittest.TestCase):
-
     def setUp(self):
         self.platform_id = "test_platform"
         self.loader = LoadTransformedMembersBase(self.platform_id)

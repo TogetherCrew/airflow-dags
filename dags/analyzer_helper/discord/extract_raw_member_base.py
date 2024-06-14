@@ -1,5 +1,4 @@
 class ExtractRawMembersBase:
-
     def __init__(self, guild_id: str):
         """
         initialize the class for a specific guild

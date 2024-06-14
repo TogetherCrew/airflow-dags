@@ -36,4 +36,3 @@ class TestUserBotChecker(unittest.TestCase):
         self.assertTrue(checker.is_user_bot("user2"))
 
         self.assertFalse(checker.is_user_bot("user3"))
-

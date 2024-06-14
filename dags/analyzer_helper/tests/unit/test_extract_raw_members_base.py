@@ -4,7 +4,6 @@ from analyzer_helper.discord.extract_raw_member_base import ExtractRawMembersBas
 
 
 class TestExtractRawMembersBase(unittest.TestCase):
-
     def setUp(self):
         self.guild_id = "test_guild"
         self.test_instance = ExtractRawMembersBase(self.guild_id)

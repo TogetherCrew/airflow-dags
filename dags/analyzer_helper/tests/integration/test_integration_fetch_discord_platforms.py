@@ -318,4 +318,3 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
         ]
 
         self.assertEqual(result, expected_result)
-

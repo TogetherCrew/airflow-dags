@@ -1,3 +1,5 @@
+import logging
+
 from analyzer_helper.discord.load_transformed_members_base import (
     LoadTransformedMembersBase,
 )
@@ -14,5 +16,6 @@ class DiscordLoadTransformedMembers(LoadTransformedMembersBase):
     def load(self, processed_data: list[dict], recompute: bool = False):
         # Probably too aggressive, we need to define another DAG for it
         if recompute:
+            logging.info("Recompute is true for loading discord transformed members, deleting the previous day")
             self.collection.delete_many({})
         self.collection.insert_many(processed_data)

@@ -1,30 +1,54 @@
 import logging
 from datetime import datetime
+from typing import Dict, List
 
 from analyzer_helper.discord.transform_raw_data_base import TransformRawDataBase
 from analyzer_helper.discord.utils.is_user_bot import UserBotChecker
 
 
 class DiscordTransformRawData(TransformRawDataBase):
-
     def __init__(self):
         """
         Initializes the class with a bot checker.
         """
         self.user_bot_checker = UserBotChecker()
 
-    def create_interaction(self, interaction_type, users_engaged_id, interaction_role):
+    def create_interaction_base(self, name: str, users_engaged_id: List[str], type: str) -> Dict[str, str]:
+        """
+        Creates an interaction dictionary.
+
+        Args:
+            interaction_type (str): Name of the interaction (e.g., 'reply', 'mention').
+            users_engaged_id (List[str]): List of user IDs engaged in the interaction.
+            type (str): Type of the interaction (e.g., 'emitter', 'receiver').
+
+        Returns:
+            Dict[str, str]: Dictionary representing the interaction.
+        """
         return {
-            "name": interaction_type,
+            "name": name,
             "users_engaged_id": users_engaged_id,
-            "type": interaction_role,
+            "type": type,
         }
 
-    def create_receiver_interaction(self, data, interaction_type, engaged_user, author):
+    def create_interaction(self, data: Dict[str, any], name: str, author: str, engaged_users: List[str], type: str) -> Dict[str, any]:
+        """
+        Creates an interaction dictionary.
+
+        Args:
+            data (Dict[str, any]): Raw data containing interaction details.
+            name (str): Name of the interaction (e.g., 'reply', 'mention').
+            author (str): ID of the author of the interaction.
+            engaged_users (List[str]): List of IDs of the engaged users.
+            type (str): Type of the interaction (e.g., 'receiver', 'emitter').
+
+        Returns:
+            Dict[str, any]: Dictionary representing the interaction.
+        """
         is_bot = self.user_bot_checker(author)
         return {
-            "author_id": engaged_user,
-            "date": data["createdDate"]["$date"],
+            "author_id": author,
+            "date": data.get("createdDate", data.get("period")),
             "source_id": data["messageId"],
             "metadata": {
                 "thread_id": data["threadId"],
@@ -33,34 +57,7 @@ class DiscordTransformRawData(TransformRawDataBase):
             },
             "actions": [],
             "interactions": [
-                {
-                    "name": interaction_type,
-                    "users_engaged_id": [author],
-                    "type": "receiver",
-                }
-            ],
-        }
-
-    def create_emitter_interaction(
-        self, user, period, data, interaction_type, engaged_user
-    ):
-        is_bot = self.user_bot_checker(engaged_user)
-        return {
-            "author_id": user,
-            "date": period,
-            "source_id": data["messageId"],
-            "metadata": {
-                "thread_id": data["threadId"],
-                "channel_id": data["channelId"],
-                "bot_activity": data["isGeneratedByWebhook"] or is_bot,
-            },
-            "actions": [],
-            "interactions": [
-                {
-                    "name": interaction_type,
-                    "users_engaged_id": [engaged_user],
-                    "type": "emitter",
-                }
+                self.create_interaction_base(name=name, users_engaged_id=engaged_users, type=type)
             ],
         }
 
@@ -84,9 +81,7 @@ class DiscordTransformRawData(TransformRawDataBase):
             "interactions": interactions,
         }
 
-    def transform(
-        self, raw_data: list, platform_id: str, period: datetime
-    ) -> list[dict]:
+    def transform(self, raw_data: list, platform_id: str, period: datetime) -> list[dict]:
         transformed_data = []
         for data in raw_data:
             try:
@@ -98,23 +93,23 @@ class DiscordTransformRawData(TransformRawDataBase):
                 if data.get("replied_user"):
                     interactions.append(
                         self.create_interaction(
-                            "reply", [data["replied_user"]], "emitter"
+                            data=data, name="reply", author=data["author"], engaged_users=[data["replied_user"]], interaction_type="emitter"
                         )
                     )
-                    receiver_interaction = self.create_receiver_interaction(
-                        data, "reply", data["replied_user"], data["author"]
+                    receiver_interaction = self.create_interaction(
+                        data=data, name="reply", author=data["author"], engaged_users=[data["replied_user"]], interaction_type="receiver"
                     )
                     transformed_data.append(receiver_interaction)
 
                 if data.get("user_mentions"):
                     interactions.append(
                         self.create_interaction(
-                            "mention", data["user_mentions"], "emitter"
+                            data=data, name="mention", author=data["author"], engaged_users=data["user_mentions"], interaction_type="emitter"
                         )
                     )
                     for mentioned_user in data["user_mentions"]:
-                        mentioned_user_interaction = self.create_receiver_interaction(
-                            data, "mention", mentioned_user, data["author"]
+                        mentioned_user_interaction = self.create_interaction(
+                            data=data, name="mention", author=mentioned_user, engaged_users=[data["author"]], interaction_type="receiver"
                         )
                         transformed_data.append(mentioned_user_interaction)
 
@@ -128,17 +123,17 @@ class DiscordTransformRawData(TransformRawDataBase):
                     if all_reaction_users:
                         interactions.append(
                             self.create_interaction(
-                                "reaction", all_reaction_users, "receiver"
+                                data=data, name="reaction", author=data["author"], engaged_users=all_reaction_users, interaction_type="receiver"
                             )
                         )
                         for user in all_reaction_users:
-                            emitter_interaction = self.create_emitter_interaction(
-                                user, period, data, "reaction", data["author"]
+                            emitter_interaction = self.create_interaction(
+                                data=data, name="reaction", author=user, engaged_users=[data["author"]], interaction_type="emitter"
                             )
                             transformed_data.append(emitter_interaction)
 
                 transformed_item = self.create_transformed_item(
-                    data, period, interactions
+                    data=data, period=period, interactions=interactions
                 )
                 transformed_data.append(transformed_item)
             except Exception as e:

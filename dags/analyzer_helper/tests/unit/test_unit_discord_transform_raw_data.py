@@ -2,13 +2,13 @@ import unittest
 from datetime import datetime
 
 from analyzer_helper.discord.discord_transform_raw_data import DiscordTransformRawData
+from bson import ObjectId
 
 
 class DiscordTransformRawDataUnitTest(unittest.TestCase):
-
-    def test_create_interaction_valid_data(self):
+    def test_create_interaction_base_valid_data(self):
         transformer = DiscordTransformRawData()
-        interaction = transformer.create_interaction("reply", ["user1234"], "emitter")
+        interaction = transformer.create_interaction_base(name="reply", users_engaged_id=["user1234"], type="emitter")
         self.assertEqual(
             interaction,
             {
@@ -21,26 +21,39 @@ class DiscordTransformRawDataUnitTest(unittest.TestCase):
     def test_create_interaction_missing_arguments(self):
         transformer = DiscordTransformRawData()
         with self.assertRaises(TypeError):
-            transformer.create_interaction("reply")
+            transformer.create_interaction_base(name="reply")
 
-    def test_create_receiver_interaction_valid_data(self):
+    def test_create_interaction_valid_data(self):
         transformer = DiscordTransformRawData()
         data = {
-            "createdDate": {"$date": "2024-06-11T00:00:00Z"},
+            "_id": ObjectId("649fc4dfb65f6981303e32ef"),
+            "type": 0,
+            "author": "user456",
+            "content": "sample message",
+            "user_mentions": ["user789"],
+            "role_mentions": ["role1", "role2"],
+            "reactions": ["user1, user2, :laugh:"],
+            "replied_user": None,
+            "createdDate": datetime(2024, 6, 11),
             "messageId": "12345",
-            "threadId": "abc",
             "channelId": "xyz",
+            "channelName": "💬・general-chat",
+            "threadId": "abc",
+            "threadName": "thread-abc",
             "isGeneratedByWebhook": False,
-            "botActivity": False,
         }
-        interaction = transformer.create_receiver_interaction(
-            data, "reply", "user456", "user789"
+        interaction = transformer.create_interaction(
+            data=data,
+            name="reply",
+            author="user456",
+            engaged_users=["user789"],
+            type="receiver",
         )
         self.assertEqual(
             interaction,
             {
                 "author_id": "user456",
-                "date": "2024-06-11T00:00:00Z",
+                "date": datetime(2024, 6, 11),
                 "source_id": "12345",
                 "metadata": {
                     "thread_id": "abc",
@@ -61,14 +74,28 @@ class DiscordTransformRawDataUnitTest(unittest.TestCase):
     def test_create_emitter_interaction_valid_data(self):
         transformer = DiscordTransformRawData()
         data = {
+            "_id": ObjectId("649fc4dfb65f6981303e32ef"),
+            "type": 0,
+            "author": "user123",
+            "content": "sample message",
+            "user_mentions": ["user456"],
+            "role_mentions": ["role1", "role2"],
+            "reactions": ["user1, user2, :laugh:"],
+            "replied_user": None,
+            "createdDate": datetime(2024, 6, 10),
             "messageId": "56789",
-            "threadId": "def",
             "channelId": "ghi",
+            "channelName": "💬・general-chat",
+            "threadId": "def",
+            "threadName": "thread-def",
             "isGeneratedByWebhook": True,
-            "botActivity": True,
         }
-        interaction = transformer.create_emitter_interaction(
-            "user123", datetime(2024, 6, 10), data, "reaction", "user456"
+        interaction = transformer.create_interaction(
+            data=data,
+            name="reaction",
+            author="user123",
+            engaged_users=["user456"],
+            type="emitter",
         )
         self.assertEqual(
             interaction,
@@ -95,12 +122,21 @@ class DiscordTransformRawDataUnitTest(unittest.TestCase):
     def test_create_transformed_item_valid_data(self):
         transformer = DiscordTransformRawData()
         data = {
+            "_id": ObjectId("649fc4dfb65f6981303e32ef"),
+            "type": 0,
             "author": "user789",
+            "content": "sample message",
+            "user_mentions": ["user123"],
+            "role_mentions": ["role1", "role2"],
+            "reactions": ["user1, user2, :laugh:"],
+            "replied_user": None,
+            "createdDate": datetime(2024, 6, 11),
             "messageId": "90123",
-            "threadId": "jkl",
             "channelId": "mno",
+            "channelName": "💬・general-chat",
+            "threadId": "jkl",
+            "threadName": "thread-jkl",
             "isGeneratedByWebhook": False,
-            "botActivity": False,
         }
         interactions = [
             {
@@ -110,7 +146,7 @@ class DiscordTransformRawDataUnitTest(unittest.TestCase):
             }
         ]
         transformed_item = transformer.create_transformed_item(
-            data, datetime(2024, 6, 11), interactions
+            data=data, period=datetime(2024, 6, 11), interactions=interactions
         )
         self.assertEqual(
             transformed_item,
@@ -123,7 +159,12 @@ class DiscordTransformRawDataUnitTest(unittest.TestCase):
                     "channel_id": "mno",
                     "bot_activity": False,
                 },
-                "actions": [],
+                "actions": [
+                    {
+                        "name": "message",
+                        "type": "emitter",
+                    }
+                ],
                 "interactions": interactions,
             },
         )

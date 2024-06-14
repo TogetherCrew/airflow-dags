@@ -28,8 +28,12 @@ class DiscordExtractRawMembers(ExtractRawMembersBase):
             members = list(self.guild_collection.find({}))
         else:
             # Fetch the latest joined date from rawmembers collection
-            latest_rawmember = self.rawmembers_collection.find_one(sort=[("joinedAt", -1)])
-            latest_joined_at = latest_rawmember["joinedAt"] if latest_rawmember else None
+            latest_rawmember = self.rawmembers_collection.find_one(
+                sort=[("joined_at", -1)]
+            )
+            latest_joined_at = (
+                latest_rawmember["joined_at"] if latest_rawmember else None
+            )
 
             if latest_joined_at:
                 members = list(

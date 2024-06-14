@@ -33,7 +33,10 @@ class FetchDiscordPlatforms:
                 - metadata: A dictionary containing action, window, period, selectedChannels, and id.
                 - recompute: A boolean set to False.
         """
-        query = {"platform": "discord"}
+        query = {
+                  "disconnectedAt": None,
+                  "platform": "discord",
+                }
         projection = {
             "_id": 1,
             "metadata.action": 1,

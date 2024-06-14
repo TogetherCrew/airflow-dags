@@ -5,7 +5,6 @@ from analyzer_helper.discord.discord_transform_raw_data import DiscordTransformR
 
 
 class TestDiscordTransformRawData(unittest.TestCase):
-
     def setUp(self):
         self.transformer = DiscordTransformRawData()
         self.platform_id = "discord_platform1"
@@ -19,8 +18,8 @@ class TestDiscordTransformRawData(unittest.TestCase):
                 "messageId": "msg123",
                 "channelId": "channel456",
                 "isGeneratedByWebhook": False,
-                "botActivity": False,
                 "threadId": "thread123",
+                "createdDate": self.period,
             }
         ]
 
@@ -63,7 +62,7 @@ class TestDiscordTransformRawData(unittest.TestCase):
             },
         ]
 
-        result = self.transformer.transform(raw_data, self.platform_id, self.period)
+        result = self.transformer.transform(raw_data=raw_data, platform_id=self.platform_id, period=self.period)
         self.assertEqual(result, expected_result)
 
     def test_transform_data_with_user_mentions(self):
@@ -74,8 +73,8 @@ class TestDiscordTransformRawData(unittest.TestCase):
                 "messageId": "msg123",
                 "channelId": "channel456",
                 "isGeneratedByWebhook": False,
-                "botActivity": False,
                 "threadId": "thread123",
+                "createdDate": self.period,
             }
         ]
 
@@ -97,10 +96,28 @@ class TestDiscordTransformRawData(unittest.TestCase):
                         "type": "emitter",
                     }
                 ],
-            }
+            },
+            {
+                "author_id": "user456",
+                "date": self.period,
+                "source_id": "msg123",
+                "metadata": {
+                    "channel_id": "channel456",
+                    "thread_id": "thread123",
+                    "bot_activity": False,
+                },
+                "actions": [],
+                "interactions": [
+                    {
+                        "name": "mention",
+                        "users_engaged_id": ["user123"],
+                        "type": "receiver",
+                    }
+                ],
+            },
         ]
 
-        result = self.transformer.transform(raw_data, self.platform_id, self.period)
+        result = self.transformer.transform(raw_data=raw_data, platform_id=self.platform_id, period=self.period)
         self.assertEqual(result, expected_result)
 
     def test_transform_data_with_reactions(self):
@@ -111,8 +128,8 @@ class TestDiscordTransformRawData(unittest.TestCase):
                 "messageId": "msg123",
                 "channelId": "channel456",
                 "isGeneratedByWebhook": False,
-                "botActivity": False,
                 "threadId": "thread123",
+                "createdDate": self.period,
             }
         ]
 
@@ -161,7 +178,7 @@ class TestDiscordTransformRawData(unittest.TestCase):
             },
         ]
 
-        result = self.transformer.transform(raw_data, self.platform_id, self.period)
+        result = self.transformer.transform(raw_data=raw_data, platform=self.platform_id, period=self.period)
         self.assertEqual(result, expected_result)
 
     def test_transform_data_empty(self):
@@ -169,5 +186,5 @@ class TestDiscordTransformRawData(unittest.TestCase):
 
         expected_result = []
 
-        result = self.transformer.transform(raw_data, self.platform_id, self.period)
+        result = self.transformer.transform(raw_data=raw_data, platform_id=self.platform_id, period=self.period)
         self.assertEqual(result, expected_result)

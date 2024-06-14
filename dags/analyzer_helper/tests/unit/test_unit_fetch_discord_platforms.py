@@ -6,7 +6,6 @@ from analyzer_helper.discord.fetch_discord_platforms import FetchDiscordPlatform
 
 
 class TestFetchDiscordPlatformsUnit(unittest.TestCase):
-
     @patch.object(FetchDiscordPlatforms, "get_client")
     def test_fetch_all(self, mock_get_client):
         mock_client = MagicMock()

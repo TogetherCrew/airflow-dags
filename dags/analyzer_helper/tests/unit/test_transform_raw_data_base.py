@@ -5,7 +5,6 @@ from analyzer_helper.discord.transform_raw_data_base import TransformRawDataBase
 
 
 class TestTransformRawDataBase(unittest.TestCase):
-
     def setUp(self):
         self.raw_data = []
         self.platform_id = "test_platform"

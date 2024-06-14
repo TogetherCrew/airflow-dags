@@ -7,17 +7,14 @@ from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
 class TestDiscordExtractRawInfos(unittest.TestCase):
-
     def setUp(self):
         self.client = MongoSingleton.get_instance().client
         self.guild_id = "discord_guild_id"
-        self.platform_id = "platform_db"
+        self.platsample_dataform_id = "platform_db"
         self.guild_db = self.client[self.guild_id]
         self.platform_db = self.client[self.platform_id]
-        self.rawinfos_collection = self.guild_db["rawinfostest"]
-        self.rawmemberactivities_collection = self.platform_db["rawmemberactivitiestest"]
+        self.rawinfos_collection = self.guild_db["rawinfo"]
         self.rawinfos_collection.delete_many({})
-        self.rawmemberactivities_collection.delete_many({})
 
     @classmethod
     def tearDownClass(self):
@@ -58,20 +55,27 @@ class TestDiscordExtractRawInfos(unittest.TestCase):
     def test_extract_recompute_false(self):
         rawmember_data = [
             {
-                "discordId": "159985870458322944",
-                "username": "MEE6",
-                "roles": ["1088165451651092635", "1046009276432400435"],
-                "joinedAt": datetime(2023, 6, 29, 20, 28, 3, 494000),
-                "avatar": "b50adff099924dd5e6b72d13f77eb9d7",
-                "isBot": True,
-                "discriminator": "4876",
-                "permissions": "559642693856991",
-                "deletedAt": None,
-                "globalName": None,
-                "nickname": None,
+                "_id": ObjectId("649fc4dfb65f6981303e32ef"),
+                "type": 0,
+                "author": "159985870458322944",
+                "content": "sample member activity",
+                "user_mentions": ["63632723832823823", "83279873210490238"],
+                "role_mentions": ["873892901809120912", "897234876127365121"],
+                "reactions": [
+                    "44444444444444444,thelounge",
+                    "91919191919191919,6373687382748239,👌",
+                ],
+                "replied_user": None,
+                "createdDate": datetime(2023, 6, 29, 20, 28, 3, 494000),
+                "messageId": "rawmemberactivities_source_id",
+                "channelId": "some_channel_id",
+                "channelName": "💬・general-chat",
+                "threadId": None,
+                "threadName": None,
+                "isGeneratedByWebhook": False,
             }
         ]
-        self.rawmemberactivities_collection.insert_many(rawmember_data)
+        self.rawinfos_collection.insert_many(rawmember_data)
 
         sample_data = [
             {

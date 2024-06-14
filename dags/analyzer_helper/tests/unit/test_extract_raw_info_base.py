@@ -5,7 +5,6 @@ from analyzer_helper.discord.extract_raw_info_base import ExtractRawInfosBase
 
 
 class TestExtractRawInfosBase(unittest.TestCase):
-
     def setUp(self):
         self.guild_id = "test_platform"
         self.test_instance = ExtractRawInfosBase(self.guild_id)
