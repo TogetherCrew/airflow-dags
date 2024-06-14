@@ -48,7 +48,6 @@ class TestGithubETLFetchRawIssues(TestCase):
                 )
             )
 
-
         repository_ids = [123]
         issues = self.extractor._fetch_raw_issues(
             repository_id=repository_ids, from_date=datetime(2024, 1, 1)
