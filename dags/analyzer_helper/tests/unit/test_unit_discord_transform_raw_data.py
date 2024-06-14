@@ -8,7 +8,11 @@ from bson import ObjectId
 class DiscordTransformRawDataUnitTest(unittest.TestCase):
     def test_create_interaction_base_valid_data(self):
         transformer = DiscordTransformRawData()
-        interaction = transformer.create_interaction_base(name="reply", users_engaged_id=["user1234"], type="emitter")
+        interaction = transformer.create_interaction_base(
+            name="reply",
+            users_engaged_id=["user1234"],
+            type="emitter"
+        )
         self.assertEqual(
             interaction,
             {

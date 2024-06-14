@@ -62,7 +62,11 @@ class TestDiscordTransformRawData(unittest.TestCase):
             },
         ]
 
-        result = self.transformer.transform(raw_data=raw_data, platform_id=self.platform_id, period=self.period)
+        result = self.transformer.transform(
+            raw_data=raw_data,
+            platform_id=self.platform_id,
+            period=self.period
+        )
         self.assertEqual(result, expected_result)
 
     def test_transform_data_with_user_mentions(self):
@@ -117,7 +121,11 @@ class TestDiscordTransformRawData(unittest.TestCase):
             },
         ]
 
-        result = self.transformer.transform(raw_data=raw_data, platform_id=self.platform_id, period=self.period)
+        result = self.transformer.transform(
+            raw_data=raw_data,
+            platform_id=self.platform_id,
+            period=self.period
+        )
         self.assertEqual(result, expected_result)
 
     def test_transform_data_with_reactions(self):
@@ -178,7 +186,11 @@ class TestDiscordTransformRawData(unittest.TestCase):
             },
         ]
 
-        result = self.transformer.transform(raw_data=raw_data, platform=self.platform_id, period=self.period)
+        result = self.transformer.transform(
+            raw_data=raw_data,
+            platform=self.platform_id,
+            period=self.period
+        )
         self.assertEqual(result, expected_result)
 
     def test_transform_data_empty(self):
@@ -186,5 +198,9 @@ class TestDiscordTransformRawData(unittest.TestCase):
 
         expected_result = []
 
-        result = self.transformer.transform(raw_data=raw_data, platform_id=self.platform_id, period=self.period)
+        result = self.transformer.transform(
+            raw_data=raw_data,
+            platform_id=self.platform_id,
+            period=self.period
+        )
         self.assertEqual(result, expected_result)

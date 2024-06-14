@@ -10,7 +10,7 @@ class TestDiscordExtractRawInfos(unittest.TestCase):
     def setUp(self):
         self.client = MongoSingleton.get_instance().client
         self.guild_id = "discord_guild_id"
-        self.platsample_dataform_id = "platform_db"
+        self.platform_id = "platform_db"
         self.guild_db = self.client[self.guild_id]
         self.platform_db = self.client[self.platform_id]
         self.rawinfos_collection = self.guild_db["rawinfo"]

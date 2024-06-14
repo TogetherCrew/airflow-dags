@@ -12,7 +12,7 @@ class DiscordTransformRawMembers(TransformRawMembersBase):
 
         for member in raw_members:
             try:
-                transformed_member = self.transform_member(member)
+                transformed_member = self.transform_member(member=member)
                 transformed_members.append(transformed_member)
             except Exception as e:
                 logging.error(f"Error transforming raw discord member {member}: {e}")
@@ -23,9 +23,10 @@ class DiscordTransformRawMembers(TransformRawMembersBase):
         """
         Transform a single member's data to the guildmember structure.
         """
+        discord_id = member.get("discordId")
         guild_member = (
             {
-                "id": int(member.get("discordId")),
+                "id": int(discord_id) if discord_id is not None else None,
                 "is_bot": member.get("isBot", False),
                 "left_at": member.get("deletedAt"),
                 "joined_at": member.get("joinedAt"),
@@ -38,7 +39,7 @@ class DiscordTransformRawMembers(TransformRawMembersBase):
                     # "global_name": member.get("globalName"),
                     # "nickname": member.get("nickname"),
                 },
-            },
+            }
         )
 
         return guild_member

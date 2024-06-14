@@ -39,4 +39,3 @@ class UserBotChecker:
         )
 
         return result.get("isBot", False) if result else False
-

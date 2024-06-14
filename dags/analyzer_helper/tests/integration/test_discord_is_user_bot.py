@@ -12,6 +12,8 @@ class TestUserBotChecker(unittest.TestCase):
         self.db = self.client[self.guild_id]
         self.rawinfo_collection = self.db["rawinfos"]
         self.guildmembers_collection = self.db["guildmembers"]
+        self.rawinfo_collection.delete_many({})
+        self.guildmembers_collection.delete_many({})
 
         self.rawinfo_collection.insert_many(
             [{"author": "user1"}, {"author": "user2"}, {"author": "user3"}]
@@ -22,7 +24,6 @@ class TestUserBotChecker(unittest.TestCase):
                 {"discordId": "user2", "isBot": True},
             ]
         )
-        self.collection.delete_many({})
 
     def tearDown(self):
         self.rawinfo_collection.delete_many({})
