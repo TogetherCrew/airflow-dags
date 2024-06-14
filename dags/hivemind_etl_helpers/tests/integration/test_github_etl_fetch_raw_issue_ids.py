@@ -31,7 +31,7 @@ class TestGithubETLFetchRawIssues(TestCase):
         with self.neo4j_driver.session() as session:
             session.execute_write(
                 lambda tx: tx.run(
-                     """
+                    """
                     CREATE (i:Issue)<-[:CREATED]-(:GitHubUser {login: "author #1"})
                     SET
                         i.latestSavedAt = "2024-02-15T06:10:02.262000000Z",
@@ -42,7 +42,7 @@ class TestGithubETLFetchRawIssues(TestCase):
                         i.repository_id = 123,
                         i.id = 21200001,
                         i.node_id = "some_id"
-                        
+
                     CREATE (repo:Repository {id: 123, full_name: "Org/SampleRepo"})
                     """
                 )
@@ -85,7 +85,7 @@ class TestGithubETLFetchRawIssues(TestCase):
                         i.locked = false,
                         i.timeline_url = "https://api.github.com/repos/GitHub/some_repo/issues/1/timeline",
                         i.node_id = "some_id"
-                        
+
                     CREATE (repo:Repository {id: 123, full_name: "Org/SampleRepo"})
                     """
                 )
