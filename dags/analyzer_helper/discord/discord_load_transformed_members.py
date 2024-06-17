@@ -11,11 +11,12 @@ class DiscordLoadTransformedMembers(LoadTransformedMembersBase):
         super().__init__(platform_id)
         self.client = MongoSingleton.get_instance().client
         self.db = self.client[self.get_platform_id()]
-        self.collection = self.db["members"]
+        self.collection = self.db["rawmembers"]
 
     def load(self, processed_data: list[dict], recompute: bool = False):
-        # Probably too aggressive, we need to define another DAG for it
         if recompute:
-            logging.info("Recompute is true for loading discord transformed members, deleting the previous day")
+            logging.info(
+                "Recompute is true, deleting all the previous data!"
+            )
             self.collection.delete_many({})
         self.collection.insert_many(processed_data)

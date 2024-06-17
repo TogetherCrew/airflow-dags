@@ -1,19 +1,19 @@
 class ExtractRawMembersBase:
-    def __init__(self, guild_id: str):
+    def __init__(self, platform_id: str):
         """
-        initialize the class for a specific guild
+        initialize the class for a specific platform
         """
-        self._guild_id = guild_id
+        self._platform_id = platform_id
 
-    def get_guild_id(self) -> str:
+    def get_platform_id(self) -> str:
         """
-        Returns the guild ID for subclasses
+        Returns the platform_id ID for subclasses
         """
-        return self._guild_id
+        return self._platform_id
 
     def extract(self, recompute: bool = False) -> list:
         """
-        extract members data
+        extract platform_id members data
         if recompute = True, then extract the whole members
         else, start extracting from latest saved member's `joined_at` date
 

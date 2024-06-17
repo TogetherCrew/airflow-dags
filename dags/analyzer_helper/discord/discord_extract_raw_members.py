@@ -11,7 +11,7 @@ class DiscordExtractRawMembers(ExtractRawMembersBase):
         self.platform_id = platform_id
         self.client = MongoSingleton.get_instance().client
         self.guild_db = self.client[guild_id]
-        self.platform_db = self.client[platform_id]
+        self.platform_db = self.client[self.get_platform_id()]
         self.guild_collection = self.guild_db["guildmembers"]
         self.rawmembers_collection = self.platform_db["rawmembers"]
 

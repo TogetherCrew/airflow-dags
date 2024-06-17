@@ -121,8 +121,8 @@ class DiscordTransformRawData(TransformRawDataBase):
                     receiver_interaction = self.create_interaction(
                         data=data,
                         name="reply",
-                        author=data["author"],
-                        engaged_users=[data["replied_user"]],
+                        author=data["replied_user"],
+                        engaged_users=[data["author"]],
                         type="receiver"
                     )
                     transformed_data.append(receiver_interaction)

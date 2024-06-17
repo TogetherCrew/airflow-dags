@@ -50,11 +50,14 @@ class DiscordExtractRawInfos(ExtractRawInfosBase):
             )
             latest_activity_date = latest_activity["date"] if latest_activity else None
 
-            if latest_activity_date and latest_activity_date > period:
-                data = list(
-                    self.collection.find({"createdDate": {"$gt": latest_activity_date}})
-                )
+            if latest_activity_date is not None:
+                if latest_activity_date > period:
+                    data = list(
+                        self.collection.find({"createdDate": {"$gt": latest_activity_date}})
+                    )
+                elif period > latest_activity_date:
+                    data = list(self.collection.find({"createdDate": {"$gte": period}}))
             else:
-                data = list(self.collection.find({"createdDate": {"$gte": period}}))
+                data = list(self.collection.find({}))
 
         return data

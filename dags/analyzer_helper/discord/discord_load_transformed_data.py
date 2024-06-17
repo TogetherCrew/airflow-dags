@@ -12,10 +12,9 @@ class DiscordLoadTransformedData(LoadTransformedDataBase):
         self.collection = self.db["rawmemberactivities"]
 
     def load(self, processed_data: list[dict], recompute: bool = False):
-        # Probably too aggressive, we should define another DAG for that
         if recompute:
             logging.info(
-                "Recompute is true for loading discord transformed data, deleting the previous day"
+                "Recompute is true, deleting all the previous data!"
             )
             self.collection.delete_many({})
         self.collection.insert_many(processed_data)
