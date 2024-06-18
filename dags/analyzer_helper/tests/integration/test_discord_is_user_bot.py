@@ -28,7 +28,7 @@ class TestUserBotChecker(unittest.TestCase):
                     "role_mentions": ["100000000000000004", "100000000000000005"],
                     "reactions": [
                         "100000000000000006,thelounge",
-                        "100000000000000007,100000000000000008,👌"
+                        "100000000000000007,100000000000000008,👌",
                     ],
                     "replied_user": None,
                     "createdDate": datetime(2023, 6, 30, 20, 28, 3, 494000),

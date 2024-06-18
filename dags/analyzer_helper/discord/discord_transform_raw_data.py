@@ -14,7 +14,8 @@ class DiscordTransformRawData(TransformRawDataBase):
         self.user_bot_checker = UserBotChecker()
 
     def create_interaction_base(
-        self, name: str,
+        self,
+        name: str,
         users_engaged_id: List[str],
         type: str,
     ) -> Dict[str, Any]:

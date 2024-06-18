@@ -3,8 +3,8 @@ from datetime import datetime
 
 from analyzer_helper.discord.discord_transform_raw_data import DiscordTransformRawData
 from bson import ObjectId
-from dags.analyzer_helper.discord.utils.is_user_bot import UserBotChecker
-from dags.hivemind_etl_helpers.src.utils.mongo import MongoSingleton
+from analyzer_helper.discord.utils.is_user_bot import UserBotChecker
+from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
 class TestDiscordTransformRawData(unittest.TestCase):
