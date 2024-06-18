@@ -3,7 +3,6 @@ from datetime import datetime
 
 from analyzer_helper.discord.discord_transform_raw_data import DiscordTransformRawData
 from bson import ObjectId
-
 from dags.analyzer_helper.discord.utils.is_user_bot import UserBotChecker
 from dags.hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
@@ -34,7 +33,7 @@ class TestDiscordTransformRawData(unittest.TestCase):
                     "permissions": "559642693856991",
                     "deletedAt": None,
                     "globalName": None,
-                    "nickname": None
+                    "nickname": None,
                 },
                 {
                     "_id": ObjectId(),
@@ -48,7 +47,7 @@ class TestDiscordTransformRawData(unittest.TestCase):
                     "permissions": "123456789",
                     "deletedAt": None,
                     "globalName": None,
-                    "nickname": None
+                    "nickname": None,
                 },
                 {
                     "_id": ObjectId(),
@@ -62,7 +61,7 @@ class TestDiscordTransformRawData(unittest.TestCase):
                     "permissions": "123456789",
                     "deletedAt": None,
                     "globalName": None,
-                    "nickname": None
+                    "nickname": None,
                 },
                 {
                     "_id": ObjectId(),
@@ -76,7 +75,7 @@ class TestDiscordTransformRawData(unittest.TestCase):
                     "permissions": "123456789",
                     "deletedAt": None,
                     "globalName": None,
-                    "nickname": None
+                    "nickname": None,
                 },
                 {
                     "_id": ObjectId(),
@@ -90,7 +89,7 @@ class TestDiscordTransformRawData(unittest.TestCase):
                     "permissions": "123456789",
                     "deletedAt": None,
                     "globalName": None,
-                    "nickname": None
+                    "nickname": None,
                 },
             ]
         )
@@ -148,9 +147,7 @@ class TestDiscordTransformRawData(unittest.TestCase):
         ]
 
         result = self.transformer.transform(
-            raw_data=raw_data,
-            platform_id=self.platform_id,
-            period=self.period
+            raw_data=raw_data, platform_id=self.platform_id, period=self.period
         )
         self.assertEqual(result, expected_result)
 
@@ -207,9 +204,7 @@ class TestDiscordTransformRawData(unittest.TestCase):
         ]
 
         result = self.transformer.transform(
-            raw_data=raw_data,
-            platform_id=self.platform_id,
-            period=self.period
+            raw_data=raw_data, platform_id=self.platform_id, period=self.period
         )
         self.assertEqual(result, expected_result)
 
@@ -272,9 +267,7 @@ class TestDiscordTransformRawData(unittest.TestCase):
         ]
 
         result = self.transformer.transform(
-            raw_data=raw_data,
-            platform=self.platform_id,
-            period=self.period
+            raw_data=raw_data, platform=self.platform_id, period=self.period
         )
         self.assertEqual(result, expected_result)
 
@@ -284,8 +277,6 @@ class TestDiscordTransformRawData(unittest.TestCase):
         expected_result = []
 
         result = self.transformer.transform(
-            raw_data=raw_data,
-            platform_id=self.platform_id,
-            period=self.period
+            raw_data=raw_data, platform_id=self.platform_id, period=self.period
         )
         self.assertEqual(result, expected_result)
