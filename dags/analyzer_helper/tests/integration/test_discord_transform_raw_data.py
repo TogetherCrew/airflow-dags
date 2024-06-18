@@ -2,8 +2,8 @@ import unittest
 from datetime import datetime
 
 from analyzer_helper.discord.discord_transform_raw_data import DiscordTransformRawData
-from bson import ObjectId
 from analyzer_helper.discord.utils.is_user_bot import UserBotChecker
+from bson import ObjectId
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
@@ -12,7 +12,7 @@ class TestDiscordTransformRawData(unittest.TestCase):
         self.client = MongoSingleton.get_instance().client
         self.db = self.client["discord_platform"]
         self.platform_id = "discord"
-        self.transformer = DiscordTransformRawData()
+        self.transformer = DiscordTransformRawData(self.platform_id)
         self.bot_checker = UserBotChecker(self.platform_id)
         self.platform_id = "discord_platform1"
         self.guildmembers_collection = self.db["guildmembers"]

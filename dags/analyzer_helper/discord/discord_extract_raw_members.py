@@ -7,8 +7,8 @@ class DiscordExtractRawMembers(ExtractRawMembersBase):
         """
         Initialize the class for a specific guild and platform
         """
+        super().__init__(platform_id)
         self.guild_id = guild_id
-        self.platform_id = platform_id
         self.client = MongoSingleton.get_instance().client
         self.guild_db = self.client[guild_id]
         self.platform_db = self.client[self.get_platform_id()]

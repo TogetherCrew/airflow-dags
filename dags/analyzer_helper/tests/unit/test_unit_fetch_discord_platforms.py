@@ -1,21 +1,23 @@
 import unittest
 from datetime import datetime
 from unittest.mock import MagicMock, patch
+from bson import ObjectId
 
 from analyzer_helper.discord.fetch_discord_platforms import FetchDiscordPlatforms
+from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
 class TestFetchDiscordPlatformsUnit(unittest.TestCase):
-    @patch.object(FetchDiscordPlatforms, "get_client")
-    def test_fetch_all(self, mock_get_client):
+    @patch.object(MongoSingleton, "get_instance")
+    def test_fetch_all(self, mock_get_instance):
         mock_client = MagicMock()
         mock_db = mock_client["Core"]
         mock_collection = mock_db["platforms"]
 
         sample_data = [
             {
-                "_id": "1",
-                "name": "discord",
+                "_id": ObjectId("000000000000000000000001"),
+                "platform": "discord",
                 "metadata": {
                     "action": {
                         "INT_THR": 1,
@@ -55,8 +57,8 @@ class TestFetchDiscordPlatformsUnit(unittest.TestCase):
                 "updatedAt": datetime(2024, 6, 5, 0, 0, 1, 984000),
             },
             {
-                "_id": "2",
-                "name": "discord",
+                "_id": ObjectId("000000000000000000000002"),
+                "platform": "discord",
                 "metadata": {
                     "action": {
                         "INT_THR": 1,
@@ -91,22 +93,19 @@ class TestFetchDiscordPlatformsUnit(unittest.TestCase):
                 },
                 "community": "6579c364f1120850414e0dc6",
                 "disconnectedAt": None,
-                "connectedAt": datetime(2023, 7, 7, 8, 47, 49, 96000),
-                "createdAt": datetime(2023, 12, 22, 8, 49, 48, 677000),
-                "updatedAt": datetime(2024, 6, 5, 0, 0, 1, 984000),
-            },
+            }
         ]
 
         mock_collection.find.return_value = sample_data
-        mock_get_client.return_value = mock_client
+        mock_get_instance.return_value = MagicMock(client=mock_client)
 
-        fetcher = FetchDiscordPlatforms("mock_uri")
+        fetcher = FetchDiscordPlatforms()
 
         result = fetcher.fetch_all()
 
         expected_result = [
             {
-                "platform_id": "1",
+                "platform_id": str(sample_data[0]["_id"]),
                 "metadata": {
                     "action": {
                         "INT_THR": 1,
@@ -142,7 +141,7 @@ class TestFetchDiscordPlatformsUnit(unittest.TestCase):
                 "recompute": False,
             },
             {
-                "platform_id": "2",
+                "platform_id": str(sample_data[1]["_id"]),
                 "metadata": {
                     "action": {
                         "INT_THR": 1,
@@ -176,21 +175,21 @@ class TestFetchDiscordPlatformsUnit(unittest.TestCase):
                     "analyzerStartedAt": datetime(2024, 4, 17, 13, 29, 16, 157000),
                 },
                 "recompute": False,
-            },
+            }
         ]
 
         self.assertEqual(result, expected_result)
 
-    @patch.object(FetchDiscordPlatforms, "get_client")
-    def test_fetch_all_empty(self, mock_get_client):
+    @patch.object(MongoSingleton, "get_instance")
+    def test_fetch_all_empty(self, mock_get_instance):
         mock_client = MagicMock()
         mock_db = mock_client["Core"]
         mock_collection = mock_db["platforms"]
 
         mock_collection.find.return_value = []
-        mock_get_client.return_value = mock_client
+        mock_get_instance.return_value = MagicMock(client=mock_client)
 
-        fetcher = FetchDiscordPlatforms("mock_uri")
+        fetcher = FetchDiscordPlatforms()
 
         result = fetcher.fetch_all()
 

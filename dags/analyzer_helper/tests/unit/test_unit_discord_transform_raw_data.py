@@ -1,14 +1,16 @@
 import unittest
 from datetime import datetime
-
-from analyzer_helper.discord.discord_transform_raw_data import DiscordTransformRawData
 from bson import ObjectId
+from analyzer_helper.discord.discord_transform_raw_data import DiscordTransformRawData
 
 
 class DiscordTransformRawDataUnitTest(unittest.TestCase):
+    def setUp(self):
+        self.platform_id = "discord"
+        self.transformer = DiscordTransformRawData(self.platform_id)
+
     def test_create_interaction_base_valid_data(self):
-        transformer = DiscordTransformRawData()
-        interaction = transformer.create_interaction_base(
+        interaction = self.transformer.create_interaction_base(
             name="reply", users_engaged_id=["user1234"], type="emitter"
         )
         self.assertEqual(
@@ -21,12 +23,10 @@ class DiscordTransformRawDataUnitTest(unittest.TestCase):
         )
 
     def test_create_interaction_missing_arguments(self):
-        transformer = DiscordTransformRawData()
         with self.assertRaises(TypeError):
-            transformer.create_interaction_base(name="reply")
+            self.transformer.create_interaction_base(name="reply")
 
     def test_create_interaction_valid_data(self):
-        transformer = DiscordTransformRawData()
         data = {
             "_id": ObjectId("649fc4dfb65f6981303e32ef"),
             "type": 0,
@@ -44,7 +44,7 @@ class DiscordTransformRawDataUnitTest(unittest.TestCase):
             "threadName": "thread-abc",
             "isGeneratedByWebhook": False,
         }
-        interaction = transformer.create_interaction(
+        interaction = self.transformer.create_interaction(
             data=data,
             name="reply",
             author="user456",
@@ -74,7 +74,6 @@ class DiscordTransformRawDataUnitTest(unittest.TestCase):
         )
 
     def test_create_emitter_interaction_valid_data(self):
-        transformer = DiscordTransformRawData()
         data = {
             "_id": ObjectId("649fc4dfb65f6981303e32ef"),
             "type": 0,
@@ -92,7 +91,7 @@ class DiscordTransformRawDataUnitTest(unittest.TestCase):
             "threadName": "thread-def",
             "isGeneratedByWebhook": True,
         }
-        interaction = transformer.create_interaction(
+        interaction = self.transformer.create_interaction(
             data=data,
             name="reaction",
             author="user123",
@@ -122,7 +121,6 @@ class DiscordTransformRawDataUnitTest(unittest.TestCase):
         )
 
     def test_create_transformed_item_valid_data(self):
-        transformer = DiscordTransformRawData()
         data = {
             "_id": ObjectId("649fc4dfb65f6981303e32ef"),
             "type": 0,
@@ -147,7 +145,7 @@ class DiscordTransformRawDataUnitTest(unittest.TestCase):
                 "type": "emitter",
             }
         ]
-        transformed_item = transformer.create_transformed_item(
+        transformed_item = self.transformer.create_transformed_item(
             data=data, period=datetime(2024, 6, 11), interactions=interactions
         )
         self.assertEqual(

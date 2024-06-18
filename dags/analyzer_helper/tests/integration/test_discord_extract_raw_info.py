@@ -1,10 +1,8 @@
 import unittest
 from datetime import datetime
-
-from analyzer_helper.discord.discord_extract_raw_infos import DiscordExtractRawInfos
 from bson import ObjectId
+from analyzer_helper.discord.discord_extract_raw_infos import DiscordExtractRawInfos
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
-
 
 class TestDiscordExtractRawInfos(unittest.TestCase):
     def setUp(self):
@@ -13,7 +11,7 @@ class TestDiscordExtractRawInfos(unittest.TestCase):
         self.platform_id = "platform_db"
         self.guild_db = self.client[self.guild_id]
         self.platform_db = self.client[self.platform_id]
-        self.rawinfos_collection = self.guild_db["rawinfo"]
+        self.rawinfos_collection = self.guild_db["rawinfos"]
         self.rawinfos_collection.delete_many({})
 
     def test_extract_recompute_true(self):
@@ -21,18 +19,18 @@ class TestDiscordExtractRawInfos(unittest.TestCase):
             {
                 "_id": ObjectId("649fc4dfb65f6981303e32ef"),
                 "type": 0,
-                "author": "111111111111111111",
+                "author": "DUMMY_DISCORD_ID_1",
                 "content": "sample message",
-                "user_mentions": ["63632723832823823", "83279873210490238"],
-                "role_mentions": ["873892901809120912", "897234876127365121"],
+                "user_mentions": ["DUMMY_DISCORD_ID_2", "DUMMY_DISCORD_ID_3"],
+                "role_mentions": ["DUMMY_ROLE_ID_1", "DUMMY_ROLE_ID_2"],
                 "reactions": [
                     "44444444444444444,thelounge",
                     "91919191919191919,6373687382748239,👌",
                 ],
                 "replied_user": None,
                 "createdDate": datetime(2023, 6, 30, 20, 28, 3, 494000),
-                "messageId": "888888888888888888",
-                "channelId": "999999999999999999",
+                "messageId": "DUMMY_MESSAGE_ID_1",
+                "channelId": "DUMMY_CHANNEL_ID_1",
                 "channelName": "💬・general-chat",
                 "threadId": None,
                 "threadName": None,
@@ -46,6 +44,10 @@ class TestDiscordExtractRawInfos(unittest.TestCase):
 
         expected_result = sample_data
 
+        print("Result: ", result)
+        print("Expected: ", expected_result)
+        # print("Difference: ", set([str(doc['_id']) for doc in result]) - set([str(doc['_id']) for doc in expected_result]))
+
         self.assertEqual(result, expected_result)
 
     def test_extract_recompute_false(self):
@@ -53,18 +55,18 @@ class TestDiscordExtractRawInfos(unittest.TestCase):
             {
                 "_id": ObjectId("649fc4dfb65f6981303e32ef"),
                 "type": 0,
-                "author": "159985870458322944",
+                "author": "DUMMY_DISCORD_ID_4",
                 "content": "sample member activity",
-                "user_mentions": ["63632723832823823", "83279873210490238"],
-                "role_mentions": ["873892901809120912", "897234876127365121"],
+                "user_mentions": ["DUMMY_DISCORD_ID_5"],
+                "role_mentions": ["DUMMY_ROLE_ID_1", "DUMMY_ROLE_ID_2"],
                 "reactions": [
                     "44444444444444444,thelounge",
                     "91919191919191919,6373687382748239,👌",
                 ],
                 "replied_user": None,
                 "createdDate": datetime(2023, 6, 29, 20, 28, 3, 494000),
-                "messageId": "rawmemberactivities_source_id",
-                "channelId": "some_channel_id",
+                "messageId": "DUMMY_MESSAGE_ID_2",
+                "channelId": "DUMMY_CHANNEL_ID_2",
                 "channelName": "💬・general-chat",
                 "threadId": None,
                 "threadName": None,
@@ -75,20 +77,20 @@ class TestDiscordExtractRawInfos(unittest.TestCase):
 
         sample_data = [
             {
-                "_id": ObjectId("649fc4dfb65f6981303e32ef"),
+                "_id": ObjectId("649fc4dfb65f6981303e32ex"),
                 "type": 0,
-                "author": "111111111111111111",
+                "author": "DUMMY_DISCORD_ID_1",
                 "content": "sample message",
-                "user_mentions": ["63632723832823823", "83279873210490238"],
-                "role_mentions": ["873892901809120912", "897234876127365121"],
+                "user_mentions": ["DUMMY_DISCORD_ID_2", "DUMMY_DISCORD_ID_3"],
+                "role_mentions": ["DUMMY_ROLE_ID_1", "DUMMY_ROLE_ID_2"],
                 "reactions": [
                     "44444444444444444,thelounge",
                     "91919191919191919,6373687382748239,👌",
                 ],
                 "replied_user": None,
                 "createdDate": datetime(2023, 6, 30, 20, 28, 3, 494000),
-                "messageId": "888888888888888888",
-                "channelId": "999999999999999999",
+                "messageId": "DUMMY_MESSAGE_ID_1",
+                "channelId": "DUMMY_CHANNEL_ID_1",
                 "channelName": "💬・general-chat",
                 "threadId": None,
                 "threadName": None,

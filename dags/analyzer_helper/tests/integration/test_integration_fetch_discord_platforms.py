@@ -1,6 +1,6 @@
 import unittest
 from datetime import datetime
-
+from bson import ObjectId
 from analyzer_helper.discord.fetch_discord_platforms import FetchDiscordPlatforms
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
@@ -18,7 +18,7 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
     def test_fetch_all(self):
         sample_data = [
             {
-                "_id": "1",
+                "_id": ObjectId("000000000000000000000001"),
                 "name": "discord",
                 "metadata": {
                     "action": {
@@ -59,7 +59,7 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
                 "updatedAt": datetime(2024, 6, 5, 0, 0, 1, 984000),
             },
             {
-                "_id": "2",
+                "_id": ObjectId("000000000000000000000002"),
                 "name": "discord",
                 "metadata": {
                     "action": {
@@ -100,7 +100,7 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
                 "updatedAt": datetime(2024, 6, 5, 0, 0, 1, 984000),
             },
             {
-                "_id": "3",
+                "_id": ObjectId("000000000000000000000003"),
                 "name": "telegram",
                 "metadata": {
                     "id": "999999999999999",
@@ -118,7 +118,7 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
                 "updatedAt": datetime(2024, 6, 5, 0, 0, 1, 984000),
             },
             {
-                "_id": "4",
+                "_id": ObjectId("000000000000000000000004"),
                 "name": "discourse",
                 "metadata": {
                     "id": "101010101010101",
@@ -145,7 +145,7 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
 
         expected_result = [
             {
-                "platform_id": "1",
+                "platform_id": str(sample_data[0]["_id"]),
                 "metadata": {
                     "action": {
                         "INT_THR": 1,
@@ -181,7 +181,7 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
                 "recompute": False,
             },
             {
-                "platform_id": "2",
+                "platform_id": str(sample_data[1]["_id"]),
                 "metadata": {
                     "action": {
                         "INT_THR": 1,
@@ -231,7 +231,7 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
 
     def test_get_single_data(self):
         sample_data = {
-            "_id": "1",
+            "_id": ObjectId("000000000000000000000001"),
             "name": "discord",
             "metadata": {
                 "action": {
@@ -280,7 +280,7 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
 
         expected_result = [
             {
-                "platform_id": "1",
+                "platform_id": str(sample_data["_id"]),
                 "metadata": {
                     "action": {
                         "INT_THR": 1,

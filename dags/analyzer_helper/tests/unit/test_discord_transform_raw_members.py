@@ -21,7 +21,7 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
         """
         transformer = DiscordTransformRawMembers()
         raw_member = {
-            "discordId": "000000000000000001",
+            "discordId": "REDACTED_ID_1",
             "isBot": False,
             "joinedAt": datetime(2023, 1, 1),
             "deletedAt": None,
@@ -49,7 +49,7 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
         """
         transformer = DiscordTransformRawMembers()
         raw_member1 = {
-            "discordId": "000000000000000002",
+            "discordId": "REDACTED_ID_2",
             "isBot": True,
             "joinedAt": datetime(2022, 12, 31),
             "deletedAt": None,
@@ -62,7 +62,7 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
             "nickname": None,
         }
         raw_member2 = {
-            "discordId": "000000000000000003",
+            "discordId": "REDACTED_ID_3",
             "isBot": False,
             "joinedAt": datetime(2023, 1, 2),
             "deletedAt": None,

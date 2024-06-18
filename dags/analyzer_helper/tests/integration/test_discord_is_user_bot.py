@@ -1,8 +1,7 @@
 import unittest
 from datetime import datetime
-
-from analyzer_helper.discord.utils.is_user_bot import UserBotChecker
 from bson import ObjectId
+from analyzer_helper.discord.utils.is_user_bot import UserBotChecker
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
@@ -11,7 +10,7 @@ class TestUserBotChecker(unittest.TestCase):
         self.client = MongoSingleton.get_instance().client
         self.platform_id = "discord"
         self.guild_id = "discord_guild1"
-        self.db = self.client[self.guild_id]
+        self.db = self.client[self.platform_id]  # Correct database for platform_id
         self.rawinfo_collection = self.db["rawinfos"]
         self.guildmembers_collection = self.db["guildmembers"]
         self.rawinfo_collection.delete_many({})
@@ -22,18 +21,18 @@ class TestUserBotChecker(unittest.TestCase):
                 {
                     "_id": ObjectId(),
                     "type": 0,
-                    "author": "100000000000000001",
+                    "author": "DUMMY_DISCORD_ID_1",
                     "content": "sample message",
-                    "user_mentions": ["100000000000000002", "100000000000000003"],
-                    "role_mentions": ["100000000000000004", "100000000000000005"],
+                    "user_mentions": ["DUMMY_DISCORD_ID_2", "DUMMY_DISCORD_ID_3"],
+                    "role_mentions": ["DUMMY_ROLE_ID_1", "DUMMY_ROLE_ID_2"],
                     "reactions": [
-                        "100000000000000006,thelounge",
-                        "100000000000000007,100000000000000008,👌",
+                        "DUMMY_REACTION_ID_1,thelounge",
+                        "DUMMY_REACTION_ID_2,DUMMY_USER_ID_1,👌"
                     ],
                     "replied_user": None,
                     "createdDate": datetime(2023, 6, 30, 20, 28, 3, 494000),
-                    "messageId": "100000000000000009",
-                    "channelId": "100000000000000010",
+                    "messageId": "DUMMY_MESSAGE_ID_1",
+                    "channelId": "DUMMY_CHANNEL_ID_1",
                     "channelName": "💬・general-chat",
                     "threadId": None,
                     "threadName": None,
@@ -42,15 +41,15 @@ class TestUserBotChecker(unittest.TestCase):
                 {
                     "_id": ObjectId(),
                     "type": 0,
-                    "author": "200000000000000011",
+                    "author": "DUMMY_DISCORD_ID_4",
                     "content": "another sample message",
-                    "user_mentions": ["200000000000000012"],
+                    "user_mentions": ["DUMMY_DISCORD_ID_5"],
                     "role_mentions": [],
                     "reactions": [],
-                    "replied_user": "100000000000000001",
+                    "replied_user": "DUMMY_DISCORD_ID_1",
                     "createdDate": datetime(2023, 6, 30, 20, 28, 3, 494000),
-                    "messageId": "200000000000000013",
-                    "channelId": "200000000000000014",
+                    "messageId": "DUMMY_MESSAGE_ID_2",
+                    "channelId": "DUMMY_CHANNEL_ID_2",
                     "channelName": "📣・announcements",
                     "threadId": None,
                     "threadName": None,
@@ -62,9 +61,9 @@ class TestUserBotChecker(unittest.TestCase):
             [
                 {
                     "_id": ObjectId(),
-                    "discordId": "100000000000000001",
+                    "discordId": "DUMMY_DISCORD_ID_1",
                     "username": "user1",
-                    "roles": ["300000000000000015"],
+                    "roles": ["DUMMY_ROLE_ID_3"],
                     "joinedAt": datetime(2023, 6, 30, 20, 28, 3, 494000),
                     "avatar": "b50adff099924dd5e6b72d13f77eb9d7",
                     "isBot": False,
@@ -76,7 +75,7 @@ class TestUserBotChecker(unittest.TestCase):
                 },
                 {
                     "_id": ObjectId(),
-                    "discordId": "200000000000000011",
+                    "discordId": "DUMMY_DISCORD_ID_4",
                     "username": "user2",
                     "roles": [],
                     "joinedAt": datetime(2023, 6, 30, 20, 28, 3, 494000),
@@ -87,7 +86,7 @@ class TestUserBotChecker(unittest.TestCase):
                     "deletedAt": None,
                     "globalName": None,
                     "nickname": None,
-                },
+                }
             ]
         )
 
@@ -96,10 +95,8 @@ class TestUserBotChecker(unittest.TestCase):
         self.guildmembers_collection.delete_many({})
 
     def test_is_user_bot(self):
-        checker = UserBotChecker("discord")
+        checker = UserBotChecker(self.platform_id)
 
-        self.assertFalse(checker.is_user_bot("100000000000000001"))
-
-        self.assertTrue(checker.is_user_bot("200000000000000011"))
-
-        self.assertFalse(checker.is_user_bot("300000000000000012"))
+        self.assertFalse(checker.is_user_bot("DUMMY_DISCORD_ID_1"))
+        self.assertTrue(checker.is_user_bot("DUMMY_DISCORD_ID_4"))
+        self.assertFalse(checker.is_user_bot("DUMMY_DISCORD_ID_6"))

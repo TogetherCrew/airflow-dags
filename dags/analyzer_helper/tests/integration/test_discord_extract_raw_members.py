@@ -1,6 +1,5 @@
 import unittest
 from datetime import datetime
-
 from analyzer_helper.discord.discord_extract_raw_members import DiscordExtractRawMembers
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
@@ -24,9 +23,9 @@ class TestDiscordExtractRawMembers(unittest.TestCase):
     def test_extract_recompute_true(self):
         sample_data = [
             {
-                "discordId": "100000000000000001",
+                "discordId": "DUMMY_DISCORD_ID_1",
                 "username": "MEE6",
-                "roles": ["100000000000000002", "100000000000000003"],
+                "roles": ["DUMMY_ROLE_ID_1", "DUMMY_ROLE_ID_2"],
                 "joinedAt": datetime(2023, 3, 22, 18, 21, 0, 870000),
                 "avatar": "b50adff099924dd5e6b72d13f77eb9d7",
                 "isBot": True,
@@ -37,9 +36,9 @@ class TestDiscordExtractRawMembers(unittest.TestCase):
                 "nickname": None,
             },
             {
-                "discordId": "100000000000000004",
+                "discordId": "DUMMY_DISCORD_ID_2",
                 "username": "TestUser",
-                "roles": ["100000000000000005", "100000000000000006"],
+                "roles": ["DUMMY_ROLE_ID_3", "DUMMY_ROLE_ID_4"],
                 "joinedAt": datetime(2023, 3, 23, 18, 21, 0, 870000),
                 "avatar": "a50adff099924dd5e6b72d13f77eb9d8",
                 "isBot": False,
@@ -62,26 +61,19 @@ class TestDiscordExtractRawMembers(unittest.TestCase):
     def test_extract_recompute_false(self):
         rawmember_data = [
             {
-                "id": "100000000000000001",
-                # "username": "MEE6",
-                # "roles": ["100000000000000002", "100000000000000003"],
+                "id": "DUMMY_DISCORD_ID_1",
                 "joined_at": datetime(2023, 3, 22, 18, 21, 0, 870000),
-                # "avatar": "b50adff099924dd5e6b72d13f77eb9d7",
                 "is_bot": True,
-                # "discriminator": "4876",
-                # "permissions": "559642693856991",
                 "left_at": None,
-                # "globalName": None,
-                # "nickname": None,
             }
         ]
         self.rawmembers_collection.insert_many(rawmember_data)
 
         sample_data = [
             {
-                "discordId": "100000000000000004",
+                "discordId": "DUMMY_DISCORD_ID_2",
                 "username": "TestUser",
-                "roles": ["100000000000000005", "100000000000000006"],
+                "roles": ["DUMMY_ROLE_ID_3", "DUMMY_ROLE_ID_4"],
                 "joinedAt": datetime(2023, 3, 23, 18, 21, 0, 870000),
                 "avatar": "a50adff099924dd5e6b72d13f77eb9d8",
                 "isBot": False,
@@ -102,9 +94,9 @@ class TestDiscordExtractRawMembers(unittest.TestCase):
         self.assertEqual(result, expected_result)
 
         new_data = {
-            "discordId": "100000000000000007",
+            "discordId": "DUMMY_DISCORD_ID_3",
             "username": "NewUser",
-            "roles": ["100000000000000008", "100000000000000009"],
+            "roles": ["DUMMY_ROLE_ID_5", "DUMMY_ROLE_ID_6"],
             "joinedAt": datetime(2023, 3, 24, 18, 21, 0, 870000),
             "avatar": "c50adff099924dd5e6b72d13f77eb9d9",
             "isBot": False,
