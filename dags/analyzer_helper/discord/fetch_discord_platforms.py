@@ -34,8 +34,8 @@ class FetchDiscordPlatforms:
                 - recompute: A boolean set to False.
         """
         query = {
-                "disconnectedAt": None,
-                "platform": "discord",
+            "disconnectedAt": None,
+            "platform": "discord",
         }
         projection = {
             "_id": 1,

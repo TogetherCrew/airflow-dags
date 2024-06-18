@@ -24,9 +24,9 @@ class TestDiscordExtractRawMembers(unittest.TestCase):
     def test_extract_recompute_true(self):
         sample_data = [
             {
-                "discordId": "159985870458322944",
+                "discordId": "000000000000000001",
                 "username": "MEE6",
-                "roles": ["1088165451651092635", "1046009276432400435"],
+                "roles": ["000000000000000002", "000000000000000003"],
                 "joinedAt": datetime(2023, 3, 22, 18, 21, 0, 870000),
                 "avatar": "b50adff099924dd5e6b72d13f77eb9d7",
                 "isBot": True,
@@ -37,9 +37,9 @@ class TestDiscordExtractRawMembers(unittest.TestCase):
                 "nickname": None,
             },
             {
-                "discordId": "159985870458322945",
+                "discordId": "000000000000000004",
                 "username": "TestUser",
-                "roles": ["1088165451651092636", "1046009276432400436"],
+                "roles": ["000000000000000005", "000000000000000006"],
                 "joinedAt": datetime(2023, 3, 23, 18, 21, 0, 870000),
                 "avatar": "a50adff099924dd5e6b72d13f77eb9d8",
                 "isBot": False,
@@ -62,9 +62,9 @@ class TestDiscordExtractRawMembers(unittest.TestCase):
     def test_extract_recompute_false(self):
         rawmember_data = [
             {
-                "id": "159985870458322944",
+                "id": "000000000000000001",
                 # "username": "MEE6",
-                # "roles": ["1088165451651092635", "1046009276432400435"],
+                # "roles": ["000000000000000002", "000000000000000003"],
                 "joined_at": datetime(2023, 3, 22, 18, 21, 0, 870000),
                 # "avatar": "b50adff099924dd5e6b72d13f77eb9d7",
                 "is_bot": True,
@@ -79,9 +79,9 @@ class TestDiscordExtractRawMembers(unittest.TestCase):
 
         sample_data = [
             {
-                "discordId": "159985870458322945",
+                "discordId": "000000000000000004",
                 "username": "TestUser",
-                "roles": ["1088165451651092636", "1046009276432400436"],
+                "roles": ["000000000000000005", "000000000000000006"],
                 "joinedAt": datetime(2023, 3, 23, 18, 21, 0, 870000),
                 "avatar": "a50adff099924dd5e6b72d13f77eb9d8",
                 "isBot": False,
@@ -102,9 +102,9 @@ class TestDiscordExtractRawMembers(unittest.TestCase):
         self.assertEqual(result, expected_result)
 
         new_data = {
-            "discordId": "159985870458322946",
+            "discordId": "000000000000000007",
             "username": "NewUser",
-            "roles": ["1088165451651092637", "1046009276432400437"],
+            "roles": ["000000000000000008", "000000000000000009"],
             "joinedAt": datetime(2023, 3, 24, 18, 21, 0, 870000),
             "avatar": "c50adff099924dd5e6b72d13f77eb9d9",
             "isBot": False,

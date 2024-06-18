@@ -20,78 +20,80 @@ class TestDiscordTransformRawData(unittest.TestCase):
         self.period = datetime(2023, 1, 1)
         self.guildmembers_collection.delete_many({})
 
-        self.guildmembers_collection.insert_many([
-            {
-                "_id": ObjectId(),
-                "discordId": "user123",
-                "username": "user1",
-                "roles": ["1088165451651092635"],
-                "joinedAt": datetime(2023, 6, 30, 20, 28, 3, 494000),
-                "avatar": "b50adff099924dd5e6b72d13f77eb9d7",
-                "isBot": False,
-                "discriminator": "1234",
-                "permissions": "559642693856991",
-                "deletedAt": None,
-                "globalName": None,
-                "nickname": None
-            },
-            {
-                "_id": ObjectId(),
-                "discordId": "user789",
-                "username": "user2",
-                "roles": [],
-                "joinedAt": datetime(2023, 6, 30, 20, 28, 3, 494000),
-                "avatar": "9876543210abcdef",
-                "isBot": True,
-                "discriminator": "5678",
-                "permissions": "123456789",
-                "deletedAt": None,
-                "globalName": None,
-                "nickname": None
-            },
-            {
-                "_id": ObjectId(),
-                "discordId": "user456",
-                "username": "user3",
-                "roles": [],
-                "joinedAt": datetime(2023, 6, 30, 20, 28, 3, 494000),
-                "avatar": "9876543210abcdef",
-                "isBot": False,
-                "discriminator": "5678",
-                "permissions": "123456789",
-                "deletedAt": None,
-                "globalName": None,
-                "nickname": None
-            },
-            {
-                "_id": ObjectId(),
-                "discordId": "user1",
-                "username": "user4",
-                "roles": [],
-                "joinedAt": datetime(2023, 6, 30, 20, 28, 3, 494000),
-                "avatar": "9876543210abcdef",
-                "isBot": True,
-                "discriminator": "5678",
-                "permissions": "123456789",
-                "deletedAt": None,
-                "globalName": None,
-                "nickname": None
-            },
-            {
-                "_id": ObjectId(),
-                "discordId": "user2",
-                "username": "user5",
-                "roles": [],
-                "joinedAt": datetime(2023, 6, 30, 20, 28, 3, 494000),
-                "avatar": "9876543210abcdef",
-                "isBot": False,
-                "discriminator": "5678",
-                "permissions": "123456789",
-                "deletedAt": None,
-                "globalName": None,
-                "nickname": None
-            },
-        ])
+        self.guildmembers_collection.insert_many(
+            [
+                {
+                    "_id": ObjectId(),
+                    "discordId": "user123",
+                    "username": "user1",
+                    "roles": ["1088165451651092635"],
+                    "joinedAt": datetime(2023, 6, 30, 20, 28, 3, 494000),
+                    "avatar": "b50adff099924dd5e6b72d13f77eb9d7",
+                    "isBot": False,
+                    "discriminator": "1234",
+                    "permissions": "559642693856991",
+                    "deletedAt": None,
+                    "globalName": None,
+                    "nickname": None
+                },
+                {
+                    "_id": ObjectId(),
+                    "discordId": "user789",
+                    "username": "user2",
+                    "roles": [],
+                    "joinedAt": datetime(2023, 6, 30, 20, 28, 3, 494000),
+                    "avatar": "9876543210abcdef",
+                    "isBot": True,
+                    "discriminator": "5678",
+                    "permissions": "123456789",
+                    "deletedAt": None,
+                    "globalName": None,
+                    "nickname": None
+                },
+                {
+                    "_id": ObjectId(),
+                    "discordId": "user456",
+                    "username": "user3",
+                    "roles": [],
+                    "joinedAt": datetime(2023, 6, 30, 20, 28, 3, 494000),
+                    "avatar": "9876543210abcdef",
+                    "isBot": False,
+                    "discriminator": "5678",
+                    "permissions": "123456789",
+                    "deletedAt": None,
+                    "globalName": None,
+                    "nickname": None
+                },
+                {
+                    "_id": ObjectId(),
+                    "discordId": "user1",
+                    "username": "user4",
+                    "roles": [],
+                    "joinedAt": datetime(2023, 6, 30, 20, 28, 3, 494000),
+                    "avatar": "9876543210abcdef",
+                    "isBot": True,
+                    "discriminator": "5678",
+                    "permissions": "123456789",
+                    "deletedAt": None,
+                    "globalName": None,
+                    "nickname": None
+                },
+                {
+                    "_id": ObjectId(),
+                    "discordId": "user2",
+                    "username": "user5",
+                    "roles": [],
+                    "joinedAt": datetime(2023, 6, 30, 20, 28, 3, 494000),
+                    "avatar": "9876543210abcdef",
+                    "isBot": False,
+                    "discriminator": "5678",
+                    "permissions": "123456789",
+                    "deletedAt": None,
+                    "globalName": None,
+                    "nickname": None
+                },
+            ]
+        )
 
     def test_transform_data_with_replied_user(self):
         raw_data = [

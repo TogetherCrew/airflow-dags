@@ -21,7 +21,7 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
         """
         transformer = DiscordTransformRawMembers()
         raw_member = {
-            "discordId": "123456789012345678",
+            "discordId": "000000000000000001",
             "isBot": False,
             "joinedAt": datetime(2023, 1, 1),
             "deletedAt": None,
@@ -34,7 +34,7 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
             "nickname": "Test Nickname",
         }
         expected_result = {
-            "id": 123456789012345678,
+            "id": 1,
             "is_bot": False,
             "left_at": None,
             "joined_at": datetime(2023, 1, 1),
@@ -49,7 +49,7 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
         """
         transformer = DiscordTransformRawMembers()
         raw_member1 = {
-            "discordId": "123456789012345678",
+            "discordId": "000000000000000002",
             "isBot": True,
             "joinedAt": datetime(2022, 12, 31),
             "deletedAt": None,
@@ -62,7 +62,7 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
             "nickname": None,
         }
         raw_member2 = {
-            "discordId": "987654321098765432",
+            "discordId": "000000000000000003",
             "isBot": False,
             "joinedAt": datetime(2023, 1, 2),
             "deletedAt": None,
@@ -75,14 +75,14 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
             "nickname": "Regular",
         }
         expected_result1 = {
-            "id": 123456789012345678,
+            "id": 2,
             "is_bot": True,
             "left_at": None,
             "joined_at": datetime(2022, 12, 31),
             "options": {},
         }
         expected_result2 = {
-            "id": 987654321098765432,
+            "id": 3,
             "is_bot": False,
             "left_at": None,
             "joined_at": datetime(2023, 1, 2),

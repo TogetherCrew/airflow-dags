@@ -14,7 +14,7 @@ class DiscordTransformRawData(TransformRawDataBase):
         self.user_bot_checker = UserBotChecker()
 
     def create_interaction_base(
-        self, name: str, users_engaged_id: List[str], type: str
+        self, name: str, users_engaged_id: List[str], type: str,
     ) -> Dict[str, Any]:
         """
         Creates an interaction dictionary.
@@ -67,9 +67,7 @@ class DiscordTransformRawData(TransformRawDataBase):
             "actions": [],
             "interactions": [
                 self.create_interaction_base(
-                    name=name,
-                    users_engaged_id=engaged_users,
-                    type=type
+                    name=name, users_engaged_id=engaged_users, type=type
                 )
             ],
         }
@@ -95,10 +93,7 @@ class DiscordTransformRawData(TransformRawDataBase):
         }
 
     def transform(
-        self,
-        raw_data: list,
-        platform_id: str,
-        period: datetime
+        self, raw_data: list, platform_id: str, period: datetime
     ) -> List[Dict[str, Any]]:
         transformed_data = []
         for data in raw_data:
@@ -115,7 +110,7 @@ class DiscordTransformRawData(TransformRawDataBase):
                             name="reply",
                             author=data["author"],
                             engaged_users=[data["replied_user"]],
-                            type="emitter"
+                            type="emitter",
                         )
                     )
                     receiver_interaction = self.create_interaction(
@@ -123,7 +118,7 @@ class DiscordTransformRawData(TransformRawDataBase):
                         name="reply",
                         author=data["replied_user"],
                         engaged_users=[data["author"]],
-                        type="receiver"
+                        type="receiver",
                     )
                     transformed_data.append(receiver_interaction)
 
@@ -134,7 +129,7 @@ class DiscordTransformRawData(TransformRawDataBase):
                             name="mention",
                             author=data["author"],
                             engaged_users=data["user_mentions"],
-                            type="emitter"
+                            type="emitter",
                         )
                     )
                     for mentioned_user in data["user_mentions"]:
@@ -143,7 +138,7 @@ class DiscordTransformRawData(TransformRawDataBase):
                             name="mention",
                             author=mentioned_user,
                             engaged_users=[data["author"]],
-                            type="receiver"
+                            type="receiver",
                         )
                         transformed_data.append(mentioned_user_interaction)
 
@@ -161,7 +156,7 @@ class DiscordTransformRawData(TransformRawDataBase):
                                 name="reaction",
                                 author=data["author"],
                                 engaged_users=all_reaction_users,
-                                type="receiver"
+                                type="receiver",
                             )
                         )
                         for user in all_reaction_users:
@@ -170,14 +165,12 @@ class DiscordTransformRawData(TransformRawDataBase):
                                 name="reaction",
                                 author=user,
                                 engaged_users=[data["author"]],
-                                type="emitter"
+                                type="emitter",
                             )
                             transformed_data.append(emitter_interaction)
 
                 transformed_item = self.create_transformed_item(
-                    data=data,
-                    period=period,
-                    interactions=interactions
+                    data=data, period=period, interactions=interactions
                 )
                 transformed_data.append(transformed_item)
             except Exception as e:

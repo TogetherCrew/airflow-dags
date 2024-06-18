@@ -15,8 +15,6 @@ class DiscordLoadTransformedMembers(LoadTransformedMembersBase):
 
     def load(self, processed_data: list[dict], recompute: bool = False):
         if recompute:
-            logging.info(
-                "Recompute is true, deleting all the previous data!"
-            )
+            logging.info("Recompute is true, deleting all the previous data!")
             self.collection.delete_many({})
         self.collection.insert_many(processed_data)

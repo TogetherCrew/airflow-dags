@@ -24,22 +24,20 @@ class DiscordTransformRawMembers(TransformRawMembersBase):
         Transform a single member's data to the guildmember structure.
         """
         discord_id = member.get("discordId")
-        guild_member = (
-            {
-                "id": int(discord_id) if discord_id is not None else None,
-                "is_bot": member.get("isBot", False),
-                "left_at": member.get("deletedAt"),
-                "joined_at": member.get("joinedAt"),
-                "options": {
-                    # "username": member.get("username"),
-                    # "avatar": member.get("avatar"),
-                    # "roles": member.get("roles"),
-                    # "discriminator": member.get("discriminator"),
-                    # "permissions": member.get("permissions"),
-                    # "global_name": member.get("globalName"),
-                    # "nickname": member.get("nickname"),
-                },
-            }
-        )
+        guild_member = {
+            "id": int(discord_id) if discord_id is not None else None,
+            "is_bot": member.get("isBot", False),
+            "left_at": member.get("deletedAt"),
+            "joined_at": member.get("joinedAt"),
+            "options": {
+                # "username": member.get("username"),
+                # "avatar": member.get("avatar"),
+                # "roles": member.get("roles"),
+                # "discriminator": member.get("discriminator"),
+                # "permissions": member.get("permissions"),
+                # "global_name": member.get("globalName"),
+                # "nickname": member.get("nickname"),
+            },
+        }
 
         return guild_member

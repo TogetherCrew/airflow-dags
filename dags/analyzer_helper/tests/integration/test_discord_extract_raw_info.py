@@ -16,10 +16,6 @@ class TestDiscordExtractRawInfos(unittest.TestCase):
         self.rawinfos_collection = self.guild_db["rawinfo"]
         self.rawinfos_collection.delete_many({})
 
-    @classmethod
-    def tearDownClass(self):
-        self.client.close()
-
     def test_extract_recompute_true(self):
         sample_data = [
             {
