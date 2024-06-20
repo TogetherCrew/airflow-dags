@@ -4,8 +4,6 @@ from datetime import datetime
 from analyzer_helper.discord.discord_transform_raw_members import (
     DiscordTransformRawMembers,
 )
-from pprint import pprint
-from deepdiff import DeepDiff
 
 
 class TestDiscordTransformRawMembers(unittest.TestCase):
@@ -97,11 +95,5 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
             "options": {},
         }
         result = transformer.transform([raw_member1, raw_member2])
-        print("Result `test_transform_multiple_members`:")
-        pprint(result)
-        print("Expected Result:")
-        pprint([expected_result1, expected_result2])  # Wrap in a list
-        print("Difference:")
-        pprint(DeepDiff(result, [expected_result1, expected_result2], ignore_order=False))  # Ensure the comparison is between lists
         self.assertEqual(result, [expected_result1, expected_result2])
         self.assertEqual(result, [expected_result1, expected_result2])

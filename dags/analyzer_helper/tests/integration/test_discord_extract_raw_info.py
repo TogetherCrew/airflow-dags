@@ -1,7 +1,8 @@
 import unittest
 from datetime import datetime
-from bson import ObjectId
+
 from analyzer_helper.discord.discord_extract_raw_infos import DiscordExtractRawInfos
+from bson import ObjectId
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
@@ -69,7 +70,9 @@ class TestDiscordExtractRawInfos(unittest.TestCase):
                 "interactions": [
                     {
                         "name": "mention",
-                        "users_engaged_id": ["DUMMY_DISCORD_ID_2", "DUMMY_DISCORD_ID_3"],
+                        "users_engaged_id": [
+                            "DUMMY_DISCORD_ID_2",
+                            "DUMMY_DISCORD_ID_3"],
                         "type": "emitter",
                     },
                     {

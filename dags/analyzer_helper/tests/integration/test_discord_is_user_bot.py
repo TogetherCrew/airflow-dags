@@ -1,7 +1,8 @@
 import unittest
 from datetime import datetime
-from bson import ObjectId
+
 from analyzer_helper.discord.utils.is_user_bot import UserBotChecker
+from bson import ObjectId
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
@@ -26,7 +27,7 @@ class TestUserBotChecker(unittest.TestCase):
                     "role_mentions": ["DUMMY_ROLE_ID_1", "DUMMY_ROLE_ID_2"],
                     "reactions": [
                         "DUMMY_REACTION_ID_1,thelounge",
-                        "DUMMY_REACTION_ID_2,DUMMY_USER_ID_1,👌"
+                        "DUMMY_REACTION_ID_2,DUMMY_USER_ID_1,👌",
                     ],
                     "replied_user": None,
                     "createdDate": datetime(2023, 6, 30, 20, 28, 3, 494000),
@@ -85,7 +86,7 @@ class TestUserBotChecker(unittest.TestCase):
                     "deletedAt": None,
                     "globalName": None,
                     "nickname": None,
-                }
+                },
             ]
         )
 

@@ -1,9 +1,9 @@
 import unittest
 from datetime import datetime
 from unittest.mock import MagicMock, patch
-from bson import ObjectId
 
 from analyzer_helper.discord.fetch_discord_platforms import FetchDiscordPlatforms
+from bson import ObjectId
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
@@ -93,7 +93,7 @@ class TestFetchDiscordPlatformsUnit(unittest.TestCase):
                 },
                 "community": "6579c364f1120850414e0dc6",
                 "disconnectedAt": None,
-            }
+            },
         ]
 
         mock_collection.find.return_value = sample_data

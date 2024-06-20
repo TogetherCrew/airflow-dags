@@ -5,8 +5,6 @@ from analyzer_helper.discord.discord_transform_raw_data import DiscordTransformR
 from analyzer_helper.discord.utils.is_user_bot import UserBotChecker
 from bson import ObjectId
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
-from pprint import pprint
-from deepdiff import DeepDiff
 
 
 class TestDiscordTransformRawData(unittest.TestCase):
@@ -150,12 +148,6 @@ class TestDiscordTransformRawData(unittest.TestCase):
         result = self.transformer.transform(
             raw_data=raw_data, platform_id=self.platform_id, period=self.period
         )
-        print("Result `test_transform_data_with_replied_user`:")
-        pprint(result)
-        print("Expected Result:")
-        pprint(expected_result)
-        print("Difference:")
-        pprint(DeepDiff(result, expected_result, ignore_order=False))
         self.assertEqual(result, expected_result)
 
     def test_transform_data_with_user_mentions(self):
@@ -213,12 +205,6 @@ class TestDiscordTransformRawData(unittest.TestCase):
         result = self.transformer.transform(
             raw_data=raw_data, platform_id=self.platform_id, period=self.period
         )
-        print("Result `test_transform_data_with_reactions`:")
-        pprint(result)
-        print("Expected Result:")
-        pprint(expected_result)
-        print("Difference:")
-        pprint(DeepDiff(result, expected_result, ignore_order=False))
         self.assertEqual(result, expected_result)
 
     def test_transform_data_with_reactions(self):
@@ -238,7 +224,7 @@ class TestDiscordTransformRawData(unittest.TestCase):
                 "channelName": "general-chat-name",
                 "threadId": "threadId123",
                 "threadName": "general-thread-name",
-                "isGeneratedByWebhook": False
+                "isGeneratedByWebhook": False,
             }
         ]
         expected_result = [
@@ -247,7 +233,10 @@ class TestDiscordTransformRawData(unittest.TestCase):
                 "author_id": "user1",
                 "date": self.period,
                 "interactions": [
-                    {"name": "reaction", "type": "emitter", "users_engaged_id": ["user123"]}
+                    {
+                        "name": "reaction",
+                        "type": "emitter",
+                        "users_engaged_id": ["user123"]}
                 ],
                 "metadata": {
                     "bot_activity": True,
@@ -261,7 +250,11 @@ class TestDiscordTransformRawData(unittest.TestCase):
                 "author_id": "user2",
                 "date": self.period,
                 "interactions": [
-                    {"name": "reaction", "type": "emitter", "users_engaged_id": ["user123"]}
+                    {
+                        "name": "reaction",
+                        "type": "emitter",
+                        "users_engaged_id": ["user123"]
+                    }
                 ],
                 "metadata": {
                     "bot_activity": False,
@@ -293,12 +286,6 @@ class TestDiscordTransformRawData(unittest.TestCase):
         result = self.transformer.transform(
             raw_data=raw_data, platform_id=self.platform_id, period=self.period
         )
-        print("Result `test_transform_data_with_user_mentions`:")
-        pprint(result)
-        print("Expected Result:")
-        pprint(expected_result)
-        print("Difference:")
-        pprint(DeepDiff(result, expected_result, ignore_order=False))
         self.assertEqual(result, expected_result)
 
     def test_transform_data_empty(self):

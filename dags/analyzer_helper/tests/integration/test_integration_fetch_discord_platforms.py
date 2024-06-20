@@ -1,7 +1,8 @@
 import unittest
 from datetime import datetime
-from bson import ObjectId
+
 from analyzer_helper.discord.fetch_discord_platforms import FetchDiscordPlatforms
+from bson import ObjectId
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
@@ -315,11 +316,4 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
                 "recompute": False,
             }
         ]
-
-        print("Result `test_get_single_data`:")
-        pprint(result)
-        print("Expected Result:")
-        pprint(expected_result)
-        print("Difference:")
-        pprint(DeepDiff(result, expected_result, ignore_order=False))
         self.assertEqual(result, expected_result)

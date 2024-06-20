@@ -1,7 +1,8 @@
 import unittest
 from datetime import datetime
-from bson import ObjectId
+
 from analyzer_helper.discord.discord_transform_raw_data import DiscordTransformRawData
+from bson import ObjectId
 
 
 class DiscordTransformRawDataUnitTest(unittest.TestCase):

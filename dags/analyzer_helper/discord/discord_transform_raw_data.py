@@ -79,9 +79,13 @@ class DiscordTransformRawData(TransformRawDataBase):
     def create_transformed_item(self, data, period, interactions):
         is_bot = self.user_bot_checker.is_user_bot(data["author"])
 
-        extracted_interactions = [interaction["interactions"] for interaction in interactions]
+        extracted_interactions = [
+            interaction["interactions"] for interaction in interactions
+        ]
 
-        flat_interactions = [item for sublist in extracted_interactions for item in sublist]
+        flat_interactions = [
+            item for sublist in extracted_interactions for item in sublist
+        ]
 
         return {
             "author_id": data["author"],
@@ -93,7 +97,7 @@ class DiscordTransformRawData(TransformRawDataBase):
                 "bot_activity": data["isGeneratedByWebhook"] or is_bot,
             },
             "actions": [{"name": "message", "type": "emitter"}],
-            "interactions": flat_interactions
+            "interactions": flat_interactions,
         }
 
     def transform(

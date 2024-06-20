@@ -1,6 +1,9 @@
 import unittest
 from datetime import datetime
-from analyzer_helper.discord.discord_load_transformed_members import DiscordLoadTransformedMembers
+
+from analyzer_helper.discord.discord_load_transformed_members import (
+    DiscordLoadTransformedMembers,
+)
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
@@ -56,17 +59,7 @@ class TestDiscordLoadTransformedMembers(unittest.TestCase):
         loader = DiscordLoadTransformedMembers(self.platform_id)
 
         loader.load(processed_data, recompute=True)
-        collection_count_after_delete = self.collection.count_documents({})
-        print(f"Collection count after delete: {collection_count_after_delete}")
-
         result = list(self.collection.find({}))
-
-        print("Result `test_load_recompute_true`:")
-        pprint(result)
-        print("Expected Result:")
-        pprint(processed_data)
-        print("Difference:")
-        pprint(DeepDiff(result, processed_data, ignore_order=False))
         self.assertEqual(result, processed_data)
 
     def test_load_recompute_false(self):
