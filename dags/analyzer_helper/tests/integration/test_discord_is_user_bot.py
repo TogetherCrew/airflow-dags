@@ -9,8 +9,7 @@ class TestUserBotChecker(unittest.TestCase):
     def setUp(self):
         self.client = MongoSingleton.get_instance().client
         self.platform_id = "discord"
-        self.guild_id = "discord_guild1"
-        self.db = self.client[self.platform_id]  # Correct database for platform_id
+        self.db = self.client[self.platform_id]
         self.rawinfo_collection = self.db["rawinfos"]
         self.guildmembers_collection = self.db["guildmembers"]
         self.rawinfo_collection.delete_many({})

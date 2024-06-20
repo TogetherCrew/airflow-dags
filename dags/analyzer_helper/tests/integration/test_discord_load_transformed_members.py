@@ -7,9 +7,9 @@ from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 class TestDiscordLoadTransformedMembers(unittest.TestCase):
     def setUp(self):
         self.client = MongoSingleton.get_instance().client
-        self.db = self.client["discord_platform"]
-        self.platform_id = "discord"
-        self.collection = self.db["members"]
+        self.platform_id = "discord_platform"
+        self.db = self.client[self.platform_id]
+        self.collection = self.db["rawmembers"]
         self.collection.delete_many({})
 
     def tearDown(self):
@@ -56,7 +56,17 @@ class TestDiscordLoadTransformedMembers(unittest.TestCase):
         loader = DiscordLoadTransformedMembers(self.platform_id)
 
         loader.load(processed_data, recompute=True)
-        result = list(self.collection.find({}, {"_id": False}))
+        collection_count_after_delete = self.collection.count_documents({})
+        print(f"Collection count after delete: {collection_count_after_delete}")
+
+        result = list(self.collection.find({}))
+
+        print("Result `test_load_recompute_true`:")
+        pprint(result)
+        print("Expected Result:")
+        pprint(processed_data)
+        print("Difference:")
+        pprint(DeepDiff(result, processed_data, ignore_order=False))
         self.assertEqual(result, processed_data)
 
     def test_load_recompute_false(self):
@@ -100,6 +110,6 @@ class TestDiscordLoadTransformedMembers(unittest.TestCase):
         loader = DiscordLoadTransformedMembers(self.platform_id)
 
         loader.load(processed_data, recompute=False)
-        result = list(self.collection.find({}, {"_id": False}))
+        result = list(self.collection.find({}))
         expected_result = initial_data + processed_data
         self.assertEqual(result, expected_result)

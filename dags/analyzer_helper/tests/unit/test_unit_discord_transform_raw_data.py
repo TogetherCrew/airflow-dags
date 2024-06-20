@@ -138,33 +138,37 @@ class DiscordTransformRawDataUnitTest(unittest.TestCase):
             "threadName": "thread-jkl",
             "isGeneratedByWebhook": False,
         }
-        interactions = [
-            {
-                "name": "mention",
-                "users_engaged_id": ["user123"],
-                "type": "emitter",
-            }
-        ]
-        transformed_item = self.transformer.create_transformed_item(
-            data=data, period=datetime(2024, 6, 11), interactions=interactions
+        interaction = self.transformer.create_interaction(
+            data=data,
+            name="mention",
+            author="user789",
+            engaged_users=["user123"],
+            type="emitter",
         )
+        interactions = interaction["interactions"]
+
+        transformed_item = self.transformer.create_transformed_item(
+            data=data, period=datetime(2024, 6, 11), interactions=[interaction]
+        )
+        expected_result = {
+            "author_id": "user789",
+            "date": datetime(2024, 6, 11),
+            "source_id": "90123",
+            "metadata": {
+                "thread_id": "jkl",
+                "channel_id": "mno",
+                "bot_activity": True,
+            },
+            "actions": [
+                {
+                    "name": "message",
+                    "type": "emitter",
+                }
+            ],
+            "interactions": interactions,
+        }
+
         self.assertEqual(
             transformed_item,
-            {
-                "author_id": "user789",
-                "date": datetime(2024, 6, 11),
-                "source_id": "90123",
-                "metadata": {
-                    "thread_id": "jkl",
-                    "channel_id": "mno",
-                    "bot_activity": False,
-                },
-                "actions": [
-                    {
-                        "name": "message",
-                        "type": "emitter",
-                    }
-                ],
-                "interactions": interactions,
-            },
+            expected_result,
         )

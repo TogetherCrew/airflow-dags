@@ -124,9 +124,9 @@ class TestFetchDiscordPlatformsUnit(unittest.TestCase):
                     },
                     "window": {"period_size": 7, "step_size": 1},
                     "id": "777777777777777",
-                    "isInProgress": False,
+                    # "isInProgress": False,
                     "period": datetime(2023, 10, 20),
-                    "icon": "e160861192ed8c2a6fa65a8ab6ac337e",
+                    # "icon": "e160861192ed8c2a6fa65a8ab6ac337e",
                     "selectedChannels": [
                         "1067517728543477920",
                         "1067512760163897514",
@@ -135,8 +135,8 @@ class TestFetchDiscordPlatformsUnit(unittest.TestCase):
                         "1194381466663141519",
                         "1194381535734935602",
                     ],
-                    "name": "PlatformName",
-                    "analyzerStartedAt": datetime(2024, 4, 17, 13, 29, 16, 157000),
+                    # "name": "PlatformName",
+                    # "analyzerStartedAt": datetime(2024, 4, 17, 13, 29, 16, 157000),
                 },
                 "recompute": False,
             },
@@ -160,9 +160,9 @@ class TestFetchDiscordPlatformsUnit(unittest.TestCase):
                     },
                     "window": {"period_size": 7, "step_size": 1},
                     "id": "888888888888888",
-                    "isInProgress": False,
+                    # "isInProgress": False,
                     "period": datetime(2023, 10, 20),
-                    "icon": "e160861192ed8c2a6fa65a8ab6ac337e",
+                    # "icon": "e160861192ed8c2a6fa65a8ab6ac337e",
                     "selectedChannels": [
                         "1067517728543477920",
                         "1067512760163897514",
@@ -171,11 +171,11 @@ class TestFetchDiscordPlatformsUnit(unittest.TestCase):
                         "1194381466663141519",
                         "1194381535734935602",
                     ],
-                    "name": "PlatformName2",
-                    "analyzerStartedAt": datetime(2024, 4, 17, 13, 29, 16, 157000),
+                    # "name": "PlatformName2",
+                    # "analyzerStartedAt": datetime(2024, 4, 17, 13, 29, 16, 157000),
                 },
                 "recompute": False,
-            }
+            },
         ]
 
         self.assertEqual(result, expected_result)

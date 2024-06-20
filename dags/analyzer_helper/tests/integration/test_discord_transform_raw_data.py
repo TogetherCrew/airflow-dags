@@ -5,16 +5,17 @@ from analyzer_helper.discord.discord_transform_raw_data import DiscordTransformR
 from analyzer_helper.discord.utils.is_user_bot import UserBotChecker
 from bson import ObjectId
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
+from pprint import pprint
+from deepdiff import DeepDiff
 
 
 class TestDiscordTransformRawData(unittest.TestCase):
     def setUp(self):
         self.client = MongoSingleton.get_instance().client
-        self.db = self.client["discord_platform"]
         self.platform_id = "discord"
+        self.db = self.client[self.platform_id]
         self.transformer = DiscordTransformRawData(self.platform_id)
         self.bot_checker = UserBotChecker(self.platform_id)
-        self.platform_id = "discord_platform1"
         self.guildmembers_collection = self.db["guildmembers"]
         self.period = datetime(2023, 1, 1)
         self.guildmembers_collection.delete_many({})
@@ -109,24 +110,6 @@ class TestDiscordTransformRawData(unittest.TestCase):
 
         expected_result = [
             {
-                "author_id": "user123",
-                "date": self.period,
-                "source_id": "msg123",
-                "metadata": {
-                    "channel_id": "channel456",
-                    "thread_id": "thread123",
-                    "bot_activity": False,
-                },
-                "actions": [{"name": "message", "type": "emitter"}],
-                "interactions": [
-                    {
-                        "name": "reply",
-                        "users_engaged_id": ["user789"],
-                        "type": "emitter",
-                    }
-                ],
-            },
-            {
                 "author_id": "user789",
                 "date": self.period,
                 "source_id": "msg123",
@@ -144,11 +127,35 @@ class TestDiscordTransformRawData(unittest.TestCase):
                     }
                 ],
             },
+            {
+                "author_id": "user123",
+                "date": self.period,
+                "source_id": "msg123",
+                "metadata": {
+                    "channel_id": "channel456",
+                    "thread_id": "thread123",
+                    "bot_activity": False,
+                },
+                "actions": [{"name": "message", "type": "emitter"}],
+                "interactions": [
+                    {
+                        "name": "reply",
+                        "users_engaged_id": ["user789"],
+                        "type": "emitter",
+                    }
+                ],
+            },
         ]
 
         result = self.transformer.transform(
             raw_data=raw_data, platform_id=self.platform_id, period=self.period
         )
+        print("Result `test_transform_data_with_replied_user`:")
+        pprint(result)
+        print("Expected Result:")
+        pprint(expected_result)
+        print("Difference:")
+        pprint(DeepDiff(result, expected_result, ignore_order=False))
         self.assertEqual(result, expected_result)
 
     def test_transform_data_with_user_mentions(self):
@@ -165,24 +172,6 @@ class TestDiscordTransformRawData(unittest.TestCase):
         ]
 
         expected_result = [
-            {
-                "author_id": "user123",
-                "date": self.period,
-                "source_id": "msg123",
-                "metadata": {
-                    "channel_id": "channel456",
-                    "thread_id": "thread123",
-                    "bot_activity": False,
-                },
-                "actions": [{"name": "message", "type": "emitter"}],
-                "interactions": [
-                    {
-                        "name": "mention",
-                        "users_engaged_id": ["user456"],
-                        "type": "emitter",
-                    }
-                ],
-            },
             {
                 "author_id": "user456",
                 "date": self.period,
@@ -201,27 +190,6 @@ class TestDiscordTransformRawData(unittest.TestCase):
                     }
                 ],
             },
-        ]
-
-        result = self.transformer.transform(
-            raw_data=raw_data, platform_id=self.platform_id, period=self.period
-        )
-        self.assertEqual(result, expected_result)
-
-    def test_transform_data_with_reactions(self):
-        raw_data = [
-            {
-                "author": "user123",
-                "reactions": ["user1, user2, :laugh:"],
-                "messageId": "msg123",
-                "channelId": "channel456",
-                "isGeneratedByWebhook": False,
-                "threadId": "thread123",
-                "createdDate": self.period,
-            }
-        ]
-
-        expected_result = [
             {
                 "author_id": "user123",
                 "date": self.period,
@@ -234,41 +202,103 @@ class TestDiscordTransformRawData(unittest.TestCase):
                 "actions": [{"name": "message", "type": "emitter"}],
                 "interactions": [
                     {
-                        "name": "reaction",
-                        "users_engaged_id": ["user1", "user2"],
-                        "type": "receiver",
+                        "name": "mention",
+                        "users_engaged_id": ["user456"],
+                        "type": "emitter",
                     }
                 ],
-            },
-            {
-                "author_id": "user1",
-                "date": self.period,
-                "source_id": "msg123",
-                "metadata": {
-                    "channel_id": "channel456",
-                    "thread_id": "thread123",
-                    "bot_activity": True,
-                },
-                "actions": [{"name": "reaction", "type": "emitter"}],
-                "interactions": [],
-            },
-            {
-                "author_id": "user2",
-                "date": self.period,
-                "source_id": "msg123",
-                "metadata": {
-                    "channel_id": "channel456",
-                    "thread_id": "thread123",
-                    "bot_activity": False,
-                },
-                "actions": [{"name": "reaction", "type": "emitter"}],
-                "interactions": [],
             },
         ]
 
         result = self.transformer.transform(
-            raw_data=raw_data, platform=self.platform_id, period=self.period
+            raw_data=raw_data, platform_id=self.platform_id, period=self.period
         )
+        print("Result `test_transform_data_with_reactions`:")
+        pprint(result)
+        print("Expected Result:")
+        pprint(expected_result)
+        print("Difference:")
+        pprint(DeepDiff(result, expected_result, ignore_order=False))
+        self.assertEqual(result, expected_result)
+
+    def test_transform_data_with_reactions(self):
+        raw_data = [
+            {
+                "author": "user123",
+                "content": "sample text",
+                "user_mentions": [],
+                "role_mentions": [],
+                "reactions": [
+                    "user1,user2,❤️",
+                ],
+                "replied_user": None,
+                "createdDate": self.period,
+                "messageId": "msg123",
+                "channelId": "channel456",
+                "channelName": "general-chat-name",
+                "threadId": "threadId123",
+                "threadName": "general-thread-name",
+                "isGeneratedByWebhook": False
+            }
+        ]
+        expected_result = [
+            {
+                "actions": [],
+                "author_id": "user1",
+                "date": self.period,
+                "interactions": [
+                    {"name": "reaction", "type": "emitter", "users_engaged_id": ["user123"]}
+                ],
+                "metadata": {
+                    "bot_activity": True,
+                    "channel_id": "channel456",
+                    "thread_id": "threadId123",
+                },
+                "source_id": "msg123",
+            },
+            {
+                "actions": [],
+                "author_id": "user2",
+                "date": self.period,
+                "interactions": [
+                    {"name": "reaction", "type": "emitter", "users_engaged_id": ["user123"]}
+                ],
+                "metadata": {
+                    "bot_activity": False,
+                    "channel_id": "channel456",
+                    "thread_id": "threadId123",
+                },
+                "source_id": "msg123",
+            },
+            {
+                "actions": [{"name": "message", "type": "emitter"}],
+                "author_id": "user123",
+                "date": self.period,
+                "interactions": [
+                    {
+                        "name": "reaction",
+                        "type": "receiver",
+                        "users_engaged_id": ["user1", "user2"],
+                    },
+                ],
+                "metadata": {
+                    "bot_activity": False,
+                    "channel_id": "channel456",
+                    "thread_id": "threadId123",
+                },
+                "source_id": "msg123",
+            },
+        ]
+
+        result = self.transformer.transform(
+            raw_data=raw_data, platform_id=self.platform_id, period=self.period
+        )
+        print("Result `test_transform_data_with_user_mentions`:")
+        pprint(result)
+        print("Expected Result:")
+        pprint(expected_result)
+        print("Difference:")
+        pprint(DeepDiff(result, expected_result, ignore_order=False))
         self.assertEqual(result, expected_result)
 
     def test_transform_data_empty(self):

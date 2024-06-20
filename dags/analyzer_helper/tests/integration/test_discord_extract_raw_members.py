@@ -89,7 +89,7 @@ class TestDiscordExtractRawMembers(unittest.TestCase):
         extractor = DiscordExtractRawMembers(self.guild_id, self.platform_id)
         result = extractor.extract(recompute=False)
 
-        expected_result = sample_data
+        expected_result = [sample_data[0]]
 
         self.assertEqual(result, expected_result)
 
@@ -108,7 +108,9 @@ class TestDiscordExtractRawMembers(unittest.TestCase):
         }
         self.guild_collection.insert_one(new_data)
 
+        self.assertEqual(result, expected_result)
+
         result = extractor.extract(recompute=False)
-        expected_result = [new_data]
+        expected_result = [sample_data[0], new_data]
 
         self.assertEqual(result, expected_result)

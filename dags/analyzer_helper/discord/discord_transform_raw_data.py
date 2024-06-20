@@ -9,8 +9,9 @@ from analyzer_helper.discord.utils.is_user_bot import UserBotChecker
 class DiscordTransformRawData(TransformRawDataBase):
     def __init__(self, platform_id: str):
         """
-        Initializes the class with a bot checker.
+        Initializes the class with platform and bot checker.
         """
+        self.platform_id = platform_id
         self.user_bot_checker = UserBotChecker(platform_id)
 
     def create_interaction_base(
@@ -57,7 +58,7 @@ class DiscordTransformRawData(TransformRawDataBase):
         Returns:
             Dict[str, Any]: Dictionary representing the interaction.
         """
-        is_bot = self.user_bot_checker(author)
+        is_bot = self.user_bot_checker.is_user_bot(author)
         return {
             "author_id": author,
             "date": data.get("createdDate", data.get("period")),
@@ -76,7 +77,12 @@ class DiscordTransformRawData(TransformRawDataBase):
         }
 
     def create_transformed_item(self, data, period, interactions):
-        is_bot = self.user_bot_checker(data["author"])
+        is_bot = self.user_bot_checker.is_user_bot(data["author"])
+
+        extracted_interactions = [interaction["interactions"] for interaction in interactions]
+
+        flat_interactions = [item for sublist in extracted_interactions for item in sublist]
+
         return {
             "author_id": data["author"],
             "date": period,
@@ -86,13 +92,8 @@ class DiscordTransformRawData(TransformRawDataBase):
                 "channel_id": data["channelId"],
                 "bot_activity": data["isGeneratedByWebhook"] or is_bot,
             },
-            "actions": [
-                {
-                    "name": "message",
-                    "type": "emitter",
-                }
-            ],
-            "interactions": interactions,
+            "actions": [{"name": "message", "type": "emitter"}],
+            "interactions": flat_interactions
         }
 
     def transform(
@@ -124,6 +125,7 @@ class DiscordTransformRawData(TransformRawDataBase):
                         type="receiver",
                     )
                     transformed_data.append(receiver_interaction)
+                    # print(f"Added reply interaction: {receiver_interaction}")
 
                 if data.get("user_mentions"):
                     interactions.append(
@@ -144,6 +146,7 @@ class DiscordTransformRawData(TransformRawDataBase):
                             type="receiver",
                         )
                         transformed_data.append(mentioned_user_interaction)
+                        # print(f"Added mention interaction: {mentioned_user_interaction}")
 
                 all_reaction_users = []
                 if data.get("reactions"):
@@ -171,12 +174,15 @@ class DiscordTransformRawData(TransformRawDataBase):
                                 type="emitter",
                             )
                             transformed_data.append(emitter_interaction)
-
+                            # print(f"Added reaction interaction: {emitter_interaction}")
+                # print(f"Type of interactions: {type(interactions)}")
+                # print(f"Content of interactions: {interactions}")
                 transformed_item = self.create_transformed_item(
                     data=data, period=period, interactions=interactions
                 )
                 transformed_data.append(transformed_item)
+                # print(f"Added transformed item: {transformed_item}")
             except Exception as e:
                 logging.error(f"Error transforming raw discord data. Error: {e}")
-
+        # print(f"Final transformed data: {transformed_data}")
         return transformed_data

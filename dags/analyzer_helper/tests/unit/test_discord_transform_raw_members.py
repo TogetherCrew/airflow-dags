@@ -4,6 +4,8 @@ from datetime import datetime
 from analyzer_helper.discord.discord_transform_raw_members import (
     DiscordTransformRawMembers,
 )
+from pprint import pprint
+from deepdiff import DeepDiff
 
 
 class TestDiscordTransformRawMembers(unittest.TestCase):
@@ -21,7 +23,7 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
         """
         transformer = DiscordTransformRawMembers()
         raw_member = {
-            "discordId": "REDACTED_ID_1",
+            "discordId": 1,
             "isBot": False,
             "joinedAt": datetime(2023, 1, 1),
             "deletedAt": None,
@@ -41,6 +43,12 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
             "options": {},
         }
         result = transformer.transform([raw_member])
+        print("Result `test_transform_single_member`:")
+        pprint(result)
+        print("Expected Result:")
+        pprint([expected_result])  # Wrap in a list
+        print("Difference:")
+        pprint(DeepDiff(result, [expected_result], ignore_order=False))  # Ensure the comparison is between lists
         self.assertEqual(result, [expected_result])
 
     def test_transform_multiple_members(self):
@@ -49,7 +57,7 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
         """
         transformer = DiscordTransformRawMembers()
         raw_member1 = {
-            "discordId": "REDACTED_ID_2",
+            "discordId": 2,
             "isBot": True,
             "joinedAt": datetime(2022, 12, 31),
             "deletedAt": None,
@@ -62,7 +70,7 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
             "nickname": None,
         }
         raw_member2 = {
-            "discordId": "REDACTED_ID_3",
+            "discordId": 3,
             "isBot": False,
             "joinedAt": datetime(2023, 1, 2),
             "deletedAt": None,
@@ -89,4 +97,11 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
             "options": {},
         }
         result = transformer.transform([raw_member1, raw_member2])
+        print("Result `test_transform_multiple_members`:")
+        pprint(result)
+        print("Expected Result:")
+        pprint([expected_result1, expected_result2])  # Wrap in a list
+        print("Difference:")
+        pprint(DeepDiff(result, [expected_result1, expected_result2], ignore_order=False))  # Ensure the comparison is between lists
+        self.assertEqual(result, [expected_result1, expected_result2])
         self.assertEqual(result, [expected_result1, expected_result2])

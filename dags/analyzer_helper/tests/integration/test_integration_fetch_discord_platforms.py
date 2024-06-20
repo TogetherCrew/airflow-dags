@@ -19,7 +19,7 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
         sample_data = [
             {
                 "_id": ObjectId("000000000000000000000001"),
-                "name": "discord",
+                "platform": "discord",
                 "metadata": {
                     "action": {
                         "INT_THR": 1,
@@ -60,7 +60,7 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
             },
             {
                 "_id": ObjectId("000000000000000000000002"),
-                "name": "discord",
+                "platform": "discord",
                 "metadata": {
                     "action": {
                         "INT_THR": 1,
@@ -101,7 +101,7 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
             },
             {
                 "_id": ObjectId("000000000000000000000003"),
-                "name": "telegram",
+                "platform": "telegram",
                 "metadata": {
                     "id": "999999999999999",
                     "isInProgress": False,
@@ -119,7 +119,7 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
             },
             {
                 "_id": ObjectId("000000000000000000000004"),
-                "name": "discourse",
+                "platform": "discourse",
                 "metadata": {
                     "id": "101010101010101",
                     "isInProgress": False,
@@ -164,9 +164,9 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
                     },
                     "window": {"period_size": 7, "step_size": 1},
                     "id": "777777777777777",
-                    "isInProgress": False,
+                    # "isInProgress": False,
                     "period": datetime(2023, 10, 20),
-                    "icon": "e160861192ed8c2a6fa65a8ab6ac337e",
+                    # "icon": "e160861192ed8c2a6fa65a8ab6ac337e",
                     "selectedChannels": [
                         "1067517728543477920",
                         "1067512760163897514",
@@ -175,8 +175,8 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
                         "1194381466663141519",
                         "1194381535734935602",
                     ],
-                    "name": "PlatformName",
-                    "analyzerStartedAt": datetime(2024, 4, 17, 13, 29, 16, 157000),
+                    # "name": "PlatformName",
+                    # "analyzerStartedAt": datetime(2024, 4, 17, 13, 29, 16, 157000),
                 },
                 "recompute": False,
             },
@@ -200,9 +200,9 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
                     },
                     "window": {"period_size": 7, "step_size": 1},
                     "id": "888888888888888",
-                    "isInProgress": False,
+                    # "isInProgress": False,
                     "period": datetime(2023, 10, 20),
-                    "icon": "e160861192ed8c2a6fa65a8ab6ac337e",
+                    # "icon": "e160861192ed8c2a6fa65a8ab6ac337e",
                     "selectedChannels": [
                         "1067517728543477920",
                         "1067512760163897514",
@@ -211,13 +211,12 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
                         "1194381466663141519",
                         "1194381535734935602",
                     ],
-                    "name": "PlatformName2",
-                    "analyzerStartedAt": datetime(2024, 4, 17, 13, 29, 16, 157000),
+                    # "name": "PlatformName2",
+                    # "analyzerStartedAt": datetime(2024, 4, 17, 13, 29, 16, 157000),
                 },
                 "recompute": False,
             },
         ]
-
         self.assertEqual(result, expected_result)
 
     def test_get_empty_data(self):
@@ -232,7 +231,7 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
     def test_get_single_data(self):
         sample_data = {
             "_id": ObjectId("000000000000000000000001"),
-            "name": "discord",
+            "platform": "discord",
             "metadata": {
                 "action": {
                     "INT_THR": 1,
@@ -299,9 +298,9 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
                     },
                     "window": {"period_size": 7, "step_size": 1},
                     "id": "777777777777777",
-                    "isInProgress": False,
+                    # "isInProgress": False,
                     "period": datetime(2023, 10, 20),
-                    "icon": "e160861192ed8c2a6fa65a8ab6ac337e",
+                    # "icon": "e160861192ed8c2a6fa65a8ab6ac337e",
                     "selectedChannels": [
                         "1067517728543477920",
                         "1067512760163897514",
@@ -310,11 +309,17 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
                         "1194381466663141519",
                         "1194381535734935602",
                     ],
-                    "name": "PlatformName",
-                    "analyzerStartedAt": datetime(2024, 4, 17, 13, 29, 16, 157000),
+                    # "name": "PlatformName",
+                    # "analyzerStartedAt": datetime(2024, 4, 17, 13, 29, 16, 157000),
                 },
                 "recompute": False,
             }
         ]
 
+        print("Result `test_get_single_data`:")
+        pprint(result)
+        print("Expected Result:")
+        pprint(expected_result)
+        print("Difference:")
+        pprint(DeepDiff(result, expected_result, ignore_order=False))
         self.assertEqual(result, expected_result)

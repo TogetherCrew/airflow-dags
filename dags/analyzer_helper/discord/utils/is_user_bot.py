@@ -37,5 +37,6 @@ class UserBotChecker:
         result = self.guildmembers_collection.find_one(
             {"discordId": author_id}, {"isBot": 1, "_id": 0}
         )
+        print(f"User ID: {author_id}, isBot: {result.get('isBot', False) if result else False}")
 
         return result.get("isBot", False) if result else False

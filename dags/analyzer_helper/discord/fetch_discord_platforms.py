@@ -37,6 +37,11 @@ class FetchDiscordPlatforms:
             "disconnectedAt": None,
             "platform": "discord",
         }
+        # TODO: Understand if we need to expand projection with:
+        # isInProgress
+        # icon
+        # name
+        # analyzerStartedAt
         projection = {
             "_id": 1,
             "metadata.action": 1,

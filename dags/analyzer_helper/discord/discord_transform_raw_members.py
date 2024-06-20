@@ -26,6 +26,7 @@ class DiscordTransformRawMembers(TransformRawMembersBase):
         discord_id = member.get("discordId")
         guild_member = {
             "id": int(discord_id) if discord_id is not None else None,
+            # "id": discord_id,
             "is_bot": member.get("isBot", False),
             "left_at": member.get("deletedAt"),
             "joined_at": member.get("joinedAt"),
