@@ -72,7 +72,7 @@ class TestDiscordExtractRawInfos(unittest.TestCase):
                         "name": "mention",
                         "users_engaged_id": [
                             "DUMMY_DISCORD_ID_2",
-                            "DUMMY_DISCORD_ID_3"
+                            "DUMMY_DISCORD_ID_3",
                         ],
                         "type": "emitter",
                     },
