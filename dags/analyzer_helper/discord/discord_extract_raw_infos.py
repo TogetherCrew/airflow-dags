@@ -80,7 +80,6 @@ class DiscordExtractRawInfos(ExtractRawInfosBase):
             latest_activity_date = latest_activity["date"] if latest_activity else None
 
             if latest_activity_date is not None:
-                print(f"Comparing latest_activity_date: {latest_activity_date} with period: {period}")
                 if latest_activity_date >= period:
                     data = list(
                         self.collection.find(

@@ -41,12 +41,6 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
             "options": {},
         }
         result = transformer.transform([raw_member])
-        print("Result `test_transform_single_member`:")
-        pprint(result)
-        print("Expected Result:")
-        pprint([expected_result])  # Wrap in a list
-        print("Difference:")
-        pprint(DeepDiff(result, [expected_result], ignore_order=False))  # Ensure the comparison is between lists
         self.assertEqual(result, [expected_result])
 
     def test_transform_multiple_members(self):

@@ -236,7 +236,8 @@ class TestDiscordTransformRawData(unittest.TestCase):
                     {
                         "name": "reaction",
                         "type": "emitter",
-                        "users_engaged_id": ["user123"]}
+                        "users_engaged_id": ["user123"],
+                    }
                 ],
                 "metadata": {
                     "bot_activity": True,
