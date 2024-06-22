@@ -10,10 +10,11 @@ from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 class TestDiscordTransformRawData(unittest.TestCase):
     def setUp(self):
         self.client = MongoSingleton.get_instance().client
+        self.guild_id = "discord"
         self.platform_id = "discord"
-        self.db = self.client[self.platform_id]
+        self.db = self.client[self.guild_id]
         self.transformer = DiscordTransformRawData(self.platform_id)
-        self.bot_checker = UserBotChecker(self.platform_id)
+        self.bot_checker = UserBotChecker(self.guild_id)
         self.guildmembers_collection = self.db["guildmembers"]
         self.period = datetime(2023, 1, 1)
         self.guildmembers_collection.delete_many({})
@@ -146,7 +147,7 @@ class TestDiscordTransformRawData(unittest.TestCase):
         ]
 
         result = self.transformer.transform(
-            raw_data=raw_data, platform_id=self.platform_id, period=self.period
+            raw_data=raw_data, platform_id=self.platform_id,
         )
         self.assertEqual(result, expected_result)
 
@@ -203,7 +204,7 @@ class TestDiscordTransformRawData(unittest.TestCase):
         ]
 
         result = self.transformer.transform(
-            raw_data=raw_data, platform_id=self.platform_id, period=self.period
+            raw_data=raw_data, platform_id=self.platform_id,
         )
         self.assertEqual(result, expected_result)
 
@@ -285,7 +286,7 @@ class TestDiscordTransformRawData(unittest.TestCase):
         ]
 
         result = self.transformer.transform(
-            raw_data=raw_data, platform_id=self.platform_id, period=self.period
+            raw_data=raw_data, platform_id=self.platform_id,
         )
         self.assertEqual(result, expected_result)
 
@@ -295,6 +296,6 @@ class TestDiscordTransformRawData(unittest.TestCase):
         expected_result = []
 
         result = self.transformer.transform(
-            raw_data=raw_data, platform_id=self.platform_id, period=self.period
+            raw_data=raw_data, platform_id=self.platform_id,
         )
         self.assertEqual(result, expected_result)

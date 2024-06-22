@@ -23,52 +23,6 @@ class DiscordExtractRawInfos(ExtractRawInfosBase):
         self.collection = self.guild_db["rawinfos"]
         self.rawmemberactivities_collection = self.platform_db["rawmemberactivities"]
 
-    # def extract(self, period: datetime, recompute: bool = False) -> list:
-    #     """
-    #     Extracts raw information data from the 'rawinfos' collection.
-
-    #     Parameters
-    #     ----------
-    #     period : datetime
-    #         The starting date from which data should be extracted.
-    #     recompute : bool, optional
-    #         If True, extracts all data from the collection. If False, extracts data
-    #         starting from the latest saved record's 'createdDate'.
-
-    #     Returns
-    #     -------
-    #     list
-    #         A list of documents from the 'rawinfos' collection.
-    #     """
-    #     data = []
-    #     if recompute:
-    #         data = list(self.collection.find({}))
-    #     else:
-    #         # Fetch the latest joined date from rawmemberactivities collection
-    #         latest_activity = self.rawmemberactivities_collection.find_one(
-    #             sort=[("date", -1)]
-    #         )
-    #         latest_activity_date = latest_activity["date"] if latest_activity else None
-
-    #         print(f"latest_activity_date: {latest_activity_date}")
-    #         print(f"period: {period}")
-
-    #         if latest_activity_date is not None:
-    #             if latest_activity_date >= period:
-    #                 print("Fetching data created after latest_activity_date")
-    #                 data = list(
-    #                     self.collection.find(
-    #                         {"createdDate": {"$gt": latest_activity_date}}
-    #                     )
-    #                 )
-    #             else:
-    #                 print("Fetching data created on or after period")
-    #                 data = list(self.collection.find({"createdDate": {"$gte": period}}))
-    #         else:
-    #             print("No latest activity date, fetching all data")
-    #             data = list(self.collection.find({}))
-
-    #     return data
     def extract(self, period: datetime, recompute: bool = False) -> list:
         data = []
         if recompute:
@@ -83,7 +37,7 @@ class DiscordExtractRawInfos(ExtractRawInfosBase):
                 if latest_activity_date >= period:
                     data = list(
                         self.collection.find(
-                            {"createdDate": {"$gte": latest_activity_date}}
+                            {"createdDate": {"$gt": latest_activity_date}}
                         )
                     )
                 else:

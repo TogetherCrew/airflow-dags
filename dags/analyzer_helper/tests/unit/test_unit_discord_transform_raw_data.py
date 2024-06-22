@@ -52,27 +52,25 @@ class DiscordTransformRawDataUnitTest(unittest.TestCase):
             engaged_users=["user789"],
             type="receiver",
         )
-        self.assertEqual(
-            interaction,
-            {
-                "author_id": "user456",
-                "date": datetime(2024, 6, 11),
-                "source_id": "12345",
-                "metadata": {
-                    "thread_id": "abc",
-                    "channel_id": "xyz",
-                    "bot_activity": False,
-                },
-                "actions": [],
-                "interactions": [
-                    {
-                        "name": "reply",
-                        "users_engaged_id": ["user789"],
-                        "type": "receiver",
-                    }
-                ],
+        expected_interaction = {
+            "author_id": "user456",
+            "date": datetime(2024, 6, 11),
+            "source_id": "12345",
+            "metadata": {
+                "thread_id": "abc",
+                "channel_id": "xyz",
+                "bot_activity": False,
             },
-        )
+            "actions": [],
+            "interactions": [
+                {
+                    "name": "reply",
+                    "users_engaged_id": ["user789"],
+                    "type": "receiver",
+                }
+            ],
+        }
+        self.assertEqual(interaction, expected_interaction)
 
     def test_create_emitter_interaction_valid_data(self):
         data = {
@@ -99,27 +97,25 @@ class DiscordTransformRawDataUnitTest(unittest.TestCase):
             engaged_users=["user456"],
             type="emitter",
         )
-        self.assertEqual(
-            interaction,
-            {
-                "author_id": "user123",
-                "date": datetime(2024, 6, 10),
-                "source_id": "56789",
-                "metadata": {
-                    "thread_id": "def",
-                    "channel_id": "ghi",
-                    "bot_activity": True,
-                },
-                "actions": [],
-                "interactions": [
-                    {
-                        "name": "reaction",
-                        "users_engaged_id": ["user456"],
-                        "type": "emitter",
-                    }
-                ],
+        expected_interaction = {
+            "author_id": "user123",
+            "date": datetime(2024, 6, 10),
+            "source_id": "56789",
+            "metadata": {
+                "thread_id": "def",
+                "channel_id": "ghi",
+                "bot_activity": True,
             },
-        )
+            "actions": [],
+            "interactions": [
+                {
+                    "name": "reaction",
+                    "users_engaged_id": ["user456"],
+                    "type": "emitter",
+                }
+            ],
+        }
+        self.assertEqual(interaction, expected_interaction)
 
     def test_create_transformed_item_valid_data(self):
         data = {
@@ -146,10 +142,16 @@ class DiscordTransformRawDataUnitTest(unittest.TestCase):
             engaged_users=["user123"],
             type="emitter",
         )
-        interactions = interaction["interactions"]
+        interactions = [
+            {
+                "name": "mention",
+                "users_engaged_id": ["user123"],
+                "type": "emitter",
+            }
+        ]
 
         transformed_item = self.transformer.create_transformed_item(
-            data=data, period=datetime(2024, 6, 11), interactions=[interaction]
+            data=data, interactions=[interaction]
         )
         expected_result = {
             "author_id": "user789",
@@ -158,7 +160,7 @@ class DiscordTransformRawDataUnitTest(unittest.TestCase):
             "metadata": {
                 "thread_id": "jkl",
                 "channel_id": "mno",
-                "bot_activity": True,
+                "bot_activity": data["isGeneratedByWebhook"] or self.transformer.user_bot_checker.is_user_bot("user789"),
             },
             "actions": [
                 {
@@ -169,7 +171,4 @@ class DiscordTransformRawDataUnitTest(unittest.TestCase):
             "interactions": interactions,
         }
 
-        self.assertEqual(
-            transformed_item,
-            expected_result,
-        )
+        self.assertEqual(transformed_item, expected_result)

@@ -61,7 +61,7 @@ class DiscordTransformRawData(TransformRawDataBase):
         is_bot = self.user_bot_checker.is_user_bot(author)
         return {
             "author_id": author,
-            "date": data.get("createdDate", data.get("period")),
+            "date": data.get("createdDate"),
             "source_id": data["messageId"],
             "metadata": {
                 "thread_id": data["threadId"],
@@ -76,7 +76,22 @@ class DiscordTransformRawData(TransformRawDataBase):
             ],
         }
 
-    def create_transformed_item(self, data, period, interactions):
+    def create_transformed_item(
+        self,
+        data: Dict[str, Any],
+        interactions: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
+        """
+        Creates a transformed item dictionary.
+
+        Args:
+            data (Dict[str, Any]): Raw data containing message details.
+            period (datetime): The datetime period of the message.
+            interactions (List[Dict[str, Any]]): List of interaction dictionaries.
+
+        Returns:
+            Dict[str, Any]: Dictionary representing the transformed item.
+        """
         is_bot = self.user_bot_checker.is_user_bot(data["author"])
 
         extracted_interactions = [
@@ -89,7 +104,7 @@ class DiscordTransformRawData(TransformRawDataBase):
 
         return {
             "author_id": data["author"],
-            "date": period,
+            "date": data.get("createdDate"),
             "source_id": data["messageId"],
             "metadata": {
                 "thread_id": data["threadId"],
@@ -101,7 +116,7 @@ class DiscordTransformRawData(TransformRawDataBase):
         }
 
     def transform(
-        self, raw_data: list, platform_id: str, period: datetime
+        self, raw_data: list, platform_id: str,
     ) -> List[Dict[str, Any]]:
         transformed_data = []
         for data in raw_data:
@@ -182,7 +197,7 @@ class DiscordTransformRawData(TransformRawDataBase):
                 # print(f"Type of interactions: {type(interactions)}")
                 # print(f"Content of interactions: {interactions}")
                 transformed_item = self.create_transformed_item(
-                    data=data, period=period, interactions=interactions
+                    data=data, interactions=interactions
                 )
                 transformed_data.append(transformed_item)
                 # print(f"Added transformed item: {transformed_item}")

@@ -114,7 +114,7 @@ class TestDiscordExtractRawInfos(unittest.TestCase):
         extractor = DiscordExtractRawInfos(self.guild_id, self.platform_id)
         result = extractor.extract(datetime(2023, 6, 30), recompute=False)
 
-        expected_result = sample_data
+        expected_result = []
 
         self.assertEqual(result, expected_result)
 

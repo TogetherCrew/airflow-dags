@@ -37,17 +37,9 @@ class FetchDiscordPlatforms:
             "disconnectedAt": None,
             "platform": "discord",
         }
-        # TODO: Understand if we need to expand projection with:
-        # isInProgress
-        # icon
-        # name
-        # analyzerStartedAt
         projection = {
             "_id": 1,
-            "metadata.action": 1,
-            "metadata.window": 1,
             "metadata.period": 1,
-            "metadata.selectedChannels": 1,
             "metadata.id": 1,
         }
 
@@ -58,12 +50,7 @@ class FetchDiscordPlatforms:
             platform_data = {
                 "platform_id": str(doc["_id"]),
                 "metadata": {
-                    "action": doc.get("metadata", {}).get("action", None),
-                    "window": doc.get("metadata", {}).get("window", None),
                     "period": doc.get("metadata", {}).get("period", None),
-                    "selectedChannels": doc.get("metadata", {}).get(
-                        "selectedChannels", None
-                    ),
                     "id": doc.get("metadata", {}).get("id", None),
                 },
                 "recompute": False,
