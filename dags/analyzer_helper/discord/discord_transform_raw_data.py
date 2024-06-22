@@ -1,5 +1,4 @@
 import logging
-from datetime import datetime
 from typing import Any, Dict, List
 
 from analyzer_helper.discord.transform_raw_data_base import TransformRawDataBase
@@ -77,9 +76,7 @@ class DiscordTransformRawData(TransformRawDataBase):
         }
 
     def create_transformed_item(
-        self,
-        data: Dict[str, Any],
-        interactions: List[Dict[str, Any]]
+        self, data: Dict[str, Any], interactions: List[Dict[str, Any]]
     ) -> Dict[str, Any]:
         """
         Creates a transformed item dictionary.
@@ -116,7 +113,9 @@ class DiscordTransformRawData(TransformRawDataBase):
         }
 
     def transform(
-        self, raw_data: list, platform_id: str,
+        self,
+        raw_data: list,
+        platform_id: str,
     ) -> List[Dict[str, Any]]:
         transformed_data = []
         for data in raw_data:

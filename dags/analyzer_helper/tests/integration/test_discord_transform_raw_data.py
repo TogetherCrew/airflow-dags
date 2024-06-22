@@ -147,7 +147,8 @@ class TestDiscordTransformRawData(unittest.TestCase):
         ]
 
         result = self.transformer.transform(
-            raw_data=raw_data, platform_id=self.platform_id,
+            raw_data=raw_data,
+            platform_id=self.platform_id,
         )
         self.assertEqual(result, expected_result)
 
@@ -204,7 +205,8 @@ class TestDiscordTransformRawData(unittest.TestCase):
         ]
 
         result = self.transformer.transform(
-            raw_data=raw_data, platform_id=self.platform_id,
+            raw_data=raw_data,
+            platform_id=self.platform_id,
         )
         self.assertEqual(result, expected_result)
 
@@ -286,7 +288,8 @@ class TestDiscordTransformRawData(unittest.TestCase):
         ]
 
         result = self.transformer.transform(
-            raw_data=raw_data, platform_id=self.platform_id,
+            raw_data=raw_data,
+            platform_id=self.platform_id,
         )
         self.assertEqual(result, expected_result)
 
@@ -296,6 +299,7 @@ class TestDiscordTransformRawData(unittest.TestCase):
         expected_result = []
 
         result = self.transformer.transform(
-            raw_data=raw_data, platform_id=self.platform_id,
+            raw_data=raw_data,
+            platform_id=self.platform_id,
         )
         self.assertEqual(result, expected_result)
