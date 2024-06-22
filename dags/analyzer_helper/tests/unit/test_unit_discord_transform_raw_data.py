@@ -160,7 +160,7 @@ class DiscordTransformRawDataUnitTest(unittest.TestCase):
             "metadata": {
                 "thread_id": "jkl",
                 "channel_id": "mno",
-                "bot_activity": data["isGeneratedByWebhook"] 
+                "bot_activity": data["isGeneratedByWebhook"]
                 or self.transformer.user_bot_checker.is_user_bot("user789"),
             },
             "actions": [
