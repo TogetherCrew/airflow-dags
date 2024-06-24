@@ -1,25 +1,23 @@
 # type: ignore
 # remove the above when all tasks were filled
-from airflow import DAG
-from airflow.decorators import task
-
 import logging
 from datetime import datetime
 
+from airflow import DAG
+from airflow.decorators import task
 from analyzer_helper.discord.discord_analyze import Analyzer
 from analyzer_helper.discord.discord_extract_raw_infos import DiscordExtractRawInfos
 from analyzer_helper.discord.discord_extract_raw_members import DiscordExtractRawMembers
-
 from analyzer_helper.discord.discord_load_transformed_data import (
     DiscordLoadTransformedData,
 )
 from analyzer_helper.discord.discord_load_transformed_members import (
     DiscordLoadTransformedMembers,
 )
+from analyzer_helper.discord.discord_transform_raw_data import DiscordTransformRawData
 from analyzer_helper.discord.discord_transform_raw_members import (
     DiscordTransformRawMembers,
 )
-from analyzer_helper.discord.discord_transform_raw_data import DiscordTransformRawData
 from analyzer_helper.discord.fetch_discord_platforms import FetchDiscordPlatforms
 
 with DAG(
@@ -117,7 +115,10 @@ with DAG(
         extractor = DiscordExtractRawInfos(guild_id=guild_id, platform_id=platform_id)
         extracted_data = extractor.extract(period=period, recompute=recompute)
         transformer = DiscordTransformRawData(platform_id=platform_id)
-        transformed_data = transformer.transform(raw_data=extracted_data, platform_id=platform_id)
+        transformed_data = transformer.transform(
+            raw_data=extracted_data,
+            platform_id=platform_id
+        )
         # if recompute is True, then replace the whole previously saved data in
         # database with the new ones
         # else, just save the new ones
@@ -155,7 +156,10 @@ with DAG(
         extractor = DiscordExtractRawMembers(guild_id=guild_id, platform_id=platform_id)
         extracted_data = extractor.extract(period=period, recompute=recompute)
         transformer = DiscordTransformRawMembers(platform_id=platform_id)
-        transformed_data = transformer.transform(raw_data=extracted_data, platform_id=platform_id)
+        transformed_data = transformer.transform(
+            raw_data=extracted_data,
+            platform_id=platform_id
+        )
         loader = DiscordLoadTransformedMembers(platform_id=platform_id)
         loader.load(processed_data=transformed_data, recompute=recompute)
         pass
@@ -190,7 +194,6 @@ with DAG(
         window = metadata["window"]
         channels = metadata["selectedChannels"]
 
-        channels = []
         analyzer = Analyzer(
             platform_id=platform_id,
             channels=channels,

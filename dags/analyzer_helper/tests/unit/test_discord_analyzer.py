@@ -1,5 +1,5 @@
-from datetime import datetime
 import unittest
+from datetime import datetime
 
 from analyzer_helper.discord.discord_analyze import Analyzer
 
@@ -16,5 +16,5 @@ class TestAnalyzer(unittest.TestCase):
                 ["channel1", "channel2"],
                 datetime.now(),
                 {"INT_THR": 1, "UW_DEG_THR": 1},
-                {"period_size": 7, "step_size": 1}
+                {"period_size": 7, "step_size": 1},
             )

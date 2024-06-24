@@ -10,6 +10,6 @@ class Analyzer:
         channels: List[str],
         period: datetime,
         action: Dict[str, int],
-        window: Dict[str, int]
+        window: Dict[str, int],
     ) -> None:
         raise NotImplementedError("Analyzer is not implemented yet")
