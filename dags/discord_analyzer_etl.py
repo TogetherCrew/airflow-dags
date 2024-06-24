@@ -116,8 +116,7 @@ with DAG(
         extracted_data = extractor.extract(period=period, recompute=recompute)
         transformer = DiscordTransformRawData(platform_id=platform_id)
         transformed_data = transformer.transform(
-            raw_data=extracted_data,
-            platform_id=platform_id
+            raw_data=extracted_data, platform_id=platform_id
         )
         # if recompute is True, then replace the whole previously saved data in
         # database with the new ones
@@ -157,8 +156,7 @@ with DAG(
         extracted_data = extractor.extract(period=period, recompute=recompute)
         transformer = DiscordTransformRawMembers(platform_id=platform_id)
         transformed_data = transformer.transform(
-            raw_data=extracted_data,
-            platform_id=platform_id
+            raw_data=extracted_data, platform_id=platform_id
         )
         loader = DiscordLoadTransformedMembers(platform_id=platform_id)
         loader.load(processed_data=transformed_data, recompute=recompute)
