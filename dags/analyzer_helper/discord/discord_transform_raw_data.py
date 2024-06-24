@@ -8,7 +8,7 @@ from analyzer_helper.discord.utils.is_user_bot import UserBotChecker
 class DiscordTransformRawData(TransformRawDataBase):
     def __init__(self, platform_id: str):
         """
-        Initializes the class with platform and bot checker.
+        Initializes the class with a specific platform ID and sets up a bot checker for user validation.
         """
         self.platform_id = platform_id
         self.user_bot_checker = UserBotChecker(platform_id)
@@ -23,7 +23,7 @@ class DiscordTransformRawData(TransformRawDataBase):
         Creates an interaction dictionary.
 
         Args:
-            interaction_type (str): Name of the interaction (e.g., 'reply', 'mention').
+            name (str): Name of the interaction (e.g., 'reply', 'mention').
             users_engaged_id (List[str]): List of user IDs engaged in the interaction.
             type (str): Type of the interaction (e.g., 'emitter', 'receiver').
 
@@ -83,7 +83,6 @@ class DiscordTransformRawData(TransformRawDataBase):
 
         Args:
             data (Dict[str, Any]): Raw data containing message details.
-            period (datetime): The datetime period of the message.
             interactions (List[Dict[str, Any]]): List of interaction dictionaries.
 
         Returns:
@@ -117,6 +116,21 @@ class DiscordTransformRawData(TransformRawDataBase):
         raw_data: list,
         platform_id: str,
     ) -> List[Dict[str, Any]]:
+        """
+        Transforms raw Discord data into a structured format for analysis.
+
+        This method processes a list of raw data dictionaries, extracting relevant
+        interactions such as replies, mentions, and reactions, and organizes them 
+        into a list of transformed data dictionaries. Each dictionary represents
+        an interaction or message, enriched with metadata and interaction details.
+
+        Args:
+            raw_data (list): A list of dictionaries containing raw Discord message data.
+            platform_id (str): The platform ID to associate with the transformed data.
+
+        Returns:
+            List[Dict[str, Any]]: A list of dictionaries representing the transformed data.
+        """
         transformed_data = []
         for data in raw_data:
             try:
