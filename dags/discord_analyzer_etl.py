@@ -1,16 +1,15 @@
 # type: ignore
 # remove the above when all tasks were filled
+from airflow import DAG
+from airflow.decorators import task
+
 import logging
 from datetime import datetime
 
 from analyzer_helper.discord.discord_analyze import Analyzer
+from analyzer_helper.discord.discord_extract_raw_infos import DiscordExtractRawInfos
+from analyzer_helper.discord.discord_extract_raw_members import DiscordExtractRawMembers
 
-from analyzer_helper.discord.discord_extract_raw_infos import (
-    DiscordExtractRawInfos,
-)
-from analyzer_helper.discord.discord_extract_raw_members import (
-    DiscordExtractRawMembers,
-)
 from analyzer_helper.discord.discord_load_transformed_data import (
     DiscordLoadTransformedData,
 )
@@ -20,13 +19,8 @@ from analyzer_helper.discord.discord_load_transformed_members import (
 from analyzer_helper.discord.discord_transform_raw_members import (
     DiscordTransformRawMembers,
 )
-from analyzer_helper.discord.discord_transform_raw_data import (
-    DiscordTransformRawData,
-)
+from analyzer_helper.discord.discord_transform_raw_data import DiscordTransformRawData
 from analyzer_helper.discord.fetch_discord_platforms import FetchDiscordPlatforms
-
-from airflow import DAG
-from airflow.decorators import task
 
 with DAG(
     dag_id="discord_analyzer_etl",
@@ -113,26 +107,17 @@ with DAG(
             }
             ```
         """
-        platform_id = platform_info['platform_id']
-        guild_id = platform_info['guild_id']
-        period = platform_info['period']
-        recompute = platform_info['recompute']
+        platform_id = platform_info["platform_id"]
+        guild_id = platform_info["guild_id"]
+        period = platform_info["period"]
+        recompute = platform_info["recompute"]
         # If recompute is False, then just extract from the latest saved document
         # within rawmemberactivities collection using their date
         # else, just extract from the `period`
-        extractor = DiscordExtractRawInfos(
-            guild_id=guild_id,
-            platform_id=platform_id
-        )
-        extracted_data = extractor.extract(
-            period=period,
-            recompute=recompute
-        )
+        extractor = DiscordExtractRawInfos(guild_id=guild_id, platform_id=platform_id)
+        extracted_data = extractor.extract(period=period, recompute=recompute)
         transformer = DiscordTransformRawData(platform_id=platform_id)
-        transformed_data = transformer.transform(
-            raw_data=extracted_data,
-            platform_id=platform_id
-        )
+        transformed_data = transformer.transform(raw_data=extracted_data, platform_id=platform_id)
         # if recompute is True, then replace the whole previously saved data in
         # database with the new ones
         # else, just save the new ones
@@ -161,25 +146,16 @@ with DAG(
             }
             ```
         """
-        platform_id = platform_info['platform_id']
-        guild_id = platform_info['guild_id']
-        period = platform_info['period']
-        recompute = platform_info['recompute']
+        platform_id = platform_info["platform_id"]
+        guild_id = platform_info["guild_id"]
+        period = platform_info["period"]
+        recompute = platform_info["recompute"]
         # if recompute was false, then will fetch from the previously saved data date
         # else, then will fetch all platform's members data
-        extractor = DiscordExtractRawMembers(
-            guild_id=guild_id,
-            platform_id=platform_id
-        )
-        extracted_data = extractor.extract(
-            period=period,
-            recompute=recompute
-        )
+        extractor = DiscordExtractRawMembers(guild_id=guild_id, platform_id=platform_id)
+        extracted_data = extractor.extract(period=period, recompute=recompute)
         transformer = DiscordTransformRawMembers(platform_id=platform_id)
-        transformed_data = transformer.transform(
-            raw_data=extracted_data,
-            platform_id=platform_id
-        )
+        transformed_data = transformer.transform(raw_data=extracted_data, platform_id=platform_id)
         loader = DiscordLoadTransformedMembers(platform_id=platform_id)
         loader.load(processed_data=transformed_data, recompute=recompute)
         pass
@@ -203,16 +179,16 @@ with DAG(
         """
         logging.info(f"platform_processed: {platform_processed}")
         fetcher = FetchDiscordPlatforms()
-        platform_id = platform_processed['platform_id']
-        recompute = platform_processed['recompute']
+        platform_id = platform_processed["platform_id"]
+        recompute = platform_processed["recompute"]
 
         platform_data = fetcher.fetch_all_for_analyzer(platform_id)
 
-        metadata = platform_data['metadata']
-        period = metadata['period']
-        action = metadata['action']
-        window = metadata['window']
-        channels = metadata['selectedChannels']
+        metadata = platform_data["metadata"]
+        period = metadata["period"]
+        action = metadata["action"]
+        window = metadata["window"]
+        channels = metadata["selectedChannels"]
 
         channels = []
         analyzer = Analyzer(
@@ -220,7 +196,7 @@ with DAG(
             channels=channels,
             period=period,
             action=action,
-            window=window
+            window=window,
         )
         analyzer.analyze(recompute=recompute)
         pass

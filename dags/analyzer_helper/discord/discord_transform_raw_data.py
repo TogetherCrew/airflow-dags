@@ -120,7 +120,7 @@ class DiscordTransformRawData(TransformRawDataBase):
         Transforms raw Discord data into a structured format for analysis.
 
         This method processes a list of raw data dictionaries, extracting relevant
-        interactions such as replies, mentions, and reactions, and organizes them 
+        interactions such as replies, mentions, and reactions, and organizes them
         into a list of transformed data dictionaries. Each dictionary represents
         an interaction or message, enriched with metadata and interaction details.
 

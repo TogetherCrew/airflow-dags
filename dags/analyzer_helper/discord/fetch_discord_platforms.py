@@ -96,7 +96,9 @@ class FetchDiscordPlatforms:
                     "period": doc.get("metadata", {}).get("period", None),
                     "action": doc.get("metadata", {}).get("action", None),
                     "window": doc.get("metadata", {}).get("window", None),
-                    "selectedChannels": doc.get("metadata", {}).get("selectedChannels", None),
+                    "selectedChannels": doc.get("metadata", {}).get(
+                        "selectedChannels", None
+                    ),
                     "id": doc.get("metadata", {}).get("id", None),
                 },
                 "recompute": False,
@@ -106,42 +108,51 @@ class FetchDiscordPlatforms:
         return platforms
 
     # TODO: Decide if we'd like to merge `fetch_all` and `fetch_all_for_analzyer`
-    # def fetch_all(self, fields=None):
+    # def fetch_for_analyzer(self, platform_id: str):
     #     """
-    #     Fetches all Discord platforms from the MongoDB collection.
+    #     Fetches the specified Discord platform from the MongoDB collection with additional fields.
 
-    #     Args:
-    #         fields (dict, optional): The fields to include in the projection. Defaults to None.
+    #     Parameters:
+    #         platform_id (str): The platform ID to fetch.
 
     #     Returns:
-    #         list: A list of dictionaries, each containing platform data.
+    #         dict: A dictionary containing the platform data with the following fields:
+    #             - platform_id: The platform ID (_id from MongoDB).
+    #             - metadata: A dictionary containing period, action, window, selectedChannels, and id.
+    #             - recompute: A boolean set to False.
     #     """
     #     query = {
+    #         "_id": platform_id,
     #         "disconnectedAt": None,
     #         "platform": "discord",
     #     }
-    #     default_fields = {
+    #     projection = {
     #         "_id": 1,
     #         "metadata.period": 1,
+    #         "metadata.action": 1,
+    #         "metadata.window": 1,
+    #         "metadata.selectedChannels": 1,
     #         "metadata.id": 1,
     #     }
-    #     projection = fields if fields else default_fields
 
-    #     cursor = self.collection.find(query, projection)
-    #     platforms = []
+    #     doc = self.collection.find_one(query, projection)
 
-    #     for doc in cursor:
+    #     if doc:
+    #         metadata = {
+    #             "period": doc.get("metadata", {}).get("period", None),
+    #             "id": doc.get("metadata", {}).get("id", None)
+    #         }
+
+    #         if "metadata.action" in projection:
+    #             metadata["action"] = doc.get("metadata", {}).get("action", None)
+
+    #         if "metadata.window" in projection:
+    #             metadata["window"] = doc.get("metadata", {}).get("window", None)
+
     #         platform_data = {
     #             "platform_id": str(doc["_id"]),
-    #             "metadata": {
-    #                 "period": doc.get("metadata", {}).get("period", None),
-    #                 "id": doc.get("metadata", {}).get("id", None),
-    #                 **({"action": doc.get("metadata", {}).get("action", None)} if "metadata.action" in projection else {}),
-    #                 **({"window": doc.get("metadata", {}).get("window", None)} if "metadata.window" in projection else {}),
-    #             },
-    #             **({"channels": doc.get("channels", None)} if "channels" in projection else {}),
+    #             "metadata": metadata,
     #             "recompute": False,
     #         }
-    #         platforms.append(platform_data)
 
-    #     return platforms
+    #         return platform_data
