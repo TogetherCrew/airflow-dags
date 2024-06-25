@@ -114,8 +114,7 @@ with DAG(
         extractor = DiscordExtractRawInfos(guild_id=guild_id, platform_id=platform_id)
         extracted_data = extractor.extract(period=period, recompute=recompute)
         transformer = DiscordTransformRawData(
-            platform_id=platform_id,
-            guild_id=guild_id
+            platform_id=platform_id, guild_id=guild_id
         )
         transformed_data = transformer.transform(
             raw_data=extracted_data, platform_id=platform_id
