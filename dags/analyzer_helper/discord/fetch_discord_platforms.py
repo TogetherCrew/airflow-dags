@@ -1,5 +1,4 @@
 from bson import ObjectId
-
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 

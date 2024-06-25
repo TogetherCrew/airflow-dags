@@ -69,7 +69,6 @@ with DAG(
                 platform["recompute"] = True
 
         return platforms
-        pass
 
     @task
     def discord_etl_raw_data(
@@ -114,7 +113,7 @@ with DAG(
         # else, just extract from the `period`
         extractor = DiscordExtractRawInfos(guild_id=guild_id, platform_id=platform_id)
         extracted_data = extractor.extract(period=period, recompute=recompute)
-        transformer = DiscordTransformRawData(platform_id=platform_id)
+        transformer = DiscordTransformRawData(platform_id=platform_id, guild_id=guild_id)
         transformed_data = transformer.transform(
             raw_data=extracted_data, platform_id=platform_id
         )
@@ -123,7 +122,6 @@ with DAG(
         # else, just save the new ones
         loader = DiscordLoadTransformedData(platform_id=platform_id)
         loader.load(processed_data=transformed_data, recompute=recompute)
-        pass
 
     @task
     def discord_etl_raw_members(
@@ -160,7 +158,6 @@ with DAG(
         )
         loader = DiscordLoadTransformedMembers(platform_id=platform_id)
         loader.load(processed_data=transformed_data, recompute=recompute)
-        pass
 
     @task
     def analyze_discord(platform_processed: dict[str, str | bool]) -> None:
@@ -184,7 +181,7 @@ with DAG(
         platform_id = platform_processed["platform_id"]
         recompute = platform_processed["recompute"]
 
-        platform_data = fetcher.fetch_all_for_analyzer(platform_id)
+        platform_data = fetcher.fetch_analyzer_parameters(platform_id)
 
         metadata = platform_data["metadata"]
         period = metadata["period"]
@@ -200,7 +197,6 @@ with DAG(
             window=window,
         )
         analyzer.analyze(recompute=recompute)
-        pass
 
     platform_modules = fetch_discord_platforms()
 

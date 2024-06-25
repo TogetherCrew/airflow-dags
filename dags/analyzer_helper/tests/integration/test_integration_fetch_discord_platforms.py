@@ -350,9 +350,13 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
 
         second_platform_id = ObjectId("000000000000000000000002")
 
-        result_first_platform = fetcher.fetch_analyzer_parameters(platform_id=first_platform_id)
+        result_first_platform = fetcher.fetch_analyzer_parameters(
+            platform_id=first_platform_id
+        )
 
-        result_second_platform = fetcher.fetch_analyzer_parameters(platform_id=second_platform_id)
+        result_second_platform = fetcher.fetch_analyzer_parameters(
+            platform_id=second_platform_id
+        )
 
         result = result_first_platform + result_second_platform
 
