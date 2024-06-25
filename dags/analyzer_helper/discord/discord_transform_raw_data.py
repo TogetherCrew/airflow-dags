@@ -6,12 +6,13 @@ from analyzer_helper.discord.utils.is_user_bot import UserBotChecker
 
 
 class DiscordTransformRawData(TransformRawDataBase):
-    def __init__(self, platform_id: str):
+    def __init__(self, platform_id: str, guild_id: str):
         """
         Initializes the class with a specific platform ID and sets up a bot checker for user validation.
         """
+        self.guild_id = guild_id
         self.platform_id = platform_id
-        self.user_bot_checker = UserBotChecker(platform_id)
+        self.user_bot_checker = UserBotChecker(self.guild_id)
 
     def create_interaction_base(
         self,

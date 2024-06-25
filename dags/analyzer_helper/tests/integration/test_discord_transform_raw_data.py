@@ -13,7 +13,7 @@ class TestDiscordTransformRawData(unittest.TestCase):
         self.guild_id = "discord"
         self.platform_id = "discord"
         self.db = self.client[self.guild_id]
-        self.transformer = DiscordTransformRawData(self.platform_id)
+        self.transformer = DiscordTransformRawData(self.platform_id, self.guild_id)
         self.bot_checker = UserBotChecker(self.guild_id)
         self.guildmembers_collection = self.db["guildmembers"]
         self.period = datetime(2023, 1, 1)

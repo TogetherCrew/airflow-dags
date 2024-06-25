@@ -1,3 +1,5 @@
+from bson import ObjectId
+
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
@@ -59,7 +61,7 @@ class FetchDiscordPlatforms:
 
         return platforms
 
-    def fetch_all_for_analyzer(self, platform_id: str):
+    def fetch_analyzer_parameters(self, platform_id: str):
         """
         Fetches the specified Discord platform from the MongoDB collection with additional fields.
 
@@ -73,7 +75,7 @@ class FetchDiscordPlatforms:
                 - recompute: A boolean set to False.
         """
         query = {
-            "_id": platform_id,
+            "_id": ObjectId(platform_id),
             "disconnectedAt": None,
             "platform": "discord",
         }
@@ -107,7 +109,7 @@ class FetchDiscordPlatforms:
 
         return platforms
 
-    # TODO: Decide if we'd like to merge `fetch_all` and `fetch_all_for_analzyer`
+    # TODO: Decide if we'd like to merge `fetch_all` and `fetch_analyzer_parameters`
     # def fetch_for_analyzer(self, platform_id: str):
     #     """
     #     Fetches the specified Discord platform from the MongoDB collection with additional fields.

@@ -8,7 +8,8 @@ from bson import ObjectId
 class DiscordTransformRawDataUnitTest(unittest.TestCase):
     def setUp(self):
         self.platform_id = "discord"
-        self.transformer = DiscordTransformRawData(self.platform_id)
+        self.guild_id = "discord_guild"
+        self.transformer = DiscordTransformRawData(self.platform_id, self.guild_id)
 
     def test_create_interaction_base_valid_data(self):
         interaction = self.transformer.create_interaction_base(
