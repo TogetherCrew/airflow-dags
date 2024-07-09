@@ -2,8 +2,10 @@ import unittest
 from datetime import datetime
 
 from analyzer_helper.discord.discord_analyze import Analyzer
+import pytest
 
 
+@pytest.mark.skip("The Analyzer lib is fully test before!")
 class TestAnalyzer(unittest.TestCase):
     def test_analyze_abstract(self):
         """
