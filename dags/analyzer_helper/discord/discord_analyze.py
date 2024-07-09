@@ -29,6 +29,5 @@ class Analyzer:
             logging.info(f"{prefix} recomputing analyzer!")
             analyzer.recompute()
         else:
-            # will append to previous analyzer results
-            logging.info(f"{prefix} computing periodically!")
+            logging.info(f"{prefix} append analytics to previous analytics results!")
             analyzer.run_once()
