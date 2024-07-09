@@ -197,6 +197,7 @@ with DAG(
             period=period,
             action=action,
             window=window,
+            recompute=recompute,
         )
         analyzer.analyze(recompute=recompute)
 
