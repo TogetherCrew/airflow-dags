@@ -1,8 +1,8 @@
 import unittest
 from datetime import datetime
 
-from analyzer_helper.discord.discord_analyze import Analyzer
 import pytest
+from analyzer_helper.discord.discord_analyze import Analyzer
 
 
 @pytest.mark.skip("The Analyzer lib is fully test before!")
