@@ -1,8 +1,8 @@
 import logging
 from datetime import datetime
 
-from tc_analyzer_lib.tc_analyzer import TCAnalyzer
 from tc_analyzer_lib.schemas.platform_configs import DiscordAnalyzerConfig
+from tc_analyzer_lib.tc_analyzer import TCAnalyzer
 
 
 class Analyzer:
