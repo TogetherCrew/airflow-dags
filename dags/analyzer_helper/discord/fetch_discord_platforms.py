@@ -76,7 +76,7 @@ class FetchDiscordPlatforms:
         query = {
             "_id": ObjectId(platform_id),
             "disconnectedAt": None,
-            "platform": "discord",
+            "name": "discord",
         }
         projection = {
             "_id": 1,
