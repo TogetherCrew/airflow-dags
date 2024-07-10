@@ -50,11 +50,9 @@ class FetchDiscordPlatforms:
         for doc in cursor:
             platform_data = {
                 "platform_id": str(doc["_id"]),
-                "metadata": {
-                    "period": doc.get("metadata", {}).get("period", None),
-                    "id": doc.get("metadata", {}).get("id", None),
-                },
+                "period": doc.get("metadata", {}).get("period", None),
                 "recompute": False,
+                "guild_id": doc.get("metadata", {}).get("id", None),
             }
             platforms.append(platform_data)
 
