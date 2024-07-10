@@ -20,7 +20,7 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
         sample_data = [
             {
                 "_id": ObjectId("000000000000000000000001"),
-                "platform": "discord",
+                "name": "discord",
                 "metadata": {
                     "action": {
                         "INT_THR": 1,
@@ -61,7 +61,7 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
             },
             {
                 "_id": ObjectId("000000000000000000000002"),
-                "platform": "discord",
+                "name": "discord",
                 "metadata": {
                     "action": {
                         "INT_THR": 1,
@@ -102,7 +102,7 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
             },
             {
                 "_id": ObjectId("000000000000000000000003"),
-                "platform": "telegram",
+                "name": "telegram",
                 "metadata": {
                     "id": "999999999999999",
                     "isInProgress": False,
@@ -120,7 +120,7 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
             },
             {
                 "_id": ObjectId("000000000000000000000004"),
-                "platform": "discourse",
+                "name": "discourse",
                 "metadata": {
                     "id": "101010101010101",
                     "isInProgress": False,
@@ -224,7 +224,7 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
         sample_data = [
             {
                 "_id": ObjectId("000000000000000000000001"),
-                "platform": "discord",
+                "name": "discord",
                 "metadata": {
                     "action": {
                         "INT_THR": 1,
@@ -265,7 +265,7 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
             },
             {
                 "_id": ObjectId("000000000000000000000002"),
-                "platform": "discord",
+                "name": "discord",
                 "metadata": {
                     "action": {
                         "INT_THR": 1,
@@ -306,7 +306,7 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
             },
             {
                 "_id": ObjectId("000000000000000000000003"),
-                "platform": "telegram",
+                "name": "telegram",
                 "metadata": {
                     "id": "999999999999999",
                     "isInProgress": False,
@@ -324,7 +324,7 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
             },
             {
                 "_id": ObjectId("000000000000000000000004"),
-                "platform": "discourse",
+                "name": "discourse",
                 "metadata": {
                     "id": "101010101010101",
                     "isInProgress": False,
@@ -459,7 +459,7 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
     def test_get_single_data_fetch_all(self):
         sample_data = {
             "_id": ObjectId("000000000000000000000001"),
-            "platform": "discord",
+            "name": "discord",
             "metadata": {
                 "action": {
                     "INT_THR": 1,
@@ -548,7 +548,7 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
     def test_get_single_data_fetch_analyzer_parameters(self):
         sample_data = {
             "_id": ObjectId("000000000000000000000001"),
-            "platform": "discord",
+            "name": "discord",
             "metadata": {
                 "action": {
                     "INT_THR": 1,
