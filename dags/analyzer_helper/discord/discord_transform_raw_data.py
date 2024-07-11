@@ -207,15 +207,15 @@ class DiscordTransformRawData(TransformRawDataBase):
                                 type="emitter",
                             )
                             transformed_data.append(emitter_interaction)
-                            # print(f"Added reaction interaction: {emitter_interaction}")
-                # print(f"Type of interactions: {type(interactions)}")
-                # print(f"Content of interactions: {interactions}")
+
                 transformed_item = self.create_transformed_item(
                     data=data, interactions=interactions
                 )
                 transformed_data.append(transformed_item)
                 # print(f"Added transformed item: {transformed_item}")
             except Exception as e:
-                logging.error(f"Error transforming raw discord data. Error: {e}")
-        # print(f"Final transformed data: {transformed_data}")
+                logging.error(
+                    f"Error transforming raw discord data, "
+                    f"messageId: {data['messageId']}. Error: {e}"
+                )
         return transformed_data
