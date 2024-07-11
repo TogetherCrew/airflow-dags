@@ -37,9 +37,7 @@ class DiscordExtractRawInfos(ExtractRawInfosBase):
             if latest_activity_date is not None:
                 prefix = "previous data is avaialble! "
                 if latest_activity_date >= period:
-                    logging.info(
-                        f"{prefix}Extracting data from {latest_activity_date}"
-                    )
+                    logging.info(f"{prefix}Extracting data from {latest_activity_date}")
                     data = list(
                         self.collection.find(
                             {"createdDate": {"$gt": latest_activity_date}}
