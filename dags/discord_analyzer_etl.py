@@ -108,20 +108,28 @@ with DAG(
         guild_id = platform_info["guild_id"]
         period = platform_info["period"]
         recompute = platform_info["recompute"]
+        logging.info(
+            f"PROCESSING PLATFORM ID: {platform_id}, GUILD_ID: {guild_id}, "
+            f"PERIOD: {period}, RECOMPUTE: {recompute}"
+        )
         # If recompute is False, then just extract from the latest saved document
         # within rawmemberactivities collection using their date
         # else, just extract from the `period`
+        logging.info("Extracting raw discord data!")
         extractor = DiscordExtractRawInfos(guild_id=guild_id, platform_id=platform_id)
         extracted_data = extractor.extract(period=period, recompute=recompute)
+
+        logging.info("Transforming data to general data structure!")
         transformer = DiscordTransformRawData(
             platform_id=platform_id, guild_id=guild_id
         )
         transformed_data = transformer.transform(
-            raw_data=extracted_data, platform_id=platform_id
+            raw_data=extracted_data
         )
         # if recompute is True, then replace the whole previously saved data in
         # database with the new ones
         # else, just save the new ones
+        logging.info("Loading Transformed data in database!")
         loader = DiscordLoadTransformedData(platform_id=platform_id)
         loader.load(processed_data=transformed_data, recompute=recompute)
 
@@ -150,14 +158,24 @@ with DAG(
         guild_id = platform_info["guild_id"]
         period = platform_info["period"]
         recompute = platform_info["recompute"]
+
+        logging.info(
+            f"PROCESSING PLATFORM ID: {platform_id}, GUILD_ID: {guild_id}, "
+            f"PERIOD: {period}, RECOMPUTE: {recompute}"
+        )
         # if recompute was false, then will fetch from the previously saved data date
         # else, then will fetch all platform's members data
+        logging.info("Extracting Raw members!")
         extractor = DiscordExtractRawMembers(guild_id=guild_id, platform_id=platform_id)
         extracted_data = extractor.extract(period=period, recompute=recompute)
+
+        logging.info("Transforming raw members!")
         transformer = DiscordTransformRawMembers(platform_id=platform_id)
         transformed_data = transformer.transform(
             raw_data=extracted_data, platform_id=platform_id
         )
+
+        logging.info("Loading processed raw members!")
         loader = DiscordLoadTransformedMembers(platform_id=platform_id)
         loader.load(processed_data=transformed_data, recompute=recompute)
 

@@ -115,7 +115,6 @@ class DiscordTransformRawData(TransformRawDataBase):
     def transform(
         self,
         raw_data: list,
-        platform_id: str,
     ) -> List[Dict[str, Any]]:
         """
         Transforms raw Discord data into a structured format for analysis.
@@ -127,7 +126,6 @@ class DiscordTransformRawData(TransformRawDataBase):
 
         Args:
             raw_data (list): A list of dictionaries containing raw Discord message data.
-            platform_id (str): The platform ID to associate with the transformed data.
 
         Returns:
             List[Dict[str, Any]]: A list of dictionaries representing the transformed data.
@@ -207,15 +205,15 @@ class DiscordTransformRawData(TransformRawDataBase):
                                 type="emitter",
                             )
                             transformed_data.append(emitter_interaction)
-                            # print(f"Added reaction interaction: {emitter_interaction}")
-                # print(f"Type of interactions: {type(interactions)}")
-                # print(f"Content of interactions: {interactions}")
+
                 transformed_item = self.create_transformed_item(
                     data=data, interactions=interactions
                 )
                 transformed_data.append(transformed_item)
                 # print(f"Added transformed item: {transformed_item}")
             except Exception as e:
-                logging.error(f"Error transforming raw discord data. Error: {e}")
-        # print(f"Final transformed data: {transformed_data}")
+                logging.error(
+                    f"Error transforming raw discord data, "
+                    f"messageId: {data['messageId']}. Error: {e}"
+                )
         return transformed_data
