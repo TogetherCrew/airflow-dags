@@ -1,5 +1,3 @@
-# type: ignore
-# remove the above when all tasks were filled
 import logging
 from datetime import datetime
 
@@ -21,22 +19,24 @@ from analyzer_helper.discord.discord_transform_raw_members import (
 from analyzer_helper.discord.fetch_discord_platforms import FetchDiscordPlatforms
 
 with DAG(
-    dag_id="discord_analyzer_etl",
+    dag_id="discord_guild_analyzer_etl",
     start_date=datetime(2024, 5, 1),
-    schedule_interval="0 2 * * *",
+    schedule_interval=None,  # we would always run this manually
     catchup=False,
 ) as dag:
+    """
+    processing data just for one guild
+    """
 
     @task
-    def fetch_discord_platforms(**kwargs) -> list[dict[str, str | datetime | bool]]:
+    def fetch_discord_platforms(**kwargs) -> dict[str, str | datetime | bool]:
         """
         fetch discord platforms
 
         Returns
         ---------
-        platform_modules : list[dict[str, str | datetime | bool]]
-            a list of data for each platform
-            each platform's module information would have the information below
+        platform_module : dict[str, str | datetime | bool]
+            a platform's module information would have the information below
             ```
             {
                 'platform_id' : str,
@@ -47,26 +47,27 @@ with DAG(
             ```
 
         """
-        # the platform that needs to be recomputed
-        platform_id_recompute = kwargs["dag_run"].conf.get(  # noqa: F841
-            "recompute_platform", None
-        )
-        # for default we're setting the recompute for all platforms to False
-        # if an id for `recompute_platform` was given
-        # then just run the ETL job for that platform with `recompute = True`
-        # meaning the return would be a list with just one platform information
-        fetcher = FetchDiscordPlatforms()
+        recompute = kwargs["dag_run"].conf.get("recompute", None)  # noqa: F841
+        platform_id = kwargs["dag_run"].conf.get("platform_id", None)  # noqa: F841
+        period = kwargs["dag_run"].conf.get("period", None)  # noqa: F841
+        guild_id = kwargs["dag_run"].conf.get("guild_id", None)  # noqa: F841
+        if recompute is None:
+            raise AttributeError("recompute is not sent!")
+        if platform_id is None:
+            raise AttributeError("platform_id is not sent!")
+        if period is None:
+            raise AttributeError("period is not sent!")
+        if guild_id is None:
+            raise AttributeError("guild_id is not sent!")
 
-        platforms = fetcher.fetch_all()
-
-        if platform_id_recompute:
-            platforms = [
-                platform
-                for platform in platforms
-                if platform["platform_id"] == platform_id_recompute
-            ]
-            for platform in platforms:
-                platform["recompute"] = True
+        platforms = [
+            {
+                "recompute": recompute,
+                "platform_id": platform_id,
+                "period": period,
+                "guild_id": guild_id,
+            }
+        ]
 
         return platforms
 
@@ -119,8 +120,6 @@ with DAG(
         extractor = DiscordExtractRawInfos(guild_id=guild_id, platform_id=platform_id)
         extracted_data = extractor.extract(period=period, recompute=recompute)
 
-        logging.info(f"{len(extracted_data)} raw data extracted!")
-
         logging.info("Transforming data to general data structure!")
         transformer = DiscordTransformRawData(
             platform_id=platform_id, guild_id=guild_id
@@ -132,12 +131,9 @@ with DAG(
         # if recompute is True, then replace the whole previously saved data in
         # database with the new ones
         # else, just save the new ones
-        if len(transformed_data) != 0:
-            logging.info("Loading Transformed data in database!")
-            loader = DiscordLoadTransformedData(platform_id=platform_id)
-            loader.load(processed_data=transformed_data, recompute=recompute)
-        else:
-            logging.info("No new data to load!")
+        logging.info("Loading Transformed data in database!")
+        loader = DiscordLoadTransformedData(platform_id=platform_id)
+        loader.load(processed_data=transformed_data, recompute=recompute)
 
     @task
     def discord_etl_raw_members(
@@ -173,20 +169,17 @@ with DAG(
         # else, then will fetch all platform's members data
         logging.info("Extracting Raw members!")
         extractor = DiscordExtractRawMembers(guild_id=guild_id, platform_id=platform_id)
-        extracted_data = extractor.extract(recompute=recompute)
-
-        logging.info(f"{len(extracted_data)} raw members extracted!")
+        extracted_data = extractor.extract(period=period, recompute=recompute)
 
         logging.info("Transforming raw members!")
-        transformer = DiscordTransformRawMembers()
-        transformed_data = transformer.transform(raw_members=extracted_data)
+        transformer = DiscordTransformRawMembers(platform_id=platform_id)
+        transformed_data = transformer.transform(
+            raw_data=extracted_data, platform_id=platform_id
+        )
 
-        if len(transformed_data) != 0:
-            logging.info("Loading processed raw members!")
-            loader = DiscordLoadTransformedMembers(platform_id=platform_id)
-            loader.load(processed_data=transformed_data, recompute=recompute)
-        else:
-            logging.info("No new data to load!")
+        logging.info("Loading processed raw members!")
+        loader = DiscordLoadTransformedMembers(platform_id=platform_id)
+        loader.load(processed_data=transformed_data, recompute=recompute)
 
     @task
     def analyze_discord(platform_processed: dict[str, str | bool]) -> None:
