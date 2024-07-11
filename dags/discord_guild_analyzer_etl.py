@@ -1,5 +1,3 @@
-# type: ignore
-# remove the above when all tasks were filled
 import logging
 from datetime import datetime
 
@@ -23,7 +21,7 @@ from analyzer_helper.discord.fetch_discord_platforms import FetchDiscordPlatform
 with DAG(
     dag_id="discord_guild_analyzer_etl",
     start_date=datetime(2024, 5, 1),
-    schedule_interval="0 2 * * *",
+    schedule_interval=None,  # we would always run this manually
     catchup=False,
 ) as dag:
     """
