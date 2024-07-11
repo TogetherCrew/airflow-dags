@@ -1,3 +1,5 @@
+import logging
+
 from analyzer_helper.discord.extract_raw_member_base import ExtractRawMembersBase
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
@@ -36,10 +38,15 @@ class DiscordExtractRawMembers(ExtractRawMembersBase):
             )
 
             if latest_joined_at:
+                logging.info(
+                    f"previous data is available! "
+                    f"Extracting members after the joined_at {latest_rawmember}!"
+                )
                 members = list(
                     self.guild_collection.find({"joinedAt": {"$gte": latest_joined_at}})
                 )
             else:
+                logging.info("No processed members is available! extracting all.")
                 members = list(self.guild_collection.find({}))
 
         return members
