@@ -21,7 +21,7 @@ from analyzer_helper.discord.discord_transform_raw_members import (
 from analyzer_helper.discord.fetch_discord_platforms import FetchDiscordPlatforms
 
 with DAG(
-    dag_id="discord_analyzer_etl",
+    dag_id="all_discord_guilds_analyzer_etl",
     start_date=datetime(2024, 5, 1),
     schedule_interval="0 2 * * *",
     catchup=False,
