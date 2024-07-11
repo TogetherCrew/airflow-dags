@@ -49,18 +49,10 @@ with DAG(
             ```
 
         """
-        recompute = kwargs["dag_run"].conf.get(  # noqa: F841
-            "recompute", None
-        )
-        platform_id = kwargs["dag_run"].conf.get(  # noqa: F841
-            "platform_id", None
-        )
-        period = kwargs["dag_run"].conf.get(  # noqa: F841
-            "period", None
-        )
-        guild_id = kwargs["dag_run"].conf.get(  # noqa: F841
-            "guild_id", None
-        )
+        recompute = kwargs["dag_run"].conf.get("recompute", None)  # noqa: F841
+        platform_id = kwargs["dag_run"].conf.get("platform_id", None)  # noqa: F841
+        period = kwargs["dag_run"].conf.get("period", None)  # noqa: F841
+        guild_id = kwargs["dag_run"].conf.get("guild_id", None)  # noqa: F841
         if recompute is None:
             raise AttributeError("recompute is not sent!")
         if platform_id is None:
@@ -72,10 +64,10 @@ with DAG(
 
         platforms = [
             {
-               "recompute": recompute,
-               "platform_id": platform_id,
-               "period": period,
-               "guild_id": guild_id,
+                "recompute": recompute,
+                "platform_id": platform_id,
+                "period": period,
+                "guild_id": guild_id,
             }
         ]
 
