@@ -39,7 +39,7 @@ class DiscordExtractRawMembers(ExtractRawMembersBase):
 
             if latest_joined_at:
                 logging.info(
-                    f"previous data is avaialble! "
+                    f"previous data is available! "
                     f"Extracting members after the joined_at {latest_rawmember}!"
                 )
                 members = list(
