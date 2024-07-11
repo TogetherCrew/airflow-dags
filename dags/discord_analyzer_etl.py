@@ -123,7 +123,10 @@ with DAG(
         transformer = DiscordTransformRawData(
             platform_id=platform_id, guild_id=guild_id
         )
-        transformed_data = transformer.transform(raw_data=extracted_data)
+        transformed_data = transformer.transform(
+            raw_data=extracted_data,
+            platform_id=platform_id,
+        )
         # if recompute is True, then replace the whole previously saved data in
         # database with the new ones
         # else, just save the new ones

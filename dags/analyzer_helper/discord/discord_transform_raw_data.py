@@ -115,6 +115,7 @@ class DiscordTransformRawData(TransformRawDataBase):
     def transform(
         self,
         raw_data: list,
+        platform_id: str,
     ) -> List[Dict[str, Any]]:
         """
         Transforms raw Discord data into a structured format for analysis.
@@ -126,6 +127,7 @@ class DiscordTransformRawData(TransformRawDataBase):
 
         Args:
             raw_data (list): A list of dictionaries containing raw Discord message data.
+            platform_id (str): The platform ID to associate with the transformed data.
 
         Returns:
             List[Dict[str, Any]]: A list of dictionaries representing the transformed data.
