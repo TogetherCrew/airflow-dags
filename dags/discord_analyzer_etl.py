@@ -173,13 +173,13 @@ with DAG(
         # else, then will fetch all platform's members data
         logging.info("Extracting Raw members!")
         extractor = DiscordExtractRawMembers(guild_id=guild_id, platform_id=platform_id)
-        extracted_data = extractor.extract(period=period, recompute=recompute)
+        extracted_data = extractor.extract(recompute=recompute)
 
         logging.info(f"{len(extracted_data)} raw members extracted!")
 
         logging.info("Transforming raw members!")
         transformer = DiscordTransformRawMembers(platform_id=platform_id)
-        transformed_data = transformer.transform(raw_data=extracted_data)
+        transformed_data = transformer.transform(raw_members=extracted_data)
 
         if len(transformed_data) != 0:
             logging.info("Loading processed raw members!")
