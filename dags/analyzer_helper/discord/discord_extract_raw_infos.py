@@ -35,7 +35,7 @@ class DiscordExtractRawInfos(ExtractRawInfosBase):
             latest_activity_date = latest_activity["date"] if latest_activity else None
 
             if latest_activity_date is not None:
-                prefix = "previous data is avaialble! "
+                prefix = "previous data is available! "
                 if latest_activity_date >= period:
                     logging.info(f"{prefix}Extracting data from {latest_activity_date}")
                     data = list(
