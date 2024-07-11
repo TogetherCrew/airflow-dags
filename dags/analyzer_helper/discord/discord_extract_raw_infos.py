@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 
 from analyzer_helper.discord.extract_raw_info_base import ExtractRawInfosBase
@@ -34,14 +35,18 @@ class DiscordExtractRawInfos(ExtractRawInfosBase):
             latest_activity_date = latest_activity["date"] if latest_activity else None
 
             if latest_activity_date is not None:
+                prefix = "previous data is available! "
                 if latest_activity_date >= period:
+                    logging.info(f"{prefix}Extracting data from {latest_activity_date}")
                     data = list(
                         self.collection.find(
                             {"createdDate": {"$gt": latest_activity_date}}
                         )
                     )
                 else:
+                    logging.info(f"{prefix}Extracting data from {period}")
                     data = list(self.collection.find({"createdDate": {"$gte": period}}))
             else:
+                logging.info("No previous data available! Extracting all")
                 data = list(self.collection.find({}))
         return data

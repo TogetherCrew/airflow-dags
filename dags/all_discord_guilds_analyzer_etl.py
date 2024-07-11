@@ -119,6 +119,8 @@ with DAG(
         extractor = DiscordExtractRawInfos(guild_id=guild_id, platform_id=platform_id)
         extracted_data = extractor.extract(period=period, recompute=recompute)
 
+        logging.info(f"{len(extracted_data)} raw data extracted!")
+
         logging.info("Transforming data to general data structure!")
         transformer = DiscordTransformRawData(
             platform_id=platform_id, guild_id=guild_id
@@ -130,9 +132,12 @@ with DAG(
         # if recompute is True, then replace the whole previously saved data in
         # database with the new ones
         # else, just save the new ones
-        logging.info("Loading Transformed data in database!")
-        loader = DiscordLoadTransformedData(platform_id=platform_id)
-        loader.load(processed_data=transformed_data, recompute=recompute)
+        if len(transformed_data) != 0:
+            logging.info("Loading Transformed data in database!")
+            loader = DiscordLoadTransformedData(platform_id=platform_id)
+            loader.load(processed_data=transformed_data, recompute=recompute)
+        else:
+            logging.info("No new data to load!")
 
     @task
     def discord_etl_raw_members(
@@ -168,17 +173,20 @@ with DAG(
         # else, then will fetch all platform's members data
         logging.info("Extracting Raw members!")
         extractor = DiscordExtractRawMembers(guild_id=guild_id, platform_id=platform_id)
-        extracted_data = extractor.extract(period=period, recompute=recompute)
+        extracted_data = extractor.extract(recompute=recompute)
+
+        logging.info(f"{len(extracted_data)} raw members extracted!")
 
         logging.info("Transforming raw members!")
-        transformer = DiscordTransformRawMembers(platform_id=platform_id)
-        transformed_data = transformer.transform(
-            raw_data=extracted_data, platform_id=platform_id
-        )
+        transformer = DiscordTransformRawMembers()
+        transformed_data = transformer.transform(raw_members=extracted_data)
 
-        logging.info("Loading processed raw members!")
-        loader = DiscordLoadTransformedMembers(platform_id=platform_id)
-        loader.load(processed_data=transformed_data, recompute=recompute)
+        if len(transformed_data) != 0:
+            logging.info("Loading processed raw members!")
+            loader = DiscordLoadTransformedMembers(platform_id=platform_id)
+            loader.load(processed_data=transformed_data, recompute=recompute)
+        else:
+            logging.info("No new data to load!")
 
     @task
     def analyze_discord(platform_processed: dict[str, str | bool]) -> None:
