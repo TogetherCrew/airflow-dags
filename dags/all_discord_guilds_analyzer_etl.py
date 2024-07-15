@@ -3,6 +3,7 @@ from datetime import datetime
 
 from airflow import DAG
 from airflow.decorators import task
+from airflow.utils.trigger_rule import TriggerRule
 from analyzer_helper.discord.discord_analyze import Analyzer
 from analyzer_helper.discord.discord_extract_raw_infos import DiscordExtractRawInfos
 from analyzer_helper.discord.discord_extract_raw_members import DiscordExtractRawMembers
@@ -137,8 +138,6 @@ with DAG(
         else:
             logging.info("No new data to load!")
 
-        return platform_info
-
     @task
     def discord_etl_raw_members(
         platform_info: dict[str, str | datetime | bool]
@@ -188,7 +187,7 @@ with DAG(
         else:
             logging.info("No new data to load!")
 
-    @task
+    @task(trigger_rule=TriggerRule.NONE_SKIPPED)
     def analyze_discord(platform_processed: dict[str, str | bool]) -> None:
         """
         start the analyzer to process data
@@ -233,4 +232,4 @@ with DAG(
     raw_data_etl = discord_etl_raw_data.expand(platform_info=platform_modules)
     raw_members_etl = discord_etl_raw_members.expand(platform_info=platform_modules)
 
-    raw_members_etl >> analyze_discord.expand(platform_processed=raw_data_etl)
+    raw_members_etl >> analyze_discord.expand(platform_processed=platform_modules)
