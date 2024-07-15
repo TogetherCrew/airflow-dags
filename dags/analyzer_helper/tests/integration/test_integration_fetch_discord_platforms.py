@@ -390,11 +390,9 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
 
         platform_id = ObjectId("000000000000000000000001")
 
-        result = fetcher.fetch_analyzer_parameters(platform_id)
-
-        expected_result = []
-
-        self.assertEqual(result, expected_result)
+        # no results is given
+        with self.assertRaises(ValueError):
+            fetcher.fetch_analyzer_parameters(platform_id)
 
     def test_get_single_data_fetch_all(self):
         sample_data = {
@@ -445,12 +443,14 @@ class TestFetchDiscordPlatforms(unittest.TestCase):
 
         result = fetcher.fetch_all()
 
-        expected_result = {
-            "platform_id": str(sample_data["_id"]),
-            "period": datetime(2023, 10, 20),
-            "recompute": False,
-            "guild_id": "777777777777777",
-        }
+        expected_result = [
+            {
+                "platform_id": str(sample_data["_id"]),
+                "period": datetime(2023, 10, 20),
+                "recompute": False,
+                "guild_id": "777777777777777",
+            }
+        ]
         self.assertEqual(result, expected_result)
 
     def test_get_single_data_fetch_analyzer_parameters(self):
