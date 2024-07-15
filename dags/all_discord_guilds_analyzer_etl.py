@@ -137,6 +137,8 @@ with DAG(
         else:
             logging.info("No new data to load!")
 
+        return platform_info
+
     @task
     def discord_etl_raw_members(
         platform_info: dict[str, str | datetime | bool]
@@ -216,7 +218,8 @@ with DAG(
         window = metadata["window"]
         channels = metadata["selectedChannels"]
 
-        analyzer = Analyzer(
+        analyzer = Analyzer()
+        analyzer.analyze(
             platform_id=platform_id,
             channels=channels,
             period=period,
@@ -224,11 +227,10 @@ with DAG(
             window=window,
             recompute=recompute,
         )
-        analyzer.analyze(recompute=recompute)
 
     platform_modules = fetch_discord_platforms()
 
     raw_data_etl = discord_etl_raw_data.expand(platform_info=platform_modules)
     raw_members_etl = discord_etl_raw_members.expand(platform_info=platform_modules)
 
-    raw_members_etl >> analyze_discord(platform_processed=raw_data_etl)
+    raw_members_etl >> analyze_discord.expand(platform_processed=raw_data_etl)

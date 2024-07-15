@@ -58,7 +58,7 @@ class FetchDiscordPlatforms:
 
         return platforms
 
-    def fetch_analyzer_parameters(self, platform_id: str):
+    def fetch_analyzer_parameters(self, platform_id: str) -> dict:
         """
         Fetches the specified Discord platform from the MongoDB collection with additional fields.
 
@@ -85,26 +85,27 @@ class FetchDiscordPlatforms:
             "metadata.id": 1,
         }
 
-        cursor = self.collection.find(query, projection)
-        platforms = []
+        platform = self.collection.find_one(query, projection)
 
-        for doc in cursor:
+        if platform is not None:
             platform_data = {
-                "platform_id": str(doc["_id"]),
+                "platform_id": str(platform["_id"]),
                 "metadata": {
-                    "period": doc.get("metadata", {}).get("period", None),
-                    "action": doc.get("metadata", {}).get("action", None),
-                    "window": doc.get("metadata", {}).get("window", None),
-                    "selectedChannels": doc.get("metadata", {}).get(
+                    "period": platform.get("metadata", {}).get("period", None),
+                    "action": platform.get("metadata", {}).get("action", None),
+                    "window": platform.get("metadata", {}).get("window", None),
+                    "selectedChannels": platform.get("metadata", {}).get(
                         "selectedChannels", None
                     ),
-                    "id": doc.get("metadata", {}).get("id", None),
+                    "id": platform.get("metadata", {}).get("id", None),
                 },
                 "recompute": False,
             }
-            platforms.append(platform_data)
-
-        return platforms
+            return platform_data
+        else:
+            raise ValueError(
+                f"No platform given platform_id: {platform_id} is available!"
+            )
 
     # TODO: Decide if we'd like to merge `fetch_all` and `fetch_analyzer_parameters`
     # def fetch_for_analyzer(self, platform_id: str):
