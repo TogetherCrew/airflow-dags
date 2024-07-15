@@ -232,4 +232,6 @@ with DAG(
     raw_data_etl = discord_etl_raw_data.expand(platform_info=platform_modules)
     raw_members_etl = discord_etl_raw_members.expand(platform_info=platform_modules)
 
-    raw_members_etl >> analyze_discord.expand(platform_processed=platform_modules)
+    analyze_discord_task = analyze_discord.expand(platform_processed=platform_modules)
+
+    [raw_data_etl, raw_members_etl] >> analyze_discord_task

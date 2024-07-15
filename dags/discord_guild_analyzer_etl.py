@@ -60,16 +60,14 @@ with DAG(
         if guild_id is None:
             raise AttributeError("guild_id is not sent!")
 
-        platforms = [
-            {
-                "recompute": recompute,
-                "platform_id": platform_id,
-                "period": period,
-                "guild_id": guild_id,
-            }
-        ]
+        platform = {
+            "recompute": recompute,
+            "platform_id": platform_id,
+            "period": period,
+            "guild_id": guild_id,
+        }
 
-        return platforms
+        return platform
 
     @task
     def discord_etl_raw_data(
@@ -131,9 +129,12 @@ with DAG(
         # if recompute is True, then replace the whole previously saved data in
         # database with the new ones
         # else, just save the new ones
-        logging.info("Loading Transformed data in database!")
-        loader = DiscordLoadTransformedData(platform_id=platform_id)
-        loader.load(processed_data=transformed_data, recompute=recompute)
+        if len(transformed_data) != 0:
+            logging.info("Loading Transformed data in database!")
+            loader = DiscordLoadTransformedData(platform_id=platform_id)
+            loader.load(processed_data=transformed_data, recompute=recompute)
+        else:
+            logging.info("No new data to load!")
 
     @task
     def discord_etl_raw_members(
@@ -177,9 +178,12 @@ with DAG(
             raw_data=extracted_data, platform_id=platform_id
         )
 
-        logging.info("Loading processed raw members!")
-        loader = DiscordLoadTransformedMembers(platform_id=platform_id)
-        loader.load(processed_data=transformed_data, recompute=recompute)
+        if len(transformed_data) != 0:
+            logging.info("Loading processed raw members!")
+            loader = DiscordLoadTransformedMembers(platform_id=platform_id)
+            loader.load(processed_data=transformed_data, recompute=recompute)
+        else:
+            logging.info("No new data to load!")
 
     @task
     def analyze_discord(platform_processed: dict[str, str | bool]) -> None:
@@ -211,7 +215,8 @@ with DAG(
         window = metadata["window"]
         channels = metadata["selectedChannels"]
 
-        analyzer = Analyzer(
+        analyzer = Analyzer()
+        analyzer.analyze(
             platform_id=platform_id,
             channels=channels,
             period=period,
@@ -219,11 +224,12 @@ with DAG(
             window=window,
             recompute=recompute,
         )
-        analyzer.analyze(recompute=recompute)
 
     platform_modules = fetch_discord_platforms()
 
-    raw_data_etl = discord_etl_raw_data.expand(platform_info=platform_modules)
-    raw_members_etl = discord_etl_raw_members.expand(platform_info=platform_modules)
+    raw_data_etl = discord_etl_raw_data(platform_info=platform_modules)
+    raw_members_etl = discord_etl_raw_members(platform_info=platform_modules)
 
-    raw_members_etl >> analyze_discord(platform_processed=raw_data_etl)
+    analyze_discord_task = analyze_discord(platform_processed=platform_modules)
+
+    [raw_data_etl, raw_members_etl] >> analyze_discord_task
