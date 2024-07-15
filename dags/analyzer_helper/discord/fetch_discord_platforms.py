@@ -107,7 +107,6 @@ class FetchDiscordPlatforms:
                 f"No platform given platform_id: {platform_id} is available!"
             )
 
-
     # TODO: Decide if we'd like to merge `fetch_all` and `fetch_analyzer_parameters`
     # def fetch_for_analyzer(self, platform_id: str):
     #     """

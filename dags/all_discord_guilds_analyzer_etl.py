@@ -225,7 +225,7 @@ with DAG(
             period=period,
             action=action,
             window=window,
-            recompute=recompute
+            recompute=recompute,
         )
 
     platform_modules = fetch_discord_platforms()
