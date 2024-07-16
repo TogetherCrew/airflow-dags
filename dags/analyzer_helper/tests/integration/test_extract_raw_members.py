@@ -8,23 +8,42 @@ class TestExtractRawMembers(unittest.TestCase):
         cls.neo4jConnection = Neo4jConnection()
         cls.driver = cls.neo4jConnection.connect_neo4j()
         cls.extractor = ExtractRawMembers()
+        cls.test_forum_endpoint = "https://test-forum.discourse.org"
 
         with cls.driver.session() as session:
+
+            result_forum = session.run(
+                """
+                CREATE (f:DiscourseForum {endpoint: $forum_endpoint})
+                RETURN id(f) AS id
+                """,
+                forum_endpoint=cls.test_forum_endpoint
+            )
+            cls.forum_id = result_forum.single()["id"]
+            
+            # Create user1 and relate to forum
             result1 = session.run(
                 """
+                MATCH (f:DiscourseForum {endpoint: $forum_endpoint})
                 CREATE (u:DiscourseUser {id: 'user1', avatarTemplate: 'avatar1', createdAt: '2023-07-01'})
-                -[:HAS_BADGE]->(:Badge {id: 'badge1'})
+                -[:HAS_JOINED]->(f)
+                CREATE (u)-[:HAS_BADGE]->(:Badge {id: 'badge1'})
                 RETURN id(u) AS id
-                """
+                """,
+                forum_endpoint=cls.test_forum_endpoint
             )
             cls.user1_id = result1.single()["id"]
 
+            # Create user2 and relate to forum
             result2 = session.run(
                 """
+                MATCH (f:DiscourseForum {endpoint: $forum_endpoint})
                 CREATE (u:DiscourseUser {id: 'user2', avatarTemplate: 'avatar2', createdAt: '2023-07-02'})
-                -[:HAS_BADGE]->(:Badge {id: 'badge2'})
+                -[:HAS_JOINED]->(f)
+                CREATE (u)-[:HAS_BADGE]->(:Badge {id: 'badge2'})
                 RETURN id(u) AS id
-                """
+                """,
+                forum_endpoint=cls.test_forum_endpoint
             )
             cls.user2_id = result2.single()["id"]
 

@@ -1,5 +1,4 @@
 import unittest
-from datetime import datetime
 from analyzer_helper.discourse.extract_raw_info import ExtractRawInfo
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
 
@@ -12,11 +11,9 @@ class TestExtractRawInfo(unittest.TestCase):
         cls.forum_endpoint = "http://test_forum"
         cls.extractor = ExtractRawInfo(cls.forum_endpoint)
 
-        # Clear existing data
         with cls.driver.session() as session:
             session.run("MATCH (n) DETACH DELETE n")
 
-        # Set up test data
         with cls.driver.session() as session:
             session.run("""
                 CREATE (f:DiscourseForum {endpoint: $endpoint, uuid: 'forum-uuid'}),
@@ -35,11 +32,11 @@ class TestExtractRawInfo(unittest.TestCase):
                        (c)-[:HAS_TOPIC]->(t)
                 """, {'endpoint': cls.forum_endpoint})
         
-        # Optional: Print nodes and relationships
         with cls.driver.session() as session:
             result = session.run("MATCH (n)-[r]->() RETURN n, r LIMIT 20")
-            for item in result:
-                print(item)
+            # Debugging
+            # for item in result:
+            #     print(item)
 
     @classmethod
     def tearDownClass(cls):

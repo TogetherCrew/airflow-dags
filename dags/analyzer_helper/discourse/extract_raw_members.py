@@ -1,12 +1,13 @@
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
 
 class ExtractRawMembers:
-    def __init__(self):
+    def __init__(self, forum_endpoint:str):
         """
         Initialize the ExtractRawMembers with the Neo4j connection parameters.
         """
         self.neo4jConnection = Neo4jConnection()
         self.driver = self.neo4jConnection.connect_neo4j()
+        self.forum_endpoiont = forum_endpoint
 
     def close(self):
         """
@@ -21,6 +22,8 @@ class ExtractRawMembers:
         :return: List of dictionaries containing member details.
         """
         query = """
+        MATCH (forum:DiscourseForum {endpoint: $forum_endpoint})
+        MATCH (user:DiscourseUser)-[:HAS_JOINED]->(forum)
         MATCH (user:DiscourseUser)-[:HAS_BADGE]->(badge)
         WHERE user.id IS NOT NULL
         WITH user, collect(badge.id) AS badgeIds
@@ -36,8 +39,9 @@ extractor = ExtractRawMembers()
 try:
     # Call the fetch_member_details method
     member_details = extractor.fetch_member_details()
-    for member in member_details:
-        print(member)
+    print(member_details)
+    # for member in member_details:
+    #     print(member)
 finally:
     # Ensure the Neo4j connection is closed
     extractor.close()
