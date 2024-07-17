@@ -185,7 +185,7 @@ class DiscordTransformRawData(TransformRawDataBase):
                 if data.get("reactions"):
                     for reaction in data["reactions"]:
                         parts = reaction.split(",")
-                        if len(parts) > 2:
+                        if len(parts) >= 2:
                             all_reaction_users.extend(parts[:-1])
 
                     if all_reaction_users:
