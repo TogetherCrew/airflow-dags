@@ -33,8 +33,8 @@ class DiscordTransformRawData(TransformRawDataBase):
         """
         return {
             "name": name,
-            "users_engaged_id": users_engaged_id,
             "type": type,
+            "users_engaged_id": users_engaged_id,
         }
 
     def create_interaction(
@@ -60,20 +60,20 @@ class DiscordTransformRawData(TransformRawDataBase):
         """
         is_bot = self.user_bot_checker.is_user_bot(author)
         return {
+            "actions": [],
             "author_id": author,
             "date": data.get("createdDate"),
-            "source_id": data["messageId"],
-            "metadata": {
-                "thread_id": data["threadId"],
-                "channel_id": data["channelId"],
-                "bot_activity": data["isGeneratedByWebhook"] or is_bot,
-            },
-            "actions": [],
             "interactions": [
                 self.create_interaction_base(
                     name=name, users_engaged_id=engaged_users, type=type
                 )
             ],
+            "metadata": {
+                "bot_activity": data["isGeneratedByWebhook"] or is_bot,
+                "channel_id": data["channelId"],
+                "thread_id": data["threadId"],
+            },
+            "source_id": data["messageId"],
         }
 
     def create_transformed_item(
@@ -100,16 +100,16 @@ class DiscordTransformRawData(TransformRawDataBase):
         ]
 
         return {
+            "actions": [{"name": "message", "type": "emitter"}],
             "author_id": data["author"],
             "date": data.get("createdDate"),
-            "source_id": data["messageId"],
+            "interactions": flat_interactions,
             "metadata": {
                 "thread_id": data["threadId"],
                 "channel_id": data["channelId"],
                 "bot_activity": data["isGeneratedByWebhook"] or is_bot,
             },
-            "actions": [{"name": "message", "type": "emitter"}],
-            "interactions": flat_interactions,
+            "source_id": data["messageId"],
         }
 
     def transform(
@@ -203,8 +203,9 @@ class DiscordTransformRawData(TransformRawDataBase):
                                 data=data,
                                 name="reaction",
                                 author=user,
-                                engaged_users=[data["author"]],
                                 type="emitter",
+                                engaged_users=[data["author"]],
+                                # type="emitter",
                             )
                             transformed_data.append(emitter_interaction)
                             # print(f"Added reaction interaction: {emitter_interaction}")
