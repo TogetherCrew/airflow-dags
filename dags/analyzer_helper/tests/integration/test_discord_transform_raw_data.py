@@ -210,6 +210,71 @@ class TestDiscordTransformRawData(unittest.TestCase):
         )
         self.assertEqual(result, expected_result)
 
+    def test_transform_data_with_single_reaction(self):
+        raw_data = [
+            {
+                "author": "user123",
+                "content": "sample text",
+                "user_mentions": [],
+                "role_mentions": [],
+                "reactions": [
+                    "user1,❤️",
+                ],
+                "replied_user": None,
+                "createdDate": self.period,
+                "messageId": "msg123",
+                "channelId": "channel456",
+                "channelName": "general-chat-name",
+                "threadId": "threadId123",
+                "threadName": "general-thread-name",
+                "isGeneratedByWebhook": False,
+            }
+        ]
+        expected_result = [
+            {
+                "actions": [],
+                "author_id": "user1",
+                "date": self.period,
+                "interactions": [
+                    {
+                        "name": "reaction",
+                        "type": "emitter",
+                        "users_engaged_id": ["user123"],
+                    }
+                ],
+                "metadata": {
+                    "bot_activity": True,
+                    "channel_id": "channel456",
+                    "thread_id": "threadId123",
+                },
+                "source_id": "msg123",
+            },
+            {
+                "actions": [{"name": "message", "type": "emitter"}],
+                "author_id": "user123",
+                "date": self.period,
+                "interactions": [
+                    {
+                        "name": "reaction",
+                        "type": "receiver",
+                        "users_engaged_id": ["user1"],
+                    },
+                ],
+                "metadata": {
+                    "bot_activity": False,
+                    "channel_id": "channel456",
+                    "thread_id": "threadId123",
+                },
+                "source_id": "msg123",
+            },
+        ]
+
+        result = self.transformer.transform(
+            raw_data=raw_data,
+            platform_id=self.platform_id,
+        )
+        self.assertEqual(result, expected_result)
+
     def test_transform_data_with_reactions(self):
         raw_data = [
             {
@@ -291,6 +356,128 @@ class TestDiscordTransformRawData(unittest.TestCase):
             raw_data=raw_data,
             platform_id=self.platform_id,
         )
+        self.assertEqual(result, expected_result)
+
+    def test_transform_data_with_multiple_reactions(self):
+        raw_data = [
+            {
+                "author": "user123",
+                "content": "sample text",
+                "user_mentions": [],
+                "role_mentions": [],
+                "reactions": [
+                    "user1,user2,user3,user4,❤️",
+                ],
+                "replied_user": None,
+                "createdDate": self.period,
+                "messageId": "msg123",
+                "channelId": "channel456",
+                "channelName": "general-chat-name",
+                "threadId": "threadId123",
+                "threadName": "general-thread-name",
+                "isGeneratedByWebhook": False,
+            }
+        ]
+        expected_result = [
+            {
+                "actions": [],
+                "author_id": "user1",
+                "date": self.period,
+                "interactions": [
+                    {
+                        "name": "reaction",
+                        "type": "emitter",
+                        "users_engaged_id": ["user123"],
+                    }
+                ],
+                "metadata": {
+                    "bot_activity": True,
+                    "channel_id": "channel456",
+                    "thread_id": "threadId123",
+                },
+                "source_id": "msg123",
+            },
+            {
+                "actions": [],
+                "author_id": "user2",
+                "date": self.period,
+                "interactions": [
+                    {
+                        "name": "reaction",
+                        "type": "emitter",
+                        "users_engaged_id": ["user123"],
+                    }
+                ],
+                "metadata": {
+                    "bot_activity": False,
+                    "channel_id": "channel456",
+                    "thread_id": "threadId123",
+                },
+                "source_id": "msg123",
+            },
+            {
+                "actions": [],
+                "author_id": "user3",
+                "date": self.period,
+                "interactions": [
+                    {
+                        "name": "reaction",
+                        "type": "emitter",
+                        "users_engaged_id": ["user123"],
+                    }
+                ],
+                "metadata": {
+                    "bot_activity": False,
+                    "channel_id": "channel456",
+                    "thread_id": "threadId123",
+                },
+                "source_id": "msg123",
+            },
+            {
+                "actions": [],
+                "author_id": "user4",
+                "date": self.period,
+                "interactions": [
+                    {
+                        "name": "reaction",
+                        "type": "emitter",
+                        "users_engaged_id": ["user123"],
+                    }
+                ],
+                "metadata": {
+                    "bot_activity": False,
+                    "channel_id": "channel456",
+                    "thread_id": "threadId123",
+                },
+                "source_id": "msg123",
+            },
+            {
+                "actions": [{"name": "message", "type": "emitter"}],
+                "author_id": "user123",
+                "date": self.period,
+                "interactions": [
+                    {
+                        "name": "reaction",
+                        "type": "receiver",
+                        "users_engaged_id": ["user1", "user2", "user3", "user4"],
+                    },
+                ],
+                "metadata": {
+                    "bot_activity": False,
+                    "channel_id": "channel456",
+                    "thread_id": "threadId123",
+                },
+                "source_id": "msg123",
+            },
+        ]
+
+        result = self.transformer.transform(
+            raw_data=raw_data,
+            platform_id=self.platform_id,
+        )
+        print(result)
+        print("expected result: \n")
+        print(expected_result)
         self.assertEqual(result, expected_result)
 
     def test_transform_data_empty(self):
