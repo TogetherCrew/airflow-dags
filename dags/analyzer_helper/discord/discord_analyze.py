@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from datetime import datetime
 
@@ -27,7 +28,7 @@ class Analyzer:
         )
         if recompute:
             logging.info(f"{prefix} recomputing analyzer!")
-            analyzer.recompute()
+            asyncio.run(analyzer.recompute())
         else:
             logging.info(f"{prefix} append analytics to previous analytics results!")
-            analyzer.run_once()
+            asyncio.run(analyzer.run_once())
