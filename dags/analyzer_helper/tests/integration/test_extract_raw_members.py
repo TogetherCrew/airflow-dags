@@ -1,3 +1,4 @@
+from datetime import datetime
 import unittest
 from analyzer_helper.discourse.extract_raw_members import ExtractRawMembers
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
@@ -7,8 +8,15 @@ class TestExtractRawMembers(unittest.TestCase):
     def setUp(cls):
         cls.neo4jConnection = Neo4jConnection()
         cls.driver = cls.neo4jConnection.connect_neo4j()
-        cls.extractor = ExtractRawMembers()
         cls.test_forum_endpoint = "https://test-forum.discourse.org"
+        cls.platform_id = "test_platform"
+        cls.extractor = ExtractRawMembers(cls.test_forum_endpoint, cls.platform_id)
+        cls.rawmembers_collection = cls.extractor.rawmembers_collection
+        
+        cls.rawmembers_collection.insert_many([
+            {'id': 1, 'joined_at': datetime(2023, 7, 1), 'avatar': 'avatar1.png', 'badgeIds': [1, 2]},
+            {'id': 2, 'joined_at': datetime(2023, 2, 2), 'avatar': 'avatar2.png', 'badgeIds': [3]}
+        ])
 
         with cls.driver.session() as session:
 
@@ -52,6 +60,7 @@ class TestExtractRawMembers(unittest.TestCase):
             session.run("MATCH (n) DETACH DELETE n")
         cls.extractor.close()
         cls.driver.close()
+        cls.rawmembers_collection.delete_many({})
 
     def test_fetch_member_details(self):
         member_details = self.extractor.fetch_member_details()
@@ -60,13 +69,13 @@ class TestExtractRawMembers(unittest.TestCase):
             {
                 'id': self.user1_id,
                 'avatar': 'avatar1',
-                'createdAt': '2023-07-01',
+                'joined_at': '2023-07-01',
                 'badgeIds': ['badge1'],
             },
             {
                 'id': self.user2_id,
                 'avatar': 'avatar2',
-                'createdAt': '2023-07-02',
+                'joined_at': '2023-07-02',
                 'badgeIds': ['badge2']
             }
         ]
@@ -74,3 +83,34 @@ class TestExtractRawMembers(unittest.TestCase):
         self.assertEqual(len(member_details), len(expected_members))
         for member in member_details:
             self.assertIn(member, expected_members)
+
+    def test_extract_recompute(cls):
+        result = cls.extractor.extract(recompute=True)
+        print("result: \n", result)
+        #TODO: Check with Amin if it's all right to use neo4j generated ids for users
+        expected_members = [
+            {
+                'id': 11,
+                'avatar': 'avatar1',
+                'joined_at': "2023-07-01",
+                'badgeIds': ['badge1'],
+            },
+            {
+                'id': 13,
+                'avatar': 'avatar2',
+                'joined_at': '2023-07-02',
+                'badgeIds': ['badge2']
+            }
+        ]
+        cls.assertEqual(result, expected_members)
+        
+    def test_extract_without_recompute(self):
+        result = self.extractor.extract(recompute=False,)
+        print("result: \n", result)
+        actual_ids = {member['id'] for member in result}
+        #TODO: Check with Amin if it's all right to use neo4j generated ids
+        expected_result = [
+            {'id': 6, 'avatar': 'avatar1', 'joined_at': '2023-07-01', 'badgeIds': []},
+            {'id': 8, 'avatar': 'avatar2', 'joined_at': '2023-07-02', 'badgeIds': ['badge2']}
+        ]
+        self.assertEqual(result, expected_result)

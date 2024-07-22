@@ -44,21 +44,21 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
         """
         transformer = TransformRawMembers()
         raw_member1 = {
-            "id": 85159,
+            "id": "85159",
             "avatar": "avatar1",
             "createdAt": "2023-07-01",
             "badgeIds": ["badge1"],
         }
         
         raw_member2 = {
-            "id": 85161,
+            "id": "85161",
             "avatar": "avatar2",
             "createdAt": "2023-07-02",
             "badgeIds": ["badge2"],
         }
 
         expected_result1 = {
-            "id": 85159,
+            "id": "85159",
             "is_bot": False,
             "left_at": None,
             "joined_at": "2023-07-01",
@@ -66,7 +66,7 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
         }
 
         expected_result2 = {
-            "id": 85161,
+            "id": "85161",
             "is_bot": False,
             "left_at": None,
             "joined_at": "2023-07-02",

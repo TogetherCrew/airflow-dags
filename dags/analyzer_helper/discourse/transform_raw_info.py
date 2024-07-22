@@ -5,17 +5,18 @@ class TransformRawInfo:
     def __init__(self):
         self.converter = DateTimeFormatConverter()
     
-    def create_data_entry(self, raw_data: list, interaction_type: str = None, interaction_user: int = None):
+    def create_data_entry(self, raw_data: dict, interaction_type: str = None, interaction_user: int = None) -> dict:
         metadata = {
-            "channel_id": raw_data.get("category_id"),
-            "thread_id": raw_data.get("topic_id"),
+            "category_id": raw_data.get("category_id"),
+            "topic_id": raw_data.get("topic_id"),
             "bot_activity": False,
         }
 
+        result = {}
         if interaction_type == "reaction":
-            return {
+            result = {
                 "actions": [],
-                "author_id": interaction_user,
+                "author_id": str(interaction_user),
                 "date": self.converter.convert_to_datetime(raw_data.get("created_at")),
                 "interactions": [
                     {
@@ -40,17 +41,19 @@ class TransformRawInfo:
                 interactions.append({
                     "name": "reply",
                     "type": "emitter" if interaction_type != "reply" else "receiver",
-                    "users_engaged_id": [str(raw_data["author_id"] if interaction_type == "reply" else raw_data["replied_post_id"])],
+                    "users_engaged_id": [str(raw_data["author_id"] if interaction_type == "reply" else raw_data["replied_post_user_id"])],
                 })
 
-            return {
-                "author_id": str(interaction_user if interaction_type == "reply" else raw_data["author_id"]),
+            result = {
+                "author_id": str(interaction_user if interaction_type == "reply" else str(raw_data["author_id"])),
                 "date": self.converter.convert_to_datetime(raw_data.get("created_at")),
                 "source_id": str(raw_data["post_id"]),
                 "metadata": metadata,           
                 "actions": actions,
                 "interactions": interactions,
             }
+        
+        return result
 
     def transform(self, raw_data: list) -> list:
         transformed_data = []
@@ -71,23 +74,9 @@ class TransformRawInfo:
                 transformed_data.append(self.create_data_entry(
                     entry,
                     interaction_type="reply",
-                    interaction_user=entry["replied_post_id"]
+                    interaction_user=entry["replied_post_user_id"]
                 ))
             # TODO: Create entry for mentioned users
 
         return transformed_data
-
-# Sample data
-data = [
-    {"post_id": 6262, "author_id": 6168, "created_at" : "2023-09-11T21:41:43.553Z", "author_name": "Ibby Benali", "reactions": [], "replied_post_id": 6512, "topic_id": 6134},
-    {"post_id": 6261, "author_id": 6168, "created_at" : "2023-09-11T21:42:43.553Z", "author_name": "Ibby Benali", "reactions": [1, 2], "replied_post_id": None, "topic_id": 6134},
-]
-
-# Create an instance of the class with the raw data
-transformer = TransformRawInfo()
-
-# Transform the data
-transformed_data = transformer.transform(data)
-# import json
-# print(json.dumps(transformed_data, indent=2))
-print(transformed_data)
+        

@@ -1,18 +1,24 @@
 from datetime import datetime
+
 from analyzer_helper.discourse.utils.convert_date_time_formats import DateTimeFormatConverter
+from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
-from typing import Optional
+from typing import Optional, List, Dict
+
 
 
 class ExtractRawInfo:
-    def __init__(self, forum_endpoint:str):
+    def __init__(self, forum_endpoint:str, platform_id:str):
         """
-        Initialize the ExtractRawInfo with the forum endpoint and set up Neo4j connection.
+        Initialize the ExtractRawInfo with the forum endpoint, platform id and set up Neo4j and MongoDB connection.
         """
         self.neo4jConnection = Neo4jConnection()
         self.driver = self.neo4jConnection.connect_neo4j()
         self.forum_endpoint = forum_endpoint
         self.converter = DateTimeFormatConverter()
+        self.client = MongoSingleton.get_instance().client
+        self.platform_db = self.client[platform_id]
+        self.rawmemberactivities_collection = self.platform_db["rawmemberactivities"]
 
     def close(self):
         """
@@ -28,11 +34,34 @@ class ExtractRawInfo:
         :param comparison: Optional comparison operator, either 'gt' for greater than or 'gte' for greater than or equal to.
         :return: List of dictionaries containing post details.
         """
+        if comparison:
+            assert comparison in {'gt', 'gte'}, "comparison must be either 'gt' or 'gte'"
+
         where_clause = ""
         if created_at and comparison:
             operator = '>' if comparison == 'gt' else '>='
             where_clause = f"WHERE post.createdAt {operator} $createdAt"
 
+        # Previously, without replied_post_user_id
+        # query = f"""
+        # MATCH (forum:DiscourseForum {{endpoint: $forum_endpoint}})
+        # WITH forum
+        # MATCH (topic:DiscourseTopic {{forumUuid: forum.uuid}})
+        # MATCH (topic)-[:HAS_POST]->(post:DiscoursePost)
+        # {where_clause}
+        # OPTIONAL MATCH (post)<-[:POSTED]-(author:DiscourseUser)
+        # OPTIONAL MATCH (post)<-[:LIKED]-(likedUser:DiscourseUser)
+        # OPTIONAL MATCH (post)-[:REPLY_TO]->(repliedPost:DiscoursePost)
+        # RETURN
+        #   id(post) AS post_id,
+        #   id(author) AS author_id,
+        #   post.createdAt AS created_at,
+        #   author.name AS author_name,
+        #   collect(DISTINCT likedUser.id) AS reactions,
+        #   id(repliedPost) AS replied_post_id,
+        #   id(topic) AS topic_id
+        # LIMIT 10
+        # """
         query = f"""
         MATCH (forum:DiscourseForum {{endpoint: $forum_endpoint}})
         WITH forum
@@ -42,14 +71,16 @@ class ExtractRawInfo:
         OPTIONAL MATCH (post)<-[:POSTED]-(author:DiscourseUser)
         OPTIONAL MATCH (post)<-[:LIKED]-(likedUser:DiscourseUser)
         OPTIONAL MATCH (post)-[:REPLY_TO]->(repliedPost:DiscoursePost)
+        OPTIONAL MATCH (repliedPost)<-[:POSTED]-(repliedAuthor:DiscourseUser)
         RETURN
-          id(post) AS post_id,
-          id(author) AS author_id,
-          post.createdAt AS created_at,
-          author.name AS author_name,
-          collect(DISTINCT likedUser.id) AS reactions,
-          id(repliedPost) AS replied_post_id,
-          id(topic) AS topic_id
+        id(post) AS post_id,
+        id(author) AS author_id,
+        post.createdAt AS created_at,
+        author.name AS author_name,
+        collect(DISTINCT likedUser.id) AS reactions,
+        id(repliedPost) AS replied_post_id,
+        id(repliedAuthor) AS replied_post_user_id,
+        id(topic) AS topic_id
         LIMIT 10
         """
 
@@ -80,24 +111,32 @@ class ExtractRawInfo:
         # RETURN
         #   id(post) AS post_id,
         #   id(category) AS category_id,
-        #   category.name AS category_name
         # """
         # We are matching topics by topic.HAS_POST post.id
+        # query = """
+        # UNWIND $post_ids AS post_id
+        # MATCH (post:DiscoursePost)
+        # WHERE id(post) = post_id
+        # MATCH (topic:DiscourseTopic)-[:HAS_POST]->(post)
+        # OPTIONAL MATCH (category:DiscourseCategory)-[:HAS_TOPIC]->(topic)
+        # RETURN
+        # id(post) AS post_id,
+        # id(category) AS category_id,
+        # """
+        # Amin suggested optimal one
         query = """
-        UNWIND $post_ids AS post_id
         MATCH (post:DiscoursePost)
-        WHERE id(post) = post_id
+        WHERE id(post) in $post_ids
         MATCH (topic:DiscourseTopic)-[:HAS_POST]->(post)
         OPTIONAL MATCH (category:DiscourseCategory)-[:HAS_TOPIC]->(topic)
         RETURN
         id(post) AS post_id,
-        id(category) AS category_id,
-        category.name AS category_name
+        id(category) AS category_id
         """
         with self.driver.session() as session:
             result = session.run(query, post_ids=post_ids)
             records = [record.data() for record in result]
-            print(f"Cathegories fetched: ", records)
+            # print(f"Cathegories fetched: ", records)
             self.driver.close()
             # print(f"Number of records fetched in fetch_post_categories: {len(records)}")
             return records
@@ -137,7 +176,12 @@ class ExtractRawInfo:
         else:
             return None
         
-    def combine_posts_with_cathegories(self, post_details, post_categories) -> list:
+    def combine_posts_with_categories(
+            self, 
+            post_details: List[Dict[str, any]], 
+            post_categories: List[Dict[str, any]]
+    ) -> List[Dict[str, any]]:
+
         """
         Combine post details with their respective categories.
 
@@ -145,19 +189,15 @@ class ExtractRawInfo:
         :param post_categories: List of dictionaries containing post categories.
         :return: List of combined dictionaries.
         """
+        category_dict = {category["post_id"]: category for category in post_categories}
+
         combined_results = []
         for post in post_details:
-            matched = False
-            for category in post_categories:
-                if post["post_id"] == category["post_id"]:
-                    post["category_id"] = category["category_id"]
-                    post["category_name"] = category["category_name"]
-                    matched = True
-                    break
-            if not matched:
-                post["category_id"] = None
-                post["category_name"] = None
+            category = category_dict.get(post["post_id"], {"category_id": None, "category_name": None})
+            post["category_id"] = category["category_id"]
+            # post["category_name"] = category["category_name"]
             combined_results.append(post)
+
         return combined_results
 
     def fetch_raw_data(self, created_at: Optional[str] = None, comparison: Optional[str] = None) -> list:
@@ -175,7 +215,7 @@ class ExtractRawInfo:
 
         post_ids = [post["post_id"] for post in post_details]
         post_categories = self.fetch_post_categories(post_ids)
-        return self.combine_posts_with_cathegories(
+        return self.combine_posts_with_categories(
             post_details, post_categories
         )
 
@@ -191,40 +231,23 @@ class ExtractRawInfo:
         if recompute:
             data = self.fetch_raw_data()
         else:
-            latest_activity_date = self.get_latest_post_created_at(
-                self.forum_endpoint
+            latest_activity = self.rawmemberactivities_collection.find_one(
+                sort=[("date", -1)]
             )
+            latest_activity_date = latest_activity["date"] if latest_activity else None
+            print(f"Latest activity date: {latest_activity_date}")
             if latest_activity_date is not None:
+                # Convert latest_activity_date string to datetime
+                latest_activity_date_datetime = self.converter.from_iso_format(latest_activity_date) if latest_activity_date else None
+                # Convert latest_activity_date_datetime to ISO format with milliseconds
+                latest_activity_date_iso_format = self.converter.to_iso_format(latest_activity_date_datetime) if latest_activity_date_datetime else None
                 period_iso_format = self.converter.to_iso_format(period)
-                if latest_activity_date >= period_iso_format:
-                    data = self.fetch_post_details(latest_activity_date, "gt")
+                print(f"Period ISO format: {period_iso_format}")
+                if latest_activity_date_iso_format >= period_iso_format:
+                    data = self.fetch_raw_data(latest_activity_date_iso_format, "gt")
                 else:
-                    data = self.fetch_post_details(period_iso_format, "gte")
+                    data = self.fetch_raw_data(period_iso_format, "gte")
+                    print("data fetched: \n", data)
             else:
-                data = self.fetch_post_details()
+                data = self.fetch_raw_data()
         return data
-
-# TODO: Testing purposes, remove!
-#     @staticmethod
-#     def print_combined_data(combined_results):
-#         """
-#         Print the combined data of posts.
-
-#         :param combined_results: List of combined dictionaries.
-#         """
-#         for post in combined_results:
-#             print(f"Post ID: {post['post_id']}")
-#             print(f"Author ID: {post['author_id']}")
-#             print(f"Author Name: {post['author_name']}")
-#             print(f"Reactions: {post['reactions']}")
-#             print(f"Replied Post ID: {post['replied_post_id']}")
-#             print(f"Topic ID: {post['topic_id']}")
-#             print(f"Category ID: {post.get('category_id', 'N/A')}")
-#             print(f"Category Name: {post.get('category_name', 'N/A')}")
-#             print("-" * 40)
-#         print(f"Total number of combined records: {len(combined_results)}")
-        
-# extractor = ExtractRawInfo("gov.optimism.io")
-# results = extractor.fetch_raw_data()
-# print("Results:", results)
-
