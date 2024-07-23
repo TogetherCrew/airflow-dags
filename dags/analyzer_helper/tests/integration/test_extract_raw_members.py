@@ -67,13 +67,13 @@ class TestExtractRawMembers(unittest.TestCase):
         
         expected_members = [
             {
-                'id': self.user1_id,
+                'id': 'user1',
                 'avatar': 'avatar1',
                 'joined_at': '2023-07-01',
                 'badgeIds': ['badge1'],
             },
             {
-                'id': self.user2_id,
+                'id': 'user2',
                 'avatar': 'avatar2',
                 'joined_at': '2023-07-02',
                 'badgeIds': ['badge2']
@@ -86,17 +86,15 @@ class TestExtractRawMembers(unittest.TestCase):
 
     def test_extract_recompute(cls):
         result = cls.extractor.extract(recompute=True)
-        print("result: \n", result)
-        #TODO: Check with Amin if it's all right to use neo4j generated ids for users
         expected_members = [
             {
-                'id': 11,
+                'id': 'user1',
                 'avatar': 'avatar1',
                 'joined_at': "2023-07-01",
                 'badgeIds': ['badge1'],
             },
             {
-                'id': 13,
+                'id': 'user2',
                 'avatar': 'avatar2',
                 'joined_at': '2023-07-02',
                 'badgeIds': ['badge2']
@@ -106,11 +104,8 @@ class TestExtractRawMembers(unittest.TestCase):
         
     def test_extract_without_recompute(self):
         result = self.extractor.extract(recompute=False,)
-        print("result: \n", result)
-        actual_ids = {member['id'] for member in result}
-        #TODO: Check with Amin if it's all right to use neo4j generated ids
         expected_result = [
-            {'id': 6, 'avatar': 'avatar1', 'joined_at': '2023-07-01', 'badgeIds': []},
-            {'id': 8, 'avatar': 'avatar2', 'joined_at': '2023-07-02', 'badgeIds': ['badge2']}
+            {'id': 'user1', 'avatar': 'avatar1', 'joined_at': '2023-07-01', 'badgeIds': []},
+            {'id': 'user2', 'avatar': 'avatar2', 'joined_at': '2023-07-02', 'badgeIds': ['badge2']}
         ]
         self.assertEqual(result, expected_result)

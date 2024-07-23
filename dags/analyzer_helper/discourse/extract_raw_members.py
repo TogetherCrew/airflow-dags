@@ -44,7 +44,7 @@ class ExtractRawMembers:
 
         query += """
         WITH user, collect(badge.id) AS badgeIds
-        RETURN id(user) AS id, user.avatarTemplate AS avatar, user.createdAt AS joined_at, badgeIds
+        RETURN user.id AS id, user.avatarTemplate AS avatar, user.createdAt AS joined_at, badgeIds 
         """
         
         with self.driver.session() as session:

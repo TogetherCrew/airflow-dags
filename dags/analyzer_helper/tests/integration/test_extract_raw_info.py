@@ -75,8 +75,8 @@ class TestExtractRawInfo(unittest.TestCase):
         combined_data = self.extractor.fetch_raw_data()
         self.assertEqual(len(combined_data), 2)
         author_names_categories = [(post['author_name'], post['category_id']) for post in combined_data]
-        self.assertIn(('User One', 6), author_names_categories)
-        self.assertIn(('User Two', 6), author_names_categories)
+        self.assertIn(('User One', 'category1'), author_names_categories)
+        self.assertIn(('User Two', 'category1'), author_names_categories)
 
         for post in combined_data:
             self.assertIn('post_id', post)
@@ -111,10 +111,9 @@ class TestExtractRawInfo(unittest.TestCase):
         self.rawmemberactivities_collection.insert_one({'date': '2022-12-31T00:00:00Z'})
         
         result = self.extractor.extract(period=datetime(2023, 1, 1), recompute=False)
-        #TODO: Check with Amin if it's all right to use automatically generated post ids
         self.assertGreater(len(result), 0)
-        self.assertIn(3, [post['post_id'] for post in result])
-        self.assertIn(4, [post['post_id'] for post in result])
+        self.assertIn('1', [post['post_id'] for post in result])
+        self.assertIn('2', [post['post_id'] for post in result])
 
     def test_extract_without_recompute_latest_activity_after_period(self):
         self.rawmemberactivities_collection.delete_many({})
@@ -122,4 +121,4 @@ class TestExtractRawInfo(unittest.TestCase):
         
         result = self.extractor.extract(period=datetime(2023, 1, 1), recompute=False)
         self.assertGreater(len(result), 0)
-        self.assertIn(4, [post['post_id'] for post in result])
+        self.assertIn('2', [post['post_id'] for post in result])

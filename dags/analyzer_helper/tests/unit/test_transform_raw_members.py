@@ -1,3 +1,4 @@
+from datetime import datetime
 import unittest
 
 from analyzer_helper.discourse.transform_raw_members import (
@@ -5,6 +6,10 @@ from analyzer_helper.discourse.transform_raw_members import (
 )
 
 class TestDiscordTransformRawMembers(unittest.TestCase):
+
+    def setUp(self):
+        self.transformer = TransformRawMembers()
+     
     def test_transform_empty_list(self):
         """
         Tests that transform returns an empty list for an empty members list
@@ -27,10 +32,10 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
 
         expected_result = [
             {
-                "id": 85149,
+                "id": "85149",
                 "is_bot": False,
                 "left_at": None,
-                "joined_at": "2023-07-02",
+                "joined_at": datetime(2023, 7, 2, 0, 0, 0, 0),
                 "options": {},
             }
         ]
@@ -61,7 +66,7 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
             "id": "85159",
             "is_bot": False,
             "left_at": None,
-            "joined_at": "2023-07-01",
+            "joined_at": datetime(2023, 7, 1, 0, 0, 0, 0),
             "options": {},
         }
 
@@ -69,7 +74,7 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
             "id": "85161",
             "is_bot": False,
             "left_at": None,
-            "joined_at": "2023-07-02",
+            "joined_at": datetime(2023, 7, 2, 0, 0, 0, 0),
             "options": {},
         }
 

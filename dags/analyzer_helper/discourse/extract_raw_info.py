@@ -41,8 +41,7 @@ class ExtractRawInfo:
         if created_at and comparison:
             operator = '>' if comparison == 'gt' else '>='
             where_clause = f"WHERE post.createdAt {operator} $createdAt"
-
-        # Previously, without replied_post_user_id
+        # With neo4j automatically generated ids
         # query = f"""
         # MATCH (forum:DiscourseForum {{endpoint: $forum_endpoint}})
         # WITH forum
@@ -52,16 +51,19 @@ class ExtractRawInfo:
         # OPTIONAL MATCH (post)<-[:POSTED]-(author:DiscourseUser)
         # OPTIONAL MATCH (post)<-[:LIKED]-(likedUser:DiscourseUser)
         # OPTIONAL MATCH (post)-[:REPLY_TO]->(repliedPost:DiscoursePost)
+        # OPTIONAL MATCH (repliedPost)<-[:POSTED]-(repliedAuthor:DiscourseUser)
         # RETURN
-        #   id(post) AS post_id,
-        #   id(author) AS author_id,
-        #   post.createdAt AS created_at,
-        #   author.name AS author_name,
-        #   collect(DISTINCT likedUser.id) AS reactions,
-        #   id(repliedPost) AS replied_post_id,
-        #   id(topic) AS topic_id
+        # id(post) AS post_id,
+        # id(author) AS author_id,
+        # post.createdAt AS created_at,
+        # author.name AS author_name,
+        # collect(DISTINCT likedUser.id) AS reactions,
+        # id(repliedPost) AS replied_post_id,
+        # id(repliedAuthor) AS replied_post_user_id,
+        # id(topic) AS topic_id
         # LIMIT 10
         # """
+        # Without neo4j automatically generated ids
         query = f"""
         MATCH (forum:DiscourseForum {{endpoint: $forum_endpoint}})
         WITH forum
@@ -73,14 +75,14 @@ class ExtractRawInfo:
         OPTIONAL MATCH (post)-[:REPLY_TO]->(repliedPost:DiscoursePost)
         OPTIONAL MATCH (repliedPost)<-[:POSTED]-(repliedAuthor:DiscourseUser)
         RETURN
-        id(post) AS post_id,
-        id(author) AS author_id,
+        post.id AS post_id,
+        author.id AS author_id,
         post.createdAt AS created_at,
         author.name AS author_name,
         collect(DISTINCT likedUser.id) AS reactions,
-        id(repliedPost) AS replied_post_id,
-        id(repliedAuthor) AS replied_post_user_id,
-        id(topic) AS topic_id
+        repliedPost.id AS replied_post_id,
+        repliedAuthor.id AS replied_post_user_id,
+        topic.id AS topic_id
         LIMIT 10
         """
 
@@ -124,14 +126,25 @@ class ExtractRawInfo:
         # id(category) AS category_id,
         # """
         # Amin suggested optimal one
+        # With neo4j automatically generated ids
+        # query = """
+        # MATCH (post:DiscoursePost)
+        # WHERE id(post) in $post_ids
+        # MATCH (topic:DiscourseTopic)-[:HAS_POST]->(post)
+        # OPTIONAL MATCH (category:DiscourseCategory)-[:HAS_TOPIC]->(topic)
+        # RETURN
+        # id(post) AS post_id,
+        # id(category) AS category_id
+        # """
+        # Without neo4j automatically generated ids
         query = """
         MATCH (post:DiscoursePost)
-        WHERE id(post) in $post_ids
+        WHERE post.id in $post_ids
         MATCH (topic:DiscourseTopic)-[:HAS_POST]->(post)
         OPTIONAL MATCH (category:DiscourseCategory)-[:HAS_TOPIC]->(topic)
         RETURN
-        id(post) AS post_id,
-        id(category) AS category_id
+        post.id AS post_id,
+        category.id AS category_id
         """
         with self.driver.session() as session:
             result = session.run(query, post_ids=post_ids)
@@ -154,7 +167,17 @@ class ExtractRawInfo:
         Returns:
             Optional[str]: The created_at timestamp of the latest post, or None if no posts are found.
         """
-        
+        # With neo4j automatically generated ids
+        # query = """
+        # MATCH (forum:DiscourseForum {endpoint: $forum_endpoint})
+        # WITH forum
+        # MATCH (topic:DiscourseTopic {forumUuid: forum.uuid})
+        # MATCH (topic)-[:HAS_POST]->(post:DiscoursePost)
+        # RETURN post.createdAt AS created_at
+        # ORDER BY post.createdAt DESC
+        # LIMIT 1
+        # """
+        # Without neo4j automatically generated ids
         query = """
         MATCH (forum:DiscourseForum {endpoint: $forum_endpoint})
         WITH forum
@@ -195,7 +218,6 @@ class ExtractRawInfo:
         for post in post_details:
             category = category_dict.get(post["post_id"], {"category_id": None, "category_name": None})
             post["category_id"] = category["category_id"]
-            # post["category_name"] = category["category_name"]
             combined_results.append(post)
 
         return combined_results

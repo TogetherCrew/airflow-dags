@@ -5,19 +5,12 @@ from datetime import datetime
 
 from airflow import DAG
 from airflow.decorators import task
-from analyzer_helper.discord.discord_analyze import Analyzer
-from analyzer_helper.discord.discord_extract_raw_members import DiscordExtractRawMembers
-from analyzer_helper.discord.discord_load_transformed_data import (
-    DiscordLoadTransformedData,
-)
-from analyzer_helper.discord.discord_load_transformed_members import (
-    DiscordLoadTransformedMembers,
-)
-from analyzer_helper.discord.discord_transform_raw_data import DiscordTransformRawData
-from analyzer_helper.discord.discord_transform_raw_members import (
-    DiscordTransformRawMembers,
-)
-from analyzer_helper.discord.fetch_discord_platforms import FetchDiscordPlatforms
+
+from analyzer_helper.common.fetch_platforms import FetchPlatforms
+from analyzer_helper.common.load_transformed_data import LoadTransformedData
+from analyzer_helper.discourse.analyzer import Analyzer
+from analyzer_helper.discourse.extract_raw_info import ExtractRawInfo
+from analyzer_helper.discourse.transform_raw_info import TransformRawInfo
 
 with DAG(
     dag_id="discourse_analyzer_etl",
@@ -54,7 +47,7 @@ with DAG(
         # if an id for `recompute_platform` was given
         # then just run the ETL job for that platform with `recompute = True`
         # meaning the return would be a list with just one platform information
-        fetcher = FetchDiscordPlatforms() #TODO: Modify accordingly to `discourse` needs
+        fetcher = FetchPlatforms(plaform_name='discourse') #TODO: Modify accordingly to `discourse` needs
 
         platforms = fetcher.fetch_all()
 
@@ -84,7 +77,7 @@ with DAG(
             ```
             {
                 'platform_id' : datetime,
-                'guild_id' : str,
+                'forum_endpoint' : str,
                 'period' : datetime,
                 'recompute': bool,
             }
@@ -104,8 +97,7 @@ with DAG(
             ```
         """
         platform_id = platform_info["platform_id"]
-        guild_id = platform_info["guild_id"] #TODO: This should be replaced with endpoint
-        forum_endpoint = platform_info["forum_endpoint"]
+        forum_endpoint = platform_info["forum_endpoint"] #TODO: Understand with Amin if this is appropriately reflecting current structure
         period = platform_info["period"]
         recompute = platform_info["recompute"]
         # If recompute is False, then just extract from the latest saved document
@@ -138,26 +130,25 @@ with DAG(
             ```
             {
                 'platform_id' : datetime,
-                'guild_id' : str,
+                'forum_endpoint' : str,
                 'period' : datetime,
                 'recompute': bool,
             }
             ```
         """
         platform_id = platform_info["platform_id"]
-        guild_id = platform_info["guild_id"] #TODO: This should be replaced with endpoint
-        forum_endpoint = platform_info["forum_endpoint"]
+        forum_endpoint = platform_info["forum_endpoint"] #TODO: Understand with Amin if this is appropriately reflecting current structure
         period = platform_info["period"]
         recompute = platform_info["recompute"]
         # if recompute was false, then will fetch from the previously saved data date
         # else, then will fetch all platform's members data
-        extractor = ExtractRawMembers(guild_id=guild_id, platform_id=platform_id)
+        extractor = ExtractRawMembers(forum_endpoint=forum_endpoint, platform_id=platform_id)
         extracted_data = extractor.extract(period=period, recompute=recompute)
-        transformer = DiscordTransformRawMembers(platform_id=platform_id)
+        transformer = TransformRawMembers(platform_id=platform_id)
         transformed_data = transformer.transform(
             raw_data=extracted_data, platform_id=platform_id
         )
-        loader = DiscordLoadTransformedMembers(platform_id=platform_id)
+        loader = LoadTransformedMembers(platform_id=platform_id)
         loader.load(processed_data=transformed_data, recompute=recompute)
 
     @task
@@ -178,7 +169,7 @@ with DAG(
             ```
         """
         logging.info(f"platform_processed: {platform_processed}")
-        fetcher = FetchDiscordPlatforms()
+        fetcher = FetchPlatforms(plaform_name='discourse')
         platform_id = platform_processed["platform_id"]
         recompute = platform_processed["recompute"]
 
@@ -199,9 +190,9 @@ with DAG(
         )
         analyzer.analyze(recompute=recompute)
 
-    platform_modules = fetch_discord_platforms()
+    platform_modules = fetch_discourse_platforms()
 
-    raw_data_etl = discord_etl_raw_data.expand(platform_info=platform_modules)
-    raw_members_etl = discord_etl_raw_members.expand(platform_info=platform_modules)
+    raw_data_etl = discourse_etl_raw_data.expand(platform_info=platform_modules)
+    raw_members_etl = discourse_etl_raw_members.expand(platform_info=platform_modules)
 
-    raw_members_etl >> analyze_discord(platform_processed=raw_data_etl)
+    raw_members_etl >> analyze_discourse(platform_processed=raw_data_etl)
