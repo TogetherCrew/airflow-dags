@@ -1,12 +1,16 @@
 import logging
 
-from dags.analyzer_helper.common.base.transform_raw_members_base import TransformRawMembersBase
+from analyzer_helper.common.base.transform_raw_members_base import TransformRawMembersBase
+from analyzer_helper.discourse.utils.convert_date_time_formats import DateTimeFormatConverter
 
 
 class TransformRawMembers(TransformRawMembersBase):
+    def __init__(self):
+        self.converter = DateTimeFormatConverter()
+        
     def transform(self, raw_members: list) -> list:
         """
-        Transform extracted raw members data into the guildmember structure.
+        Transform extracted raw members data into the rawmember structure.
         """
         transformed_members = []
 
@@ -21,16 +25,16 @@ class TransformRawMembers(TransformRawMembersBase):
 
     def transform_member(self, member: dict) -> dict:
         """
-        Transform a single member's data to the guildmember structure.
+        Transform a single member's data to the rawmember structure.
         """
         discourse_id = member.get("id")
-        guild_member = {
+        member = {
             "id": str(discourse_id) if discourse_id is not None else None,
             "is_bot": member.get("isBot", False),
-            "left_at": member.get("deletedAt"),
-            "joined_at": member.get("createdAt"),
+            "left_at": None,
+            "joined_at": self.converter.from_date_string(member.get("joined_at")),
             "options": {
             },
         }
 
-        return guild_member
+        return member

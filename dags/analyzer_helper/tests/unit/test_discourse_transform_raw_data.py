@@ -1,7 +1,7 @@
-import unittest
-# from datetime import datetime
 import datetime
-from analyzer_helper.discourse.transform_raw_info import TransformRawInfo
+import unittest
+
+from analyzer_helper.discourse.transform_raw_data import TransformRawInfo
 
 class TestTransformRawInfo(unittest.TestCase):
 
@@ -20,26 +20,6 @@ class TestTransformRawInfo(unittest.TestCase):
             "topic_id": 6134,
             "reactions": [],
             "replied_post_id": None
-        }
-
-        {
-            'actions': [],
-            'author_id': 6263,
-            'date': datetime.datetime(2023, 9, 11, 21, 42, 43, 553000, tzinfo=datetime.timezone.utc),
-            # 'date': datetime(2023, 9, 11, 21, 42, 43, 553000),
-            'interactions': [
-                {
-                    'name': 'reaction',
-                    'type': 'emitter',
-                    'users_engaged_id': ['6261']
-                }
-            ],
-            'metadata': {
-                'category_id': 500,
-                'topic_id': 6134,
-                'bot_activity': False
-            },
-            'source_id': '6261'
         }
         result = self.transformer.create_data_entry(raw_data)
         self.assertEqual(result['author_id'], str(raw_data['author_id']))
@@ -65,16 +45,25 @@ class TestTransformRawInfo(unittest.TestCase):
             "replied_post_id": None
         }
         result = self.transformer.create_data_entry(raw_data, interaction_type="reaction", interaction_user=6263)
-        print("test_create_data_entry_with_reaction \n", result)
-        self.assertEqual(result['author_id'], "6263")
-        self.assertEqual(result['interactions'][0]['name'], "reaction")
-        self.assertEqual(result['interactions'][0]['type'], 'emitter')
-        self.assertEqual(result['interactions'][0]['users_engaged_id'], [str(raw_data['post_id'])])
-        self.assertIsInstance(result['date'], datetime.datetime)
-        self.assertEqual(result['source_id'], str(raw_data['post_id']))
-        self.assertEqual(result['metadata']['category_id'], raw_data['category_id'])
-        self.assertEqual(result['metadata']['topic_id'], raw_data['topic_id'])
-        self.assertEqual(len(result['actions']), 0)
+        expected_result = {
+            'actions': [],
+            'author_id': '6263',
+            'date': datetime.datetime(2023, 9, 11, 21, 42, 43, 553000, tzinfo=datetime.timezone.utc),
+            'interactions': [
+                {
+                    'name': 'reaction',
+                    'type': 'emitter',
+                    'users_engaged_id': ['6168']
+                }
+            ],
+            'metadata': {
+                'category_id': 500,
+                'topic_id': 6134,
+                'bot_activity': False
+            },
+            'source_id': '6261'
+        }
+        self.assertEqual(result, expected_result)
 
     def test_transform_data_with_replied_user(self):
         raw_data = [
@@ -137,10 +126,6 @@ class TestTransformRawInfo(unittest.TestCase):
         result = self.transformer.transform(
             raw_data=raw_data,
         )
-        print("Result:")
-        print(result)
-        print("Expected Result:")
-        print(expected_result)
         self.assertEqual(result, expected_result)
 
     def test_transform_data_with_reactions(self):
@@ -152,6 +137,7 @@ class TestTransformRawInfo(unittest.TestCase):
                     "author_name": "Test Author Name2",
                     "reactions": [1, 2],
                     "replied_post_id": None,
+                    "replied_post_user_id": None,
                     "topic_id": 6134
                 }
 
@@ -188,7 +174,7 @@ class TestTransformRawInfo(unittest.TestCase):
                         {
                             'name': 'reaction',
                             'type': 'emitter',
-                            'users_engaged_id': ['6261'],
+                            'users_engaged_id': ['6168'],
                         }
                     ],
                     'metadata': {
@@ -206,7 +192,7 @@ class TestTransformRawInfo(unittest.TestCase):
                         {
                             'name': 'reaction',
                             'type': 'emitter',
-                            'users_engaged_id': ['6261'],
+                            'users_engaged_id': ['6168'],
                         }
                     ],
                     'metadata': {
@@ -221,8 +207,6 @@ class TestTransformRawInfo(unittest.TestCase):
             result = self.transformer.transform(
                 raw_data=raw_data,
             )
-            print("Result: \n", result)
-            print("Expected result: \n", expected_result)
             self.assertEqual(result, expected_result)
 
     def test_transform_data_replied_and_reactions(self):
@@ -322,7 +306,7 @@ class TestTransformRawInfo(unittest.TestCase):
                     {
                         'name': 'reaction',
                         'type': 'emitter',
-                        'users_engaged_id': ['6261']
+                        'users_engaged_id': ['6168']
                     }
                 ],
                 'metadata': {
@@ -340,7 +324,7 @@ class TestTransformRawInfo(unittest.TestCase):
                     {
                         'name': 'reaction',
                         'type': 'emitter',
-                        'users_engaged_id': ['6261']
+                        'users_engaged_id': ['6168']
                     }
                 ],
                 'metadata': {

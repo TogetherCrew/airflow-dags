@@ -12,47 +12,50 @@ class TransformRawInfo:
             "bot_activity": False,
         }
 
-        result = {}
+        result = {
+            "author_id": str(interaction_user if interaction_type == "reply" else raw_data.get("author_id")),
+            "date": self.converter.from_iso_format(raw_data.get("created_at")),
+            "source_id": str(raw_data["post_id"]),
+            "metadata": metadata,
+            "actions": [],
+            "interactions": []
+        }
+
         if interaction_type == "reaction":
-            result = {
-                "actions": [],
-                "author_id": str(interaction_user),
-                "date": self.converter.convert_to_datetime(raw_data.get("created_at")),
-                "interactions": [
-                    {
-                        "name": "reaction",
-                        "type": "emitter",  
-                        "users_engaged_id": [str(raw_data["post_id"])],
-                    }
-                ],
-                "metadata": metadata,
-                "source_id": str(raw_data["post_id"]),
-            }
+            result["actions"] = []
+            result["interactions"] = [
+                {
+                    "name": "reaction",
+                    "type": "emitter",
+                    "users_engaged_id": [str(raw_data["author_id"])],
+                }
+            ]
+            result["author_id"] = str(interaction_user)
+        elif interaction_type == "reply":
+            result["actions"] = []
+            result["interactions"] = [
+                {
+                    "name": "reply",
+                    "type": "receiver",
+                    "users_engaged_id": [str(raw_data["author_id"])],
+                }
+            ]
+            result["author_id"] = str(interaction_user)
         else:
-            actions = [{"name": "message", "type": "emitter"}] if not interaction_type else []
-            interactions = []
             if raw_data["reactions"]:
-                interactions.append({
+                result["interactions"].append({
                     "name": "reaction",
                     "type": "receiver",
                     "users_engaged_id": [str(int(reaction)) for reaction in raw_data["reactions"]],
                 })
             if raw_data["replied_post_id"]:
-                interactions.append({
+                result["interactions"].append({
                     "name": "reply",
-                    "type": "emitter" if interaction_type != "reply" else "receiver",
-                    "users_engaged_id": [str(raw_data["author_id"] if interaction_type == "reply" else raw_data["replied_post_user_id"])],
+                    "type": "emitter",
+                    "users_engaged_id": [str(raw_data["replied_post_user_id"])],
                 })
+            result["actions"] = [{"name": "message", "type": "emitter"}]
 
-            result = {
-                "author_id": str(interaction_user if interaction_type == "reply" else str(raw_data["author_id"])),
-                "date": self.converter.convert_to_datetime(raw_data.get("created_at")),
-                "source_id": str(raw_data["post_id"]),
-                "metadata": metadata,           
-                "actions": actions,
-                "interactions": interactions,
-            }
-        
         return result
 
     def transform(self, raw_data: list) -> list:
@@ -79,4 +82,3 @@ class TransformRawInfo:
             # TODO: Create entry for mentioned users
 
         return transformed_data
-        

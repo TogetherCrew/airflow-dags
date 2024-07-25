@@ -25,9 +25,7 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
         transformer = TransformRawMembers()
         raw_member = {
             "id": 85149,
-            "avatar": "avatar2",
-            "createdAt": "2023-07-02",
-            "badgeIds": ["badge2"],
+            "joined_at": "2023-07-02",
         }
 
         expected_result = [
@@ -51,14 +49,14 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
         raw_member1 = {
             "id": "85159",
             "avatar": "avatar1",
-            "createdAt": "2023-07-01",
+            "joined_at": "2023-07-01",
             "badgeIds": ["badge1"],
         }
         
         raw_member2 = {
             "id": "85161",
             "avatar": "avatar2",
-            "createdAt": "2023-07-02",
+            "joined_at": "2023-07-02",
             "badgeIds": ["badge2"],
         }
 
@@ -79,5 +77,4 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
         }
 
         result = transformer.transform([raw_member1, raw_member2])
-        self.assertEqual(result, [expected_result1, expected_result2])
         self.assertEqual(result, [expected_result1, expected_result2])

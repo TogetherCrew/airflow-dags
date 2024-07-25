@@ -8,9 +8,9 @@ from airflow.decorators import task
 
 from analyzer_helper.common.fetch_platforms import FetchPlatforms
 from analyzer_helper.common.load_transformed_data import LoadTransformedData
-from analyzer_helper.discourse.analyzer import Analyzer
-from analyzer_helper.discourse.extract_raw_info import ExtractRawInfo
-from analyzer_helper.discourse.transform_raw_info import TransformRawInfo
+from analyzer_helper.common.analyzer import Analyzer
+from analyzer_helper.discourse.extract_raw_data import ExtractRawInfo
+from analyzer_helper.discourse.transform_raw_data import TransformRawInfo
 
 with DAG(
     dag_id="discourse_analyzer_etl",
@@ -47,7 +47,7 @@ with DAG(
         # if an id for `recompute_platform` was given
         # then just run the ETL job for that platform with `recompute = True`
         # meaning the return would be a list with just one platform information
-        fetcher = FetchPlatforms(plaform_name='discourse') #TODO: Modify accordingly to `discourse` needs
+        fetcher = FetchPlatforms(platform_name='discourse') #TODO: Modify accordingly to `discourse` needs
 
         platforms = fetcher.fetch_all()
 
@@ -181,18 +181,19 @@ with DAG(
         window = metadata["window"]
         channels = metadata["selectedChannels"]
 
-        analyzer = Analyzer(
+        analyzer = Analyzer(platform_name='discourse')
+        
+        analyzer.analyze(
             platform_id=platform_id,
             channels=channels,
             period=period,
             action=action,
             window=window,
         )
-        analyzer.analyze(recompute=recompute)
 
-    platform_modules = fetch_discourse_platforms()
+        platform_modules = fetch_discourse_platforms()
 
-    raw_data_etl = discourse_etl_raw_data.expand(platform_info=platform_modules)
-    raw_members_etl = discourse_etl_raw_members.expand(platform_info=platform_modules)
+        raw_data_etl = discourse_etl_raw_data.expand(platform_info=platform_modules)
+        raw_members_etl = discourse_etl_raw_members.expand(platform_info=platform_modules)
 
-    raw_members_etl >> analyze_discourse(platform_processed=raw_data_etl)
+        raw_members_etl >> analyze_discourse(platform_processed=raw_data_etl)

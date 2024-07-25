@@ -32,19 +32,17 @@ class ExtractRawMembers:
         query = """
         MATCH (forum:DiscourseForum {endpoint: $forum_endpoint})
         MATCH (user:DiscourseUser)-[:HAS_JOINED]->(forum)
-        OPTIONAL MATCH (user)-[:HAS_BADGE]->(badge)
         WHERE user.id IS NOT NULL
         """
-        
+
         parameters = {"forum_endpoint": self.forum_endpoint}
-        
+
         if start_date:
             query += " AND user.createdAt >= $start_date"
             parameters["start_date"] = start_date
 
         query += """
-        WITH user, collect(badge.id) AS badgeIds
-        RETURN user.id AS id, user.avatarTemplate AS avatar, user.createdAt AS joined_at, badgeIds 
+        RETURN user.id AS id, user.createdAt AS joined_at 
         """
         
         with self.driver.session() as session:

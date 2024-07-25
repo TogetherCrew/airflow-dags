@@ -41,29 +41,6 @@ class ExtractRawInfo:
         if created_at and comparison:
             operator = '>' if comparison == 'gt' else '>='
             where_clause = f"WHERE post.createdAt {operator} $createdAt"
-        # With neo4j automatically generated ids
-        # query = f"""
-        # MATCH (forum:DiscourseForum {{endpoint: $forum_endpoint}})
-        # WITH forum
-        # MATCH (topic:DiscourseTopic {{forumUuid: forum.uuid}})
-        # MATCH (topic)-[:HAS_POST]->(post:DiscoursePost)
-        # {where_clause}
-        # OPTIONAL MATCH (post)<-[:POSTED]-(author:DiscourseUser)
-        # OPTIONAL MATCH (post)<-[:LIKED]-(likedUser:DiscourseUser)
-        # OPTIONAL MATCH (post)-[:REPLY_TO]->(repliedPost:DiscoursePost)
-        # OPTIONAL MATCH (repliedPost)<-[:POSTED]-(repliedAuthor:DiscourseUser)
-        # RETURN
-        # id(post) AS post_id,
-        # id(author) AS author_id,
-        # post.createdAt AS created_at,
-        # author.name AS author_name,
-        # collect(DISTINCT likedUser.id) AS reactions,
-        # id(repliedPost) AS replied_post_id,
-        # id(repliedAuthor) AS replied_post_user_id,
-        # id(topic) AS topic_id
-        # LIMIT 10
-        # """
-        # Without neo4j automatically generated ids
         query = f"""
         MATCH (forum:DiscourseForum {{endpoint: $forum_endpoint}})
         WITH forum
@@ -83,7 +60,6 @@ class ExtractRawInfo:
         repliedPost.id AS replied_post_id,
         repliedAuthor.id AS replied_post_user_id,
         topic.id AS topic_id
-        LIMIT 10
         """
 
         with self.driver.session() as session:
@@ -102,41 +78,6 @@ class ExtractRawInfo:
         :param post_ids: List of post IDs.
         :return: List of dictionaries containing post categories.
         """
-        # We are matching topics by post.topicId
-        # query = """
-        # UNWIND $post_ids AS post_id
-        # MATCH (post:DiscoursePost)
-        # WHERE id(post) = post_id
-        # MATCH (topic:DiscourseTopic)
-        # WHERE id(topic) = post.topicId
-        # OPTIONAL MATCH (category:DiscourseCategory)-[:HAS_TOPIC]->(topic)
-        # RETURN
-        #   id(post) AS post_id,
-        #   id(category) AS category_id,
-        # """
-        # We are matching topics by topic.HAS_POST post.id
-        # query = """
-        # UNWIND $post_ids AS post_id
-        # MATCH (post:DiscoursePost)
-        # WHERE id(post) = post_id
-        # MATCH (topic:DiscourseTopic)-[:HAS_POST]->(post)
-        # OPTIONAL MATCH (category:DiscourseCategory)-[:HAS_TOPIC]->(topic)
-        # RETURN
-        # id(post) AS post_id,
-        # id(category) AS category_id,
-        # """
-        # Amin suggested optimal one
-        # With neo4j automatically generated ids
-        # query = """
-        # MATCH (post:DiscoursePost)
-        # WHERE id(post) in $post_ids
-        # MATCH (topic:DiscourseTopic)-[:HAS_POST]->(post)
-        # OPTIONAL MATCH (category:DiscourseCategory)-[:HAS_TOPIC]->(topic)
-        # RETURN
-        # id(post) AS post_id,
-        # id(category) AS category_id
-        # """
-        # Without neo4j automatically generated ids
         query = """
         MATCH (post:DiscoursePost)
         WHERE post.id in $post_ids
@@ -149,9 +90,7 @@ class ExtractRawInfo:
         with self.driver.session() as session:
             result = session.run(query, post_ids=post_ids)
             records = [record.data() for record in result]
-            # print(f"Cathegories fetched: ", records)
             self.driver.close()
-            # print(f"Number of records fetched in fetch_post_categories: {len(records)}")
             return records
     
     def get_latest_post_created_at(self, forum_endpoint: str) -> Optional[str]:
@@ -167,17 +106,6 @@ class ExtractRawInfo:
         Returns:
             Optional[str]: The created_at timestamp of the latest post, or None if no posts are found.
         """
-        # With neo4j automatically generated ids
-        # query = """
-        # MATCH (forum:DiscourseForum {endpoint: $forum_endpoint})
-        # WITH forum
-        # MATCH (topic:DiscourseTopic {forumUuid: forum.uuid})
-        # MATCH (topic)-[:HAS_POST]->(post:DiscoursePost)
-        # RETURN post.createdAt AS created_at
-        # ORDER BY post.createdAt DESC
-        # LIMIT 1
-        # """
-        # Without neo4j automatically generated ids
         query = """
         MATCH (forum:DiscourseForum {endpoint: $forum_endpoint})
         WITH forum
@@ -257,19 +185,16 @@ class ExtractRawInfo:
                 sort=[("date", -1)]
             )
             latest_activity_date = latest_activity["date"] if latest_activity else None
-            print(f"Latest activity date: {latest_activity_date}")
             if latest_activity_date is not None:
                 # Convert latest_activity_date string to datetime
                 latest_activity_date_datetime = self.converter.from_iso_format(latest_activity_date) if latest_activity_date else None
                 # Convert latest_activity_date_datetime to ISO format with milliseconds
                 latest_activity_date_iso_format = self.converter.to_iso_format(latest_activity_date_datetime) if latest_activity_date_datetime else None
                 period_iso_format = self.converter.to_iso_format(period)
-                print(f"Period ISO format: {period_iso_format}")
                 if latest_activity_date_iso_format >= period_iso_format:
                     data = self.fetch_raw_data(latest_activity_date_iso_format, "gt")
                 else:
                     data = self.fetch_raw_data(period_iso_format, "gte")
-                    print("data fetched: \n", data)
             else:
                 data = self.fetch_raw_data()
         return data

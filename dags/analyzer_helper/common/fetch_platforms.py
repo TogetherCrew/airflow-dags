@@ -80,35 +80,50 @@ class FetchPlatforms:
             "disconnectedAt": None,
             "platform": self.platform_name,
         }
-        projection = {
-            "_id": 1,
-            "metadata.period": 1,
-            "metadata.action": 1,
-            "metadata.window": 1,
-            "metadata.selectedChannels": 1, #TODO: Understand with Amin if this will be different for Discourse
-            "metadata.id": 1,
+        
+        #TODO: introduce strategy pattern once we add 'telegram'
+        if self.platform_name == 'discord':
+            projection = {
+                "_id": 1,
+                "metadata.period": 1,
+                "metadata.action": 1,
+                "metadata.window": 1,
+                "metadata.selectedChannels": 1,
+                "metadata.id": 1,
+            }
+        else:
+            projection = {
+                "_id": 1,
+                "metadata.period": 1,
+                "metadata.action": 1,
+                "metadata.window": 1,
+                "metadata.resources": 1,
+                "metadata.id": 1,
         }
 
         cursor = self.collection.find(query, projection)
         platforms = []
 
         for doc in cursor:
-            platform_data = {
-                "platform_id": str(doc["_id"]),
-                "metadata": {
-                    "period": doc.get("metadata", {}).get("period", None),
-                    "action": doc.get("metadata", {}).get("action", None),
-                    "window": doc.get("metadata", {}).get("window", None),
-                    "selectedChannels": doc.get("metadata", {}).get(
-                        "selectedChannels", None
-                    ),
-                    "id": doc.get("metadata", {}).get("id", None),
-                },
-                "recompute": False,
-            }
-            platforms.append(platform_data)
+                if self.platform_name == 'discord':
+                    selected_channels = doc.get("metadata", {}).get("selectedChannels", None)
+                else:
+                    selected_channels = doc.get("metadata", {}).get("resources", None)
+                    
+                platform_data = {
+                    "platform_id": str(doc["_id"]),
+                    "metadata": {
+                        "period": doc.get("metadata", {}).get("period", None),
+                        "action": doc.get("metadata", {}).get("action", None),
+                        "window": doc.get("metadata", {}).get("window", None),
+                        "selectedChannels": selected_channels,
+                        "id": doc.get("metadata", {}).get("id", None),
+                    },
+                    "recompute": False,
+                }
+                platforms.append(platform_data)
 
-        return platforms
+                return platforms
 
     # TODO: Decide if we'd like to merge `fetch_all` and `fetch_analyzer_parameters`
     # def fetch_for_analyzer(self, platform_id: str):
