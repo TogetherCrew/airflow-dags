@@ -6,7 +6,6 @@ from violation_detection_helpers import ExtractPlatformRawData
 
 
 class TestExtractRawData(TestCase):
-
     @patch("hivemind_etl_helpers.src.utils.mongo.MongoSingleton.get_instance")
     def test_extract(self, mock_get_instance):
         mock_client = MagicMock()
@@ -16,6 +15,7 @@ class TestExtractRawData(TestCase):
                 "author_id": "1",
                 "date": datetime(2022, 1, 1),
                 "source_id": "8888",
+                "text": "some text message",
                 "metadata": {
                     "topic_id": None,
                     "category_id": "34567",
