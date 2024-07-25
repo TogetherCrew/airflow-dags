@@ -10,7 +10,7 @@ class LoadPlatformLabeledData:
     def load(
         self,
         platform_id: str,
-        raw_data: list[dict],
+        transformed_data: list[dict],
     ) -> list[dict]:
         """
         update `rawmemberactivities` by with their label
@@ -19,7 +19,7 @@ class LoadPlatformLabeledData:
         -------------
         platform_id : str
             the platform to be used
-        raw_data : list[dict]
+        transformed_data : list[dict]
             the extracted data to be transformed
             the transformation here is to label the violation for texts
 
