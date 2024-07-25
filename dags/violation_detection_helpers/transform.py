@@ -1,15 +1,14 @@
 from datetime import datetime
 
-from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
+from openai import OpenAI
 
 
 class TransformPlatformRawData:
     def __init__(self) -> None:
-        self.client = MongoSingleton.get_instance().get_client()
+        self.open_ai = OpenAI()
 
     def transform(
         self,
-        platform_id: str,
         raw_data: list[dict],
     ) -> list[dict]:
         """
@@ -17,8 +16,6 @@ class TransformPlatformRawData:
 
         Parameters
         -------------
-        platform_id : str
-            the platform to be used
         raw_data : list[dict]
             the extracted data to be transformed
             the transformation here is to label the violation for texts
