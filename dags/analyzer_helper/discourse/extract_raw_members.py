@@ -1,10 +1,15 @@
 import datetime
-from analyzer_helper.discourse.utils.convert_date_time_formats import DateTimeFormatConverter
+
+from analyzer_helper.discourse.utils.convert_date_time_formats import (
+    DateTimeFormatConverter,
+)
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
 
+
+
 class ExtractRawMembers:
-    def __init__(self, forum_endpoint:str, platform_id:str):
+    def __init__(self, forum_endpoint: str, platform_id: str):
         """
         Initialize the ExtractRawMembers with the Neo4j connection parameters.
         """
@@ -48,6 +53,7 @@ class ExtractRawMembers:
         with self.driver.session() as session:
             result = session.run(query, parameters)
             return [record.data() for record in result]
+
     
     def extract(self, recompute: bool = False) -> list:
         """
@@ -72,7 +78,9 @@ class ExtractRawMembers:
             latest_joined_at_iso_format = self.converter.to_iso_format(latest_joined_at)
 
             if latest_joined_at:
-                members = self.fetch_member_details(start_date=latest_joined_at_iso_format)
+                members = self.fetch_member_details(
+                    start_date=latest_joined_at_iso_format
+                )
             else:
                 members = self.fetch_member_details()
 

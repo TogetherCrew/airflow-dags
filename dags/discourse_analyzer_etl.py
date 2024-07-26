@@ -6,9 +6,9 @@ from datetime import datetime
 from airflow import DAG
 from airflow.decorators import task
 
+from analyzer_helper.common.analyzer import Analyzer
 from analyzer_helper.common.fetch_platforms import FetchPlatforms
 from analyzer_helper.common.load_transformed_data import LoadTransformedData
-from analyzer_helper.common.analyzer import Analyzer
 from analyzer_helper.discourse.extract_raw_data import ExtractRawInfo
 from analyzer_helper.discourse.transform_raw_data import TransformRawInfo
 
@@ -47,7 +47,9 @@ with DAG(
         # if an id for `recompute_platform` was given
         # then just run the ETL job for that platform with `recompute = True`
         # meaning the return would be a list with just one platform information
-        fetcher = FetchPlatforms(platform_name='discourse') #TODO: Modify accordingly to `discourse` needs
+        fetcher = FetchPlatforms(
+            platform_name="discourse",
+        ) #TODO: Modify accordingly to `discourse` needs
 
         platforms = fetcher.fetch_all()
 
@@ -137,12 +139,16 @@ with DAG(
             ```
         """
         platform_id = platform_info["platform_id"]
-        forum_endpoint = platform_info["forum_endpoint"] #TODO: Understand with Amin if this is appropriately reflecting current structure
+        forum_endpoint = platform_info[
+            "forum_endpoint"
+        ]
         period = platform_info["period"]
         recompute = platform_info["recompute"]
         # if recompute was false, then will fetch from the previously saved data date
         # else, then will fetch all platform's members data
-        extractor = ExtractRawMembers(forum_endpoint=forum_endpoint, platform_id=platform_id)
+        extractor = ExtractRawMembers(
+            forum_endpoint=forum_endpoint, platform_id=platform_id
+        )
         extracted_data = extractor.extract(period=period, recompute=recompute)
         transformer = TransformRawMembers(platform_id=platform_id)
         transformed_data = transformer.transform(
@@ -169,7 +175,7 @@ with DAG(
             ```
         """
         logging.info(f"platform_processed: {platform_processed}")
-        fetcher = FetchPlatforms(plaform_name='discourse')
+        fetcher = FetchPlatforms(plaform_name="discourse")
         platform_id = platform_processed["platform_id"]
         recompute = platform_processed["recompute"]
 
@@ -181,7 +187,7 @@ with DAG(
         window = metadata["window"]
         channels = metadata["selectedChannels"]
 
-        analyzer = Analyzer(platform_name='discourse')
+        analyzer = Analyzer(platform_name="discourse")
         
         analyzer.analyze(
             platform_id=platform_id,
@@ -193,7 +199,10 @@ with DAG(
 
         platform_modules = fetch_discourse_platforms()
 
-        raw_data_etl = discourse_etl_raw_data.expand(platform_info=platform_modules)
-        raw_members_etl = discourse_etl_raw_members.expand(platform_info=platform_modules)
-
+        raw_data_etl = discourse_etl_raw_data.expand(
+            platform_info=platform_modules
+        )
+        raw_members_etl = discourse_etl_raw_members.expand(
+            platform_info=platform_modules
+        )
         raw_members_etl >> analyze_discourse(platform_processed=raw_data_etl)

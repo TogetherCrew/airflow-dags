@@ -3,8 +3,8 @@ import unittest
 
 from analyzer_helper.discourse.transform_raw_data import TransformRawInfo
 
-class TestTransformRawInfo(unittest.TestCase):
 
+class TestTransformRawInfo(unittest.TestCase):
     def setUp(self):
         """Initialize the TransformRawInfo instance before each test."""
         self.transformer = TransformRawInfo()
@@ -19,19 +19,19 @@ class TestTransformRawInfo(unittest.TestCase):
             "category_id": 500,
             "topic_id": 6134,
             "reactions": [],
-            "replied_post_id": None
+            "replied_post_id": None,
         }
         result = self.transformer.create_data_entry(raw_data)
-        self.assertEqual(result['author_id'], str(raw_data['author_id']))
-        self.assertIsInstance(result['date'], datetime.datetime)
-        self.assertFalse(result['metadata']['bot_activity'])
-        self.assertEqual(len(result['interactions']), 0)
-        self.assertEqual(result['source_id'], str(raw_data['post_id']))
-        self.assertEqual(result['metadata']['category_id'], raw_data['category_id'])
-        self.assertEqual(result['metadata']['topic_id'], raw_data['topic_id'])
-        self.assertEqual(len(result['actions']), 1)
-        self.assertEqual(result['actions'][0]['name'], 'message')
-        self.assertEqual(result['actions'][0]['type'], 'emitter')
+        self.assertEqual(result["author_id"], str(raw_data["author_id"]))
+        self.assertIsInstance(result["date"], datetime.datetime)
+        self.assertFalse(result["metadata"]["bot_activity"])
+        self.assertEqual(len(result["interactions"]), 0)
+        self.assertEqual(result["source_id"], str(raw_data["post_id"]))
+        self.assertEqual(result["metadata"]["category_id"], raw_data["category_id"])
+        self.assertEqual(result["metadata"]["topic_id"], raw_data["topic_id"])
+        self.assertEqual(len(result["actions"]), 1)
+        self.assertEqual(result["actions"][0]["name"], "message")
+        self.assertEqual(result["actions"][0]["type"], "emitter")
 
     def test_create_data_entry_with_reaction(self):
         """Test data entry creation for a reaction interaction."""
@@ -42,26 +42,28 @@ class TestTransformRawInfo(unittest.TestCase):
             "category_id": 500,
             "topic_id": 6134,
             "reactions": [6263],
-            "replied_post_id": None
+            "replied_post_id": None,
         }
-        result = self.transformer.create_data_entry(raw_data, interaction_type="reaction", interaction_user=6263)
+        result = self.transformer.create_data_entry(
+             raw_data, interaction_type="reaction", interaction_user=6263
+        )
         expected_result = {
-            'actions': [],
-            'author_id': '6263',
-            'date': datetime.datetime(2023, 9, 11, 21, 42, 43, 553000, tzinfo=datetime.timezone.utc),
-            'interactions': [
+            "actions": [],
+            "author_id": "6263",
+            "date": datetime.datetime(2023, 9, 11, 21, 42, 43, 553000, tzinfo=datetime.timezone.utc),
+            "interactions": [
                 {
-                    'name': 'reaction',
-                    'type': 'emitter',
-                    'users_engaged_id': ['6168']
+                    "name": "reaction",
+                    "type": "emitter",
+                    "users_engaged_id": ["6168"],
                 }
             ],
-            'metadata': {
-                'category_id': 500,
-                'topic_id': 6134,
-                'bot_activity': False
+            "metadata": {
+                "category_id": 500,
+                "topic_id": 6134,
+                "bot_activity": False,
             },
-            'source_id': '6261'
+            "source_id": "6261",
         }
         self.assertEqual(result, expected_result)
 
@@ -81,43 +83,43 @@ class TestTransformRawInfo(unittest.TestCase):
 
         expected_result = [
             {
-                'author_id': '6168',
-                'date': datetime.datetime(2023, 9, 11, 21, 41, 43, 553000, tzinfo=datetime.timezone.utc),
-                'source_id': '6262',
-                'metadata': {
-                    'category_id': None,
-                    'topic_id': 6134,
-                    'bot_activity': False
+                "author_id": "6168",
+                "date": datetime.datetime(2023, 9, 11, 21, 41, 43, 553000, tzinfo=datetime.timezone.utc),
+                "source_id": "6262",
+                "metadata": {
+                    "category_id": None,
+                    "topic_id": 6134,
+                    "bot_activity": False,
                 },
-                'actions': [
+                "actions": [
                     {
-                        'name': 'message',
-                        'type': 'emitter',
+                        "name": "message",
+                        "type": "emitter",
                     }
                 ],
-                'interactions': [
+                "interactions": [
                     {
-                        'name': 'reply',
-                        'type': 'emitter',
-                        'users_engaged_id': ['4444'],
+                        "name": "reply",
+                        "type": "emitter",
+                        "users_engaged_id": ["4444"],
                     }
                 ]
             },
             {
-                'author_id': '4444',
-                'date': datetime.datetime(2023, 9, 11, 21, 41, 43, 553000, tzinfo=datetime.timezone.utc),
-                'source_id': '6262',
-                'metadata': {
-                    'category_id': None,
-                    'topic_id': 6134,
-                    'bot_activity': False,
+                "author_id": "4444",
+                "date": datetime.datetime(2023, 9, 11, 21, 41, 43, 553000, tzinfo=datetime.timezone.utc),
+                "source_id": "6262",
+                "metadata": {
+                    "category_id": None,
+                    "topic_id": 6134,
+                    "bot_activity": False,
                 },
-                'actions': [],
-                'interactions': [
+                "actions": [],
+                "interactions": [
                     {
-                        'name': 'reply',
-                        'type': 'receiver',
-                        'users_engaged_id': ['6168'],
+                        "name": "reply",
+                        "type": "receiver",
+                        "users_engaged_id": ["6168"],
                     }
                 ]
             }
@@ -138,69 +140,69 @@ class TestTransformRawInfo(unittest.TestCase):
                     "reactions": [1, 2],
                     "replied_post_id": None,
                     "replied_post_user_id": None,
-                    "topic_id": 6134
+                    "topic_id": 6134,
                 }
 
             ]
             expected_result = [
                 {
-                    'author_id': '6168',
-                    'date': datetime.datetime(2023, 9, 11, 21, 42, 43, 553000, tzinfo=datetime.timezone.utc),
-                    'source_id': '6261',
-                    'metadata': {
-                        'category_id': None,
-                        'topic_id': 6134,
-                        'bot_activity': False,
+                    "author_id": "6168",
+                    "date": datetime.datetime(2023, 9, 11, 21, 42, 43, 553000, tzinfo=datetime.timezone.utc),
+                    "source_id": "6261",
+                    "metadata": {
+                        "category_id": None,
+                        "topic_id": 6134,
+                        "bot_activity": False,
                     },
-                    'actions': [
+                    "actions": [
                         {
-                            'name': 'message',
-                            'type': 'emitter',
+                            "name": "message",
+                            "type": "emitter",
                         }
                     ],
-                    'interactions': [
+                    "interactions": [
                         {
-                            'name': 'reaction',
-                            'type': 'receiver',
-                            'users_engaged_id': ['1', '2'],
+                            "name": "reaction",
+                            "type": "receiver",
+                            "users_engaged_id": ["1", "2"],
                         }
                     ]
                 },
                 {
-                    'actions': [],
-                    'author_id': '1',
-                    'date': datetime.datetime(2023, 9, 11, 21, 42, 43, 553000, tzinfo=datetime.timezone.utc),
-                    'interactions': [
+                    "actions": [],
+                    "author_id": "1",
+                    "date": datetime.datetime(2023, 9, 11, 21, 42, 43, 553000, tzinfo=datetime.timezone.utc),
+                    "interactions": [
                         {
-                            'name': 'reaction',
-                            'type': 'emitter',
-                            'users_engaged_id': ['6168'],
+                            "name": "reaction",
+                            "type": "emitter",
+                            "users_engaged_id": ["6168"],
                         }
                     ],
-                    'metadata': {
-                        'category_id': None,
-                        'topic_id': 6134,
-                        'bot_activity': False,
+                    "metadata": {
+                        "category_id": None,
+                        "topic_id": 6134,
+                        "bot_activity": False,
                     },
-                    'source_id': '6261',
+                    "source_id": "6261",
                 },
                 {
-                    'actions': [],
-                    'author_id': '2',
-                    'date': datetime.datetime(2023, 9, 11, 21, 42, 43, 553000, tzinfo=datetime.timezone.utc),
-                    'interactions': [
+                    "actions": [],
+                    "author_id": "2",
+                    "date": datetime.datetime(2023, 9, 11, 21, 42, 43, 553000, tzinfo=datetime.timezone.utc),
+                    "interactions": [
                         {
-                            'name': 'reaction',
-                            'type': 'emitter',
-                            'users_engaged_id': ['6168'],
+                            "name": "reaction",
+                            "type": "emitter",
+                            "users_engaged_id": ["6168"],
                         }
                     ],
-                    'metadata': {
-                        'category_id': None,
-                        'topic_id': 6134,
-                        'bot_activity': False,
+                    "metadata": {
+                        "category_id": None,
+                        "topic_id": 6134,
+                        "bot_activity": False,
                     },
-                    'source_id': '6261',
+                    "source_id": "6261",
                 }
             ]
 
@@ -219,7 +221,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 "reactions": [],
                 "replied_post_id": 6512,
                 "replied_post_user_id": 4444,
-                "topic_id": 6134
+                "topic_id": 6134,
             },
             {
                 "post_id": 6261,
@@ -229,117 +231,115 @@ class TestTransformRawInfo(unittest.TestCase):
                 "reactions": [1, 2],
                 "replied_post_id": None,
                 "replied_post_user_id": None,
-                "topic_id": 6134
+                "topic_id": 6134,
             }
         ]
          
         expected_result = [
             {
-                'author_id': '6168',
-                'date': datetime.datetime(2023, 9, 11, 21, 41, 43, 553000, tzinfo=datetime.timezone.utc),
-                'source_id': '6262',
-                'metadata': {
-                    'category_id': None,
-                    'topic_id': 6134,
-                    'bot_activity': False
+                "author_id": "6168",
+                "date": datetime.datetime(2023, 9, 11, 21, 41, 43, 553000, tzinfo=datetime.timezone.utc),
+                "source_id": "6262",
+                "metadata": {
+                    "category_id": None,
+                    "topic_id": 6134,
+                    "bot_activity": False,
                 },
-                'actions': [
+                "actions": [
                     {
-                        'name': 'message',
-                        'type': 'emitter'
+                        "name": "message",
+                        "type": "emitter",
                     }
                 ],
-                'interactions': [
+                "interactions": [
                     {
-                        'name': 'reply',
-                        'type': 'emitter',
-                        'users_engaged_id': ['4444']
+                        "name": "reply",
+                        "type": "emitter",
+                        "users_engaged_id": ["4444"],
                     }
                 ]
             },
             {
-                'author_id': '4444',
-                'date': datetime.datetime(2023, 9, 11, 21, 41, 43, 553000, tzinfo=datetime.timezone.utc),
-                'source_id': '6262',
-                'metadata': {
-                    'category_id': None,
-                    'topic_id': 6134,
-                    'bot_activity': False
+                "author_id": "4444",
+                "date": datetime.datetime(2023, 9, 11, 21, 41, 43, 553000, tzinfo=datetime.timezone.utc),
+                "source_id": "6262",
+                "metadata": {
+                    "category_id": None,
+                    "topic_id": 6134,
+                    "bot_activity": False,
                 },
-                'actions': [],
-                'interactions': [
+                "actions": [],
+                "interactions": [
                     {
-                        'name': 'reply',
-                        'type': 'receiver',
-                        'users_engaged_id': ['6168']
+                        "name": "reply",
+                        "type": "receiver",
+                        "users_engaged_id": ["6168"],
                     }
                 ]
             },
             {
-                'author_id': '6168',
-                'date': datetime.datetime(2023, 9, 11, 21, 42, 43, 553000, tzinfo=datetime.timezone.utc),
-                'source_id': '6261',
-                'metadata': {
-                    'category_id': None,
-                    'topic_id': 6134,
-                    'bot_activity': False
+                "author_id": "6168",
+                "date": datetime.datetime(2023, 9, 11, 21, 42, 43, 553000, tzinfo=datetime.timezone.utc),
+                "source_id": "6261",
+                "metadata": {
+                    "category_id": None,
+                    "topic_id": 6134,
+                    "bot_activity": False,
                 },
-                'actions': [
+                "actions": [
                     {
-                        'name': 'message',
-                        'type': 'emitter'
+                        "name": "message",
+                        "type": "emitter",
                     }
                 ],
-                'interactions': [
+                "interactions": [
                     {
-                        'name': 'reaction',
-                        'type': 'receiver',
-                        'users_engaged_id': ['1', '2']
+                        "name": "reaction",
+                        "type": "receiver",
+                        "users_engaged_id": ["1", "2"],
                     }
                 ]
             },
             {
-                'actions': [],
-                'author_id': '1',
-                'date': datetime.datetime(2023, 9, 11, 21, 42, 43, 553000, tzinfo=datetime.timezone.utc),
-                'interactions': [
+                "actions": [],
+                "author_id": "1",
+                "date": datetime.datetime(2023, 9, 11, 21, 42, 43, 553000, tzinfo=datetime.timezone.utc),
+                "interactions": [
                     {
-                        'name': 'reaction',
-                        'type': 'emitter',
-                        'users_engaged_id': ['6168']
+                        "name": "reaction",
+                        "type": "emitter",
+                        "users_engaged_id": ["6168"],
                     }
                 ],
-                'metadata': {
-                    'category_id': None,
-                    'topic_id': 6134,
-                    'bot_activity': False
+                "metadata": {
+                    "category_id": None,
+                    "topic_id": 6134,
+                    "bot_activity": False,
                 },
-                'source_id': '6261'
+                "source_id": "6261",
             },
             {
-                'actions': [],
-                'author_id': '2',
-                'date': datetime.datetime(2023, 9, 11, 21, 42, 43, 553000, tzinfo=datetime.timezone.utc),
-                'interactions': [
+                "actions": [],
+                "author_id": "2",
+                "date": datetime.datetime(2023, 9, 11, 21, 42, 43, 553000, tzinfo=datetime.timezone.utc),
+                "interactions": [
                     {
-                        'name': 'reaction',
-                        'type': 'emitter',
-                        'users_engaged_id': ['6168']
+                        "name": "reaction",
+                        "type": "emitter",
+                        "users_engaged_id": ["6168"],
                     }
                 ],
-                'metadata': {
-                    'category_id': None,
-                    'topic_id': 6134,
-                    'bot_activity': False
+                "metadata": {
+                    "category_id": None,
+                    "topic_id": 6134,
+                    "bot_activity": False,
                 },
-                'source_id': '6261'
+                "source_id": "6261",
             }
         ]
         result = self.transformer.transform(
             raw_data=raw_data,
         )
-        print("result: \n", result)
-        print("expected_result: \n", expected_result)
         self.assertEqual(result, expected_result)
 
     def test_transform_data_empty(self):

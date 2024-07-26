@@ -1,12 +1,10 @@
-from datetime import datetime
 import unittest
+from datetime import datetime
 
-from analyzer_helper.discourse.transform_raw_members import (
-    TransformRawMembers,
-)
+from analyzer_helper.discourse.transform_raw_members import TransformRawMembers
+
 
 class TestDiscordTransformRawMembers(unittest.TestCase):
-
     def setUp(self):
         self.transformer = TransformRawMembers()
      
@@ -52,14 +50,12 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
             "joined_at": "2023-07-01",
             "badgeIds": ["badge1"],
         }
-        
         raw_member2 = {
             "id": "85161",
             "avatar": "avatar2",
             "joined_at": "2023-07-02",
             "badgeIds": ["badge2"],
         }
-
         expected_result1 = {
             "id": "85159",
             "is_bot": False,
@@ -67,7 +63,6 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
             "joined_at": datetime(2023, 7, 1, 0, 0, 0, 0),
             "options": {},
         }
-
         expected_result2 = {
             "id": "85161",
             "is_bot": False,

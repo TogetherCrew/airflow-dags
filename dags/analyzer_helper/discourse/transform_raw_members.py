@@ -1,7 +1,11 @@
 import logging
 
-from analyzer_helper.common.base.transform_raw_members_base import TransformRawMembersBase
-from analyzer_helper.discourse.utils.convert_date_time_formats import DateTimeFormatConverter
+from analyzer_helper.common.base.transform_raw_members_base import (
+    TransformRawMembersBase,
+)
+from analyzer_helper.discourse.utils.convert_date_time_formats import (
+    DateTimeFormatConverter,
+)
 
 
 class TransformRawMembers(TransformRawMembersBase):
@@ -33,8 +37,7 @@ class TransformRawMembers(TransformRawMembersBase):
             "is_bot": member.get("isBot", False),
             "left_at": None,
             "joined_at": self.converter.from_date_string(member.get("joined_at")),
-            "options": {
-            },
+            "options": {},
         }
 
         return member

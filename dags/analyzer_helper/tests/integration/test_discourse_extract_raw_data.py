@@ -1,11 +1,13 @@
-import datetime
 import unittest
+import datetime
+
 from analyzer_helper.discourse.extract_raw_data import ExtractRawInfo
-from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
+from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
+
+
 
 class TestExtractRawInfo(unittest.TestCase):
-
     @classmethod
     def setUpClass(cls):
         cls.neo4jConnection = Neo4jConnection()
@@ -21,7 +23,8 @@ class TestExtractRawInfo(unittest.TestCase):
             session.run("MATCH (n) DETACH DELETE n")
 
         with cls.driver.session() as session:
-            session.run("""
+            session.run(
+                """
                 CREATE (f:DiscourseForum {endpoint: $endpoint, uuid: 'forum-uuid'}),
                        (u1:DiscourseUser {id: 'user1', name: 'User One'}),
                        (u2:DiscourseUser {id: 'user2', name: 'User Two'}),
@@ -36,7 +39,9 @@ class TestExtractRawInfo(unittest.TestCase):
                        (p1)<-[:LIKED]-(u2),
                        (p2)<-[:REPLY_TO]-(p1),
                        (c)-[:HAS_TOPIC]->(t)
-                """, {'endpoint': cls.forum_endpoint})
+                """,
+                {'endpoint': cls.forum_endpoint},
+                )
 
     @classmethod
     def tearDownClass(cls):
@@ -49,24 +54,24 @@ class TestExtractRawInfo(unittest.TestCase):
         result = self.extractor.fetch_post_details()
         expected_result = [
             {
-                'post_id': '1',
-                'author_id': 'user1',
-                'created_at': '2023-01-01T00:00:00Z',
-                'author_name': 'User One',
-                'reactions': ['user2'],
-                'replied_post_id': '2',
-                'replied_post_user_id': 'user2',
-                'topic_id': 'topic-uuid'
+                "post_id": "1",
+                "author_id": "user1",
+                "created_at": "2023-01-01T00:00:00Z",
+                "author_name": "User One",
+                "reactions": ["user2"],
+                "replied_post_id": "2",
+                "replied_post_user_id": "user2",
+                "topic_id": "topic-uuid"
             },
             {
-                'post_id': '2',
-                'author_id': 'user2',
-                'created_at': '2023-01-02T00:00:00Z',
-                'author_name': 'User Two',
-                'reactions': [],
-                'replied_post_id': None,
-                'replied_post_user_id': None,
-                'topic_id': 'topic-uuid'
+                "post_id": "2",
+                "author_id": "user2",
+                "created_at": "2023-01-02T00:00:00Z",
+                "author_name": "User Two",
+                "reactions": [],
+                "replied_post_id": None,
+                "replied_post_user_id": None,
+                "topic_id": "topic-uuid"
             }
         ]
         self.assertEqual(len(result), 2)
@@ -79,25 +84,27 @@ class TestExtractRawInfo(unittest.TestCase):
         self.assertEqual(len(post_categories), 2)
 
         for category in post_categories:
-            self.assertIn('post_id', category)
-            self.assertIn('category_id', category)
+            self.assertIn("post_id", category)
+            self.assertIn("category_id", category)
 
     def test_fetch_raw_data(self):
         combined_data = self.extractor.fetch_raw_data()
         self.assertEqual(len(combined_data), 2)
-        author_names_categories = [(post['author_name'], post['category_id']) for post in combined_data]
-        self.assertIn(('User One', 'category1'), author_names_categories)
-        self.assertIn(('User Two', 'category1'), author_names_categories)
+        author_names_categories = [
+            (post["author_name"], post["category_id"]) for post in combined_data
+        ]
+        self.assertIn(("User One", "category1"), author_names_categories)
+        self.assertIn(("User Two", "category1"), author_names_categories)
 
         for post in combined_data:
-            self.assertIn('post_id', post)
-            self.assertIn('author_id', post)
-            self.assertIn('created_at', post)
-            self.assertIn('author_name', post)
-            self.assertIn('reactions', post)
-            self.assertIn('replied_post_id', post)
-            self.assertIn('topic_id', post)
-            self.assertIn('category_id', post)
+            self.assertIn("post_id", post)
+            self.assertIn("author_id", post)
+            self.assertIn("created_at", post)
+            self.assertIn("author_name", post)
+            self.assertIn("reactions", post)
+            self.assertIn("replied_post_id", post)
+            self.assertIn("topic_id", post)
+            self.assertIn("category_id", post)
             
     def test_extract_with_recompute(self):
         self.rawmemberactivities_collection.delete_many({})
@@ -107,93 +114,96 @@ class TestExtractRawInfo(unittest.TestCase):
 
         # Check if data is fetched from the Neo4j database without date filtering
         self.assertEqual(len(data), 2)
-        author_names = [post['author_name'] for post in data]
-        self.assertIn('User One', author_names)
-        self.assertIn('User Two', author_names)
+        author_names = [post["author_name"] for post in data]
+        self.assertIn("User One", author_names)
+        self.assertIn("User Two", author_names)
 
     def test_extract_without_recompute_no_latest_activity(self):
         self.rawmemberactivities_collection.delete_many({})
         
-        result = self.extractor.extract(period=datetime.datetime(2023, 1, 1), recompute=False)
+        result = self.extractor.extract(
+            period=datetime.datetime(2023, 1, 1), recompute=False
+        )
         expected_result = [
             {
-                'post_id': '1',
-                'author_id': 'user1',
-                'created_at': '2023-01-01T00:00:00Z',
-                'author_name': 'User One',
-                'reactions': ['user2'],
-                'replied_post_id': '2',
-                'replied_post_user_id': 'user2',
-                'topic_id': 'topic-uuid',
-                'category_id': 'category1'
+                'post_id': "1",
+                "author_id": "user1",
+                "created_at": "2023-01-01T00:00:00Z",
+                "author_name": "User One",
+                "reactions": ["user2"],
+                "replied_post_id": "2",
+                "replied_post_user_id": "user2",
+                "topic_id": "topic-uuid",
+                "category_id": "category1",
             },
             {
-                'post_id': '2',
-                'author_id': 'user2',
-                'created_at': '2023-01-02T00:00:00Z',
-                'author_name': 'User Two',
-                'reactions': [],
-                'replied_post_id': None,
-                'replied_post_user_id': None,
-                'topic_id': 'topic-uuid',
-                'category_id': 'category1'
+                "post_id": "2",
+                "author_id": "user2",
+                "created_at": "2023-01-02T00:00:00Z",
+                "author_name": "User Two",
+                "reactions": [],
+                "replied_post_id": None,
+                "replied_post_user_id": None,
+                "topic_id": "topic-uuid",
+                "category_id": "category1",
             }
         ]
         self.assertEqual(len(result), 2)
         self.assertEqual(result, expected_result)
 
-    
     def test_extract_without_recompute_latest_activity_before_period(self):
         self.rawmemberactivities_collection.delete_many({})
         self.rawmemberactivities_collection.insert_one(
             {
-                'author_id': '6168',
-                'date': datetime.datetime(2022, 12, 31, 00, 00, 00, tzinfo=datetime.timezone.utc),
-                'source_id': '6262',
-                'metadata': {
-                    'category_id': None,
-                    'topic_id': 6134,
-                    'bot_activity': False
+                "author_id": "6168",
+                "date": datetime.datetime(2022, 12, 31, 00, 00, 00, tzinfo=datetime.timezone.utc),
+                "source_id": "6262",
+                "metadata": {
+                    "category_id": None,
+                    "topic_id": 6134,
+                    "bot_activity": False,
                 },
-                'actions': [
+                "actions": [
                     {
-                        'name': 'message',
-                        'type': 'emitter',
+                        "name": "message",
+                        "type": "emitter",
                     }
                 ],
-                'interactions': [
+                "interactions": [
                     {
-                        'name': 'reply',
-                        'type': 'emitter',
-                        'users_engaged_id': ['4444'],
+                        "name": "reply",
+                        "type": "emitter",
+                        "users_engaged_id": ["4444"],
                     }
                 ]
             },
         )  
         
-        result = self.extractor.extract(period=datetime.datetime(2023, 1, 1), recompute=False)
+        result = self.extractor.extract(
+            period=datetime.datetime(2023, 1, 1), recompute=False
+        )
         expected_result = [
             {
-                'post_id': '1',
-                'author_id': 'user1',
-                'created_at': '2023-01-01T00:00:00Z',
-                'author_name': 'User One',
-                'reactions': ['user2'],
-                'replied_post_id': '2',
-                'replied_post_user_id': 'user2',
-                'topic_id': 'topic-uuid',
-                'category_id': 'category1'
+                "post_id": "1",
+                "author_id": "user1",
+                "created_at": "2023-01-01T00:00:00Z",
+                "author_name": "User One",
+                "reactions": ["user2"],
+                "replied_post_id": "2",
+                "replied_post_user_id": "user2",
+                "topic_id": "topic-uuid",
+                "category_id": "category1",
             },
             {
-                'post_id': '2',
-                'author_id': 'user2',
-                'created_at': '2023-01-02T00:00:00Z',
-                'author_name': 'User Two',
-                'reactions': [],
-                'replied_post_id': None,
-                'replied_post_user_id': None,
-                'topic_id': 'topic-uuid',
-                'category_id': 'category1'
+                "post_id": "2",
+                "author_id": "user2",
+                "created_at": "2023-01-02T00:00:00Z",
+                "author_name": "User Two",
+                "reactions": [],
+                "replied_post_id": None,
+                "replied_post_user_id": None,
+                "topic_id": "topic-uuid",
+                "category_id": "category1",
             }
         ]
         self.assertEqual(len(result), 2)
@@ -203,25 +213,25 @@ class TestExtractRawInfo(unittest.TestCase):
         self.rawmemberactivities_collection.delete_many({})
         self.rawmemberactivities_collection.insert_one(
             {
-                'author_id': '6168',
-                'date': datetime.datetime(2023, 1, 2, 00, 00, 00, tzinfo=datetime.timezone.utc),
-                'source_id': '6262',
-                'metadata': {
-                    'category_id': None,
-                    'topic_id': 6134,
-                    'bot_activity': False
+                "author_id": "6168",
+                "date": datetime.datetime(2023, 1, 2, 00, 00, 00, tzinfo=datetime.timezone.utc),
+                "source_id": "6262",
+                "metadata": {
+                    "category_id": None,
+                    "topic_id": 6134,
+                    "bot_activity": False,
                 },
-                'actions': [
+                "actions": [
                     {
-                        'name': 'message',
-                        'type': 'emitter',
+                        "name": "message",
+                        "type": "emitter",
                     }
                 ],
-                'interactions': [
+                "interactions": [
                     {
-                        'name': 'reply',
-                        'type': 'emitter',
-                        'users_engaged_id': ['4444'],
+                        "name": "reply",
+                        "type": "emitter",
+                        "users_engaged_id": ["4444"],
                     }
                 ]
             },
@@ -229,4 +239,6 @@ class TestExtractRawInfo(unittest.TestCase):
         
         result = self.extractor.extract(period=datetime.datetime(2023, 1, 1), recompute=False)
         expected_result = []
-        self.assertEqual(result, expected_result)
+        self.assertEqual(
+            result, expected_result
+        )

@@ -1,12 +1,13 @@
-from typing import List, Dict, Callable
 from datetime import datetime
+from typing import List, Dict, Callable
+
 
 class Analyzer:
     def __init__(self, platform_name: str):
         self.platform_name = platform_name
         self.platform_methods: Dict[str, Callable] = {
-            'discord': self._analyze_discord,
-            'discourse': self._analyze_discourse,
+            "discord": self._analyze_discord,
+            "discourse": self._analyze_discourse,
         }
 
     def analyze(
@@ -21,7 +22,9 @@ class Analyzer:
         if analyze_method:
             analyze_method(platform_id, channels_or_resources, period, action, window)
         else:
-            raise NotImplementedError(f"Analyzer for platform '{self.platform_name}' is not implemented yet")
+            raise NotImplementedError(
+                f"Analyzer for platform '{self.platform_name}' is not implemented yet"
+            )
 
     def _analyze_discord(
         self,

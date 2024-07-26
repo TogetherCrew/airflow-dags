@@ -1,6 +1,8 @@
 import logging
 
-from analyzer_helper.common.base.load_transformed_members_base import LoadTransformedMembersBase
+from analyzer_helper.common.base.load_transformed_members_base import (
+    LoadTransformedMembersBase,
+)
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 

@@ -1,14 +1,16 @@
 from datetime import datetime
 
-from analyzer_helper.discourse.utils.convert_date_time_formats import DateTimeFormatConverter
+from typing import Dict, List, Optional
+
+from analyzer_helper.discourse.utils.convert_date_time_formats import (
+    DateTimeFormatConverter,
+)
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
-from typing import Optional, List, Dict
-
 
 
 class ExtractRawInfo:
-    def __init__(self, forum_endpoint:str, platform_id:str):
+    def __init__(self, forum_endpoint: str, platform_id: str):
         """
         Initialize the ExtractRawInfo with the forum endpoint, platform id and set up Neo4j and MongoDB connection.
         """
@@ -26,7 +28,9 @@ class ExtractRawInfo:
         """
         self.driver.close()
 
-    def fetch_post_details(self, created_at: Optional[str] = None, comparison: Optional[str] = None) -> list:
+    def fetch_post_details(
+        self, created_at: Optional[str] = None, comparison: Optional[str] = None
+        ) -> list:
         """
         Fetch details of posts from the Discourse forum.
 
@@ -35,11 +39,14 @@ class ExtractRawInfo:
         :return: List of dictionaries containing post details.
         """
         if comparison:
-            assert comparison in {'gt', 'gte'}, "comparison must be either 'gt' or 'gte'"
+            assert comparison in {
+                "gt",
+                "gte",
+            }, "comparison must be either 'gt' or 'gte'"
 
         where_clause = ""
         if created_at and comparison:
-            operator = '>' if comparison == 'gt' else '>='
+            operator = ">" if comparison == "gt" else ">="
             where_clause = f"WHERE post.createdAt {operator} $createdAt"
         query = f"""
         MATCH (forum:DiscourseForum {{endpoint: $forum_endpoint}})
@@ -64,7 +71,9 @@ class ExtractRawInfo:
 
         with self.driver.session() as session:
             if created_at and comparison:
-                result = session.run(query, forum_endpoint=self.forum_endpoint, createdAt=created_at)
+                result = session.run(
+                    query, forum_endpoint=self.forum_endpoint, createdAt=created_at
+                )
             else:
                 result = session.run(query, forum_endpoint=self.forum_endpoint)
             posts = result.data()
@@ -92,6 +101,7 @@ class ExtractRawInfo:
             records = [record.data() for record in result]
             self.driver.close()
             return records
+
     
     def get_latest_post_created_at(self, forum_endpoint: str) -> Optional[str]:
         """
@@ -115,22 +125,18 @@ class ExtractRawInfo:
         ORDER BY post.createdAt DESC
         LIMIT 1
         """
-        
         with self.driver.session() as session:
             result = session.run(query, forum_endpoint=forum_endpoint)
             latest_post = result.single()
-            
             self.driver.close()
-        
         if latest_post:
             return latest_post["created_at"]
         else:
             return None
+
         
     def combine_posts_with_categories(
-            self, 
-            post_details: List[Dict[str, any]], 
-            post_categories: List[Dict[str, any]]
+        self, post_details: List[Dict[str, any]], post_categories: List[Dict[str, any]]
     ) -> List[Dict[str, any]]:
 
         """
@@ -144,13 +150,17 @@ class ExtractRawInfo:
 
         combined_results = []
         for post in post_details:
-            category = category_dict.get(post["post_id"], {"category_id": None, "category_name": None})
+            category = category_dict.get(
+                post["post_id"], {"category_id": None, "category_name": None}
+            )
             post["category_id"] = category["category_id"]
             combined_results.append(post)
 
         return combined_results
 
-    def fetch_raw_data(self, created_at: Optional[str] = None, comparison: Optional[str] = None) -> list:
+    def fetch_raw_data(
+            self, created_at: Optional[str] = None, comparison: Optional[str] = None
+    ) -> list:
         """
         Fetch and combine post details and categories.
 
@@ -165,9 +175,8 @@ class ExtractRawInfo:
 
         post_ids = [post["post_id"] for post in post_details]
         post_categories = self.fetch_post_categories(post_ids)
-        return self.combine_posts_with_categories(
-            post_details, post_categories
-        )
+        return self.combine_posts_with_categories(post_details, post_categories)
+
 
     def extract(self, period: datetime, recompute: bool = False) -> list:
         """
@@ -187,9 +196,17 @@ class ExtractRawInfo:
             latest_activity_date = latest_activity["date"] if latest_activity else None
             if latest_activity_date is not None:
                 # Convert latest_activity_date string to datetime
-                latest_activity_date_datetime = self.converter.from_iso_format(latest_activity_date) if latest_activity_date else None
+                latest_activity_date_datetime = (
+                    self.converter.from_iso_format(latest_activity_date)
+                    if latest_activity_date
+                    else None
+                )
                 # Convert latest_activity_date_datetime to ISO format with milliseconds
-                latest_activity_date_iso_format = self.converter.to_iso_format(latest_activity_date_datetime) if latest_activity_date_datetime else None
+                latest_activity_date_iso_format = (
+                    self.converter.to_iso_format(latest_activity_date_datetime) 
+                    if latest_activity_date_datetime 
+                    else None
+                )
                 period_iso_format = self.converter.to_iso_format(period)
                 if latest_activity_date_iso_format >= period_iso_format:
                     data = self.fetch_raw_data(latest_activity_date_iso_format, "gt")
