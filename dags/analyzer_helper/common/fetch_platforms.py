@@ -80,9 +80,8 @@ class FetchPlatforms:
             "disconnectedAt": None,
             "platform": self.platform_name,
         }
-        
         #TODO: introduce strategy pattern once we add 'telegram'
-        if self.platform_name == 'discord':
+        if self.platform_name == "discord":
             projection = {
                 "_id": 1,
                 "metadata.period": 1,
@@ -106,7 +105,9 @@ class FetchPlatforms:
 
         for doc in cursor:
             if self.platform_name == "discord":
-                selected_channels = doc.get("metadata", {}).get("selectedChannels", None)
+                selected_channels = doc.get("metadata", {}).get(
+                    "selectedChannels", None
+                )
             else:
                 selected_channels = doc.get("metadata", {}).get("resources", None)
                 

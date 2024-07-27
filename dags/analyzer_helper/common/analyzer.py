@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Dict, Callable
+from typing import Callable, List, Dict
 
 
 class Analyzer:

@@ -7,7 +7,7 @@ from analyzer_helper.discourse.transform_raw_members import TransformRawMembers
 class TestDiscordTransformRawMembers(unittest.TestCase):
     def setUp(self):
         self.transformer = TransformRawMembers()
-     
+
     def test_transform_empty_list(self):
         """
         Tests that transform returns an empty list for an empty members list

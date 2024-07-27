@@ -1,5 +1,5 @@
-import unittest
 import datetime
+import unittest
 
 from analyzer_helper.discourse.extract_raw_data import ExtractRawInfo
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
@@ -40,7 +40,7 @@ class TestExtractRawInfo(unittest.TestCase):
                        (p2)<-[:REPLY_TO]-(p1),
                        (c)-[:HAS_TOPIC]->(t)
                 """,
-                {'endpoint': cls.forum_endpoint},
+                {"endpoint": cls.forum_endpoint},
                 )
 
     @classmethod
@@ -61,7 +61,7 @@ class TestExtractRawInfo(unittest.TestCase):
                 "reactions": ["user2"],
                 "replied_post_id": "2",
                 "replied_post_user_id": "user2",
-                "topic_id": "topic-uuid"
+                "topic_id": "topic-uuid",
             },
             {
                 "post_id": "2",
@@ -71,8 +71,8 @@ class TestExtractRawInfo(unittest.TestCase):
                 "reactions": [],
                 "replied_post_id": None,
                 "replied_post_user_id": None,
-                "topic_id": "topic-uuid"
-            }
+                "topic_id": "topic-uuid",
+            },
         ]
         self.assertEqual(len(result), 2)
         self.assertEqual(result, expected_result)
@@ -126,7 +126,7 @@ class TestExtractRawInfo(unittest.TestCase):
         )
         expected_result = [
             {
-                'post_id': "1",
+                "post_id": "1",
                 "author_id": "user1",
                 "created_at": "2023-01-01T00:00:00Z",
                 "author_name": "User One",
@@ -146,7 +146,7 @@ class TestExtractRawInfo(unittest.TestCase):
                 "replied_post_user_id": None,
                 "topic_id": "topic-uuid",
                 "category_id": "category1",
-            }
+            },
         ]
         self.assertEqual(len(result), 2)
         self.assertEqual(result, expected_result)
@@ -175,7 +175,7 @@ class TestExtractRawInfo(unittest.TestCase):
                         "type": "emitter",
                         "users_engaged_id": ["4444"],
                     }
-                ]
+                ],
             },
         )  
         
@@ -204,7 +204,7 @@ class TestExtractRawInfo(unittest.TestCase):
                 "replied_post_user_id": None,
                 "topic_id": "topic-uuid",
                 "category_id": "category1",
-            }
+            },
         ]
         self.assertEqual(len(result), 2)
         self.assertEqual(result, expected_result)
@@ -214,7 +214,9 @@ class TestExtractRawInfo(unittest.TestCase):
         self.rawmemberactivities_collection.insert_one(
             {
                 "author_id": "6168",
-                "date": datetime.datetime(2023, 1, 2, 00, 00, 00, tzinfo=datetime.timezone.utc),
+                "date": datetime.datetime(
+                    2023, 1, 2, 00, 00, 00, tzinfo=datetime.timezone.utc
+                ),
                 "source_id": "6262",
                 "metadata": {
                     "category_id": None,
@@ -233,11 +235,13 @@ class TestExtractRawInfo(unittest.TestCase):
                         "type": "emitter",
                         "users_engaged_id": ["4444"],
                     }
-                ]
+                ],
             },
         )
         
-        result = self.extractor.extract(period=datetime.datetime(2023, 1, 1), recompute=False)
+        result = self.extractor.extract(
+            period=datetime.datetime(2023, 1, 1), recompute=False
+        )
         expected_result = []
         self.assertEqual(
             result, expected_result

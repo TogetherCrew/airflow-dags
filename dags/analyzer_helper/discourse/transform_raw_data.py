@@ -55,7 +55,9 @@ class TransformRawInfo:
                     {
                         "name": "reaction",
                         "type": "receiver",
-                        "users_engaged_id": [str(int(reaction)) for reaction in raw_data["reactions"]],
+                        "users_engaged_id": [
+                            str(int(reaction)) for reaction in raw_data["reactions"]
+                        ],
                     }
                 )
             if raw_data["replied_post_id"]:
@@ -93,7 +95,7 @@ class TransformRawInfo:
                         entry,
                         interaction_type="reply",
                         interaction_user=entry["replied_post_user_id"],
-                    )   
+                    )
                 )
             # TODO: Create entry for mentioned users
 

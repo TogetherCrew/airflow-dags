@@ -49,7 +49,7 @@ class DateTimeFormatConverter:
         :param microsecond: Microsecond component of the time.
         :return: datetime object.
         """
-        date = datetime.datetime.strptime(date_string, '%Y-%m-%d')
+        date = datetime.datetime.strptime(date_string, "%Y-%m-%d")
         return datetime.datetime(
             date.year, date.month, date.day, hour, minute, second, microsecond
         )

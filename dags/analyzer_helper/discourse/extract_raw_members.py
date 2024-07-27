@@ -3,8 +3,8 @@ import datetime
 from analyzer_helper.discourse.utils.convert_date_time_formats import (
     DateTimeFormatConverter,
 )
-from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
+from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
 
@@ -49,12 +49,10 @@ class ExtractRawMembers:
         query += """
         RETURN user.id AS id, user.createdAt AS joined_at 
         """
-        
         with self.driver.session() as session:
             result = session.run(query, parameters)
             return [record.data() for record in result]
 
-    
     def extract(self, recompute: bool = False) -> list:
         """
         Extract members data

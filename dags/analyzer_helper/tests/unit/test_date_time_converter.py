@@ -1,11 +1,10 @@
 import datetime
-
 import unittest
-
 
 from analyzer_helper.discourse.utils.convert_date_time_formats import (
     DateTimeFormatConverter,
 )
+
 
 class TestDateTimeFormatConverter(unittest.TestCase):
     def test_to_iso_format(self):

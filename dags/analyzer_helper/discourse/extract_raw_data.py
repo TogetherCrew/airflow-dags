@@ -1,5 +1,4 @@
 from datetime import datetime
-
 from typing import Dict, List, Optional
 
 from analyzer_helper.discourse.utils.convert_date_time_formats import (
@@ -30,7 +29,7 @@ class ExtractRawInfo:
 
     def fetch_post_details(
         self, created_at: Optional[str] = None, comparison: Optional[str] = None
-        ) -> list:
+    ) -> list:
         """
         Fetch details of posts from the Discourse forum.
 
@@ -101,7 +100,6 @@ class ExtractRawInfo:
             records = [record.data() for record in result]
             self.driver.close()
             return records
-
     
     def get_latest_post_created_at(self, forum_endpoint: str) -> Optional[str]:
         """
@@ -134,11 +132,9 @@ class ExtractRawInfo:
         else:
             return None
 
-        
     def combine_posts_with_categories(
         self, post_details: List[Dict[str, any]], post_categories: List[Dict[str, any]]
     ) -> List[Dict[str, any]]:
-
         """
         Combine post details with their respective categories.
 
@@ -176,7 +172,6 @@ class ExtractRawInfo:
         post_ids = [post["post_id"] for post in post_details]
         post_categories = self.fetch_post_categories(post_ids)
         return self.combine_posts_with_categories(post_details, post_categories)
-
 
     def extract(self, period: datetime, recompute: bool = False) -> list:
         """

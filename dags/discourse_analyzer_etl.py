@@ -5,12 +5,15 @@ from datetime import datetime
 
 from airflow import DAG
 from airflow.decorators import task
-
 from analyzer_helper.common.analyzer import Analyzer
 from analyzer_helper.common.fetch_platforms import FetchPlatforms
 from analyzer_helper.common.load_transformed_data import LoadTransformedData
+from analyzer_helper.common.load_transformed_members import LoadTransformedMembers
 from analyzer_helper.discourse.extract_raw_data import ExtractRawInfo
+from analyzer_helper.discourse.extract_raw_members import ExtractRawMembers
 from analyzer_helper.discourse.transform_raw_data import TransformRawInfo
+from analyzer_helper.discourse.transform_raw_members import TransformRawMembers
+
 
 with DAG(
     dag_id="discourse_analyzer_etl",
@@ -49,7 +52,7 @@ with DAG(
         # meaning the return would be a list with just one platform information
         fetcher = FetchPlatforms(
             platform_name="discourse",
-        ) #TODO: Modify accordingly to `discourse` needs
+        )
 
         platforms = fetcher.fetch_all()
 
@@ -99,7 +102,9 @@ with DAG(
             ```
         """
         platform_id = platform_info["platform_id"]
-        forum_endpoint = platform_info["forum_endpoint"] #TODO: Understand with Amin if this is appropriately reflecting current structure
+        forum_endpoint = platform_info[
+            "forum_endpoint"
+        ] #TODO: Understand with Amin if this is appropriately reflecting current structure
         period = platform_info["period"]
         recompute = platform_info["recompute"]
         # If recompute is False, then just extract from the latest saved document
@@ -139,9 +144,7 @@ with DAG(
             ```
         """
         platform_id = platform_info["platform_id"]
-        forum_endpoint = platform_info[
-            "forum_endpoint"
-        ]
+        forum_endpoint = platform_info["forum_endpoint"]
         period = platform_info["period"]
         recompute = platform_info["recompute"]
         # if recompute was false, then will fetch from the previously saved data date
@@ -188,7 +191,7 @@ with DAG(
         channels = metadata["selectedChannels"]
 
         analyzer = Analyzer(platform_name="discourse")
-        
+
         analyzer.analyze(
             platform_id=platform_id,
             channels=channels,
@@ -199,9 +202,7 @@ with DAG(
 
         platform_modules = fetch_discourse_platforms()
 
-        raw_data_etl = discourse_etl_raw_data.expand(
-            platform_info=platform_modules
-        )
+        raw_data_etl = discourse_etl_raw_data.expand(platform_info=platform_modules)
         raw_members_etl = discourse_etl_raw_members.expand(
             platform_info=platform_modules
         )

@@ -45,12 +45,14 @@ class TestTransformRawInfo(unittest.TestCase):
             "replied_post_id": None,
         }
         result = self.transformer.create_data_entry(
-             raw_data, interaction_type="reaction", interaction_user=6263
+            raw_data, interaction_type="reaction", interaction_user=6263
         )
         expected_result = {
             "actions": [],
             "author_id": "6263",
-            "date": datetime.datetime(2023, 9, 11, 21, 42, 43, 553000, tzinfo=datetime.timezone.utc),
+            "date": datetime.datetime(
+                 2023, 9, 11, 21, 42, 43, 553000, tzinfo=datetime.timezone.utc
+            ),
             "interactions": [
                 {
                     "name": "reaction",
@@ -84,7 +86,9 @@ class TestTransformRawInfo(unittest.TestCase):
         expected_result = [
             {
                 "author_id": "6168",
-                "date": datetime.datetime(2023, 9, 11, 21, 41, 43, 553000, tzinfo=datetime.timezone.utc),
+                "date": datetime.datetime(
+                    2023, 9, 11, 21, 41, 43, 553000, tzinfo=datetime.timezone.utc
+                ),
                 "source_id": "6262",
                 "metadata": {
                     "category_id": None,

@@ -1,5 +1,4 @@
 import unittest
-
 from datetime import datetime
 
 from analyzer_helper.discourse.extract_raw_members import ExtractRawMembers
@@ -86,7 +85,7 @@ class TestExtractRawMembers(unittest.TestCase):
             {
                 "id": "user2",
                 "joined_at": "2023-07-02",
-            }
+            },
         ]
         self.assertEqual(result, expected_result)
 
@@ -100,7 +99,7 @@ class TestExtractRawMembers(unittest.TestCase):
             {
                 "id": "user2",
                 "joined_at": "2023-07-02",
-            }
+            },
         ]
         self.assertEqual(result, expected_result)
         
