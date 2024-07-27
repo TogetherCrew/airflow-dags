@@ -4,8 +4,9 @@ from typing import Dict, List, Optional
 from analyzer_helper.discourse.utils.convert_date_time_formats import (
     DateTimeFormatConverter,
 )
-from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
+from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
+
 
 
 class ExtractRawInfo:
@@ -100,7 +101,7 @@ class ExtractRawInfo:
             records = [record.data() for record in result]
             self.driver.close()
             return records
-    
+
     def get_latest_post_created_at(self, forum_endpoint: str) -> Optional[str]:
         """
         Fetches the created_at timestamp of the latest post from a specified forum.
@@ -155,7 +156,7 @@ class ExtractRawInfo:
         return combined_results
 
     def fetch_raw_data(
-            self, created_at: Optional[str] = None, comparison: Optional[str] = None
+        self, created_at: Optional[str] = None, comparison: Optional[str] = None
     ) -> list:
         """
         Fetch and combine post details and categories.
@@ -198,8 +199,8 @@ class ExtractRawInfo:
                 )
                 # Convert latest_activity_date_datetime to ISO format with milliseconds
                 latest_activity_date_iso_format = (
-                    self.converter.to_iso_format(latest_activity_date_datetime) 
-                    if latest_activity_date_datetime 
+                    self.converter.to_iso_format(latest_activity_date_datetime)
+                    if latest_activity_date_datetime
                     else None
                 )
                 period_iso_format = self.converter.to_iso_format(period)

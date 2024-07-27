@@ -5,16 +5,14 @@ from analyzer_helper.discourse.extract_raw_data import ExtractRawInfo
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
-
-
 class TestExtractRawInfo(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.neo4jConnection = Neo4jConnection()
         cls.client = MongoSingleton.get_instance().client
         cls.driver = cls.neo4jConnection.connect_neo4j()
-        cls.forum_endpoint = "http://test_forum" 
-        cls.platform_id = "platform_db"       
+        cls.forum_endpoint = "http://test_forum"
+        cls.platform_id = "platform_db"
         cls.platform_db = cls.client[cls.platform_id]
         cls.extractor = ExtractRawInfo(cls.forum_endpoint, cls.platform_id)
         cls.rawmemberactivities_collection = cls.platform_db["rawmemberactivities"]
@@ -41,7 +39,7 @@ class TestExtractRawInfo(unittest.TestCase):
                        (c)-[:HAS_TOPIC]->(t)
                 """,
                 {"endpoint": cls.forum_endpoint},
-                )
+            )
 
     @classmethod
     def tearDownClass(cls):
@@ -105,7 +103,7 @@ class TestExtractRawInfo(unittest.TestCase):
             self.assertIn("replied_post_id", post)
             self.assertIn("topic_id", post)
             self.assertIn("category_id", post)
-            
+
     def test_extract_with_recompute(self):
         self.rawmemberactivities_collection.delete_many({})
 
@@ -156,7 +154,9 @@ class TestExtractRawInfo(unittest.TestCase):
         self.rawmemberactivities_collection.insert_one(
             {
                 "author_id": "6168",
-                "date": datetime.datetime(2022, 12, 31, 00, 00, 00, tzinfo=datetime.timezone.utc),
+                "date": datetime.datetime(
+                    2022, 12, 31, 00, 00, 00, tzinfo=datetime.timezone.utc
+                ),
                 "source_id": "6262",
                 "metadata": {
                     "category_id": None,
@@ -177,7 +177,7 @@ class TestExtractRawInfo(unittest.TestCase):
                     }
                 ],
             },
-        )  
+        )
         
         result = self.extractor.extract(
             period=datetime.datetime(2023, 1, 1), recompute=False
@@ -238,11 +238,9 @@ class TestExtractRawInfo(unittest.TestCase):
                 ],
             },
         )
-        
+
         result = self.extractor.extract(
             period=datetime.datetime(2023, 1, 1), recompute=False
         )
         expected_result = []
-        self.assertEqual(
-            result, expected_result
-        )
+        self.assertEqual(result, expected_result)

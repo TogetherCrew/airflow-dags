@@ -13,7 +13,7 @@ class TestExtractRawMembers(unittest.TestCase):
         self.platform_id = "test_platform"
         self.extractor = ExtractRawMembers(self.test_forum_endpoint, self.platform_id)
         self.rawmembers_collection = self.extractor.rawmembers_collection
-        
+
         self.rawmembers_collection.insert_many(
             [
                 {
@@ -76,7 +76,7 @@ class TestExtractRawMembers(unittest.TestCase):
 
     def test_fetch_member_details(self):
         result = self.extractor.fetch_member_details()
-        
+
         expected_result = [
             {
                 "id": "user1",
@@ -104,11 +104,13 @@ class TestExtractRawMembers(unittest.TestCase):
         self.assertEqual(result, expected_result)
         
     def test_extract_without_recompute(self):
-        result = self.extractor.extract(recompute=False,)
+        result = self.extractor.extract(
+            recompute=False,
+        )
         expected_result = [
             {
-                "id": "user2", 
-                "joined_at": "2023-07-02", 
+                "id": "user2",
+                "joined_at": "2023-07-02",
             }
         ]
         self.assertEqual(result, expected_result)

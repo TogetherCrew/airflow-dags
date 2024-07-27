@@ -11,7 +11,7 @@ from analyzer_helper.discourse.utils.convert_date_time_formats import (
 class TransformRawMembers(TransformRawMembersBase):
     def __init__(self):
         self.converter = DateTimeFormatConverter()
-        
+
     def transform(self, raw_members: list) -> list:
         """
         Transform extracted raw members data into the rawmember structure.

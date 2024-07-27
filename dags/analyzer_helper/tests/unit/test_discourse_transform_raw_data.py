@@ -51,7 +51,7 @@ class TestTransformRawInfo(unittest.TestCase):
             "actions": [],
             "author_id": "6263",
             "date": datetime.datetime(
-                 2023, 9, 11, 21, 42, 43, 553000, tzinfo=datetime.timezone.utc
+                2023, 9, 11, 21, 42, 43, 553000, tzinfo=datetime.timezone.utc
             ),
             "interactions": [
                 {
@@ -71,16 +71,16 @@ class TestTransformRawInfo(unittest.TestCase):
 
     def test_transform_data_with_replied_user(self):
         raw_data = [
-                {
-                    "post_id": 6262,
-                    "author_id": 6168,
-                    "created_at": "2023-09-11T21:41:43.553Z",
-                    "author_name": "Test Author Name1",
-                    "reactions": [],
-                    "replied_post_id": 6512,
-                    "replied_post_user_id": 4444,
-                    "topic_id": 6134,
-                }
+            {
+                "post_id": 6262,
+                "author_id": 6168,
+                "created_at": "2023-09-11T21:41:43.553Z",
+                "author_name": "Test Author Name1",
+                "reactions": [],
+                "replied_post_id": 6512,
+                "replied_post_user_id": 4444,
+                "topic_id": 6134,
+            }
         ]
 
         expected_result = [
@@ -107,11 +107,13 @@ class TestTransformRawInfo(unittest.TestCase):
                         "type": "emitter",
                         "users_engaged_id": ["4444"],
                     }
-                ]
+                ],
             },
             {
                 "author_id": "4444",
-                "date": datetime.datetime(2023, 9, 11, 21, 41, 43, 553000, tzinfo=datetime.timezone.utc),
+                "date": datetime.datetime(
+                    2023, 9, 11, 21, 41, 43, 553000, tzinfo=datetime.timezone.utc
+                ),
                 "source_id": "6262",
                 "metadata": {
                     "category_id": None,
@@ -125,8 +127,8 @@ class TestTransformRawInfo(unittest.TestCase):
                         "type": "receiver",
                         "users_engaged_id": ["6168"],
                     }
-                ]
-            }
+                ],
+            },
         ]
 
         result = self.transformer.transform(
@@ -135,85 +137,90 @@ class TestTransformRawInfo(unittest.TestCase):
         self.assertEqual(result, expected_result)
 
     def test_transform_data_with_reactions(self):
-            raw_data = [
-                {
-                    "post_id": 6261,
-                    "author_id": 6168,
-                    "created_at": "2023-09-11T21:42:43.553Z",
-                    "author_name": "Test Author Name2",
-                    "reactions": [1, 2],
-                    "replied_post_id": None,
-                    "replied_post_user_id": None,
+        raw_data = [
+            {
+                "post_id": 6261,
+                "author_id": 6168,
+                "created_at": "2023-09-11T21:42:43.553Z",
+                "author_name": "Test Author Name2",
+                "reactions": [1, 2],
+                "replied_post_id": None,
+                "replied_post_user_id": None,
+                "topic_id": 6134,
+            }
+        ]
+        expected_result = [
+            {
+                "author_id": "6168",
+                "date": datetime.datetime(
+                    2023, 9, 11, 21, 42, 43, 553000, tzinfo=datetime.timezone.utc
+                ),
+                "source_id": "6261",
+                "metadata": {
+                    "category_id": None,
                     "topic_id": 6134,
-                }
-
-            ]
-            expected_result = [
-                {
-                    "author_id": "6168",
-                    "date": datetime.datetime(2023, 9, 11, 21, 42, 43, 553000, tzinfo=datetime.timezone.utc),
-                    "source_id": "6261",
-                    "metadata": {
-                        "category_id": None,
-                        "topic_id": 6134,
-                        "bot_activity": False,
-                    },
-                    "actions": [
-                        {
-                            "name": "message",
-                            "type": "emitter",
-                        }
-                    ],
-                    "interactions": [
-                        {
-                            "name": "reaction",
-                            "type": "receiver",
-                            "users_engaged_id": ["1", "2"],
-                        }
-                    ]
+                    "bot_activity": False,
                 },
-                {
-                    "actions": [],
-                    "author_id": "1",
-                    "date": datetime.datetime(2023, 9, 11, 21, 42, 43, 553000, tzinfo=datetime.timezone.utc),
-                    "interactions": [
-                        {
-                            "name": "reaction",
-                            "type": "emitter",
-                            "users_engaged_id": ["6168"],
-                        }
-                    ],
-                    "metadata": {
-                        "category_id": None,
-                        "topic_id": 6134,
-                        "bot_activity": False,
-                    },
-                    "source_id": "6261",
+                "actions": [
+                    {
+                        "name": "message",
+                        "type": "emitter",
+                    }
+                ],
+                "interactions": [
+                    {
+                        "name": "reaction",
+                        "type": "receiver",
+                        "users_engaged_id": ["1", "2"],
+                    }
+                ],
+            },
+            {
+                "actions": [],
+                "author_id": "1",
+                "date": datetime.datetime(
+                    2023, 9, 11, 21, 42, 43, 553000, tzinfo=datetime.timezone.utc
+                ),
+                "interactions": [
+                    {
+                        "name": "reaction",
+                        "type": "emitter",
+                        "users_engaged_id": ["6168"],
+                    }
+                ],
+                "metadata": {
+                    "category_id": None,
+                    "topic_id": 6134,
+                    "bot_activity": False,
                 },
-                {
-                    "actions": [],
-                    "author_id": "2",
-                    "date": datetime.datetime(2023, 9, 11, 21, 42, 43, 553000, tzinfo=datetime.timezone.utc),
-                    "interactions": [
-                        {
-                            "name": "reaction",
-                            "type": "emitter",
-                            "users_engaged_id": ["6168"],
-                        }
-                    ],
-                    "metadata": {
-                        "category_id": None,
-                        "topic_id": 6134,
-                        "bot_activity": False,
-                    },
-                    "source_id": "6261",
-                }
-            ]
+                "source_id": "6261",
+            },
+            {
+                "actions": [],
+                "author_id": "2",
+                "date": datetime.datetime(
+                    2023, 9, 11, 21, 42, 43, 553000, tzinfo=datetime.timezone.utc
+                ),
+                "interactions": [
+                    {
+                        "name": "reaction",
+                        "type": "emitter",
+                        "users_engaged_id": ["6168"],
+                    }
+                ],
+                "metadata": {
+                    "category_id": None,
+                    "topic_id": 6134,
+                    "bot_activity": False,
+                },
+                "source_id": "6261",
+            },
+        ]
 
-            result = self.transformer.transform(
-                raw_data=raw_data,
-            )
-            self.assertEqual(result, expected_result)
+        result = self.transformer.transform(
+            raw_data=raw_data,
+        )
+        self.assertEqual(result, expected_result)
 
     def test_transform_data_replied_and_reactions(self):
         raw_data = [
@@ -236,13 +243,15 @@ class TestTransformRawInfo(unittest.TestCase):
                 "replied_post_id": None,
                 "replied_post_user_id": None,
                 "topic_id": 6134,
-            }
+            },
         ]
-         
+
         expected_result = [
             {
                 "author_id": "6168",
-                "date": datetime.datetime(2023, 9, 11, 21, 41, 43, 553000, tzinfo=datetime.timezone.utc),
+                "date": datetime.datetime(
+                    2023, 9, 11, 21, 41, 43, 553000, tzinfo=datetime.timezone.utc
+                ),
                 "source_id": "6262",
                 "metadata": {
                     "category_id": None,
@@ -261,11 +270,13 @@ class TestTransformRawInfo(unittest.TestCase):
                         "type": "emitter",
                         "users_engaged_id": ["4444"],
                     }
-                ]
+                ],
             },
             {
                 "author_id": "4444",
-                "date": datetime.datetime(2023, 9, 11, 21, 41, 43, 553000, tzinfo=datetime.timezone.utc),
+                "date": datetime.datetime(
+                    2023, 9, 11, 21, 41, 43, 553000, tzinfo=datetime.timezone.utc
+                ),
                 "source_id": "6262",
                 "metadata": {
                     "category_id": None,
@@ -279,11 +290,13 @@ class TestTransformRawInfo(unittest.TestCase):
                         "type": "receiver",
                         "users_engaged_id": ["6168"],
                     }
-                ]
+                ],
             },
             {
                 "author_id": "6168",
-                "date": datetime.datetime(2023, 9, 11, 21, 42, 43, 553000, tzinfo=datetime.timezone.utc),
+                "date": datetime.datetime(
+                    2023, 9, 11, 21, 42, 43, 553000, tzinfo=datetime.timezone.utc
+                ),
                 "source_id": "6261",
                 "metadata": {
                     "category_id": None,
@@ -302,12 +315,14 @@ class TestTransformRawInfo(unittest.TestCase):
                         "type": "receiver",
                         "users_engaged_id": ["1", "2"],
                     }
-                ]
+                ],
             },
             {
                 "actions": [],
                 "author_id": "1",
-                "date": datetime.datetime(2023, 9, 11, 21, 42, 43, 553000, tzinfo=datetime.timezone.utc),
+                "date": datetime.datetime(
+                    2023, 9, 11, 21, 42, 43, 553000, tzinfo=datetime.timezone.utc
+                ),
                 "interactions": [
                     {
                         "name": "reaction",
@@ -325,7 +340,9 @@ class TestTransformRawInfo(unittest.TestCase):
             {
                 "actions": [],
                 "author_id": "2",
-                "date": datetime.datetime(2023, 9, 11, 21, 42, 43, 553000, tzinfo=datetime.timezone.utc),
+                "date": datetime.datetime(
+                    2023, 9, 11, 21, 42, 43, 553000, tzinfo=datetime.timezone.utc
+                ),
                 "interactions": [
                     {
                         "name": "reaction",
@@ -339,7 +356,7 @@ class TestTransformRawInfo(unittest.TestCase):
                     "bot_activity": False,
                 },
                 "source_id": "6261",
-            }
+            },
         ]
         result = self.transformer.transform(
             raw_data=raw_data,
@@ -355,4 +372,3 @@ class TestTransformRawInfo(unittest.TestCase):
             raw_data=raw_data,
         )
         self.assertEqual(result, expected_result)
-

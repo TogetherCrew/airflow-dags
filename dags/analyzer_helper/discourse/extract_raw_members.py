@@ -6,8 +6,6 @@ from analyzer_helper.discourse.utils.convert_date_time_formats import (
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
-
-
 class ExtractRawMembers:
     def __init__(self, forum_endpoint: str, platform_id: str):
         """

@@ -30,13 +30,13 @@ class DateTimeFormatConverter:
             raise TypeError(
                 f"Expected string or datetime, got {type(iso_string_or_datetime)}"
             )
-    
+
     @staticmethod
     def from_date_string(
-        date_string: str, 
-        hour: int = 0, 
+        date_string: str,
+        hour: int = 0,
         minute: int = 0,
-        second: int = 0, 
+        second: int = 0,
         microsecond: int = 0
     ) -> datetime.datetime:
         """

@@ -18,8 +18,8 @@ class TransformRawInfo:
 
         result = {
             "author_id": str(
-                interaction_user 
-                if interaction_type == "reply" 
+                interaction_user
+                if interaction_type == "reply"
                 else raw_data.get("author_id")
             ),
             "date": self.converter.from_iso_format(raw_data.get("created_at")),

@@ -29,7 +29,7 @@ class FetchPlatforms:
     def fetch_all(self):
         """
         Fetches all Discord platforms from the MongoDB collection.
-            
+
         Returns:
             list: A list of dictionaries, each containing platform data with the following fields:
                 - platform_id: The platform ID (_id from MongoDB).
@@ -80,7 +80,7 @@ class FetchPlatforms:
             "disconnectedAt": None,
             "platform": self.platform_name,
         }
-        #TODO: introduce strategy pattern once we add 'telegram'
+        # TODO: introduce strategy pattern once we add 'telegram'
         if self.platform_name == "discord":
             projection = {
                 "_id": 1,
@@ -110,7 +110,7 @@ class FetchPlatforms:
                 )
             else:
                 selected_channels = doc.get("metadata", {}).get("resources", None)
-                
+
             platform_data = {
                 "platform_id": str(doc["_id"]),
                 "metadata": {
