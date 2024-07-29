@@ -61,17 +61,17 @@ class ExtractPlatformRawData:
                 date_query = {
                     "date": {
                         "$gte": latest_labeled_date if latest_labeled_date > from_date else from_date,
-                        "$lte": to_date if to_date else datetime.now(),
+                        "$lte": to_date,
                     }
                 }
             else:
                 date_query = {
-                    "date": {"$gte": from_date, "$lte": to_date},
+                    "date": {"$gte": from_date, "$lte": to_date if to_date else datetime.now(),},
                 }
 
         else:
             date_query = {
-                "date": {"$gte": from_date, "$lte": to_date},
+                "date": {"$gte": from_date, "$lte": to_date if to_date else datetime.now()},
             }
 
         cursor = self.client[self.platform_id]["rawmemberactivities"].find(

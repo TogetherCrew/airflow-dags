@@ -3,6 +3,7 @@ from datetime import datetime
 
 from violation_detection_helpers import ExtractPlatformRawData
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
+from tc_analyzer_lib.schemas.platform_configs import DiscordAnalyzerConfig
 
 
 class TestExtractRawData(TestCase):
@@ -52,7 +53,7 @@ class TestExtractRawData(TestCase):
             },
         ]
         self.client[self.platform_id]["rawmemberactivities"].insert_many(sample_data)
-        extract_data = ExtractPlatformRawData(self.platform_id)
+        extract_data = ExtractPlatformRawData(self.platform_id, DiscordAnalyzerConfig())
 
         cursor = extract_data.extract(
             from_date=datetime(2020, 1, 1),
@@ -102,7 +103,7 @@ class TestExtractRawData(TestCase):
             },
         ]
         self.client[self.platform_id]["rawmemberactivities"].insert_many(sample_data)
-        extract_data = ExtractPlatformRawData(self.platform_id)
+        extract_data = ExtractPlatformRawData(self.platform_id, DiscordAnalyzerConfig())
 
         cursor = extract_data.extract(
             from_date=datetime(2020, 1, 1),
@@ -152,7 +153,7 @@ class TestExtractRawData(TestCase):
             },
         ]
         self.client[self.platform_id]["rawmemberactivities"].insert_many(sample_data)
-        extract_data = ExtractPlatformRawData(self.platform_id)
+        extract_data = ExtractPlatformRawData(self.platform_id, DiscordAnalyzerConfig())
 
         cursor = extract_data.extract(
             from_date=datetime(2023, 1, 1),
@@ -201,7 +202,7 @@ class TestExtractRawData(TestCase):
             },
         ]
         self.client[self.platform_id]["rawmemberactivities"].insert_many(sample_data)
-        extract_data = ExtractPlatformRawData(self.platform_id)
+        extract_data = ExtractPlatformRawData(self.platform_id, DiscordAnalyzerConfig())
 
         cursor = extract_data.extract(
             from_date=datetime(2022, 1, 1),
@@ -212,4 +213,10 @@ class TestExtractRawData(TestCase):
         results = list(cursor)
 
         self.assertEqual(len(results), 1)
-        self.assertEqual(results, sample_data[0])
+        self.assertEqual(results[0]["date"], sample_data[0]["date"])
+        self.assertEqual(results[0]["author_id"], sample_data[0]["author_id"])
+        self.assertEqual(results[0]["source_id"], sample_data[0]["source_id"])
+        self.assertEqual(results[0]["text"], sample_data[0]["text"])
+        self.assertEqual(results[0]["metadata"], sample_data[0]["metadata"])
+        self.assertEqual(results[0]["actions"], sample_data[0]["actions"])
+        self.assertEqual(results[0]["interactions"], sample_data[0]["interactions"])
