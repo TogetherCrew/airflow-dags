@@ -81,5 +81,5 @@ class NotionProcessor:
             the notion database id
         """
         logging.info(f"Processing a page of community id: {self.community_id}")
-        documents = self.notion_extractor.extract_from_pages(page_ids=[database_id])
+        documents = self.notion_extractor.extract_from_database(database_id=database_id)
         self.ingestion_pipeline.run_pipeline(docs=documents)
