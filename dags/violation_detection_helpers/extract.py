@@ -1,4 +1,6 @@
+import logging
 from datetime import datetime
+from pymongo.cursor import Cursor
 
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 from tc_analyzer_lib.schemas.platform_configs.config_base import PlatformConfigBase
@@ -18,7 +20,7 @@ class ExtractPlatformRawData:
         to_date: datetime | None,
         resources: list[str],
         recompute: bool = False,
-    ) -> list[dict]:
+    ) -> Cursor:
         """
         extract a list of platform's `rawmemberactivities` data
 
@@ -41,7 +43,69 @@ class ExtractPlatformRawData:
 
         Returns
         ---------
-        raw_data : list[data]
+        raw_data : Cursor
             a list of raw data to be processed
         """
-        raise NotImplementedError
+        date_query: dict
+        if not recompute:
+            latest_labeled_date = self._find_latest_labeled()
+
+            # all data was processed before
+            if to_date and latest_labeled_date and latest_labeled_date >= to_date:
+                logging.info(
+                    f"All data for platform_id: {self.platform_id} was labeled before!"
+                )
+                return []
+
+            if latest_labeled_date:
+                date_query = {
+                    "date": {
+                        "$gte": latest_labeled_date if latest_labeled_date > from_date else from_date,
+                        "$lte": to_date if to_date else datetime.now(),
+                    }
+                }
+            else:
+                date_query = {
+                    "date": {"$gte": from_date, "$lte": to_date},
+                }
+
+        else:
+            date_query = {
+                "date": {"$gte": from_date, "$lte": to_date},
+            }
+
+        cursor = self.client[self.platform_id]["rawmemberactivities"].find(
+            {
+                **date_query,
+                "source_id": {"$in": resources},
+            }
+        )
+        return cursor
+
+
+    def _find_latest_labeled(self, label_field: str = "vdLabel") -> datetime | None:
+        """
+        find the latest labeled document date
+
+        Parameters
+        -----------
+        label_field : str
+            the field that label was saved
+ 
+        Returns
+        --------
+        latest_labeled_date : datetime | None
+            the latest document which was labeled with vdLabel    
+        """
+        cursor = self.client[self.platform_id]["rawmemberactivities"].find(
+            {label_field: {"$ne": None}}, {"date": 1},
+        ).sort("date", -1).limit(1)
+        document = list(cursor)
+
+        latest_labeled_date: datetime | None
+        if document == []:
+            latest_labeled_date = None
+        else:
+            latest_labeled_date = document["date"]
+
+        return latest_labeled_date

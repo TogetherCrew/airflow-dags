@@ -54,12 +54,13 @@ class TestExtractRawData(TestCase):
         self.client[self.platform_id]["rawmemberactivities"].insert_many(sample_data)
         extract_data = ExtractPlatformRawData(self.platform_id)
 
-        results = extract_data.extract(
+        cursor = extract_data.extract(
             from_date=datetime(2020, 1, 1),
             to_date=None,
             resources=["8888", "8880"],
             recompute=False,
         )
+        results = list(cursor)
 
         self.assertEqual(len(results), 2)
         self.assertEqual(results, sample_data)
@@ -103,12 +104,13 @@ class TestExtractRawData(TestCase):
         self.client[self.platform_id]["rawmemberactivities"].insert_many(sample_data)
         extract_data = ExtractPlatformRawData(self.platform_id)
 
-        results = extract_data.extract(
+        cursor = extract_data.extract(
             from_date=datetime(2020, 1, 1),
             to_date=None,
             resources=["8888"],
             recompute=False,
         )
+        results = list(cursor)
 
         self.assertEqual(len(results), 1)
         self.assertEqual(results, [sample_data[0]])
@@ -152,12 +154,13 @@ class TestExtractRawData(TestCase):
         self.client[self.platform_id]["rawmemberactivities"].insert_many(sample_data)
         extract_data = ExtractPlatformRawData(self.platform_id)
 
-        results = extract_data.extract(
+        cursor = extract_data.extract(
             from_date=datetime(2023, 1, 1),
             to_date=None,
             resources=["8888"],
             recompute=False,
         )
+        results = list(cursor)
 
         self.assertEqual(len(results), 0)
 
@@ -200,12 +203,13 @@ class TestExtractRawData(TestCase):
         self.client[self.platform_id]["rawmemberactivities"].insert_many(sample_data)
         extract_data = ExtractPlatformRawData(self.platform_id)
 
-        results = extract_data.extract(
+        cursor = extract_data.extract(
             from_date=datetime(2022, 1, 1),
             to_date=datetime(2023, 2, 1),
             resources=["8888"],
             recompute=False,
         )
+        results = list(cursor)
 
         self.assertEqual(len(results), 1)
         self.assertEqual(results, sample_data[0])
