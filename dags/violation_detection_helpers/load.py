@@ -1,5 +1,4 @@
-from datetime import datetime
-
+from pymongo import UpdateOne
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
@@ -23,4 +22,26 @@ class LoadPlatformLabeledData:
             the extracted data to be transformed
             the transformation here is to label the violation for texts
         """
-        raise NotImplementedError
+        updates = self._prepare_updates(transformed_data)
+        self.client[platform_id]["rawmemberactivities"].bulk_write(updates)
+
+    def _prepare_updates(transformed_data: list[dict]) -> list[UpdateOne]:
+        """
+        prepare a list of `UpdateOne` operations to do on database
+
+        Parameters
+        -----------
+        transformed_data : list[dict]
+            the data transformed by labels added
+        """
+        updates = []
+        for document in transformed_data:
+            updates.append(
+                UpdateOne(
+                    filter={"_id": document["_id"]},
+                    update={"$set": {**document}},
+                    upsert=True,
+                )
+            )
+
+        return updates
