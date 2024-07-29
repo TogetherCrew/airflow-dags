@@ -54,7 +54,7 @@ with DAG(
     def start_notion_vectorstore(community_info: dict[str, str | list[str]]):
         community_id = community_info["community_id"]
         access_token = community_info["access_token"]
-        database_id = communities_info.get("database_id", None)
+        database_id = community_info.get("database_id", None)
         page_id = community_info.get("page_id", None)
 
         logging.info(f"Working on community, {community_id}")
