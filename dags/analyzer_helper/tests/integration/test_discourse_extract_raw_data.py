@@ -5,6 +5,7 @@ from analyzer_helper.discourse.extract_raw_data import ExtractRawInfo
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
+
 class TestExtractRawInfo(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
