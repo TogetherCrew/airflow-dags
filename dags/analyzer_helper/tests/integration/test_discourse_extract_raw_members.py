@@ -102,7 +102,7 @@ class TestExtractRawMembers(unittest.TestCase):
             },
         ]
         self.assertEqual(result, expected_result)
-        
+
     def test_extract_without_recompute(self):
         result = self.extractor.extract(
             recompute=False,

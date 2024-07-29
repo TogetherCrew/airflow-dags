@@ -5,6 +5,8 @@ from analyzer_helper.discourse.extract_raw_data import ExtractRawInfo
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
+
+
 class TestExtractRawInfo(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -118,7 +120,7 @@ class TestExtractRawInfo(unittest.TestCase):
 
     def test_extract_without_recompute_no_latest_activity(self):
         self.rawmemberactivities_collection.delete_many({})
-        
+
         result = self.extractor.extract(
             period=datetime.datetime(2023, 1, 1), recompute=False
         )
@@ -178,7 +180,7 @@ class TestExtractRawInfo(unittest.TestCase):
                 ],
             },
         )
-        
+
         result = self.extractor.extract(
             period=datetime.datetime(2023, 1, 1), recompute=False
         )

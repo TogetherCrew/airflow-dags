@@ -13,8 +13,6 @@ from analyzer_helper.discourse.extract_raw_data import ExtractRawInfo
 from analyzer_helper.discourse.extract_raw_members import ExtractRawMembers
 from analyzer_helper.discourse.transform_raw_data import TransformRawInfo
 from analyzer_helper.discourse.transform_raw_members import TransformRawMembers
-
-
 with DAG(
     dag_id="discourse_analyzer_etl",
     start_date=datetime(2024, 5, 1),
@@ -102,9 +100,7 @@ with DAG(
             ```
         """
         platform_id = platform_info["platform_id"]
-        forum_endpoint = platform_info[
-            "forum_endpoint"
-        ] #TODO: Understand with Amin if this is appropriately reflecting current structure
+        forum_endpoint = platform_info["forum_endpoint"]
         period = platform_info["period"]
         recompute = platform_info["recompute"]
         # If recompute is False, then just extract from the latest saved document

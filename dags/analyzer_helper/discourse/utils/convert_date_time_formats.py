@@ -16,7 +16,7 @@ class DateTimeFormatConverter:
     def from_iso_format(iso_string_or_datetime):
         """
         Convert ISO format string or datetime object to datetime object.
-        
+
         :param iso_string_or_datetime: ISO format string or datetime object.
         :return: datetime object.
         """
@@ -37,7 +37,7 @@ class DateTimeFormatConverter:
         hour: int = 0,
         minute: int = 0,
         second: int = 0,
-        microsecond: int = 0
+        microsecond: int = 0,
     ) -> datetime.datetime:
         """
         Convert a date string to a datetime object.
