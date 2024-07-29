@@ -1,11 +1,11 @@
-from datetime import datetime
+import copy
+import logging
 
-from openai import OpenAI
-
+from violation_detection_helpers.utils import Classifier
 
 class TransformPlatformRawData:
     def __init__(self) -> None:
-        self.open_ai = OpenAI()
+        self.classifier = Classifier()
 
     def transform(
         self,
@@ -25,4 +25,20 @@ class TransformPlatformRawData:
         labeled_data : list[dict]
             the same data but with a label for violation detection
         """
-        raise NotImplementedError
+        labeled_data = []
+        for record in raw_data:
+            try:
+                data = copy.deepcopy(record)
+
+                text = record["text"]
+                label = self.classifier.classify(text)
+
+                data.setdefault("metadata", {})
+                data["metadata"]["vdLabel"] = label
+
+                labeled_data.append(data)
+            except Exception as exp:
+                logging.error(f"Exception raised while classifying document. exp: {exp}")
+        
+        return labeled_data
+
