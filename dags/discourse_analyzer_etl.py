@@ -13,6 +13,7 @@ from analyzer_helper.discourse.extract_raw_data import ExtractRawInfo
 from analyzer_helper.discourse.extract_raw_members import ExtractRawMembers
 from analyzer_helper.discourse.transform_raw_data import TransformRawInfo
 from analyzer_helper.discourse.transform_raw_members import TransformRawMembers
+
 with DAG(
     dag_id="discourse_analyzer_etl",
     start_date=datetime(2024, 5, 1),
