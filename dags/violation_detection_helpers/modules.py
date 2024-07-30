@@ -28,6 +28,8 @@ class ViolationDetectionModules:
             }
             ```
         """
+        logging.info("Extracting all violation_detection modules!")
+
         cursor = self.client["Core"]["modules"].find(
             {
                 "name": "violationDetection",
@@ -40,21 +42,27 @@ class ViolationDetectionModules:
             platforms = module.get("options", {}).get("platforms", [])
             for platform in platforms:
                 platform_id = str(platform["platform"])
-                metadata = platform["metadata"]
-                resources = metadata["selectedResources"]
-                discord_users = metadata["selectedDiscordUsers"]
-                from_date = metadata["fromDate"]
-                to_date = metadata["toDate"]
+                try:
+                    metadata = platform["metadata"]
+                    resources = metadata["selectedResources"]
+                    discord_users = metadata["selectedDiscordUsers"]
+                    from_date = metadata["fromDate"]
+                    to_date = metadata["toDate"]
 
-                vd_platforms.append(
-                    {
-                        "community": community_id,
-                        "platform_id": platform_id,
-                        "resources": resources,
-                        "selected_discord_users": discord_users,
-                        "from_date": from_date,
-                        "to_date": to_date,
-                    }
-                )
+                    vd_platforms.append(
+                        {
+                            "community": community_id,
+                            "platform_id": platform_id,
+                            "resources": resources,
+                            "selected_discord_users": discord_users,
+                            "from_date": from_date,
+                            "to_date": to_date,
+                        }
+                    )
+                except Exception as exp:
+                    logging.error(
+                        f"Exception raised during extracting platform_id: "
+                        f"{platform_id}! Exception: {exp}"
+                    )
 
         return vd_platforms
