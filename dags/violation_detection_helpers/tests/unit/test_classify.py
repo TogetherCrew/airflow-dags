@@ -1,5 +1,6 @@
 import unittest
 from unittest.mock import MagicMock, patch
+
 from violation_detection_helpers.utils.classify import Classifier
 
 

@@ -2,8 +2,8 @@ from datetime import datetime
 from unittest import TestCase
 
 from bson import ObjectId
-from violation_detection_helpers.modules import ViolationDetectionModules
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
+from violation_detection_helpers.modules import ViolationDetectionModules
 
 
 class TestRetrieveViolationDetectionModules(TestCase):
