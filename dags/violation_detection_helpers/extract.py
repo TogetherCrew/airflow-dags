@@ -60,18 +60,28 @@ class ExtractPlatformRawData:
             if latest_labeled_date:
                 date_query = {
                     "date": {
-                        "$gte": latest_labeled_date if latest_labeled_date > from_date else from_date,
+                        "$gte": (
+                            latest_labeled_date
+                            if latest_labeled_date > from_date
+                            else from_date
+                        ),
                         "$lte": to_date,
                     }
                 }
             else:
                 date_query = {
-                    "date": {"$gte": from_date, "$lte": to_date if to_date else datetime.now(),},
+                    "date": {
+                        "$gte": from_date,
+                        "$lte": to_date if to_date else datetime.now(),
+                    },
                 }
 
         else:
             date_query = {
-                "date": {"$gte": from_date, "$lte": to_date if to_date else datetime.now()},
+                "date": {
+                    "$gte": from_date,
+                    "$lte": to_date if to_date else datetime.now(),
+                },
             }
 
         cursor = self.client[self.platform_id]["rawmemberactivities"].find(
@@ -82,7 +92,6 @@ class ExtractPlatformRawData:
         )
         return cursor
 
-
     def _find_latest_labeled(self, label_field: str = "vdLabel") -> datetime | None:
         """
         find the latest labeled document date
@@ -91,21 +100,27 @@ class ExtractPlatformRawData:
         -----------
         label_field : str
             the field that label was saved
- 
+
         Returns
         --------
         latest_labeled_date : datetime | None
-            the latest document which was labeled with vdLabel    
+            the latest document which was labeled with vdLabel
         """
-        cursor = self.client[self.platform_id]["rawmemberactivities"].find(
-            {label_field: {"$ne": None}}, {"date": 1},
-        ).sort("date", -1).limit(1)
+        cursor = (
+            self.client[self.platform_id]["rawmemberactivities"]
+            .find(
+                {label_field: {"$ne": None}},
+                {"date": 1},
+            )
+            .sort("date", -1)
+            .limit(1)
+        )
         document = list(cursor)
 
         latest_labeled_date: datetime | None
         if document == []:
             latest_labeled_date = None
         else:
-            latest_labeled_date = document["date"]
+            latest_labeled_date = document[0]["date"]
 
         return latest_labeled_date

@@ -1,20 +1,18 @@
 from openai import OpenAI
 
+
 class Classifier:
     def __init__(self) -> None:
         self.client = OpenAI()
 
         # configurations
         self.model = "gpt-3.5-turbo"
-        self.system_content = (
-            "You are a classifier with a PhD in psychology and 30 years of experience teaching non-violent communication. "
-        )
+        self.system_content = "You are a classifier with a PhD in psychology and 30 years of experience teaching non-violent communication. "
         self.user_context = (
             "[INSTRUCTION]\n"
             "State whether the message below contains any of the following violations: Discriminating, Identifying, Sexualized and/or Toxic. If not, provide None as answer.\n\n"
             "[MESSAGE]\n"
         )
-
 
     def classify(self, text: str) -> str:
         """
@@ -24,7 +22,7 @@ class Classifier:
         -----------
         text : str
             the text to be classified
-        
+
         Returns
         ---------
         label : str
@@ -39,9 +37,11 @@ class Classifier:
                 },
                 {
                     "role": "user",
-                    "content": self.user_context + text + "\n\n[VIOLATION DETECTIONS]\n",
+                    "content": self.user_context
+                    + text
+                    + "\n\n[VIOLATION DETECTIONS]\n",
                 },
-            ]
+            ],
         )
 
         # the label to add to general data structure

@@ -1,6 +1,7 @@
 from unittest import TestCase
 from datetime import datetime
 
+from bson import ObjectId
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 from violation_detection_helpers import LoadPlatformLabeledData
 
@@ -18,6 +19,7 @@ class TestLoadPlatformLabeledData(TestCase):
         # saving the data without label
         self.client[self.platform_id]["rawmemberactivities"].insert_one(
             {
+                "_id": ObjectId("64c6288b1e02c3e4b8f705a3"),
                 "author_id": "1",
                 "date": datetime(2022, 1, 1),
                 "source_id": "8888",
@@ -38,6 +40,7 @@ class TestLoadPlatformLabeledData(TestCase):
         loader = LoadPlatformLabeledData()
         labeled_data = [
             {
+                "_id": ObjectId("64c6288b1e02c3e4b8f705a3"),
                 "author_id": "1",
                 "date": datetime(2022, 1, 1),
                 "source_id": "8888",
@@ -69,9 +72,10 @@ class TestLoadPlatformLabeledData(TestCase):
 
     def test_load_multiple_data(self):
         # saving the data without label
-        self.client[self.platform_id]["rawmemberactivities"].insert_one(
+        self.client[self.platform_id]["rawmemberactivities"].insert_many(
             [
                 {
+                    "_id": ObjectId("64c6288b1e02c3e4b8f705a3"),
                     "author_id": "1",
                     "date": datetime(2022, 1, 1),
                     "source_id": "8888",
@@ -88,6 +92,7 @@ class TestLoadPlatformLabeledData(TestCase):
                     ],
                 },
                 {
+                    "_id": ObjectId("64c6288b1e02c3e4b8f705a4"),
                     "author_id": "2",
                     "date": datetime(2022, 1, 2),
                     "source_id": "8889",
@@ -104,6 +109,7 @@ class TestLoadPlatformLabeledData(TestCase):
                     ],
                 },
                 {
+                    "_id": ObjectId("64c6288b1e02c3e4b8f705a5"),
                     "author_id": "3",
                     "date": datetime(2022, 1, 3),
                     "source_id": "8880",
@@ -125,6 +131,7 @@ class TestLoadPlatformLabeledData(TestCase):
         loader = LoadPlatformLabeledData()
         labeled_data = [
             {
+                "_id": ObjectId("64c6288b1e02c3e4b8f705a3"),
                 "author_id": "1",
                 "date": datetime(2022, 1, 1),
                 "source_id": "8888",
@@ -142,6 +149,7 @@ class TestLoadPlatformLabeledData(TestCase):
                 ],
             },
             {
+                "_id": ObjectId("64c6288b1e02c3e4b8f705a4"),
                 "author_id": "2",
                 "date": datetime(2022, 1, 2),
                 "source_id": "8889",
@@ -159,6 +167,7 @@ class TestLoadPlatformLabeledData(TestCase):
                 ],
             },
             {
+                "_id": ObjectId("64c6288b1e02c3e4b8f705a5"),
                 "author_id": "3",
                 "date": datetime(2022, 1, 3),
                 "source_id": "8880",
