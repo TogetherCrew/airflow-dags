@@ -1,7 +1,7 @@
 import copy
 import logging
-from pymongo.cursor import Cursor
 
+from pymongo.cursor import Cursor
 from violation_detection_helpers.utils import Classifier
 
 

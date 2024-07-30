@@ -1,8 +1,8 @@
 import logging
 from datetime import datetime
-from pymongo.cursor import Cursor
 
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
+from pymongo.cursor import Cursor
 from tc_analyzer_lib.schemas.platform_configs.config_base import PlatformConfigBase
 
 

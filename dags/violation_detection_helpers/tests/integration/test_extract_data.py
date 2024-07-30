@@ -1,9 +1,9 @@
-from unittest import TestCase
 from datetime import datetime
+from unittest import TestCase
 
-from violation_detection_helpers import ExtractPlatformRawData
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 from tc_analyzer_lib.schemas.platform_configs import DiscordAnalyzerConfig
+from violation_detection_helpers import ExtractPlatformRawData
 
 
 class TestExtractRawData(TestCase):

@@ -1,5 +1,5 @@
-from pymongo import UpdateOne
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
+from pymongo import UpdateOne
 
 
 class LoadPlatformLabeledData:

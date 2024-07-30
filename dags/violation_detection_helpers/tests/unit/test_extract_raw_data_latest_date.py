@@ -1,7 +1,7 @@
-from unittest import TestCase
 from datetime import datetime
+from unittest import TestCase
+from unittest.mock import MagicMock, patch
 
-from unittest.mock import patch, MagicMock
 from tc_analyzer_lib.schemas.platform_configs import DiscordAnalyzerConfig
 from violation_detection_helpers import ExtractPlatformRawData
 
