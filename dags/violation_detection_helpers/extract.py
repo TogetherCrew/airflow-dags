@@ -55,7 +55,7 @@ class ExtractPlatformRawData:
                 logging.info(
                     f"All data for platform_id: {self.platform_id} was labeled before!"
                 )
-                return []
+                return self.client[self.platform_id]["rawmemberactivities"].find({"_id": None})
 
             if latest_labeled_date:
                 date_query = {
@@ -117,10 +117,6 @@ class ExtractPlatformRawData:
         )
         document = list(cursor)
 
-        latest_labeled_date: datetime | None
-        if document == []:
-            latest_labeled_date = None
-        else:
-            latest_labeled_date = document[0]["date"]
+        latest_labeled_date: datetime | None = None if document == [] else document[0]["date"]
 
         return latest_labeled_date

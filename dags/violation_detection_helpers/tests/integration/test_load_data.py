@@ -194,5 +194,5 @@ class TestLoadPlatformLabeledData(TestCase):
         self.assertEqual(len(results), 3)
 
         # asserting just the labels we wanted data to have
-        for result in cursor:
+        for result in results:
             self.assertEqual(result["metadata"]["vdLabel"], "identifying, sexualized")
