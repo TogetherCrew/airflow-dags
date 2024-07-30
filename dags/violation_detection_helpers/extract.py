@@ -3,16 +3,15 @@ from datetime import datetime
 
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 from pymongo.cursor import Cursor
-from tc_analyzer_lib.schemas.platform_configs.config_base import PlatformConfigBase
 
 
 class ExtractPlatformRawData:
-    def __init__(self, platform_id: str, analyzer_config: PlatformConfigBase) -> None:
+    def __init__(self, platform_id: str, resource_identifier: str) -> None:
         self.client = MongoSingleton.get_instance().get_client()
         self.platform_id = platform_id
 
         # the resource to query
-        self.resource_name = "metadata." + analyzer_config.resource_identifier
+        self.resource_name = "metadata." + resource_identifier
 
     def extract(
         self,
@@ -20,7 +19,7 @@ class ExtractPlatformRawData:
         to_date: datetime | None,
         resources: list[str],
         recompute: bool = False,
-    ) -> Cursor:
+    ) -> tuple[Cursor, bool]:
         """
         extract a list of platform's `rawmemberactivities` data
 
@@ -45,36 +44,49 @@ class ExtractPlatformRawData:
         ---------
         raw_data : Cursor
             a list of raw data to be processed
+        override_recompute : bool
+            in case we wanted to override the `recompute` to be `True`
+            normally would happen if no data was labeled
         """
         date_query: dict
+
+        # in case we wanted to override recompute
+        # normally would happen if no data was labeled
+        override_recompute: bool = False
+
         if not recompute:
             latest_labeled_date = self._find_latest_labeled()
+            lte_query = to_date if to_date else datetime.now()
 
             # all data was processed before
             if to_date and latest_labeled_date and latest_labeled_date >= to_date:
                 logging.info(
                     f"All data for platform_id: {self.platform_id} was labeled before!"
                 )
-                return self.client[self.platform_id]["rawmemberactivities"].find(
-                    {"_id": None}
+                return (
+                    self.client[self.platform_id]["rawmemberactivities"].find(
+                        {"_id": None}
+                    ),
+                    override_recompute,
                 )
 
             if latest_labeled_date:
                 date_query = {
                     "date": {
-                        "$gte": (
+                        "$gt": (
                             latest_labeled_date
                             if latest_labeled_date > from_date
                             else from_date
                         ),
-                        "$lte": to_date,
+                        "$lte": lte_query,
                     }
                 }
             else:
+                override_recompute = True
                 date_query = {
                     "date": {
                         "$gte": from_date,
-                        "$lte": to_date if to_date else datetime.now(),
+                        "$lte": lte_query,
                     },
                 }
 
@@ -82,7 +94,7 @@ class ExtractPlatformRawData:
             date_query = {
                 "date": {
                     "$gte": from_date,
-                    "$lte": to_date if to_date else datetime.now(),
+                    "$lte": lte_query,
                 },
             }
 
@@ -92,7 +104,7 @@ class ExtractPlatformRawData:
                 "source_id": {"$in": resources},
             }
         )
-        return cursor
+        return cursor, override_recompute
 
     def _find_latest_labeled(self, label_field: str = "vdLabel") -> datetime | None:
         """
@@ -111,7 +123,7 @@ class ExtractPlatformRawData:
         cursor = (
             self.client[self.platform_id]["rawmemberactivities"]
             .find(
-                {label_field: {"$ne": None}},
+                {"metadata." + label_field: {"$ne": None}},
                 {"date": 1},
             )
             .sort("date", -1)

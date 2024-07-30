@@ -2,7 +2,6 @@ from datetime import datetime
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
-from tc_analyzer_lib.schemas.platform_configs import DiscordAnalyzerConfig
 from violation_detection_helpers import ExtractPlatformRawData
 
 
@@ -39,7 +38,7 @@ class TestExtractRawDataLatestDate(TestCase):
 
         mock_client[platform_id]["rawmemberactivities"].find.return_value = mock_cursor
 
-        extract_data = ExtractPlatformRawData(platform_id, DiscordAnalyzerConfig())
+        extract_data = ExtractPlatformRawData(platform_id, "channel_id")
         results = extract_data._find_latest_labeled()
 
         self.assertEqual(results, datetime(2022, 1, 1))
