@@ -7,9 +7,14 @@ class ViolationDetectionModules:
     def __init__(self) -> None:
         self.client = MongoSingleton.get_instance().get_client()
 
-    def retrieve_platforms(self) -> list[dict]:
+    def retrieve_platforms(self, platform_name: str | None = None) -> list[dict]:
         """
         retrieve platforms to be processed for Violation Detection (VD)
+
+        Parameters
+        -----------
+        platform_name : str | None
+            if `None` the would fetch all platforms
 
         Returns
         ----------
@@ -42,6 +47,10 @@ class ViolationDetectionModules:
             platforms = module.get("options", {}).get("platforms", [])
             for platform in platforms:
                 platform_id = str(platform["platform"])
+
+                if platform_name is not None and platform_name != platform["name"]:
+                    continue
+
                 try:
                     metadata = platform["metadata"]
                     resources = metadata["selectedResources"]
@@ -57,6 +66,7 @@ class ViolationDetectionModules:
                             "selected_discord_users": discord_users,
                             "from_date": from_date,
                             "to_date": to_date,
+                            "recompute": False,  # for default it's False
                         }
                     )
                 except Exception as exp:
