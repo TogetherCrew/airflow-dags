@@ -27,7 +27,9 @@ class LoadPlatformLabeledData:
         updates = self._prepare_updates(transformed_data)
         self.client[platform_id]["rawmemberactivities"].bulk_write(updates)
 
-    def _prepare_updates(self, transformed_data: list[dict[str, Any]]) -> list[UpdateOne]:
+    def _prepare_updates(
+        self, transformed_data: list[dict[str, Any]]
+    ) -> list[UpdateOne]:
         """
         prepare a list of `UpdateOne` operations to do on database
 
@@ -35,7 +37,7 @@ class LoadPlatformLabeledData:
         -----------
         transformed_data : list[dict[str, Any]]
             the data transformed by labels added
-        
+
         Returns
         ----------
         updates : list[pymongo.UpdateOne]

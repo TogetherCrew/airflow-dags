@@ -19,7 +19,9 @@ class ViolationDetectionModules:
             each dict data could be as
             ```
             {
+                community: str,
                 platform_id: str,
+                resources: list[str],
                 selected_discord_users: list[str],
                 from_date: datetime,
                 to_date: datetime,
