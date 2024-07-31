@@ -23,7 +23,7 @@ class TestExtractRawInfo(unittest.TestCase):
 
         with cls.driver.session() as session:
             session.run(
-            """
+                """
             CREATE (f:DiscourseForum {endpoint: $endpoint, uuid: 'forum-uuid'}),
                 (u1:DiscourseUser {id: 'user1', name: 'User One'}),
                 (u2:DiscourseUser {id: 'user2', name: 'User Two'}),
@@ -86,10 +86,8 @@ class TestExtractRawInfo(unittest.TestCase):
 
     def test_fetch_raw_data(self):
         combined_data = self.extractor.fetch_raw_data()
-        print("result:\n", combined_data)
         self.assertEqual(len(combined_data), 2)
         category_ids = [post["category_id"] for post in combined_data]
-        # print("expected_result:\n", expected_result)
         self.assertIn("category1", category_ids)
 
         for post in combined_data:
