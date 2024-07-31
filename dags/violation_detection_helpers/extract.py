@@ -101,6 +101,7 @@ class ExtractPlatformRawData:
         cursor = self.client[self.platform_id]["rawmemberactivities"].find(
             {
                 **date_query,
+                "text": {"$ne": None},
                 "source_id": {"$in": resources},
             }
         )

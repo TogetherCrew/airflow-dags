@@ -38,6 +38,7 @@ class TestExtractRawData(TestCase):
                 "author_id": "2",
                 "date": datetime(2022, 1, 1),
                 "source_id": "8880",
+                "text": "test_test 2",
                 "metadata": {
                     "topic_id": None,
                     "category_id": "34569",
