@@ -74,17 +74,17 @@ with DAG(
         if len(transformed_data) != 0:
             loader = LoadPlatformLabeledData()
             loader.load(platform_id=platform, transformed_data=transformed_data)
+
+            # message discord users if recompute is equal to False
+            if not recompute or not override_recompute:
+                prepare_report = PrepareReport()
+                report = prepare_report.prepare(transformed_documents=transformed_data)
+
+                for discord_id in discord_users:
+                    reporter = SendReportDiscordUser(platform_id=platform_id)
+                    reporter.send(discord_user_id=discord_id, message=report)
         else:
             logging.warning("No documents were transformed!")
-
-        # message discord users if recompute is equal to False
-        if not recompute or not override_recompute:
-            prepare_report = PrepareReport()
-            report = prepare_report.prepare(transformed_documents=transformed_data)
-
-            for discord_id in discord_users:
-                reporter = SendReportDiscordUser(platform_id=platform_id)
-                reporter.send(discord_user_id=discord_id, message=report)
 
     platforms = get_violation_modules()
     process_platforms.expand(platform=platforms)
