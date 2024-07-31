@@ -28,56 +28,56 @@ class ExtractRawInfo:
         self.driver.close()
 
     def fetch_post_details(
-        self, created_at: Optional[str] = None, comparison: Optional[str] = None
-    ) -> list:
-        """
-        Fetch details of posts from the Discourse forum.
+            self, created_at: Optional[str] = None, comparison: Optional[str] = None
+        ) -> list:
+            """
+            Fetch details of posts from the Discourse forum.
 
-        :param created_at: Optional datetime string to filter posts created after this date.
-        :param comparison: Optional comparison operator, either 'gt' for greater than or 'gte' for greater than or equal to.
-        :return: List of dictionaries containing post details.
-        """
-        if comparison:
-            assert comparison in {
-                "gt",
-                "gte",
-            }, "comparison must be either 'gt' or 'gte'"
+            :param created_at: Optional datetime string to filter posts created after this date.
+            :param comparison: Optional comparison operator, either 'gt' for greater than or 'gte' for greater than or equal to.
+            :return: List of dictionaries containing post details.
+            """
+            if comparison:
+                assert comparison in {
+                    "gt",
+                    "gte",
+                }, "comparison must be either 'gt' or 'gte'"
 
-        where_clause = ""
-        if created_at and comparison:
-            operator = ">" if comparison == "gt" else ">="
-            where_clause = f"WHERE post.createdAt {operator} $createdAt"
-        query = f"""
-        MATCH (forum:DiscourseForum {{endpoint: $forum_endpoint}})
-        WITH forum
-        MATCH (topic:DiscourseTopic {{forumUuid: forum.uuid}})
-        MATCH (topic)-[:HAS_POST]->(post:DiscoursePost)
-        {where_clause}
-        OPTIONAL MATCH (post)<-[:POSTED]-(author:DiscourseUser)
-        OPTIONAL MATCH (post)<-[:LIKED]-(likedUser:DiscourseUser)
-        OPTIONAL MATCH (post)-[:REPLY_TO]->(repliedPost:DiscoursePost)
-        OPTIONAL MATCH (repliedPost)<-[:POSTED]-(repliedAuthor:DiscourseUser)
-        RETURN
-        post.id AS post_id,
-        author.id AS author_id,
-        post.createdAt AS created_at,
-        author.name AS author_name,
-        collect(DISTINCT likedUser.id) AS reactions,
-        repliedPost.id AS replied_post_id,
-        repliedAuthor.id AS replied_post_user_id,
-        topic.id AS topic_id
-        """
-
-        with self.driver.session() as session:
+            where_clause = ""
             if created_at and comparison:
-                result = session.run(
-                    query, forum_endpoint=self.forum_endpoint, createdAt=created_at
-                )
-            else:
-                result = session.run(query, forum_endpoint=self.forum_endpoint)
-            posts = result.data()
+                operator = ">" if comparison == "gt" else ">="
+                where_clause = f"WHERE post.createdAt {operator} $createdAt"
+            query = f"""
+            MATCH (forum:DiscourseForum {{endpoint: $forum_endpoint}})
+            WITH forum
+            MATCH (post:DiscoursePost {{forumUuid: forum.uuid}})
+            {where_clause}
+            OPTIONAL MATCH (post)<-[:POSTED]-(author:DiscourseUser)
+            OPTIONAL MATCH (post)<-[:LIKED]-(likedUser:DiscourseUser)
+            OPTIONAL MATCH (post)-[:REPLY_TO]->(repliedPost:DiscoursePost)
+            OPTIONAL MATCH (repliedPost)<-[:POSTED]-(repliedAuthor:DiscourseUser)
+            RETURN
+            post.id AS post_id,
+            author.id AS author_id,
+            post.createdAt AS created_at,
+            collect(DISTINCT likedUser.id) AS reactions,
+            repliedPost.id AS replied_post_id,
+            repliedAuthor.id AS replied_post_user_id,
+            post.topicId AS topic_id
+            """
 
-        return posts
+            with self.driver.session() as session:
+                if created_at and comparison:
+                    result = session.run(
+                        query, forum_endpoint=self.forum_endpoint, createdAt=created_at
+                    )
+                else:
+                    result = session.run(query, forum_endpoint=self.forum_endpoint)
+                posts = result.data()
+
+            return posts
+
+
 
     def fetch_post_categories(self, post_ids):
         """
@@ -210,3 +210,7 @@ class ExtractRawInfo:
             else:
                 data = self.fetch_raw_data()
         return data
+
+# test = ExtractRawInfo("gov.optimism.io", "test_platform_id")
+# result = test.extract()
+# print("results:\n", result)

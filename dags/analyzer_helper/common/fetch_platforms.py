@@ -12,7 +12,7 @@ class FetchPlatforms:
         collection (Collection): The MongoDB collection.
     """
 
-    def __init__(self, platform_name: str, db_name="Core", collection="platforms"):
+    def __init__(self, platform_name: str, db_name: str = "Core", collection: str = "platforms"):
         """
         Initializes the FetchDiscordPlatforms class.
 
@@ -105,11 +105,11 @@ class FetchPlatforms:
 
         for doc in cursor:
             if self.platform_name == "discord":
-                selected_channels = doc.get("metadata", {}).get(
+                resources = doc.get("metadata", {}).get(
                     "selectedChannels", None
                 )
             else:
-                selected_channels = doc.get("metadata", {}).get("resources", None)
+                resources = doc.get("metadata", {}).get("resources", None)
 
             platform_data = {
                 "platform_id": str(doc["_id"]),
@@ -117,7 +117,7 @@ class FetchPlatforms:
                     "period": doc.get("metadata", {}).get("period", None),
                     "action": doc.get("metadata", {}).get("action", None),
                     "window": doc.get("metadata", {}).get("window", None),
-                    "selectedChannels": selected_channels,
+                    "resources": resources,
                     "id": doc.get("metadata", {}).get("id", None),
                 },
                 "recompute": False,

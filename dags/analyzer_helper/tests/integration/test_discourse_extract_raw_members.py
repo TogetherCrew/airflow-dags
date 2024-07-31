@@ -87,6 +87,8 @@ class TestExtractRawMembers(unittest.TestCase):
                 "joined_at": "2023-07-02",
             },
         ]
+        print("result: \n", result)
+        print("expected_result: \n", expected_result)
         self.assertEqual(result, expected_result)
 
     def test_extract_recompute(self):

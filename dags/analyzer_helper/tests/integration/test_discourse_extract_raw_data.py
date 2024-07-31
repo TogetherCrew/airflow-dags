@@ -23,22 +23,22 @@ class TestExtractRawInfo(unittest.TestCase):
 
         with cls.driver.session() as session:
             session.run(
-                """
-                CREATE (f:DiscourseForum {endpoint: $endpoint, uuid: 'forum-uuid'}),
-                       (u1:DiscourseUser {id: 'user1', name: 'User One'}),
-                       (u2:DiscourseUser {id: 'user2', name: 'User Two'}),
-                       (p1:DiscoursePost {id: '1', content: 'Post 1', createdAt: '2023-01-01T00:00:00Z', topicId: 'topic-uuid'}),
-                       (p2:DiscoursePost {id: '2', content: 'Post 2', createdAt: '2023-01-02T00:00:00Z', topicId: 'topic-uuid'}),
-                       (t:DiscourseTopic {id: 'topic-uuid', forumUuid: 'forum-uuid'}),
-                       (c:DiscourseCategory {id: 'category1', name: 'Category 1'}),
-                       (p1)<-[:HAS_POST]-(t),
-                       (p2)<-[:HAS_POST]-(t),
-                       (p1)<-[:POSTED]-(u1),
-                       (p2)<-[:POSTED]-(u2),
-                       (p1)<-[:LIKED]-(u2),
-                       (p2)<-[:REPLY_TO]-(p1),
-                       (c)-[:HAS_TOPIC]->(t)
-                """,
+            """
+            CREATE (f:DiscourseForum {endpoint: $endpoint, uuid: 'forum-uuid'}),
+                (u1:DiscourseUser {id: 'user1', name: 'User One'}),
+                (u2:DiscourseUser {id: 'user2', name: 'User Two'}),
+                (p1:DiscoursePost {id: '1', content: 'Post 1', createdAt: '2023-01-01T00:00:00Z', topicId: 'topic-uuid', forumUuid: 'forum-uuid'}),
+                (p2:DiscoursePost {id: '2', content: 'Post 2', createdAt: '2023-01-02T00:00:00Z', topicId: 'topic-uuid', forumUuid: 'forum-uuid'}),
+                (t:DiscourseTopic {id: 'topic-uuid', forumUuid: 'forum-uuid'}),
+                (c:DiscourseCategory {id: 'category1', name: 'Category 1'}),
+                (p1)<-[:HAS_POST]-(t),
+                (p2)<-[:HAS_POST]-(t),
+                (p1)<-[:POSTED]-(u1),
+                (p2)<-[:POSTED]-(u2),
+                (p1)<-[:LIKED]-(u2),
+                (p2)<-[:REPLY_TO]-(p1),
+                (c)-[:HAS_TOPIC]->(t)
+            """,
                 {"endpoint": cls.forum_endpoint},
             )
 
@@ -56,7 +56,6 @@ class TestExtractRawInfo(unittest.TestCase):
                 "post_id": "1",
                 "author_id": "user1",
                 "created_at": "2023-01-01T00:00:00Z",
-                "author_name": "User One",
                 "reactions": ["user2"],
                 "replied_post_id": "2",
                 "replied_post_user_id": "user2",
@@ -66,7 +65,6 @@ class TestExtractRawInfo(unittest.TestCase):
                 "post_id": "2",
                 "author_id": "user2",
                 "created_at": "2023-01-02T00:00:00Z",
-                "author_name": "User Two",
                 "reactions": [],
                 "replied_post_id": None,
                 "replied_post_user_id": None,
@@ -88,18 +86,16 @@ class TestExtractRawInfo(unittest.TestCase):
 
     def test_fetch_raw_data(self):
         combined_data = self.extractor.fetch_raw_data()
+        print("result:\n", combined_data)
         self.assertEqual(len(combined_data), 2)
-        author_names_categories = [
-            (post["author_name"], post["category_id"]) for post in combined_data
-        ]
-        self.assertIn(("User One", "category1"), author_names_categories)
-        self.assertIn(("User Two", "category1"), author_names_categories)
+        category_ids = [post["category_id"] for post in combined_data]
+        # print("expected_result:\n", expected_result)
+        self.assertIn("category1", category_ids)
 
         for post in combined_data:
             self.assertIn("post_id", post)
             self.assertIn("author_id", post)
             self.assertIn("created_at", post)
-            self.assertIn("author_name", post)
             self.assertIn("reactions", post)
             self.assertIn("replied_post_id", post)
             self.assertIn("topic_id", post)
@@ -113,9 +109,9 @@ class TestExtractRawInfo(unittest.TestCase):
 
         # Check if data is fetched from the Neo4j database without date filtering
         self.assertEqual(len(data), 2)
-        author_names = [post["author_name"] for post in data]
-        self.assertIn("User One", author_names)
-        self.assertIn("User Two", author_names)
+        author_ids = [post["author_id"] for post in data]
+        self.assertIn("user1", author_ids)
+        self.assertIn("user2", author_ids)
 
     def test_extract_without_recompute_no_latest_activity(self):
         self.rawmemberactivities_collection.delete_many({})
@@ -128,7 +124,6 @@ class TestExtractRawInfo(unittest.TestCase):
                 "post_id": "1",
                 "author_id": "user1",
                 "created_at": "2023-01-01T00:00:00Z",
-                "author_name": "User One",
                 "reactions": ["user2"],
                 "replied_post_id": "2",
                 "replied_post_user_id": "user2",
@@ -139,7 +134,6 @@ class TestExtractRawInfo(unittest.TestCase):
                 "post_id": "2",
                 "author_id": "user2",
                 "created_at": "2023-01-02T00:00:00Z",
-                "author_name": "User Two",
                 "reactions": [],
                 "replied_post_id": None,
                 "replied_post_user_id": None,
@@ -188,7 +182,6 @@ class TestExtractRawInfo(unittest.TestCase):
                 "post_id": "1",
                 "author_id": "user1",
                 "created_at": "2023-01-01T00:00:00Z",
-                "author_name": "User One",
                 "reactions": ["user2"],
                 "replied_post_id": "2",
                 "replied_post_user_id": "user2",
@@ -199,7 +192,6 @@ class TestExtractRawInfo(unittest.TestCase):
                 "post_id": "2",
                 "author_id": "user2",
                 "created_at": "2023-01-02T00:00:00Z",
-                "author_name": "User Two",
                 "reactions": [],
                 "replied_post_id": None,
                 "replied_post_user_id": None,
