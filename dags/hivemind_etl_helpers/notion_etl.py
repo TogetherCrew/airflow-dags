@@ -67,7 +67,9 @@ class NotionProcessor:
         page_id : str
             the notion page id
         """
-        logging.info(f"Processing a page of community id: {self.community_id}")
+        logging.info(
+            f"Processing page_id: {page_id}, of community id: {self.community_id}"
+        )
         documents = self.notion_extractor.extract_from_pages(page_ids=[page_id])
         self.ingestion_pipeline.run_pipeline(docs=documents)
 
@@ -80,6 +82,8 @@ class NotionProcessor:
         database_id : str
             the notion database id
         """
-        logging.info(f"Processing a page of community id: {self.community_id}")
+        logging.info(
+            f"Processing database id: {database_id}, of community id: {self.community_id}"
+        )
         documents = self.notion_extractor.extract_from_database(database_id=database_id)
         self.ingestion_pipeline.run_pipeline(docs=documents)
