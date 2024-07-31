@@ -85,3 +85,7 @@ with DAG(
             for discord_id in discord_users:
                 reporter = SendReportDiscordUser(platform_id=platform_id)
                 reporter.send(discord_user_id=discord_id, message=report)
+
+
+    platforms = get_violation_modules()
+    process_platforms.expand(platform=platforms)
