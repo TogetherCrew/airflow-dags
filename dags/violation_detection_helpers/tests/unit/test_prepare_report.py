@@ -35,7 +35,64 @@ class TestPrepareReport(TestCase):
         result = self.preparer.prepare(transformed_documents)
         expected_report = (
             "Here's a list of messages with detected violation\n\n"
+            "Document link: https://sample_link.com | Label: Identifying"
+        )
+        self.assertEqual(result, expected_report, "Expected a valid report string")
+
+    def test_multiple_valid_inputs(self):
+        transformed_documents = [
+            {
+                "_id": ObjectId("669f40ac65aef1417bdda9a9"),
+                "metadata": {
+                    "thread_id": None,
+                    "channel_id": "915944557605163008",
+                    "bot_activity": False,
+                    "vdLabel": "Identifying",
+                    "link": "https://sample_link.com",
+                },
+                "actions": [{"name": "message", "type": "emitter"}],
+                "author_id": "729635673383895111",
+                "date": datetime(2023, 6, 30),
+                "interactions": [],
+                "source_id": "1124399166827794582",
+            },
+            {
+                "_id": ObjectId("669f40ac65aef1417bdda9a9"),
+                "metadata": {
+                    "thread_id": None,
+                    "channel_id": "915944557605163008",
+                    "bot_activity": False,
+                    "vdLabel": "Identifying, Sexualized",
+                    "link": "https://sample_link2.com",
+                },
+                "actions": [{"name": "message", "type": "emitter"}],
+                "author_id": "729635673383895111",
+                "date": datetime(2023, 6, 30),
+                "interactions": [],
+                "source_id": "1124399166827794583",
+            },
+            {
+                "_id": ObjectId("669f40ac65aef1417bdda9a9"),
+                "metadata": {
+                    "thread_id": None,
+                    "channel_id": "915944557605163008",
+                    "bot_activity": False,
+                    "vdLabel": "Sexualized",
+                    "link": "https://sample_link3.com",
+                },
+                "actions": [{"name": "message", "type": "emitter"}],
+                "author_id": "729635673383895111",
+                "date": datetime(2023, 6, 30),
+                "interactions": [],
+                "source_id": "1124399166827794584",
+            },
+        ]
+        result = self.preparer.prepare(transformed_documents)
+        expected_report = (
+            "Here's a list of messages with detected violation\n\n"
             "Document link: https://sample_link.com | Label: Identifying\n"
+            "Document link: https://sample_link2.com | Label: Identifying, Sexualized\n"
+            "Document link: https://sample_link3.com | Label: Sexualized"
         )
         self.assertEqual(result, expected_report, "Expected a valid report string")
 
