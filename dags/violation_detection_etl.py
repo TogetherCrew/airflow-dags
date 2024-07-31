@@ -8,8 +8,9 @@ from violation_detection_helpers.modules import ViolationDetectionModules
 from violation_detection_helpers import (
     ExtractPlatformRawData,
     TransformPlatformRawData,
-    LoadPlatformLabeledData
+    LoadPlatformLabeledData,
 )
+from violation_detection_helpers.utils import PrepareReport, SendReportDiscordUser
 
 
 with DAG(
@@ -19,7 +20,7 @@ with DAG(
     catchup=False,
     max_active_runs=1,
 ) as dag:
-    
+
     @task
     def get_violation_modules(**kwargs) -> list[dict[str, Any]]:
         platform_id_recompute = kwargs["dag_run"].conf.get(  # noqa: F841
@@ -39,7 +40,7 @@ with DAG(
                 platform["recompute"] = True
 
         return platforms
-    
+
     @task
     def process_platforms(platform: dict[str, Any]):
         platform_id = platform["platform_id"]
@@ -48,7 +49,7 @@ with DAG(
         to_date = platform["to_date"]
         recompute = platform["recompute"]
         discord_users = platform["selected_discord_users"]
-        
+
         # EXTRACT
 
         # TODO: Get resource_identifier from platform analyzer config
@@ -59,7 +60,7 @@ with DAG(
             resource_identifier="category_id",
         )
 
-        raw_data, override_data = extractor.extract(
+        raw_data, override_recompute = extractor.extract(
             from_date=from_date,
             to_date=to_date,
             resources=resources,
@@ -67,14 +68,21 @@ with DAG(
         )
 
         # Transform
-
         transformer = TransformPlatformRawData()
-        # TODO: prepare some report while transforming if recompute is False
         transformed_data = transformer.transform(raw_data)
 
         # Load
+        if len(transformed_data) != 0:
+            loader = LoadPlatformLabeledData()
+            loader.load(platform_id=platform, transformed_data=transformed_data)
+        else:
+            logging.warning("No documents were transformed!")
 
-        loader = LoadPlatformLabeledData()
-        loader.load(platform_id=platform, transformed_data=transformed_data)
+        # message discord users if recompute is equal to False
+        if not recompute or not override_recompute:
+            prepare_report = PrepareReport()
+            report = prepare_report.prepare(transformed_documents=transformed_data)
 
-        # message discord users
+            for discord_id in discord_users:
+                reporter = SendReportDiscordUser(platform_id=platform_id)
+                reporter.send(discord_user_id=discord_id, message=report)
