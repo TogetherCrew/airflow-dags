@@ -48,7 +48,10 @@ class PrepareReport:
 
         report: str | None
         if len(reports) != 0:
-            report = "Here's a list of messages with detected violation\n\n" + "\n".join(reports)
+            report = (
+                "Here's a list of messages with detected violation\n\n"
+                + "\n".join(reports)
+            )
         else:
             logging.warning(
                 "No reports made since no document was "
