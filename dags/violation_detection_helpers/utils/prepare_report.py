@@ -3,9 +3,6 @@ from typing import Any
 
 
 class PrepareReport:
-    def __init__(self) -> None:
-        pass
-
     def prepare(self, transformed_documents: list[dict[str, Any]]) -> str | None:
         """
         prepare a report if detected violation using the raw_messages
@@ -51,9 +48,7 @@ class PrepareReport:
 
         report: str | None
         if len(reports) != 0:
-            report = "Here's a list of messages with detected violation\n\n"
-            for doc_report in reports:
-                report += doc_report + "\n"
+            report = "Here's a list of messages with detected violation\n\n" + "\n".join(reports)
         else:
             logging.warning(
                 "No reports made since no document was "
