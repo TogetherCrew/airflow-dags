@@ -1,7 +1,8 @@
+from datetime import datetime
 from unittest import TestCase
 from unittest.mock import patch
+
 from bson import ObjectId
-from datetime import datetime
 from violation_detection_helpers.utils import PrepareReport
 
 

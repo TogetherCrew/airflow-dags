@@ -4,14 +4,13 @@ from typing import Any
 
 from airflow import DAG
 from airflow.decorators import task
-from violation_detection_helpers.modules import ViolationDetectionModules
 from violation_detection_helpers import (
     ExtractPlatformRawData,
-    TransformPlatformRawData,
     LoadPlatformLabeledData,
+    TransformPlatformRawData,
 )
+from violation_detection_helpers.modules import ViolationDetectionModules
 from violation_detection_helpers.utils import PrepareReport, SendReportDiscordUser
-
 
 with DAG(
     dag_id="violation_detection_etl",
