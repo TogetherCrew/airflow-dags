@@ -201,7 +201,5 @@ with DAG(
     platform_modules = fetch_discourse_platforms()
 
     raw_data_etl = discourse_etl_raw_data.expand(platform_info=platform_modules)
-    raw_members_etl = discourse_etl_raw_members.expand(
-        platform_info=platform_modules
-    )
+    raw_members_etl = discourse_etl_raw_members.expand(platform_info=platform_modules)
     raw_members_etl >> analyze_discourse(platform_processed=raw_data_etl)
