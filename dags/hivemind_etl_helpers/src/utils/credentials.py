@@ -21,10 +21,10 @@ def load_mongo_credentials() -> dict[str, str]:
 
     mongo_creds = {}
 
-    mongo_creds["user"] = os.getenv("MONGODB_USER", "")
-    mongo_creds["password"] = os.getenv("MONGODB_PASS", "")
-    mongo_creds["host"] = os.getenv("MONGODB_HOST", "")
-    mongo_creds["port"] = os.getenv("MONGODB_PORT", "")
+    mongo_creds["user"] = os.getenv("MONGODB_USER", "root")
+    mongo_creds["password"] = os.getenv("MONGODB_PASS", "pass")
+    mongo_creds["host"] = os.getenv("MONGODB_HOST", "mongo")
+    mongo_creds["port"] = os.getenv("MONGODB_PORT", 27017)
 
     return mongo_creds
 
