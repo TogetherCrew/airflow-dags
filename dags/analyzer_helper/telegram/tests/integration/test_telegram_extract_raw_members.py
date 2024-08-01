@@ -1,6 +1,7 @@
 import unittest
 import datetime
 
+from analyzer_helper.telegram.utils.date_time_format_converter import DateTimeFormatConverter
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
 from analyzer_helper.telegram.extract_raw_members import ExtractRawMembers
 
@@ -48,9 +49,9 @@ class TestExtractRawMembers(unittest.TestCase):
                 RETURN id(u) AS id
                 """,
                 chat_title=self.test_chat_title,
-                created_at=1713037907013,  # Replace with your Unix timestamp
-                joined_date=1713037907013,  # Replace with your Unix timestamp
-                left_date=1713124307013,    # Replace with your Unix timestamp
+                created_at=DateTimeFormatConverter.datetime_to_timestamp(datetime.datetime(2023, 7, 1)),
+                joined_date=DateTimeFormatConverter.datetime_to_timestamp(datetime.datetime(2023, 7, 1)),
+                left_date=DateTimeFormatConverter.datetime_to_timestamp(datetime.datetime(2023, 7, 2)),
             )
             session.run(
                 """
@@ -60,8 +61,8 @@ class TestExtractRawMembers(unittest.TestCase):
                 RETURN id(u) AS id
                 """,
                 chat_title=self.test_chat_title,
-                created_at=1713124307013,  # Replace with your Unix timestamp
-                joined_date=1713124307013  # Replace with your Unix timestamp
+                created_at=DateTimeFormatConverter.datetime_to_timestamp(datetime.datetime(2023, 2, 2)),
+                joined_date=DateTimeFormatConverter.datetime_to_timestamp(datetime.datetime(2023, 2, 2)),
             )
 
     def tearDown(self):

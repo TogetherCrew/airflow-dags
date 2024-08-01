@@ -22,6 +22,14 @@ class Neo4jConnection:
         port = os.getenv("NEO4J_PORT", "")
         user = os.getenv("NEO4J_USER", "")
         password = os.getenv("NEO4J_PASSWORD", "")
+        # password = "Kidalica123"
+
+        # Debugging
+        print(f"NEO4J_PROTOCOL: {protocol}")
+        print(f"NEO4J_HOST: {host}")
+        print(f"NEO4J_PORT: {port}")
+        print(f"NEO4J_USER: {user}")
+        print(f"NEO4J_PASSWORD: {password}")
 
         neo4j_db = os.getenv("NEO4J_DB", "neo4j")
 

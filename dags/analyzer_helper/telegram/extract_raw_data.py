@@ -144,6 +144,6 @@ class ExtractRawInfo:
 
 if __name__ == "__main__":
     fetcher = ExtractRawInfo(forum_endpoint="TC Ingestion Pipeline", platform_id="test_platform_id")
-    messages = fetcher.fetch_message_details()
+    messages = fetcher.fetch_raw_data()
     print(messages)
     fetcher.close()
