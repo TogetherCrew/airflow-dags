@@ -1,6 +1,6 @@
 import logging
 
-from dags.analyzer_helper.common.base.load_transformed_data_base import (
+from analyzer_helper.common.base.load_transformed_data_base import (
     LoadTransformedDataBase,
 )
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
