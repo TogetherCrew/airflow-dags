@@ -5,10 +5,10 @@ from datetime import datetime
 
 from airflow import DAG
 from airflow.decorators import task
-from analyzer_helper.common.analyzer import Analyzer
 from analyzer_helper.common.fetch_platforms import FetchPlatforms
 from analyzer_helper.common.load_transformed_data import LoadTransformedData
 from analyzer_helper.common.load_transformed_members import LoadTransformedMembers
+from analyzer_helper.discord.discord_analyze import Analyzer
 from analyzer_helper.discourse.extract_raw_data import ExtractRawInfo
 from analyzer_helper.discourse.extract_raw_members import ExtractRawMembers
 from analyzer_helper.discourse.transform_raw_data import TransformRawInfo
@@ -187,7 +187,7 @@ with DAG(
         window = metadata["window"]
         channels = metadata["selectedChannels"]
 
-        analyzer = Analyzer(platform_name="discourse")
+        analyzer = Analyzer()
 
         analyzer.analyze(
             platform_id=platform_id,
@@ -195,12 +195,13 @@ with DAG(
             period=period,
             action=action,
             window=window,
+            recompute=recompute,
         )
 
-        platform_modules = fetch_discourse_platforms()
+    platform_modules = fetch_discourse_platforms()
 
-        raw_data_etl = discourse_etl_raw_data.expand(platform_info=platform_modules)
-        raw_members_etl = discourse_etl_raw_members.expand(
-            platform_info=platform_modules
-        )
-        raw_members_etl >> analyze_discourse(platform_processed=raw_data_etl)
+    raw_data_etl = discourse_etl_raw_data.expand(platform_info=platform_modules)
+    raw_members_etl = discourse_etl_raw_members.expand(
+        platform_info=platform_modules
+    )
+    raw_members_etl >> analyze_discourse(platform_processed=raw_data_etl)
