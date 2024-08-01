@@ -77,8 +77,6 @@ class ExtractRawInfo:
 
         return posts
 
-
-
     def fetch_post_categories(self, post_ids):
         """
         Fetch categories associated with given post IDs.
