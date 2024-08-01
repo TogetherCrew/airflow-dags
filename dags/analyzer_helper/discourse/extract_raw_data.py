@@ -87,8 +87,7 @@ class ExtractRawInfo:
         query = """
         MATCH (post:DiscoursePost)
         WHERE post.id in $post_ids
-        MATCH (topic:DiscourseTopic)-[:HAS_POST]->(post)
-        OPTIONAL MATCH (category:DiscourseCategory)-[:HAS_TOPIC]->(topic)
+        OPTIONAL MATCH (category:DiscourseCategory)-[:HAS_TOPIC]->(topic:DiscourseTopic {id: post.topicId})
         RETURN
         post.id AS post_id,
         category.id AS category_id
@@ -115,8 +114,7 @@ class ExtractRawInfo:
         query = """
         MATCH (forum:DiscourseForum {endpoint: $forum_endpoint})
         WITH forum
-        MATCH (topic:DiscourseTopic {forumUuid: forum.uuid})
-        MATCH (topic)-[:HAS_POST]->(post:DiscoursePost)
+        (post:DiscoursePost {forumUuid: forum.uuid})
         RETURN post.createdAt AS created_at
         ORDER BY post.createdAt DESC
         LIMIT 1
