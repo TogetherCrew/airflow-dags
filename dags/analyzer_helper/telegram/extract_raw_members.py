@@ -41,31 +41,60 @@ class ExtractRawMembers:
         if start_date:
             query += " AND u.created_at >= $start_date"
 
+        # query += """
+        # WITH u, r, 
+        #      CASE WHEN type(r) = 'JOINED' THEN r.date ELSE NULL END AS join_date, 
+        #      CASE WHEN type(r) = 'LEFT' THEN r.date ELSE NULL END AS leave_date
+        # WITH u, 
+        #      collect(join_date) AS join_dates, 
+        #      collect(leave_date) AS leave_dates
+        # WITH u, 
+        #      [date IN join_dates WHERE date IS NOT NULL] AS valid_join_dates, 
+        #      [date IN leave_dates WHERE date IS NOT NULL] AS valid_leave_dates
+        # WITH u, 
+        #      valid_join_dates, 
+        #      valid_leave_dates, 
+        #      last(valid_join_dates) AS latest_join, 
+        #      last(valid_leave_dates) AS latest_leave
+        # RETURN u.id AS id, 
+        #        u.is_bot AS is_bot, 
+        #        CASE 
+        #            WHEN latest_join > latest_leave OR latest_leave IS NULL THEN latest_join 
+        #            ELSE NULL 
+        #        END AS joined_at, 
+        #        CASE 
+        #            WHEN latest_leave > latest_join OR latest_join IS NULL THEN latest_leave 
+        #            ELSE NULL 
+        #        END AS left_at
+        # ORDER BY id
+        # """
         query += """
         WITH u, r, 
-             CASE WHEN type(r) = 'JOINED' THEN r.date ELSE NULL END AS join_date, 
-             CASE WHEN type(r) = 'LEFT' THEN r.date ELSE NULL END AS leave_date
+            CASE WHEN type(r) = 'JOINED' THEN r.date ELSE NULL END AS join_date, 
+            CASE WHEN type(r) = 'LEFT' THEN r.date ELSE NULL END AS leave_date
         WITH u, 
-             collect(join_date) AS join_dates, 
-             collect(leave_date) AS leave_dates
+            collect(join_date) AS join_dates, 
+            collect(leave_date) AS leave_dates
         WITH u, 
-             [date IN join_dates WHERE date IS NOT NULL] AS valid_join_dates, 
-             [date IN leave_dates WHERE date IS NOT NULL] AS valid_leave_dates
+            [date IN join_dates WHERE date IS NOT NULL] AS valid_join_dates, 
+            [date IN leave_dates WHERE date IS NOT NULL] AS valid_leave_dates
         WITH u, 
-             valid_join_dates, 
-             valid_leave_dates, 
-             last(valid_join_dates) AS latest_join, 
-             last(valid_leave_dates) AS latest_leave
+            valid_join_dates, 
+            valid_leave_dates, 
+            CASE WHEN size(valid_join_dates) > 0 THEN last(valid_join_dates) ELSE NULL END AS latest_join, 
+            CASE WHEN size(valid_leave_dates) > 0 THEN last(valid_leave_dates) ELSE NULL END AS latest_leave
         RETURN u.id AS id, 
-               u.is_bot AS is_bot, 
-               CASE 
-                   WHEN latest_join > latest_leave OR latest_leave IS NULL THEN latest_join 
-                   ELSE NULL 
-               END AS joined_at, 
-               CASE 
-                   WHEN latest_leave > latest_join OR latest_join IS NULL THEN latest_leave 
-                   ELSE NULL 
-               END AS left_at
+            u.is_bot AS is_bot, 
+            CASE 
+                WHEN latest_join IS NOT NULL AND (latest_join > latest_leave OR latest_leave IS NULL) THEN latest_join 
+                WHEN latest_join = 0.0 THEN latest_join
+                ELSE NULL 
+            END AS joined_at, 
+            CASE 
+                WHEN latest_leave IS NOT NULL AND (latest_leave > latest_join OR latest_join IS NULL) THEN latest_leave 
+                WHEN latest_leave = 0.0 THEN latest_leave
+                ELSE NULL 
+            END AS left_at
         ORDER BY id
         """
 
@@ -108,3 +137,8 @@ class ExtractRawMembers:
                 members = self.fetch_member_details()
 
         return members
+
+extract = ExtractRawMembers("TC Ingestion Pipeline", "test_platform_id")
+# extract = ExtractRawMembers("TogetherCrew - Second Group", "test_platform_id")
+result = extract.fetch_member_details()
+print("result: \n", result)
