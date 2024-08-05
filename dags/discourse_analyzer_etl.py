@@ -186,7 +186,7 @@ with DAG(
 
         analyzer.analyze(
             platform_id=platform_id,
-            channels=resources,
+            resources=resources,
             period=period,
             action=action,
             window=window,

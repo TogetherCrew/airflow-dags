@@ -213,12 +213,12 @@ with DAG(
         period = metadata["period"]
         action = metadata["action"]
         window = metadata["window"]
-        channels = metadata["selectedChannels"]
+        resources = metadata["selectedChannels"]
 
         analyzer = Analyzer()
         analyzer.analyze(
             platform_id=platform_id,
-            channels=channels,
+            resources=resources,
             period=period,
             action=action,
             window=window,
