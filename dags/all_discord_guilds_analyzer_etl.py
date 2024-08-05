@@ -4,7 +4,7 @@ from datetime import datetime
 from airflow import DAG
 from airflow.decorators import task
 from airflow.utils.trigger_rule import TriggerRule
-from analyzer_helper.discord.discord_analyze import Analyzer
+from analyzer_helper.common.analyzer import Analyzer
 from analyzer_helper.discord.discord_extract_raw_infos import DiscordExtractRawInfos
 from analyzer_helper.discord.discord_extract_raw_members import DiscordExtractRawMembers
 from analyzer_helper.discord.discord_load_transformed_data import (
