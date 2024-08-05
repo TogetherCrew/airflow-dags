@@ -40,7 +40,7 @@ class FetchPlatforms:
         """
         query = {
             "disconnectedAt": None,
-            "platform": self.platform_name,
+            "name": self.platform_name,
         }
         projection = {
             "_id": 1,
