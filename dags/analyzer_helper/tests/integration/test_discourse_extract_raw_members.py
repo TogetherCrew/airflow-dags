@@ -87,9 +87,9 @@ class TestExtractRawMembers(unittest.TestCase):
                 "joined_at": "2023-07-02",
             },
         ]
-        print("result: \n", result)
-        print("expected_result: \n", expected_result)
-        self.assertEqual(set(result), set(expected_result))
+        self.assertEqual(len(result), 2)
+        for value in result:
+            self.assertIn(value, expected_result)
 
     def test_extract_recompute(self):
         result = self.extractor.extract(recompute=True)
@@ -103,7 +103,9 @@ class TestExtractRawMembers(unittest.TestCase):
                 "joined_at": "2023-07-02",
             },
         ]
-        self.assertEqual(set(result), set(expected_result))
+        self.assertEqual(len(result), 2)
+        for value in result:
+            self.assertIn(value, expected_result)
 
     def test_extract_without_recompute(self):
         result = self.extractor.extract(
