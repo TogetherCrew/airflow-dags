@@ -54,10 +54,8 @@ class FetchPlatforms:
         for doc in cursor:
             platform_data = {
                 "platform_id": str(doc["_id"]),
-                "metadata": {
-                    "period": doc.get("metadata", {}).get("period", None),
-                    "id": doc.get("metadata", {}).get("id", None),
-                },
+                "period": doc.get("metadata", {}).get("period", None),
+                "id": doc.get("metadata", {}).get("id", None),
                 "recompute": False,
             }
             platforms.append(platform_data)
@@ -113,65 +111,13 @@ class FetchPlatforms:
 
             platform_data = {
                 "platform_id": str(doc["_id"]),
-                "metadata": {
-                    "period": doc.get("metadata", {}).get("period", None),
-                    "action": doc.get("metadata", {}).get("action", None),
-                    "window": doc.get("metadata", {}).get("window", None),
-                    "resources": resources,
-                    "id": doc.get("metadata", {}).get("id", None),
-                },
+                "period": doc.get("metadata", {}).get("period", None),
+                "action": doc.get("metadata", {}).get("action", None),
+                "window": doc.get("metadata", {}).get("window", None),
+                "resources": resources,
+                "id": doc.get("metadata", {}).get("id", None),
                 "recompute": False,
             }
             platforms.append(platform_data)
 
             return platforms
-
-    # TODO: Decide if we'd like to merge `fetch_all` and `fetch_analyzer_parameters`
-    # def fetch_for_analyzer(self, platform_id: str):
-    #     """
-    #     Fetches the specified Discord platform from the MongoDB collection with additional fields.
-
-    #     Parameters:
-    #         platform_id (str): The platform ID to fetch.
-
-    #     Returns:
-    #         dict: A dictionary containing the platform data with the following fields:
-    #             - platform_id: The platform ID (_id from MongoDB).
-    #             - metadata: A dictionary containing period, action, window, selectedChannels, and id.
-    #             - recompute: A boolean set to False.
-    #     """
-    #     query = {
-    #         "_id": platform_id,
-    #         "disconnectedAt": None,
-    #         "platform": "discord",
-    #     }
-    #     projection = {
-    #         "_id": 1,
-    #         "metadata.period": 1,
-    #         "metadata.action": 1,
-    #         "metadata.window": 1,
-    #         "metadata.selectedChannels": 1,
-    #         "metadata.id": 1,
-    #     }
-
-    #     doc = self.collection.find_one(query, projection)
-
-    #     if doc:
-    #         metadata = {
-    #             "period": doc.get("metadata", {}).get("period", None),
-    #             "id": doc.get("metadata", {}).get("id", None)
-    #         }
-
-    #         if "metadata.action" in projection:
-    #             metadata["action"] = doc.get("metadata", {}).get("action", None)
-
-    #         if "metadata.window" in projection:
-    #             metadata["window"] = doc.get("metadata", {}).get("window", None)
-
-    #         platform_data = {
-    #             "platform_id": str(doc["_id"]),
-    #             "metadata": metadata,
-    #             "recompute": False,
-    #         }
-
-    #         return platform_data
