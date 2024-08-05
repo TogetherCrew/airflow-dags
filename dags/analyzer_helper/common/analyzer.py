@@ -1,49 +1,36 @@
+import asyncio
+import logging
 from datetime import datetime
-from typing import Callable, Dict, List
+
+from tc_analyzer_lib.schemas.platform_configs import DiscordAnalyzerConfig
+from tc_analyzer_lib.schemas.platform_configs.config_base import PlatformConfigBase
+from tc_analyzer_lib.tc_analyzer import TCAnalyzer
 
 
 class Analyzer:
-    def __init__(self, platform_name: str):
-        self.platform_name = platform_name
-        self.platform_methods: Dict[str, Callable] = {
-            "discord": self._analyze_discord,
-            "discourse": self._analyze_discourse,
-        }
-
     def analyze(
         self,
         platform_id: str,
-        channels_or_resources: List[str],
+        resources: list[str],
         period: datetime,
-        action: Dict[str, int],
-        window: Dict[str, int],
+        action: dict[str, int],
+        window: dict[str, int],
+        recompute: bool,
+        config: PlatformConfigBase = DiscordAnalyzerConfig(),
     ) -> None:
-        analyze_method = self.platform_methods.get(self.platform_name)
-        if analyze_method:
-            analyze_method(platform_id, channels_or_resources, period, action, window)
+        prefix = f"PLATFORMID: {platform_id} "
+        logging.info(f"{prefix} Starting Analyzer job!")
+        analyzer = TCAnalyzer(
+            platform_id=platform_id,
+            resources=resources,
+            period=period,
+            action=action,
+            window=window,
+            analyzer_config=config,
+        )
+        if recompute:
+            logging.info(f"{prefix} recomputing analyzer!")
+            asyncio.run(analyzer.recompute())
         else:
-            raise NotImplementedError(
-                f"Analyzer for platform '{self.platform_name}' is not implemented yet"
-            )
-
-    def _analyze_discord(
-        self,
-        platform_id: str,
-        channels: List[str],
-        period: datetime,
-        action: Dict[str, int],
-        window: Dict[str, int],
-    ) -> None:
-        # Implement Discord-specific analysis logic here
-        raise NotImplementedError("Discord Analyzer is not implemented yet")
-
-    def _analyze_discourse(
-        self,
-        platform_id: str,
-        resources: List[str],
-        period: datetime,
-        action: Dict[str, int],
-        window: Dict[str, int],
-    ) -> None:
-        # Implement Discourse-specific analysis logic here
-        raise NotImplementedError("Discourse Analyzer is not implemented yet")
+            logging.info(f"{prefix} append analytics to previous analytics results!")
+            asyncio.run(analyzer.run_once())

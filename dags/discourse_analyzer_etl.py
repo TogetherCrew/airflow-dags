@@ -5,10 +5,10 @@ from datetime import datetime
 
 from airflow import DAG
 from airflow.decorators import task
+from analyzer_helper.common.analyzer import Analyzer
 from analyzer_helper.common.fetch_platforms import FetchPlatforms
 from analyzer_helper.common.load_transformed_data import LoadTransformedData
 from analyzer_helper.common.load_transformed_members import LoadTransformedMembers
-from analyzer_helper.discord.discord_analyze import Analyzer
 from analyzer_helper.discourse.extract_raw_data import ExtractRawInfo
 from analyzer_helper.discourse.extract_raw_members import ExtractRawMembers
 from analyzer_helper.discourse.transform_raw_data import TransformRawInfo
@@ -35,7 +35,7 @@ with DAG(
             {
                 'platform_id' : str,
                 'period': datetime,
-                'guild_id' : str,
+                'id' : str,   # forum_endpoint
                 'recompute': bool,  # default is False
             }
             ```
@@ -81,7 +81,7 @@ with DAG(
             ```
             {
                 'platform_id' : datetime,
-                'forum_endpoint' : str,
+                'id' : str,
                 'period' : datetime,
                 'recompute': bool,
             }
@@ -101,21 +101,17 @@ with DAG(
             ```
         """
         platform_id = platform_info["platform_id"]
-        forum_endpoint = platform_info["forum_endpoint"]
+        forum_endpoint = platform_info["id"]
         period = platform_info["period"]
         recompute = platform_info["recompute"]
-        # If recompute is False, then just extract from the latest saved document
-        # within rawmemberactivities collection using their date
-        # else, just extract from the `period`
+
         extractor = ExtractRawInfo(forum_endpoint=forum_endpoint)
         extracted_data = extractor.extract(period=period, recompute=recompute)
         transformer = TransformRawInfo()
         transformed_data = transformer.transform(
             raw_data=extracted_data,
         )
-        # if recompute is True, then replace the whole previously saved data in
-        # database with the new ones
-        # else, just save the new ones
+
         loader = LoadTransformedData(platform_id=platform_id)
         loader.load(processed_data=transformed_data, recompute=recompute)
 
@@ -141,11 +137,10 @@ with DAG(
             ```
         """
         platform_id = platform_info["platform_id"]
-        forum_endpoint = platform_info["forum_endpoint"]
+        forum_endpoint = platform_info["id"]
         period = platform_info["period"]
         recompute = platform_info["recompute"]
-        # if recompute was false, then will fetch from the previously saved data date
-        # else, then will fetch all platform's members data
+
         extractor = ExtractRawMembers(
             forum_endpoint=forum_endpoint, platform_id=platform_id
         )
@@ -185,13 +180,13 @@ with DAG(
         period = metadata["period"]
         action = metadata["action"]
         window = metadata["window"]
-        channels = metadata["selectedChannels"]
+        resources = metadata["resources"]
 
         analyzer = Analyzer()
 
         analyzer.analyze(
             platform_id=platform_id,
-            channels=channels,
+            resources=resources,
             period=period,
             action=action,
             window=window,

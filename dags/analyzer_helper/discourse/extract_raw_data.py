@@ -64,6 +64,7 @@ class ExtractRawInfo:
         repliedPost.id AS replied_post_id,
         repliedAuthor.id AS replied_post_user_id,
         post.topicId AS topic_id
+        ORDER BY created_at ASC
         """
 
         with self.driver.session() as session:
