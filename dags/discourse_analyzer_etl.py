@@ -1,5 +1,3 @@
-# type: ignore
-# remove the above when all tasks were filled
 import logging
 from datetime import datetime
 
