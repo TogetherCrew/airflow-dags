@@ -103,7 +103,7 @@ with DAG(
         period = platform_info["period"]
         recompute = platform_info["recompute"]
 
-        extractor = ExtractRawInfo(forum_endpoint=forum_endpoint)
+        extractor = ExtractRawInfo(forum_endpoint=forum_endpoint, platform_id=platform_id)
         extracted_data = extractor.extract(period=period, recompute=recompute)
         transformer = TransformRawInfo()
         transformed_data = transformer.transform(
@@ -136,13 +136,13 @@ with DAG(
         """
         platform_id = platform_info["platform_id"]
         forum_endpoint = platform_info["id"]
-        period = platform_info["period"]
+        # period = platform_info["period"]
         recompute = platform_info["recompute"]
 
         extractor = ExtractRawMembers(
             forum_endpoint=forum_endpoint, platform_id=platform_id
         )
-        extracted_data = extractor.extract(period=period, recompute=recompute)
+        extracted_data = extractor.extract(recompute=recompute)
         transformer = TransformRawMembers(platform_id=platform_id)
         transformed_data = transformer.transform(
             raw_data=extracted_data, platform_id=platform_id
