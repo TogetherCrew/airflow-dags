@@ -46,7 +46,8 @@ class ExtractRawMembers:
             parameters["start_date"] = start_date
 
         query += """
-        RETURN user.id AS id, user.createdAt AS joined_at 
+        RETURN user.id AS id, user.createdAt AS joined_at
+        ORDER BY joined_at ASC
         """
         with self.driver.session() as session:
             result = session.run(query, parameters)
