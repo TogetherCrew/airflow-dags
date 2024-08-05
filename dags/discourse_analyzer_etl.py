@@ -5,10 +5,10 @@ from datetime import datetime
 
 from airflow import DAG
 from airflow.decorators import task
+from analyzer_helper.common.analyzer import Analyzer
 from analyzer_helper.common.fetch_platforms import FetchPlatforms
 from analyzer_helper.common.load_transformed_data import LoadTransformedData
 from analyzer_helper.common.load_transformed_members import LoadTransformedMembers
-from analyzer_helper.common.analyzer import Analyzer
 from analyzer_helper.discourse.extract_raw_data import ExtractRawInfo
 from analyzer_helper.discourse.extract_raw_members import ExtractRawMembers
 from analyzer_helper.discourse.transform_raw_data import TransformRawInfo
