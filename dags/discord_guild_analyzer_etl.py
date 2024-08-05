@@ -170,7 +170,7 @@ with DAG(
         # else, then will fetch all platform's members data
         logging.info("Extracting Raw members!")
         extractor = DiscordExtractRawMembers(guild_id=guild_id, platform_id=platform_id)
-        extracted_data = extractor.extract(period=period, recompute=recompute)
+        extracted_data = extractor.extract(recompute=recompute)
 
         logging.info("Transforming raw members!")
         transformer = DiscordTransformRawMembers(platform_id=platform_id)
