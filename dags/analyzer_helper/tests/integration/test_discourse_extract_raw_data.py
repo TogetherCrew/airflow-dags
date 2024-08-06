@@ -36,7 +36,7 @@ class TestExtractRawInfo(unittest.TestCase):
                 (p1)<-[:POSTED]-(u1),
                 (p2)<-[:POSTED]-(u2),
                 (p1)<-[:LIKED]-(u2),
-                (p2)<-[:REPLY_TO]-(p1),
+                (p2)<-[:REPLIED_TO]-(p1),
                 (c)-[:HAS_TOPIC]->(t)
             """,
                 {"endpoint": cls.forum_endpoint},
