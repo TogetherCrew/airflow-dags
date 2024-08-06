@@ -72,10 +72,10 @@ class ExtractRawMembers:
             latest_joined_at = (
                 latest_rawmember["joined_at"] if latest_rawmember else None
             )
-            # Conversion to ISO format because of neo4j
-            latest_joined_at_iso_format = self.converter.to_iso_format(latest_joined_at)
 
             if latest_joined_at:
+                # Conversion to ISO format because of neo4j
+                latest_joined_at_iso_format = self.converter.to_iso_format(latest_joined_at)
                 members = self.fetch_member_details(
                     start_date=latest_joined_at_iso_format
                 )
