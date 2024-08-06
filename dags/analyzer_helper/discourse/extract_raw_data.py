@@ -59,6 +59,8 @@ class ExtractRawInfo:
         OPTIONAL MATCH (post)-[:REPLIED_TO]->(repliedPost:DiscoursePost)
         OPTIONAL MATCH (repliedPost)<-[:POSTED]-(repliedAuthor:DiscourseUser)
         RETURN
+        post.raw as text,
+        post.postNumber as post_number,
         post.id AS post_id,
         author.id AS author_id,
         post.createdAt AS created_at,

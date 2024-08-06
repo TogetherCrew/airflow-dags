@@ -4,17 +4,30 @@ from analyzer_helper.discourse.utils.convert_date_time_formats import (
 
 
 class TransformRawInfo:
-    def __init__(self):
+    def __init__(self, forum_endpoint: str):
+        self.forum_endpoint = forum_endpoint
         self.converter = DateTimeFormatConverter()
 
     def create_data_entry(
         self, raw_data: dict, interaction_type: str = None, interaction_user: int = None
     ) -> dict:
+        topic_id = raw_data.get("topic_id")
+        post_number = raw_data.get("post_number")
         metadata = {
             "category_id": raw_data.get("category_id"),
-            "topic_id": raw_data.get("topic_id"),
+            "topic_id": topic_id,
             "bot_activity": False,
         }
+
+        # Adding the message link to metadata
+        if topic_id and post_number:
+            metadata = {
+                **metadata,  # previous ones
+                "link": (
+                    f"https://{self.forum_endpoint}/t/"
+                    + f"{int(topic_id)}/{int(post_number)}"
+                ),
+            }
 
         result = {
             "author_id": str(
@@ -22,6 +35,7 @@ class TransformRawInfo:
                 if interaction_type == "reply"
                 else raw_data.get("author_id")
             ),
+            "text": raw_data["text"],
             "date": self.converter.from_iso_format(raw_data.get("created_at")),
             "source_id": str(raw_data["post_id"]),
             "metadata": metadata,
