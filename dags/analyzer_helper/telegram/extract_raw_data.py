@@ -43,32 +43,62 @@ class ExtractRawInfo:
             operator = ">" if comparison == "gt" else ">="
             where_clause += f" AND m.created_at {operator} $created_at"
 
+        # query = f"""
+        # MATCH (c:TGChat)<-[:SENT_IN]-(m:TGMessage)
+        # {where_clause}
+        # WITH m.id AS message_id, m.text AS message_text, m.created_at AS message_created_at, m
+
+        # // Fetch who created the message
+        # OPTIONAL MATCH (u:TGUser)-[r:CREATED_MESSAGE]->(m)
+        # WITH message_id, message_text, message_created_at, u.id AS user_id, r.date AS created_date, m
+
+        # // Fetch reactions to the message
+        # OPTIONAL MATCH (reactor:TGUser)-[r:REACTED_TO]->(m)
+        # WITH message_id, message_text, message_created_at, user_id, created_date, m,
+        #     collect({{reactor_id: reactor.id, reaction: r.new_reaction, reaction_date: r.date}}) AS reactions
+
+        # // Fetch message replies
+        # OPTIONAL MATCH (m1:TGMessage)-[r:REPLIED]->(m)
+        # OPTIONAL MATCH (replier:TGUser)-[:CREATED_MESSAGE]->(m1)
+        # WITH message_id, message_text, message_created_at, user_id, created_date, reactions, m,
+        #     collect({{reply_message_id: m1.id, replier_id: replier.id, replied_date: m1.created_at}}) AS replies
+
+        # // Fetch mentions in the message
+        # OPTIONAL MATCH (m)-[r:MENTIONED]->(mentioned:TGUser)
+        # WITH message_id, message_text, message_created_at, user_id, created_date, reactions, replies,
+        #     collect({{mentioned_user_id: mentioned.id}}) AS mentions
+
+        # RETURN message_id, message_text, message_created_at, user_id, reactions, replies, mentions
+        # ORDER BY message_id
+        # LIMIT 10
+        # """
+
         query = f"""
         MATCH (c:TGChat)<-[:SENT_IN]-(m:TGMessage)
         {where_clause}
-        WITH m.id AS message_id, m.text AS message_text, m
+        WITH m.id AS message_id, m.text AS message_text, m.date AS message_created_at, m
 
         // Fetch who created the message
         OPTIONAL MATCH (u:TGUser)-[r:CREATED_MESSAGE]->(m)
-        WITH message_id, message_text, u.id AS user_id, r.date AS created_date, m
+        WITH message_id, message_text, message_created_at, u.id AS user_id, r.date AS created_date, m
 
         // Fetch reactions to the message
         OPTIONAL MATCH (reactor:TGUser)-[r:REACTED_TO]->(m)
-        WITH message_id, message_text, user_id, created_date, m,
-             collect({{reactor_id: reactor.id, reaction: r.new_reaction, reaction_date: r.date}}) AS reactions
+        WITH message_id, message_text, message_created_at, user_id, created_date, m,
+            [reaction IN collect({{reactor_id: reactor.id, reaction: r.new_reaction, reaction_date: r.date}}) WHERE reaction.reactor_id IS NOT NULL] AS reactions
 
         // Fetch message replies
         OPTIONAL MATCH (m1:TGMessage)-[r:REPLIED]->(m)
         OPTIONAL MATCH (replier:TGUser)-[:CREATED_MESSAGE]->(m1)
-        WITH message_id, message_text, user_id, created_date, reactions, m,
-             collect({{reply_message_id: m1.id, replier_id: replier.id, replied_date: r.date}}) AS replies
+        WITH message_id, message_text, message_created_at, user_id, created_date, reactions, m,
+            [reply IN collect({{reply_message_id: m1.id, replier_id: replier.id, replied_date: m1.date}}) WHERE reply.reply_message_id IS NOT NULL] AS replies
 
         // Fetch mentions in the message
         OPTIONAL MATCH (m)-[r:MENTIONED]->(mentioned:TGUser)
-        WITH message_id, message_text, user_id, created_date, reactions, replies,
-             collect({{mentioned_user_id: mentioned.id}}) AS mentions
+        WITH message_id, message_text, message_created_at, user_id, created_date, reactions, replies,
+            [mention IN collect({{mentioned_user_id: mentioned.id}}) WHERE mention.mentioned_user_id IS NOT NULL] AS mentions
 
-        RETURN message_id, message_text, user_id, created_date, reactions, replies, mentions
+        RETURN message_id, message_text, message_created_at, user_id, reactions, replies, mentions
         ORDER BY message_id
         LIMIT 10
         """

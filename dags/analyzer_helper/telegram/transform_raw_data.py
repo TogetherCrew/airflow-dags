@@ -1,33 +1,36 @@
 from analyzer_helper.telegram.utils.date_time_format_converter import (
     DateTimeFormatConverter,
 )
+from analyzer_helper.telegram.utils.is_user_bot import UserBotChecker
 
 class TransformRawInfo:
     def __init__(self):
         self.converter = DateTimeFormatConverter
+        self.user_bot_checker = UserBotChecker()
 
     def create_data_entry(
         self, raw_data: dict, interaction_type: str = None, interaction_user: int = None
     ) -> dict:
+        
+        author_id = str(
+            interaction_user
+            if interaction_type in ["reply", "mention"]
+            else raw_data.get("user_id")
+        )
+        is_bot = self.user_bot_checker.is_user_bot(float(author_id))
         metadata = {
             "category_id": raw_data.get("category_id") if raw_data.get("category_id") not in [None, ""] else None,
             "topic_id": raw_data.get("topic_id") if raw_data.get("topic_id") not in [None, ""] else None,
-            "bot_activity": False, #TODO: We need to fetch this
+            "bot_activity": is_bot,
         }
-
         result = {
-            "author_id": str(
-                interaction_user
-                if interaction_type in ["reply", "mention"]
-                else raw_data.get("user_id")
-            ),
+            "author_id": author_id,
             "date": self.converter.timestamp_to_datetime(raw_data.get("message_created_at")),
             "source_id": str(raw_data["message_id"]),
             "metadata": metadata,
             "actions": [],
             "interactions": [],
         }
-
         if interaction_type == "reaction":
             result["actions"] = []
             result["interactions"] = [

@@ -8,8 +8,81 @@ from analyzer_helper.discord.utils.is_user_bot import UserBotChecker
 class TestTransformRawInfo(unittest.TestCase):
     def setUp(self):
         """Initialize the TransformRawInfo instance before each test."""
-        self.transformer = TransformRawInfo()
+        self.transformer = TransformRawInfo("TC Ingestion Pipeline")
         self.platform_id = "test_platform"
+
+    def test_create_data_entry_with_reactions_replies_mentions(self):
+        """Test data entry creation with reactions, replies, and mentions."""
+        raw_data = {
+            "message_id": 3.0,
+            "message_text": "🎉️️️️️️ Welcome to the TC Ingestion Pipeline",
+            "message_created_at": 1713037938.0,
+            "user_id": 3.0,
+            "reactions": [
+                {
+                    "reaction": "[{\"type\":\"emoji\",\"emoji\":\"🍓\"}]",
+                    "reaction_date": 1713165102.0,
+                    "reactor_id": 4.0
+                }
+            ],
+            "replies": [
+                {
+                    "replier_id": 203678862.0,
+                    "replied_date": 1713038036.0,
+                    "reply_message_id": 5.0
+                }
+            ],
+            "mentions": []
+        }
+        result = self.transformer.create_data_entry(raw_data)
+        self.assertEqual(result["author_id"], str(int(raw_data["user_id"])))
+        self.assertIsInstance(result["date"], datetime.datetime)
+        self.assertFalse(result["metadata"]["bot_activity"])
+        self.assertEqual(result["source_id"], str(int(raw_data["message_id"])))
+        self.assertEqual(len(result["interactions"]), 2)
+        self.assertEqual(result["interactions"][0]["name"], "reaction")
+        self.assertEqual(result["interactions"][0]["type"], "receiver")
+        self.assertEqual(result["interactions"][0]["users_engaged_id"], [str(int(raw_data["reactions"][0]["reactor_id"]))])
+        self.assertEqual(result["interactions"][1]["name"], "reply")
+        self.assertEqual(result["interactions"][1]["type"], "emitter")
+        self.assertEqual(result["interactions"][1]["users_engaged_id"], [str(int(raw_data["replies"][0]["replier_id"]))])
+        self.assertEqual(len(result["actions"]), 1)
+        self.assertEqual(result["actions"][0]["name"], "message")
+        self.assertEqual(result["actions"][0]["type"], "emitter")
+
+    def test_create_data_entry_with_mentions(self):
+        """Test data entry creation with mentions."""
+        raw_data = {
+            "message_id": 7.0,
+            "message_text": "@togethercrewdev @user2 🙌",
+            "message_created_at": 1713038125.0,
+            "user_id": 5.0,
+            "reactions": [],
+            "replies": [],
+            "mentions": [
+                {
+                    "mentioned_user_id": 6.0
+                },
+                {
+                    "mentioned_user_id": 7.0
+                }
+            ]
+        }
+        result = self.transformer.create_data_entry(raw_data)
+        self.assertEqual(result["author_id"], str(int(raw_data["user_id"])))
+        self.assertIsInstance(result["date"], datetime.datetime)
+        self.assertFalse(result["metadata"]["bot_activity"])
+        self.assertEqual(result["source_id"], str(int(raw_data["message_id"])))
+        self.assertEqual(len(result["interactions"]), 2)
+        self.assertEqual(result["interactions"][0]["name"], "mention")
+        self.assertEqual(result["interactions"][0]["type"], "receiver")
+        self.assertEqual(result["interactions"][0]["users_engaged_id"], [str(int(raw_data["mentions"][0]["mentioned_user_id"]))])
+        self.assertEqual(result["interactions"][1]["name"], "mention")
+        self.assertEqual(result["interactions"][1]["type"], "receiver")
+        self.assertEqual(result["interactions"][1]["users_engaged_id"], [str(int(raw_data["mentions"][1]["mentioned_user_id"]))])
+        self.assertEqual(len(result["actions"]), 1)
+        self.assertEqual(result["actions"][0]["name"], "message")
+        self.assertEqual(result["actions"][0]["type"], "emitter")
 
     def test_transform_data_with_single_reply(self):
         result = [
@@ -170,7 +243,7 @@ class TestTransformRawInfo(unittest.TestCase):
         result = [
             {
                 "message_id": 7.0,
-                "message_text": "@togethercrewdev @cr3a1 🙌",
+                "message_text": "@togethercrewdev @user3 🙌",
                 "message_created_at": 1713038125.0,
                 "user_id": 2.0,
                 "reactions": [],
@@ -231,7 +304,7 @@ class TestTransformRawInfo(unittest.TestCase):
         result = [
             {
                 "message_id": 7.0,
-                "message_text": "@togethercrewdev @cr3a1 🙌",
+                "message_text": "@togethercrewdev @user4 🙌",
                 "message_created_at": 1713038125.0,
                 "user_id": 1.0,
                 "reactions": [],
@@ -331,7 +404,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 "user_id": 2.0,
                 "reactions": [
                     {
-                        "reaction": "[🍓]",
+                        "reaction": "[{\"type\":\"emoji\",\"emoji\":\"🍓\"}]",
                         "reaction_date": 1713038348.0,
                         "reactor_id": 1.0
                     }

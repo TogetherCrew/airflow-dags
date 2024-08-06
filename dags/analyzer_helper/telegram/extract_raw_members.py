@@ -137,7 +137,7 @@ class ExtractRawMembers:
                 members = self.fetch_member_details()
 
         return members
-
+#TODO: This needs to be removed
 extract = ExtractRawMembers("TC Ingestion Pipeline", "test_platform_id")
 # extract = ExtractRawMembers("TogetherCrew - Second Group", "test_platform_id")
 result = extract.fetch_member_details()
