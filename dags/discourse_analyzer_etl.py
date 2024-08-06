@@ -107,7 +107,7 @@ with DAG(
             forum_endpoint=forum_endpoint, platform_id=platform_id
         )
         extracted_data = extractor.extract(period=period, recompute=recompute)
-        transformer = TransformRawInfo()
+        transformer = TransformRawInfo(forum_endpoint=forum_endpoint)
         transformed_data = transformer.transform(
             raw_data=extracted_data,
         )
