@@ -145,7 +145,7 @@ with DAG(
             forum_endpoint=forum_endpoint, platform_id=platform_id
         )
         extracted_data = extractor.extract(recompute=recompute)
-        transformer = TransformRawMembers(platform_id=platform_id)
+        transformer = TransformRawMembers()
         transformed_data = transformer.transform(
             raw_data=extracted_data, platform_id=platform_id
         )
