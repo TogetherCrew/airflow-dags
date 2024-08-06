@@ -56,7 +56,7 @@ class ExtractRawInfo:
         post.createdAt is NOT NULL
         OPTIONAL MATCH (post)<-[:POSTED]-(author:DiscourseUser)
         OPTIONAL MATCH (post)<-[:LIKED]-(likedUser:DiscourseUser)
-        OPTIONAL MATCH (post)-[:REPLY_TO]->(repliedPost:DiscoursePost)
+        OPTIONAL MATCH (post)-[:REPLIED_TO]->(repliedPost:DiscoursePost)
         OPTIONAL MATCH (repliedPost)<-[:POSTED]-(repliedAuthor:DiscourseUser)
         RETURN
         post.id AS post_id,
