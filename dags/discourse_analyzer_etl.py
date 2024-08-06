@@ -146,9 +146,7 @@ with DAG(
         )
         extracted_data = extractor.extract(recompute=recompute)
         transformer = TransformRawMembers()
-        transformed_data = transformer.transform(
-            raw_data=extracted_data, platform_id=platform_id
-        )
+        transformed_data = transformer.transform(raw_data=extracted_data)
         loader = LoadTransformedMembers(platform_id=platform_id)
         loader.load(processed_data=transformed_data, recompute=recompute)
 
