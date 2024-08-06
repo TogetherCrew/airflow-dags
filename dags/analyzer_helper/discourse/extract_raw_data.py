@@ -43,7 +43,7 @@ class ExtractRawInfo:
                 "gte",
             }, "comparison must be either 'gt' or 'gte'"
 
-        where_clause = ""
+        where_clause = None
         if created_at and comparison:
             operator = ">" if comparison == "gt" else ">="
             where_clause = f"WHERE post.createdAt {operator} $createdAt"
@@ -51,7 +51,9 @@ class ExtractRawInfo:
         MATCH (forum:DiscourseForum {{endpoint: $forum_endpoint}})
         WITH forum
         MATCH (post:DiscoursePost {{forumUuid: forum.uuid}})
-        {where_clause}
+        {where_clause if where_clause else ""}
+        {"AND " if where_clause else "WHERE "}
+        post.createdAt is NOT NULL
         OPTIONAL MATCH (post)<-[:POSTED]-(author:DiscourseUser)
         OPTIONAL MATCH (post)<-[:LIKED]-(likedUser:DiscourseUser)
         OPTIONAL MATCH (post)-[:REPLY_TO]->(repliedPost:DiscoursePost)
