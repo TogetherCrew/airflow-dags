@@ -127,6 +127,7 @@ class TestTransformRawInfo(unittest.TestCase):
             },
             {
                 "author_id": "4444",
+                "text": "some content #2",
                 "date": datetime.datetime(
                     2023, 9, 11, 21, 41, 43, 553000, tzinfo=datetime.timezone.utc
                 ),
@@ -135,6 +136,7 @@ class TestTransformRawInfo(unittest.TestCase):
                     "category_id": None,
                     "topic_id": 6134,
                     "bot_activity": False,
+                    "link": f"https://{self.forum_endpoint}/t/6134/1",
                 },
                 "actions": [],
                 "interactions": [
@@ -207,19 +209,20 @@ class TestTransformRawInfo(unittest.TestCase):
                         "name": "reaction",
                         "type": "emitter",
                         "users_engaged_id": ["6168"],
-                        "link": f"https://{self.forum_endpoint}/t/6134/1",
                     }
                 ],
                 "metadata": {
                     "category_id": None,
                     "topic_id": 6134,
                     "bot_activity": False,
+                    "link": f"https://{self.forum_endpoint}/t/6134/1",
                 },
                 "source_id": "6261",
             },
             {
                 "actions": [],
                 "author_id": "2",
+                "text": "some content #2",
                 "date": datetime.datetime(
                     2023, 9, 11, 21, 42, 43, 553000, tzinfo=datetime.timezone.utc
                 ),
@@ -234,6 +237,7 @@ class TestTransformRawInfo(unittest.TestCase):
                     "category_id": None,
                     "topic_id": 6134,
                     "bot_activity": False,
+                    "link": f"https://{self.forum_endpoint}/t/6134/1",
                 },
                 "source_id": "6261",
             },

@@ -24,9 +24,9 @@ class TransformRawInfo:
             metadata = {
                 **metadata,  # previous ones
                 "link": (
-                    f"https://{self.forum_endpoint}/t/" +
-                    f"{int(topic_id)}/{int(post_number)}"
-                )
+                    f"https://{self.forum_endpoint}/t/"
+                    + f"{int(topic_id)}/{int(post_number)}"
+                ),
             }
 
         result = {
