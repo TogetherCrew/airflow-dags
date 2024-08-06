@@ -173,9 +173,9 @@ with DAG(
         extracted_data = extractor.extract(recompute=recompute)
 
         logging.info("Transforming raw members!")
-        transformer = DiscordTransformRawMembers(platform_id=platform_id)
+        transformer = DiscordTransformRawMembers()
         transformed_data = transformer.transform(
-            raw_data=extracted_data, platform_id=platform_id
+            raw_data=extracted_data,
         )
 
         if len(transformed_data) != 0:
