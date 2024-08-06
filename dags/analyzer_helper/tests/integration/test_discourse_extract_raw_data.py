@@ -27,8 +27,28 @@ class TestExtractRawInfo(unittest.TestCase):
             CREATE (f:DiscourseForum {endpoint: $endpoint, uuid: 'forum-uuid'}),
                 (u1:DiscourseUser {id: 'user1', name: 'User One'}),
                 (u2:DiscourseUser {id: 'user2', name: 'User Two'}),
-                (p1:DiscoursePost {id: '1', content: 'Post 1', createdAt: '2023-01-01T00:00:00Z', topicId: 'topic-uuid', forumUuid: 'forum-uuid'}),
-                (p2:DiscoursePost {id: '2', content: 'Post 2', createdAt: '2023-01-02T00:00:00Z', topicId: 'topic-uuid', forumUuid: 'forum-uuid'}),
+                (p1:DiscoursePost 
+                    {
+                        id: '1',
+                        content: 'Post 1',
+                        createdAt: '2023-01-01T00:00:00Z',
+                        topicId: 'topic-uuid',
+                        forumUuid: 'forum-uuid',
+                        raw: "Sample Text 1",
+                        postNumber: 1.0
+                    }
+                ),
+                (p2:DiscoursePost 
+                    {
+                        id: '2',
+                        content: 'Post 2',
+                        createdAt: '2023-01-02T00:00:00Z',
+                        topicId: 'topic-uuid',
+                        forumUuid: 'forum-uuid',
+                        raw: "Sample Text 2",
+                        postNumber: 2.0
+                    }
+                ),
                 (t:DiscourseTopic {id: 'topic-uuid', forumUuid: 'forum-uuid'}),
                 (c:DiscourseCategory {id: 'category1', name: 'Category 1'}),
                 (p1)<-[:HAS_POST]-(t),
@@ -60,6 +80,8 @@ class TestExtractRawInfo(unittest.TestCase):
                 "replied_post_id": "2",
                 "replied_post_user_id": "user2",
                 "topic_id": "topic-uuid",
+                "post_number": 1.0,
+                "text": "Sample Text 1",
             },
             {
                 "post_id": "2",
@@ -69,6 +91,8 @@ class TestExtractRawInfo(unittest.TestCase):
                 "replied_post_id": None,
                 "replied_post_user_id": None,
                 "topic_id": "topic-uuid",
+                "post_number": 2.0,
+                "text": "Sample Text 2",
             },
         ]
         self.assertEqual(len(result), 2)
@@ -127,6 +151,8 @@ class TestExtractRawInfo(unittest.TestCase):
                 "replied_post_user_id": "user2",
                 "topic_id": "topic-uuid",
                 "category_id": "category1",
+                "post_number": 1.0,
+                "text": "Sample Text 1",
             },
             {
                 "post_id": "2",
@@ -137,6 +163,8 @@ class TestExtractRawInfo(unittest.TestCase):
                 "replied_post_user_id": None,
                 "topic_id": "topic-uuid",
                 "category_id": "category1",
+                "post_number": 2.0,
+                "text": "Sample Text 2",
             },
         ]
         self.assertEqual(len(result), 2)
@@ -185,6 +213,8 @@ class TestExtractRawInfo(unittest.TestCase):
                 "replied_post_user_id": "user2",
                 "topic_id": "topic-uuid",
                 "category_id": "category1",
+                "post_number": 1.0,
+                "text": "Sample Text 1",
             },
             {
                 "post_id": "2",
@@ -195,6 +225,8 @@ class TestExtractRawInfo(unittest.TestCase):
                 "replied_post_user_id": None,
                 "topic_id": "topic-uuid",
                 "category_id": "category1",
+                "post_number": 2.0,
+                "text": "Sample Text 2",
             },
         ]
         self.assertEqual(len(result), 2)

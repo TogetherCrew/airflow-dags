@@ -11,15 +11,23 @@ class TransformRawInfo:
     def create_data_entry(
         self, raw_data: dict, interaction_type: str = None, interaction_user: int = None
     ) -> dict:
+        topic_id = raw_data.get("topic_id")
+        post_number = raw_data.get("post_number")
         metadata = {
             "category_id": raw_data.get("category_id"),
-            "topic_id": raw_data.get("topic_id"),
+            "topic_id": topic_id,
             "bot_activity": False,
-            "link": (
-                f"https://{self.forum_endpoint}/t/" +
-                raw_data.get("topic_id") + "/" + raw_data.get("post_number")
-            )
         }
+
+        # Adding the message link to metadata
+        if topic_id and post_number:
+            metadata = {
+                **metadata,  # previous ones
+                "link": (
+                    f"https://{self.forum_endpoint}/t/" +
+                    f"{int(topic_id)}/{int(post_number)}"
+                )
+            }
 
         result = {
             "author_id": str(
