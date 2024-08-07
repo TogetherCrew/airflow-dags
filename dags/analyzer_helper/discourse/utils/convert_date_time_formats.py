@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 from dateutil.parser import parse
 
+
 class DateTimeFormatConverter:
     @staticmethod
     def to_iso_format(dt: datetime) -> str:
@@ -23,9 +24,7 @@ class DateTimeFormatConverter:
         if isinstance(iso_string_or_datetime, datetime):
             return iso_string_or_datetime
         elif isinstance(iso_string_or_datetime, str):
-            return datetime.fromisoformat(
-                iso_string_or_datetime.replace("Z", "+00:00")
-            )
+            return datetime.fromisoformat(iso_string_or_datetime.replace("Z", "+00:00"))
         else:
             raise TypeError(
                 f"Expected string or datetime, got {type(iso_string_or_datetime)}"
@@ -43,5 +42,5 @@ class DateTimeFormatConverter:
         :param microsecond: Microsecond component of the time.
         :return: datetime object.
         """
-        date = parse(date_string).replace(tzinfo=timezone.utc)        
+        date = parse(date_string).replace(tzinfo=timezone.utc)
         return date
