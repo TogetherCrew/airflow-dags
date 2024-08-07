@@ -17,6 +17,7 @@ from analyzer_helper.discord.discord_transform_raw_members import (
     DiscordTransformRawMembers,
 )
 from analyzer_helper.discord.fetch_discord_platforms import FetchDiscordPlatforms
+from dateutil.parser import parse
 
 with DAG(
     dag_id="discord_guild_analyzer_etl",
@@ -63,7 +64,7 @@ with DAG(
         platform = {
             "recompute": recompute,
             "platform_id": platform_id,
-            "period": period,
+            "period": parse(period),
             "guild_id": guild_id,
         }
 
