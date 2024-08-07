@@ -11,6 +11,7 @@ from analyzer_helper.discourse.extract_raw_data import ExtractRawInfo
 from analyzer_helper.discourse.extract_raw_members import ExtractRawMembers
 from analyzer_helper.discourse.transform_raw_data import TransformRawInfo
 from analyzer_helper.discourse.transform_raw_members import TransformRawMembers
+from tc_analyzer_lib.schemas.platform_configs import DiscourseAnalyzerConfig
 
 with DAG(
     dag_id="discourse_analyzer_etl",
@@ -189,6 +190,7 @@ with DAG(
             action=action,
             window=window,
             recompute=recompute,
+            config=DiscourseAnalyzerConfig(),
         )
 
     platform_modules = fetch_discourse_platforms()
