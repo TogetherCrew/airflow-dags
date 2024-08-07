@@ -62,7 +62,7 @@ class FetchPlatforms:
 
         return platforms
 
-    def fetch_analyzer_parameters(self, platform_id: str):
+    def fetch_analyzer_parameters(self, platform_id: str) -> dict:
         """
         Fetches the specified Discord platform from the MongoDB collection with additional fields.
 
@@ -99,24 +99,23 @@ class FetchPlatforms:
                 "metadata.id": 1,
             }
 
-        cursor = self.collection.find(query, projection)
+        doc = self.collection.find_one(query, projection)
         platforms = []
 
-        for doc in cursor:
-            if self.platform_name == "discord":
-                resources = doc.get("metadata", {}).get("selectedChannels", None)
-            else:
-                resources = doc.get("metadata", {}).get("resources", None)
+        if self.platform_name == "discord":
+            resources = doc.get("metadata", {}).get("selectedChannels", None)
+        else:
+            resources = doc.get("metadata", {}).get("resources", None)
 
-            platform_data = {
-                "platform_id": str(doc["_id"]),
-                "period": doc.get("metadata", {}).get("period", None),
-                "action": doc.get("metadata", {}).get("action", None),
-                "window": doc.get("metadata", {}).get("window", None),
-                "resources": resources,
-                "id": doc.get("metadata", {}).get("id", None),
-                "recompute": False,
-            }
-            platforms.append(platform_data)
+        platform_data = {
+            "platform_id": str(doc["_id"]),
+            "period": doc.get("metadata", {}).get("period", None),
+            "action": doc.get("metadata", {}).get("action", None),
+            "window": doc.get("metadata", {}).get("window", None),
+            "resources": resources,
+            "id": doc.get("metadata", {}).get("id", None),
+            "recompute": False,
+        }
+        platforms.append(platform_data)
 
-            return platforms
+        return platforms
