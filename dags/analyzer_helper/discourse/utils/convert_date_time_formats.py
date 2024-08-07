@@ -1,9 +1,9 @@
-import datetime
-
+from datetime import datetime, timezone
+from dateutil.parser import parse
 
 class DateTimeFormatConverter:
     @staticmethod
-    def to_iso_format(dt: datetime.datetime) -> str:
+    def to_iso_format(dt: datetime) -> str:
         """
         Convert datetime to ISO format string with milliseconds.
 
@@ -20,10 +20,10 @@ class DateTimeFormatConverter:
         :param iso_string_or_datetime: ISO format string or datetime object.
         :return: datetime object.
         """
-        if isinstance(iso_string_or_datetime, datetime.datetime):
+        if isinstance(iso_string_or_datetime, datetime):
             return iso_string_or_datetime
         elif isinstance(iso_string_or_datetime, str):
-            return datetime.datetime.fromisoformat(
+            return datetime.fromisoformat(
                 iso_string_or_datetime.replace("Z", "+00:00")
             )
         else:
@@ -32,13 +32,7 @@ class DateTimeFormatConverter:
             )
 
     @staticmethod
-    def from_date_string(
-        date_string: str,
-        hour: int = 0,
-        minute: int = 0,
-        second: int = 0,
-        microsecond: int = 0,
-    ) -> datetime.datetime:
+    def from_date_string(date_string: str) -> datetime:
         """
         Convert a date string to a datetime object.
 
@@ -49,7 +43,5 @@ class DateTimeFormatConverter:
         :param microsecond: Microsecond component of the time.
         :return: datetime object.
         """
-        date = datetime.datetime.strptime(date_string, "%Y-%m-%d")
-        return datetime.datetime(
-            date.year, date.month, date.day, hour, minute, second, microsecond
-        )
+        date = parse(date_string).replace(tzinfo=timezone.utc)        
+        return date
