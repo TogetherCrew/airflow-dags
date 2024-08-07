@@ -42,6 +42,7 @@ class Classifier:
                     + "\n\n[VIOLATION DETECTIONS]\n",
                 },
             ],
+            n=1,
         )
 
         # the label to add to general data structure
