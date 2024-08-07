@@ -173,7 +173,7 @@ with DAG(
             ```
         """
         logging.info(f"platform_processed: {platform_processed}")
-        fetcher = FetchPlatforms(plaform_name="discourse")
+        fetcher = FetchPlatforms(platform_name="discourse")
         platform_id = platform_processed["platform_id"]
         recompute = platform_processed["recompute"]
 
