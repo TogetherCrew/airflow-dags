@@ -50,7 +50,7 @@ class PrepareReport:
         if len(reports) != 0:
             report = (
                 "Here's a list of messages with detected violation\n\n"
-                + "\n".join(reports)
+                + "\n".join(list(set(reports)))
             )
         else:
             logging.warning(
