@@ -99,23 +99,27 @@ class FetchPlatforms:
                 "metadata.id": 1,
             }
 
-        doc = self.collection.find_one(query, projection)
-        platforms = []
+        platform = self.collection.find_one(query, projection)
 
-        if self.platform_name == "discord":
-            resources = doc.get("metadata", {}).get("selectedChannels", None)
+        if platform:
+            if self.platform_name == "discord":
+                resources = platform.get("metadata", {}).get("selectedChannels", None)
+            else:
+                resources = platform.get("metadata", {}).get("resources", None)
+
+            platform_data = {
+                "platform_id": str(platform["_id"]),
+                "period": platform.get("metadata", {}).get("period", None),
+                "action": platform.get("metadata", {}).get("action", None),
+                "window": platform.get("metadata", {}).get("window", None),
+                "resources": resources,
+                "id": platform.get("metadata", {}).get("id", None),
+                "recompute": False,
+            }
+
+            return platform_data
+
         else:
-            resources = doc.get("metadata", {}).get("resources", None)
-
-        platform_data = {
-            "platform_id": str(doc["_id"]),
-            "period": doc.get("metadata", {}).get("period", None),
-            "action": doc.get("metadata", {}).get("action", None),
-            "window": doc.get("metadata", {}).get("window", None),
-            "resources": resources,
-            "id": doc.get("metadata", {}).get("id", None),
-            "recompute": False,
-        }
-        platforms.append(platform_data)
-
-        return platforms
+            raise ValueError(
+                f"No platform given platform_id: {platform_id} is available!"
+            )
