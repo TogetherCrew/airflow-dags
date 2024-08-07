@@ -147,8 +147,12 @@ with DAG(
         extracted_data = extractor.extract(recompute=recompute)
         transformer = TransformRawMembers()
         transformed_data = transformer.transform(raw_members=extracted_data)
-        loader = LoadTransformedMembers(platform_id=platform_id)
-        loader.load(processed_data=transformed_data, recompute=recompute)
+        if len(transformed_data) != 0:
+            logging.info(f"Loading {len(transformed_data)} transformed document in db!")
+            loader = LoadTransformedMembers(platform_id=platform_id)
+            loader.load(processed_data=transformed_data, recompute=recompute)
+        else:
+            logging.warning("No new document to load for discourse!")
 
     @task
     def analyze_discourse(platform_processed: dict[str, str | bool]) -> None:
