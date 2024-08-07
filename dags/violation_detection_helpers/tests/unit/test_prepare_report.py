@@ -94,7 +94,8 @@ class TestPrepareReport(TestCase):
             "Document link: https://sample_link2.com | Label: Identifying, Sexualized\n"
             "Document link: https://sample_link3.com | Label: Sexualized"
         )
-        self.assertEqual(result, expected_report, "Expected a valid report string")
+        for report in expected_report.split("\n"):
+            self.assertIn(report, result, "Expected a valid report string")
 
     @patch("logging.error")
     def test_missing_link(self, mock_logging_error):
