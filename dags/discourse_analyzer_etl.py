@@ -204,4 +204,9 @@ with DAG(
 
     raw_data_etl = discourse_etl_raw_data.expand(platform_info=platform_modules)
     raw_members_etl = discourse_etl_raw_members.expand(platform_info=platform_modules)
-    raw_members_etl >> analyze_discourse(platform_processed=raw_data_etl)
+
+    analyze_discourse_task = analyze_discourse.expand(
+        platform_processed=platform_modules
+    )
+
+    [raw_data_etl, raw_members_etl] >> analyze_discourse_task
