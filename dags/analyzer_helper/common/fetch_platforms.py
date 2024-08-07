@@ -78,9 +78,8 @@ class FetchPlatforms:
         query = {
             "_id": ObjectId(platform_id),
             "disconnectedAt": None,
-            "platform": self.platform_name,
+            "name": self.platform_name,
         }
-        # TODO: introduce strategy pattern once we add 'telegram'
         if self.platform_name == "discord":
             projection = {
                 "_id": 1,
