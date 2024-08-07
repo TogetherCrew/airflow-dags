@@ -112,9 +112,12 @@ with DAG(
         transformed_data = transformer.transform(
             raw_data=extracted_data,
         )
-
-        loader = LoadTransformedData(platform_id=platform_id)
-        loader.load(processed_data=transformed_data, recompute=recompute)
+        if len(transformed_data) != 0:
+            logging.info(f"Loading {len(transformed_data)} transformed document in db!")
+            loader = LoadTransformedData(platform_id=platform_id)
+            loader.load(processed_data=transformed_data, recompute=recompute)
+        else:
+            logging.warning("No new document to load for discourse!")
 
     @task
     def discourse_etl_raw_members(
@@ -173,7 +176,7 @@ with DAG(
             ```
         """
         logging.info(f"platform_processed: {platform_processed}")
-        fetcher = FetchPlatforms(plaform_name="discourse")
+        fetcher = FetchPlatforms(platform_name="discourse")
         platform_id = platform_processed["platform_id"]
         recompute = platform_processed["recompute"]
 
