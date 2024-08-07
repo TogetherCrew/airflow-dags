@@ -1,5 +1,5 @@
 import unittest
-from datetime import datetime
+from datetime import datetime, timezone
 
 from analyzer_helper.discourse.transform_raw_members import TransformRawMembers
 
@@ -31,7 +31,7 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
                 "id": "85149",
                 "is_bot": False,
                 "left_at": None,
-                "joined_at": datetime(2023, 7, 2, 0, 0, 0, 0),
+                "joined_at": datetime(2023, 7, 2, 0, 0, 0, 0, tzinfo=timezone.utc),
                 "options": {},
             }
         ]
@@ -60,14 +60,14 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
             "id": "85159",
             "is_bot": False,
             "left_at": None,
-            "joined_at": datetime(2023, 7, 1, 0, 0, 0, 0),
+            "joined_at": datetime(2023, 7, 1, 0, 0, 0, 0, tzinfo=timezone.utc),
             "options": {},
         }
         expected_result2 = {
             "id": "85161",
             "is_bot": False,
             "left_at": None,
-            "joined_at": datetime(2023, 7, 2, 0, 0, 0, 0),
+            "joined_at": datetime(2023, 7, 2, 0, 0, 0, 0, tzinfo=timezone.utc),
             "options": {},
         }
 

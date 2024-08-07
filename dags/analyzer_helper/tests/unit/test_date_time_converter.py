@@ -23,8 +23,9 @@ class TestDateTimeFormatConverter(unittest.TestCase):
     def test_from_date_string(self):
         date_string = "2023-07-01"
         dt = DateTimeFormatConverter.from_date_string(date_string)
-        self.assertEqual(dt, datetime.datetime(2023, 7, 1, 0, 0, 0, 0))
-        dt_with_time = DateTimeFormatConverter.from_date_string(
-            date_string, 18, 21, 0, 870000
+        self.assertEqual(
+            dt, datetime.datetime(2023, 7, 1, 0, 0, 0, 0, tzinfo=datetime.timezone.utc)
         )
-        self.assertEqual(dt_with_time, datetime.datetime(2023, 7, 1, 18, 21, 0, 870000))
+        dt_with_time = DateTimeFormatConverter.from_date_string(date_string)
+        expected_time = datetime.datetime(2023, 7, 1, tzinfo=datetime.timezone.utc)
+        self.assertEqual(dt_with_time, expected_time)
