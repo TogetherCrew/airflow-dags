@@ -182,11 +182,10 @@ with DAG(
 
         platform_data = fetcher.fetch_analyzer_parameters(platform_id)
 
-        metadata = platform_data["metadata"]
-        period = metadata["period"]
-        action = metadata["action"]
-        window = metadata["window"]
-        resources = metadata["resources"]
+        period = platform_data["period"]
+        action = platform_data["action"]
+        window = platform_data["window"]
+        resources = platform_data["resources"]
 
         analyzer = Analyzer()
 
