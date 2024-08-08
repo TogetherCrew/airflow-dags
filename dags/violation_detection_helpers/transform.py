@@ -39,11 +39,11 @@ class TransformPlatformRawData:
                 data = copy.deepcopy(record)
 
                 text = record["text"]
-                
+
                 # if not labeled before
                 if data["source_id"] not in cached_label:
                     cached_label[data["source_id"]] = self.classifier.classify(text)
-                
+
                 label = cached_label[data["source_id"]]
 
                 data.setdefault("metadata", {})
