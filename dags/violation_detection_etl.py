@@ -76,7 +76,7 @@ with DAG(
         if len(transformed_data) != 0:
             logging.info(f"Loading {len(transformed_data)} documents into db!")
             loader = LoadPlatformLabeledData()
-            loader.load(platform_id=platform, transformed_data=transformed_data)
+            loader.load(platform_id=platform_id, transformed_data=transformed_data)
 
             # message discord users if recompute is equal to False
             if not recompute or not override_recompute:
