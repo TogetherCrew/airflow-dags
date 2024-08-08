@@ -29,12 +29,22 @@ class TransformPlatformRawData:
             the same data but with a label for violation detection
         """
         labeled_data = []
+
+        # caching label per source_id
+        # since we might have multiple document with same text
+        cached_label: dict[str, str] = {}
+
         for record in raw_data:
             try:
                 data = copy.deepcopy(record)
 
                 text = record["text"]
-                label = self.classifier.classify(text)
+
+                # if not labeled before
+                if data["source_id"] not in cached_label:
+                    cached_label[data["source_id"]] = self.classifier.classify(text)
+
+                label = cached_label[data["source_id"]]
 
                 data.setdefault("metadata", {})
                 data["metadata"]["vdLabel"] = label
