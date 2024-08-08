@@ -53,12 +53,12 @@ class TestExtractRawData(TestCase):
             },
         ]
         self.client[self.platform_id]["rawmemberactivities"].insert_many(sample_data)
-        extract_data = ExtractPlatformRawData(self.platform_id, "channel_id")
+        extract_data = ExtractPlatformRawData(self.platform_id, "category_id")
 
         cursor, override_recompute = extract_data.extract(
             from_date=datetime(2020, 1, 1),
             to_date=None,
-            resources=["8888", "8880"],
+            resources=["34567", "34569"],
             recompute=False,
         )
         results = list(cursor)
@@ -104,12 +104,12 @@ class TestExtractRawData(TestCase):
             },
         ]
         self.client[self.platform_id]["rawmemberactivities"].insert_many(sample_data)
-        extract_data = ExtractPlatformRawData(self.platform_id, "channel_id")
+        extract_data = ExtractPlatformRawData(self.platform_id, "category_id")
 
         cursor, override_recompute = extract_data.extract(
             from_date=datetime(2020, 1, 1),
             to_date=None,
-            resources=["8888"],
+            resources=["34567"],
             recompute=False,
         )
         results = list(cursor)
@@ -155,12 +155,12 @@ class TestExtractRawData(TestCase):
             },
         ]
         self.client[self.platform_id]["rawmemberactivities"].insert_many(sample_data)
-        extract_data = ExtractPlatformRawData(self.platform_id, "channel_id")
+        extract_data = ExtractPlatformRawData(self.platform_id, "category_id")
 
         cursor, override_recompute = extract_data.extract(
             from_date=datetime(2023, 1, 1),
             to_date=None,
-            resources=["8888"],
+            resources=["34567"],
             recompute=False,
         )
         results = list(cursor)
@@ -205,12 +205,12 @@ class TestExtractRawData(TestCase):
             },
         ]
         self.client[self.platform_id]["rawmemberactivities"].insert_many(sample_data)
-        extract_data = ExtractPlatformRawData(self.platform_id, "channel_id")
+        extract_data = ExtractPlatformRawData(self.platform_id, "category_id")
 
         cursor, override_recompute = extract_data.extract(
             from_date=datetime(2022, 1, 1),
             to_date=datetime(2023, 2, 1),
-            resources=["8888"],
+            resources=["34567"],
             recompute=False,
         )
         results = list(cursor)
@@ -264,12 +264,12 @@ class TestExtractRawData(TestCase):
             },
         ]
         self.client[self.platform_id]["rawmemberactivities"].insert_many(sample_data)
-        extract_data = ExtractPlatformRawData(self.platform_id, "channel_id")
+        extract_data = ExtractPlatformRawData(self.platform_id, "category_id")
 
         cursor, override_recompute = extract_data.extract(
             from_date=datetime(2020, 1, 1),
             to_date=None,
-            resources=["8888", "8880"],
+            resources=["34567", "34569"],
             recompute=False,
         )
         results = list(cursor)

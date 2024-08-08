@@ -49,6 +49,8 @@ with DAG(
         recompute = platform["recompute"]
         discord_users = platform["selected_discord_users"]
 
+        logging.info(f"Processing PLATFORM_ID: {platform_id}!")
+
         # EXTRACT
 
         # TODO: Get resource_identifier from platform analyzer config
@@ -72,6 +74,7 @@ with DAG(
 
         # Load
         if len(transformed_data) != 0:
+            logging.info(f"Loading {len(transformed_data)} documents into db!")
             loader = LoadPlatformLabeledData()
             loader.load(platform_id=platform, transformed_data=transformed_data)
 
@@ -84,7 +87,9 @@ with DAG(
                     reporter = SendReportDiscordUser(platform_id=platform_id)
                     reporter.send(discord_user_id=discord_id, message=report)
         else:
-            logging.warning("No documents were transformed!")
+            logging.warning(
+                f"PLATFORM_ID: {platform_id}, No documents were transformed!"
+            )
 
     platforms = get_violation_modules()
     process_platforms.expand(platform=platforms)
