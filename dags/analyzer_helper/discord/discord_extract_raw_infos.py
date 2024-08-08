@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 
 from analyzer_helper.discord.extract_raw_info_base import ExtractRawInfosBase
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
@@ -36,7 +36,9 @@ class DiscordExtractRawInfos(ExtractRawInfosBase):
 
             if latest_activity_date is not None:
                 prefix = "previous data is available! "
-                if latest_activity_date >= period:
+                if latest_activity_date.replace(tzinfo=timezone.utc) >= period.replace(
+                    tzinfo=timezone.utc
+                ):
                     logging.info(f"{prefix}Extracting data from {latest_activity_date}")
                     data = list(
                         self.collection.find(
