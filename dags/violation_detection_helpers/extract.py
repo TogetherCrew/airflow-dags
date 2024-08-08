@@ -102,7 +102,7 @@ class ExtractPlatformRawData:
             {
                 **date_query,
                 "text": {"$ne": None},
-                "source_id": {"$in": resources},
+                self.resource_name: {"$in": resources},
             }
         )
         return cursor, override_recompute
