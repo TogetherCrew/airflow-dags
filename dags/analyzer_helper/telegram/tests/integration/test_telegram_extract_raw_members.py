@@ -1,7 +1,6 @@
 import unittest
 import datetime
 
-from analyzer_helper.telegram.utils.date_time_format_converter import DateTimeFormatConverter
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
 from analyzer_helper.telegram.extract_raw_members import ExtractRawMembers
 
@@ -49,9 +48,9 @@ class TestExtractRawMembers(unittest.TestCase):
                 RETURN id(u) AS id
                 """,
                 chat_title=self.test_chat_title,
-                created_at=DateTimeFormatConverter.datetime_to_timestamp(datetime.datetime(2023, 7, 1)),
-                joined_date=DateTimeFormatConverter.datetime_to_timestamp(datetime.datetime(2023, 7, 1)),
-                left_date=DateTimeFormatConverter.datetime_to_timestamp(datetime.datetime(2023, 7, 2)),
+                created_at=1688162400.0, #2023, 7, 1
+                joined_date=1688162400.0, #2023, 7, 1
+                left_date=1688248800.0, #2023, 7, 2
             )
             session.run(
                 """
@@ -61,8 +60,10 @@ class TestExtractRawMembers(unittest.TestCase):
                 RETURN id(u) AS id
                 """,
                 chat_title=self.test_chat_title,
-                created_at=DateTimeFormatConverter.datetime_to_timestamp(datetime.datetime(2023, 2, 2)),
-                joined_date=DateTimeFormatConverter.datetime_to_timestamp(datetime.datetime(2023, 2, 2)),
+                # created_at=1675292400.0, #2023, 2, 2
+                # joined_date=1675292400.0, #2023, 2, 2
+                created_at=1688342400.0, #2023, 7, 3
+                joined_date=1688342400.0, #2023, 7, 3
             )
 
     def tearDown(self):
@@ -79,13 +80,13 @@ class TestExtractRawMembers(unittest.TestCase):
             {
                 "id": "user1",
                 "is_bot": False,
-                "joined_at": "2023-07-01",
-                "left_at": "2023-07-02",
+                "joined_at": 1688162400.0,
+                "left_at": 1688248800.0,
             },
             {
                 "id": "user2",
                 "is_bot": False,
-                "joined_at": "2023-07-02",
+                "joined_at": 1688342400.0,
                 "left_at": None,
             },
         ]
@@ -98,13 +99,13 @@ class TestExtractRawMembers(unittest.TestCase):
             {
                 "id": "user1",
                 "is_bot": False,
-                "joined_at": "2023-07-01",
-                "left_at": "2023-07-02",
+                "joined_at": 1688162400.0,
+                "left_at": 1688248800.0,
             },
             {
                 "id": "user2",
                 "is_bot": False,
-                "joined_at": "2023-07-02",
+                "joined_at": 1688342400.0,
                 "left_at": None,
             },
         ]
@@ -115,11 +116,19 @@ class TestExtractRawMembers(unittest.TestCase):
 
         expected_result = [
             {
+                "id": "user1",
+                "is_bot": False,
+                "joined_at": 1688162400.0,
+                "left_at": 1688248800.0,
+            },
+            {
                 "id": "user2",
                 "is_bot": False,
-                "joined_at": "2023-07-02",
+                "joined_at": 1688342400.0,
                 "left_at": None,
             },
         ]
+        print("result: \n", result)
+        print("expected result: \n", expected_result)
         self.assertEqual(result, expected_result)
 

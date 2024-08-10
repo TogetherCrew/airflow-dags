@@ -2,13 +2,12 @@ import datetime
 import unittest
 
 from analyzer_helper.telegram.transform_raw_data import TransformRawInfo
-from analyzer_helper.discord.utils.is_user_bot import UserBotChecker
 
 
 class TestTransformRawInfo(unittest.TestCase):
     def setUp(self):
         """Initialize the TransformRawInfo instance before each test."""
-        self.transformer = TransformRawInfo("TC Ingestion Pipeline")
+        self.transformer = TransformRawInfo()
         self.platform_id = "test_platform"
 
     def test_create_data_entry_with_reactions_replies_mentions(self):
@@ -34,21 +33,38 @@ class TestTransformRawInfo(unittest.TestCase):
             ],
             "mentions": []
         }
+        expected_result = {
+                'author_id': '3.0',
+                'date': datetime.datetime(2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc),
+                'source_id': '3.0',
+                'metadata': {
+                    'category_id': None,
+                    'topic_id': None,
+                    'bot_activity': False
+                },
+                'actions': [
+                    {
+                        'name': 'message',
+                        'type': 'emitter'
+                    }
+                ],
+                'interactions': [
+                    {
+                        'name': 'reaction',
+                        'type': 'receiver',
+                        'users_engaged_id': ['4']
+                    },
+                    {
+                        'name': 'reply',
+                        'type': 'emitter',
+                        'users_engaged_id': ['203678862']
+                    }
+                ]
+        }
         result = self.transformer.create_data_entry(raw_data)
-        self.assertEqual(result["author_id"], str(int(raw_data["user_id"])))
-        self.assertIsInstance(result["date"], datetime.datetime)
-        self.assertFalse(result["metadata"]["bot_activity"])
-        self.assertEqual(result["source_id"], str(int(raw_data["message_id"])))
-        self.assertEqual(len(result["interactions"]), 2)
-        self.assertEqual(result["interactions"][0]["name"], "reaction")
-        self.assertEqual(result["interactions"][0]["type"], "receiver")
-        self.assertEqual(result["interactions"][0]["users_engaged_id"], [str(int(raw_data["reactions"][0]["reactor_id"]))])
-        self.assertEqual(result["interactions"][1]["name"], "reply")
-        self.assertEqual(result["interactions"][1]["type"], "emitter")
-        self.assertEqual(result["interactions"][1]["users_engaged_id"], [str(int(raw_data["replies"][0]["replier_id"]))])
-        self.assertEqual(len(result["actions"]), 1)
-        self.assertEqual(result["actions"][0]["name"], "message")
-        self.assertEqual(result["actions"][0]["type"], "emitter")
+        print("result: \n", result)
+        print("expected_result: \n", expected_result)
+        self.assertEqual(result, expected_result)
 
     def test_create_data_entry_with_mentions(self):
         """Test data entry creation with mentions."""
@@ -69,23 +85,38 @@ class TestTransformRawInfo(unittest.TestCase):
             ]
         }
         result = self.transformer.create_data_entry(raw_data)
-        self.assertEqual(result["author_id"], str(int(raw_data["user_id"])))
-        self.assertIsInstance(result["date"], datetime.datetime)
-        self.assertFalse(result["metadata"]["bot_activity"])
-        self.assertEqual(result["source_id"], str(int(raw_data["message_id"])))
-        self.assertEqual(len(result["interactions"]), 2)
-        self.assertEqual(result["interactions"][0]["name"], "mention")
-        self.assertEqual(result["interactions"][0]["type"], "receiver")
-        self.assertEqual(result["interactions"][0]["users_engaged_id"], [str(int(raw_data["mentions"][0]["mentioned_user_id"]))])
-        self.assertEqual(result["interactions"][1]["name"], "mention")
-        self.assertEqual(result["interactions"][1]["type"], "receiver")
-        self.assertEqual(result["interactions"][1]["users_engaged_id"], [str(int(raw_data["mentions"][1]["mentioned_user_id"]))])
-        self.assertEqual(len(result["actions"]), 1)
-        self.assertEqual(result["actions"][0]["name"], "message")
-        self.assertEqual(result["actions"][0]["type"], "emitter")
+        expected_result = {
+            'author_id': '5.0',
+            'date': datetime.datetime(2024, 4, 13, 19, 55, 25, tzinfo=datetime.timezone.utc),
+            'source_id': '7.0',
+            'metadata': {
+                'category_id': None,
+                'topic_id': None,
+                'bot_activity': False
+            },
+            'actions': [
+                {
+                    'name': 'message',
+                    'type': 'emitter'
+                }
+            ],
+            'interactions': [
+                {
+                    'name': 'mention',
+                    'type': 'receiver',
+                    'users_engaged_id': ['6']
+                },
+                {
+                    'name': 'mention',
+                    'type': 'receiver',
+                    'users_engaged_id': ['7']
+                }
+            ]
+        }
+        self.assertEqual(result, expected_result)
 
     def test_transform_data_with_single_reply(self):
-        result = [
+        data = [
                 {
                 "message_id": 3.0,
                 "message_text": "🎉️️️️️️ Welcome to the TC Ingestion Pipeline",
@@ -102,10 +133,11 @@ class TestTransformRawInfo(unittest.TestCase):
                 "mentions": []
             },
         ]
+        result = self.transformer.transform(data)
         expected_result = [
             {
                 'author_id': '1.0',
-                'date': datetime(2024, 4, 13, 21, 52, 18),
+                'date': datetime.datetime(2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc),
                 'source_id': '3.0',
                 'metadata': {
                     'category_id': None,
@@ -128,7 +160,7 @@ class TestTransformRawInfo(unittest.TestCase):
             },
             {
                 'author_id': '2',
-                'date': datetime(2024, 4, 13, 21, 52, 18),
+                'date': datetime.datetime(2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc),
                 'source_id': '3.0',
                 'metadata': {
                     'category_id': None,
@@ -148,7 +180,7 @@ class TestTransformRawInfo(unittest.TestCase):
         self.assertEqual(result, expected_result)
 
     def test_transform_data_with_multiple_replies(self):
-        result = [
+        data = [
             {
                 "message_id": 3.0,
                 "message_text": "🎉️️️️️️ Welcome to the TC Ingestion Pipeline",
@@ -170,10 +202,11 @@ class TestTransformRawInfo(unittest.TestCase):
                 "mentions": []
             },
         ]
+        result = self.transformer.transform(data)
         expected_result = [
             {
                 'author_id': '1.0',
-                'date': datetime(2024, 4, 13, 21, 52, 18),
+                'date': datetime.datetime(2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc),
                 'source_id': '3.0',
                 'metadata': {
                     'category_id': None,
@@ -201,7 +234,7 @@ class TestTransformRawInfo(unittest.TestCase):
             },
             {
                 'author_id': '2',
-                'date': datetime(2024, 4, 13, 21, 52, 18),
+                'date': datetime.datetime(2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc),
                 'source_id': '3.0',
                 'metadata': {
                     'category_id': None,
@@ -219,7 +252,7 @@ class TestTransformRawInfo(unittest.TestCase):
             },
             {
                 'author_id': '3',
-                'date': datetime(2024, 4, 13, 21, 52, 18),
+                'date': datetime.datetime(2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc),
                 'source_id': '3.0',
                 'metadata': {
                     'category_id': None,
@@ -239,8 +272,7 @@ class TestTransformRawInfo(unittest.TestCase):
         self.assertEqual(result, expected_result)
 
     def test_transform_data_with_single_mention(self):
-
-        result = [
+        data = [
             {
                 "message_id": 7.0,
                 "message_text": "@togethercrewdev @user3 🙌",
@@ -255,10 +287,11 @@ class TestTransformRawInfo(unittest.TestCase):
                 ]
             },
         ]
+        result = self.transformer.transform(data)
         expected_result = [
             {
                 'author_id': '2.0',
-                'date': datetime(2024, 4, 13, 21, 55, 25),
+                'date': datetime.datetime(2024, 4, 13, 19, 55, 25, tzinfo=datetime.timezone.utc),
                 'source_id': '7.0',
                 'metadata': {
                     'category_id': None,
@@ -281,7 +314,7 @@ class TestTransformRawInfo(unittest.TestCase):
             },
             {
                 'author_id': '3',
-                'date': datetime(2024, 4, 13, 21, 55, 25),
+                'date': datetime.datetime(2024, 4, 13, 19, 55, 25, tzinfo=datetime.timezone.utc),
                 'source_id': '7.0',
                 'metadata': {
                     'category_id': None,
@@ -301,7 +334,7 @@ class TestTransformRawInfo(unittest.TestCase):
         self.assertEqual(result, expected_result)
 
     def test_transform_data_with_multiple_mentions(self):
-        result = [
+        data = [
             {
                 "message_id": 7.0,
                 "message_text": "@togethercrewdev @user4 🙌",
@@ -319,10 +352,11 @@ class TestTransformRawInfo(unittest.TestCase):
                 ]
             },
         ]
+        result = self.transformer.transform(data)
         expected_result = [
             {
                 "author_id": "1.0",
-                "date": "2024-04-13T21:55:25",
+                "date": datetime.datetime(2024, 4, 13, 19, 55, 25, tzinfo=datetime.timezone.utc),
                 "source_id": "7.0",
                 "metadata": {
                     "category_id": None,
@@ -354,7 +388,7 @@ class TestTransformRawInfo(unittest.TestCase):
             },
             {
                 "author_id": "2",
-                "date": "2024-04-13T21:55:25",
+                "date": datetime.datetime(2024, 4, 13, 19, 55, 25, tzinfo=datetime.timezone.utc),
                 "source_id": "7.0",
                 "metadata": {
                     "category_id": None,
@@ -374,7 +408,7 @@ class TestTransformRawInfo(unittest.TestCase):
             },
             {
                 "author_id": "3",
-                "date": "2024-04-13T21:55:25",
+                "date": datetime.datetime(2024, 4, 13, 19, 55, 25, tzinfo=datetime.timezone.utc),
                 "source_id": "7.0",
                 "metadata": {
                     "category_id": None,
@@ -396,7 +430,7 @@ class TestTransformRawInfo(unittest.TestCase):
         self.assertEqual(result, expected_result)
 
     def test_transform_data_with_single_reaction(self):
-        result = [
+        data = [
                 {
                 "message_id": 11.0,
                 "message_text": "Ah I lost the chat history",
@@ -413,10 +447,11 @@ class TestTransformRawInfo(unittest.TestCase):
                 "mentions": []
             }
         ]
+        result = self.transformer.transform(data)
         expected_result = [
             {
                 'author_id': '2.0',
-                'date': datetime(2024, 4, 13, 21, 56, 31),
+                'date': datetime.datetime(2024, 4, 13, 19, 56, 31, tzinfo=datetime.timezone.utc),
                 'source_id': '11.0',
                 'metadata': {
                     'category_id': None,
@@ -439,7 +474,7 @@ class TestTransformRawInfo(unittest.TestCase):
             },
             {
                 'author_id': '1',
-                'date': datetime(2024, 4, 13, 21, 56, 31),
+                'date': datetime.datetime(2024, 4, 13, 19, 56, 31, tzinfo=datetime.timezone.utc),
                 'source_id': '11.0',
                 'metadata': {
                     'category_id': None,
@@ -459,7 +494,7 @@ class TestTransformRawInfo(unittest.TestCase):
         self.assertEqual(result, expected_result)
 
     def test_transform_data_with_multiple_reactions(self):
-        result = [
+        data = [
             {
                 "message_id": 11.0,
                 "message_text": "Ah I lost the chat history",
@@ -481,10 +516,11 @@ class TestTransformRawInfo(unittest.TestCase):
                 "mentions": [],
             }
         ]
+        result = self.transformer.transform(data)
         expected_result = [
             {
                 'author_id': '2.0',
-                'date': datetime(2024, 4, 13, 21, 56, 31),
+                'date': datetime.datetime(2024, 4, 13, 21, 56, 31, tzinfo=datetime.timezone.utc),
                 'source_id': '11.0',
                 'metadata': {
                     'category_id': None,
@@ -512,7 +548,7 @@ class TestTransformRawInfo(unittest.TestCase):
             },
             {
                 'author_id': '1',
-                'date': datetime(2024, 4, 13, 21, 56, 31),
+                'date': datetime.datetime(2024, 4, 13, 21, 56, 31, tzinfo=datetime.timezone.utc),
                 'source_id': '11.0',
                 'metadata': {
                     'category_id': None,
@@ -530,7 +566,7 @@ class TestTransformRawInfo(unittest.TestCase):
             },
             {
                 'author_id': '2',
-                'date': datetime(2024, 4, 13, 21, 56, 31),
+                'date': datetime.datetime(2024, 4, 13, 21, 56, 31, tzinfo=datetime.timezone.utc),
                 'source_id': '11.0',
                 'metadata': {
                     'category_id': None,
@@ -549,7 +585,7 @@ class TestTransformRawInfo(unittest.TestCase):
         ]
     
     def test_transform_data_with_replied_mentions_interactions(self):
-        result = [
+        data = [
             {
                 "message_id": 3.0,
                 "message_text": "🎉️️️️️️ Welcome to the TC Ingestion Pipeline",
@@ -589,10 +625,11 @@ class TestTransformRawInfo(unittest.TestCase):
                 ]
             }
         ]
+        result = self.transformer.transform(data)
         expected_result = [
             {
                 'author_id': '1.0',
-                'date': datetime(2024, 4, 13, 21, 52, 18),
+                'date': datetime.datetime(2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc),
                 'source_id': '3.0',
                 'metadata': {
                     'category_id': None,
@@ -640,7 +677,7 @@ class TestTransformRawInfo(unittest.TestCase):
             },
             {
                 'author_id': '2',
-                'date': datetime(2024, 4, 13, 21, 52, 18),
+                'date': datetime.datetime(2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc),
                 'source_id': '3.0',
                 'metadata': {
                     'category_id': None,
@@ -658,7 +695,7 @@ class TestTransformRawInfo(unittest.TestCase):
             },
             {
                 'author_id': '3',
-                'date': datetime(2024, 4, 13, 21, 52, 18),
+                'date': datetime.datetime(2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc),
                 'source_id': '3.0',
                 'metadata': {
                     'category_id': None,
@@ -676,7 +713,7 @@ class TestTransformRawInfo(unittest.TestCase):
             },
             {
                 'author_id': '4',
-                'date': datetime(2024, 4, 13, 21, 52, 18),
+                'date': datetime.datetime(2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc),
                 'source_id': '3.0',
                 'metadata': {
                     'category_id': None,
@@ -694,7 +731,7 @@ class TestTransformRawInfo(unittest.TestCase):
             },
             {
                 'author_id': '5',
-                'date': datetime(2024, 4, 13, 21, 52, 18),
+                'date': datetime.datetime(2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc),
                 'source_id': '3.0',
                 'metadata': {
                     'category_id': None,
@@ -712,7 +749,7 @@ class TestTransformRawInfo(unittest.TestCase):
             },
             {
                 'author_id': '6',
-                'date': datetime(2024, 4, 13, 21, 52, 18),
+                'date': datetime.datetime(2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc),
                 'source_id': '3.0',
                 'metadata': {
                     'category_id': None,
@@ -730,7 +767,7 @@ class TestTransformRawInfo(unittest.TestCase):
             },
             {
                 'author_id': '7',
-                'date': datetime(2024, 4, 13, 21, 52, 18),
+                'date': datetime.datetime(2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc),
                 'source_id': '3.0',
                 'metadata': {
                     'category_id': None,
@@ -747,6 +784,8 @@ class TestTransformRawInfo(unittest.TestCase):
                 ]
             }
         ]
+        print("result: \n", result)
+        print("expected_result: \n", expected_result)
         self.assertEqual(result, expected_result)
 
     def test_transform_data_empty(self):

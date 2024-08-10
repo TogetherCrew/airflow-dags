@@ -40,38 +40,9 @@ class ExtractRawInfo:
 
         where_clause = "WHERE c.title = $chat_title"
         if created_at and comparison:
+            print(f"Fetching raw data with created_at: {created_at} and comparison: {comparison}")
             operator = ">" if comparison == "gt" else ">="
-            where_clause += f" AND m.created_at {operator} $created_at"
-
-        # query = f"""
-        # MATCH (c:TGChat)<-[:SENT_IN]-(m:TGMessage)
-        # {where_clause}
-        # WITH m.id AS message_id, m.text AS message_text, m.created_at AS message_created_at, m
-
-        # // Fetch who created the message
-        # OPTIONAL MATCH (u:TGUser)-[r:CREATED_MESSAGE]->(m)
-        # WITH message_id, message_text, message_created_at, u.id AS user_id, r.date AS created_date, m
-
-        # // Fetch reactions to the message
-        # OPTIONAL MATCH (reactor:TGUser)-[r:REACTED_TO]->(m)
-        # WITH message_id, message_text, message_created_at, user_id, created_date, m,
-        #     collect({{reactor_id: reactor.id, reaction: r.new_reaction, reaction_date: r.date}}) AS reactions
-
-        # // Fetch message replies
-        # OPTIONAL MATCH (m1:TGMessage)-[r:REPLIED]->(m)
-        # OPTIONAL MATCH (replier:TGUser)-[:CREATED_MESSAGE]->(m1)
-        # WITH message_id, message_text, message_created_at, user_id, created_date, reactions, m,
-        #     collect({{reply_message_id: m1.id, replier_id: replier.id, replied_date: m1.created_at}}) AS replies
-
-        # // Fetch mentions in the message
-        # OPTIONAL MATCH (m)-[r:MENTIONED]->(mentioned:TGUser)
-        # WITH message_id, message_text, message_created_at, user_id, created_date, reactions, replies,
-        #     collect({{mentioned_user_id: mentioned.id}}) AS mentions
-
-        # RETURN message_id, message_text, message_created_at, user_id, reactions, replies, mentions
-        # ORDER BY message_id
-        # LIMIT 10
-        # """
+            where_clause += f" AND m.date {operator} $created_at"
 
         query = f"""
         MATCH (c:TGChat)<-[:SENT_IN]-(m:TGMessage)
@@ -106,17 +77,13 @@ class ExtractRawInfo:
         parameters = {"chat_title": self.forum_endpoint}
         if created_at and comparison:
             parameters["created_at"] = created_at
-
-        # Log the query and parameters for debugging
-        print("Query:", query)
-        print("Parameters:", parameters)
-
+        
         with self.driver.session() as session:
             result = session.run(query, parameters)
             messages = result.data()
 
         return messages
-
+    
     def fetch_raw_data(
         self, created_at: Optional[str] = None, comparison: Optional[str] = None
     ) -> list:
@@ -151,29 +118,28 @@ class ExtractRawInfo:
             )
             latest_activity_date = latest_activity["date"] if latest_activity else None
             if latest_activity_date is not None:
-                # Convert latest_activity_date string to datetime
-                latest_activity_date_datetime = (
-                    self.converter.datetime_to_timestamp(latest_activity_date)
-                    if latest_activity_date
-                    else None
-                )
+                # Convert latest_activity_date to datetime if it is a string
+                if isinstance(latest_activity_date, str):
+                    latest_activity_date_datetime = self.converter.string_to_datetime(latest_activity_date)
+                elif isinstance(latest_activity_date, float):  # if it is a timestamp
+                    latest_activity_date_datetime = self.converter.timestamp_to_datetime(latest_activity_date)
+                else:
+                    latest_activity_date_datetime = latest_activity_date
                 # Convert latest_activity_date_datetime to unix timestmap format
                 latest_activity_date_unix_timestamp_format = (
-                    self.converter.datetime_to_timestamp(latest_activity_date_datetime)
+                    float(self.converter.datetime_to_timestamp(latest_activity_date_datetime))
                     if latest_activity_date_datetime
                     else None
                 )
-                period_unix_timestamp_format = self.converter.datetime_to_timestamp(period)
+                period_unix_timestamp_format = float(self.converter.datetime_to_timestamp(period))
+                print("latest_activity_date_unix_timestamp_format:", latest_activity_date_unix_timestamp_format)
+                print("period_unix_timestamp_format:", period_unix_timestamp_format)
                 if latest_activity_date_unix_timestamp_format >= period_unix_timestamp_format:
                     data = self.fetch_raw_data(latest_activity_date_unix_timestamp_format, "gt")
+                    print("latest_activity_date is equal or greater then period")
                 else:
                     data = self.fetch_raw_data(period_unix_timestamp_format, "gte")
+                    print("latest_activity_date is less then period")
             else:
                 data = self.fetch_raw_data()
         return data
-
-if __name__ == "__main__":
-    fetcher = ExtractRawInfo(forum_endpoint="TC Ingestion Pipeline", platform_id="test_platform_id")
-    messages = fetcher.fetch_raw_data()
-    print(messages)
-    fetcher.close()

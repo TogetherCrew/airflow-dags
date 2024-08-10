@@ -31,7 +31,7 @@ class TestTelegramTransformRawMembers(unittest.TestCase):
                 "id": "203678862.0",
                 "is_bot": False,
                 "left_at": None,
-                "joined_at": datetime.datetime(2024, 4, 14, 6, 12, 54),  # Use the direct datetime format
+                "joined_at": datetime.datetime(2024, 4, 13, 20, 6, 14, tzinfo=datetime.timezone.utc),
                 "options": {},
             }
         ]
@@ -55,55 +55,58 @@ class TestTelegramTransformRawMembers(unittest.TestCase):
 
         expected_result = [
             {
-                "id": "203678862.0",
-                "is_bot": False,
-                "left_at": None,
-                "joined_at": datetime.datetime(2024, 4, 14, 6, 12, 54),
-                "options": {},
+                'id': '203678862.0',
+                'is_bot': False,
+                'left_at': None,
+                'joined_at': datetime.datetime(2024, 4, 13, 20, 6, 14, tzinfo=datetime.timezone.utc),
+                'options': {}
             },
             {
-                "id": "265278326.0",
-                "is_bot": False,
-                "left_at": None,
-                "joined_at": datetime.datetime(2024, 4, 15, 12, 16, 55),
-                "options": {},
+                'id': '265278326.0',
+                'is_bot': False,
+                'left_at': None,
+                'joined_at': datetime.datetime(2024, 4, 15, 6, 10, 15, tzinfo=datetime.timezone.utc),
+                'options': {}
             },
             {
-                "id": "501641383.0",
-                "is_bot": False,
-                "left_at": None,
-                "joined_at": datetime.datetime(2024, 4, 14, 6, 13, 25),
-                "options": {},
+                'id': '501641383.0',
+                'is_bot': False,
+                'left_at': None,
+                'joined_at': datetime.datetime(2024, 4, 13, 20, 6, 45, tzinfo=datetime.timezone.utc),
+                'options': {}
             },
             {
-                "id": "551595722.0",
-                "is_bot": False,
-                "left_at": None,
-                "joined_at": datetime.datetime(2024, 4, 14, 8, 5, 41),
-                "options": {},
+                'id': '551595722.0',
+                'is_bot': False,
+                'left_at': None,
+                'joined_at': datetime.datetime(2024, 4, 13, 22, 25, 41, tzinfo=datetime.timezone.utc),
+                'options': {}
             },
             {
-                "id": "926245054.0",
-                "is_bot": False,
-                "left_at": None,
-                "joined_at": datetime.datetime(2024, 4, 15, 17, 8, 19),
-                "options": {},
+                'id': '926245054.0',
+                'is_bot': False,
+                'left_at': None,
+                'joined_at': datetime.datetime(2024, 4, 15, 10, 48, 19, tzinfo=datetime.timezone.utc),
+                'options': {}
             },
             {
-                "id": "927814807.0",
-                "is_bot": False,
-                "left_at": None,
-                "joined_at": datetime.datetime(1970, 1, 1, 0, 0),
-                "options": {},
+                'id': '927814807.0',
+                'is_bot': False,
+                'left_at': None,
+                'joined_at': None,
+                'options': {}
             },
             {
-                "id": "6504405389.0",
-                "is_bot": False,
-                "left_at": None,
-                "joined_at": datetime.datetime(1970, 1, 1, 0, 0),
-                "options": {},
+                'id': '6504405389.0',
+                'is_bot': False,
+                'left_at': None,
+                'joined_at': None,
+                'options': {}
             }
         ]
 
+
         result = self.transformer.transform(raw_members)
+        print("result: \n", result)
+        print("expceted result: \n", expected_result)
         self.assertEqual(result, expected_result)

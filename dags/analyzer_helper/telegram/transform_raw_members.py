@@ -30,28 +30,15 @@ class TransformRawMembers(TransformRawMembersBase):
         Transform a single member's data to the rawmember structure.
         """
         telegram_id = member.get("id")
-        joined_at = DateTimeFormatConverter.timestamp_to_datetime(member.get("joined_at"))
+        joined_at_timestamp = member.get("joined_at")
+        joined_at = DateTimeFormatConverter.timestamp_to_datetime(joined_at_timestamp)
+        
         member = {
             "id": str(telegram_id) if telegram_id is not None else None,
             "is_bot": member.get("isBot", False),
             "left_at": member.get("left_at", None),
-            "joined_at": joined_at if joined_at is not None else None,
+            "joined_at": None if joined_at is None or joined_at_timestamp == 0.0 else joined_at,
             "options": {},
         }
 
         return member
-    
-data = [
-            {'id': 203678862.0, 'is_bot': False, 'joined_at': 1713038774.0, 'left_at': None},
-            {'id': 265278326.0, 'is_bot': False, 'joined_at': 1713161415.0, 'left_at': None},
-            {'id': 501641383.0, 'is_bot': False, 'joined_at': 1713038805.0, 'left_at': None},
-            {'id': 551595722.0, 'is_bot': False, 'joined_at': 1713047141.0, 'left_at': None},
-            {'id': 926245054.0, 'is_bot': False, 'joined_at': 1713178099.0, 'left_at': None},
-            {'id': 927814807.0, 'is_bot': False, 'joined_at': 0.0, 'left_at': None},
-            {'id': 6504405389.0, 'is_bot': False, 'joined_at': 0.0, 'left_at': None}
-        ]
-
-# data = [{'id': 927814807.0, 'is_bot': False, 'joined_at': 0.0, 'left_at': 1713036912.0}]
-transform = TransformRawMembers()
-result = transform.transform(data)
-print("result: \n", result)
