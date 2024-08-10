@@ -3,7 +3,7 @@ from datetime import datetime
 
 from airflow import DAG
 from airflow.decorators import task
-from analyzer_helper.discord.discord_analyze import Analyzer
+from analyzer_helper.common.analyzer import Analyzer
 from analyzer_helper.discord.discord_extract_raw_infos import DiscordExtractRawInfos
 from analyzer_helper.discord.discord_extract_raw_members import DiscordExtractRawMembers
 from analyzer_helper.discord.discord_load_transformed_data import (
@@ -17,6 +17,7 @@ from analyzer_helper.discord.discord_transform_raw_members import (
     DiscordTransformRawMembers,
 )
 from analyzer_helper.discord.fetch_discord_platforms import FetchDiscordPlatforms
+from dateutil.parser import parse
 
 with DAG(
     dag_id="discord_guild_analyzer_etl",
@@ -63,7 +64,7 @@ with DAG(
         platform = {
             "recompute": recompute,
             "platform_id": platform_id,
-            "period": period,
+            "period": parse(period),
             "guild_id": guild_id,
         }
 
@@ -170,12 +171,12 @@ with DAG(
         # else, then will fetch all platform's members data
         logging.info("Extracting Raw members!")
         extractor = DiscordExtractRawMembers(guild_id=guild_id, platform_id=platform_id)
-        extracted_data = extractor.extract(period=period, recompute=recompute)
+        extracted_data = extractor.extract(recompute=recompute)
 
         logging.info("Transforming raw members!")
-        transformer = DiscordTransformRawMembers(platform_id=platform_id)
+        transformer = DiscordTransformRawMembers()
         transformed_data = transformer.transform(
-            raw_data=extracted_data, platform_id=platform_id
+            raw_members=extracted_data,
         )
 
         if len(transformed_data) != 0:
@@ -213,12 +214,12 @@ with DAG(
         period = metadata["period"]
         action = metadata["action"]
         window = metadata["window"]
-        channels = metadata["selectedChannels"]
+        resources = metadata["selectedChannels"]
 
         analyzer = Analyzer()
         analyzer.analyze(
             platform_id=platform_id,
-            channels=channels,
+            resources=resources,
             period=period,
             action=action,
             window=window,

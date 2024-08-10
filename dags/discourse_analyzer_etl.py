@@ -3,33 +3,27 @@ from datetime import datetime
 
 from airflow import DAG
 from airflow.decorators import task
-from airflow.utils.trigger_rule import TriggerRule
 from analyzer_helper.common.analyzer import Analyzer
-from analyzer_helper.discord.discord_extract_raw_infos import DiscordExtractRawInfos
-from analyzer_helper.discord.discord_extract_raw_members import DiscordExtractRawMembers
-from analyzer_helper.discord.discord_load_transformed_data import (
-    DiscordLoadTransformedData,
-)
-from analyzer_helper.discord.discord_load_transformed_members import (
-    DiscordLoadTransformedMembers,
-)
-from analyzer_helper.discord.discord_transform_raw_data import DiscordTransformRawData
-from analyzer_helper.discord.discord_transform_raw_members import (
-    DiscordTransformRawMembers,
-)
-from analyzer_helper.discord.fetch_discord_platforms import FetchDiscordPlatforms
+from analyzer_helper.common.fetch_platforms import FetchPlatforms
+from analyzer_helper.common.load_transformed_data import LoadTransformedData
+from analyzer_helper.common.load_transformed_members import LoadTransformedMembers
+from analyzer_helper.discourse.extract_raw_data import ExtractRawInfo
+from analyzer_helper.discourse.extract_raw_members import ExtractRawMembers
+from analyzer_helper.discourse.transform_raw_data import TransformRawInfo
+from analyzer_helper.discourse.transform_raw_members import TransformRawMembers
+from tc_analyzer_lib.schemas.platform_configs import DiscourseAnalyzerConfig
 
 with DAG(
-    dag_id="all_discord_guilds_analyzer_etl",
+    dag_id="discourse_analyzer_etl",
     start_date=datetime(2024, 5, 1),
     schedule_interval="0 2 * * *",
     catchup=False,
 ) as dag:
 
     @task
-    def fetch_discord_platforms(**kwargs) -> list[dict[str, str | datetime | bool]]:
+    def fetch_discourse_platforms(**kwargs) -> list[dict[str, str | datetime | bool]]:
         """
-        fetch discord platforms
+        fetch discourse platforms
 
         Returns
         ---------
@@ -40,7 +34,7 @@ with DAG(
             {
                 'platform_id' : str,
                 'period': datetime,
-                'guild_id' : str,
+                'id' : str,   # forum_endpoint
                 'recompute': bool,  # default is False
             }
             ```
@@ -54,7 +48,9 @@ with DAG(
         # if an id for `recompute_platform` was given
         # then just run the ETL job for that platform with `recompute = True`
         # meaning the return would be a list with just one platform information
-        fetcher = FetchDiscordPlatforms()
+        fetcher = FetchPlatforms(
+            platform_name="discourse",
+        )
 
         platforms = fetcher.fetch_all()
 
@@ -70,7 +66,7 @@ with DAG(
         return platforms
 
     @task
-    def discord_etl_raw_data(
+    def discourse_etl_raw_data(
         platform_info: dict[str, str | datetime | bool]
     ) -> dict[str, str | list[dict] | bool]:
         """
@@ -84,7 +80,7 @@ with DAG(
             ```
             {
                 'platform_id' : datetime,
-                'guild_id' : str,
+                'id' : str,
                 'period' : datetime,
                 'recompute': bool,
             }
@@ -104,42 +100,27 @@ with DAG(
             ```
         """
         platform_id = platform_info["platform_id"]
-        guild_id = platform_info["guild_id"]
+        forum_endpoint = platform_info["id"]
         period = platform_info["period"]
         recompute = platform_info["recompute"]
-        logging.info(
-            f"PROCESSING PLATFORM ID: {platform_id}, GUILD_ID: {guild_id}, "
-            f"PERIOD: {period}, RECOMPUTE: {recompute}"
+
+        extractor = ExtractRawInfo(
+            forum_endpoint=forum_endpoint, platform_id=platform_id
         )
-        # If recompute is False, then just extract from the latest saved document
-        # within rawmemberactivities collection using their date
-        # else, just extract from the `period`
-        logging.info("Extracting raw discord data!")
-        extractor = DiscordExtractRawInfos(guild_id=guild_id, platform_id=platform_id)
         extracted_data = extractor.extract(period=period, recompute=recompute)
-
-        logging.info(f"{len(extracted_data)} raw data extracted!")
-
-        logging.info("Transforming data to general data structure!")
-        transformer = DiscordTransformRawData(
-            platform_id=platform_id, guild_id=guild_id
-        )
+        transformer = TransformRawInfo(forum_endpoint=forum_endpoint)
         transformed_data = transformer.transform(
             raw_data=extracted_data,
-            platform_id=platform_id,
         )
-        # if recompute is True, then replace the whole previously saved data in
-        # database with the new ones
-        # else, just save the new ones
         if len(transformed_data) != 0:
-            logging.info("Loading Transformed data in database!")
-            loader = DiscordLoadTransformedData(platform_id=platform_id)
+            logging.info(f"Loading {len(transformed_data)} transformed document in db!")
+            loader = LoadTransformedData(platform_id=platform_id)
             loader.load(processed_data=transformed_data, recompute=recompute)
         else:
-            logging.info("No new data to load!")
+            logging.warning("No new document to load for discourse!")
 
     @task
-    def discord_etl_raw_members(
+    def discourse_etl_raw_members(
         platform_info: dict[str, str | datetime | bool]
     ) -> None:
         """
@@ -153,42 +134,32 @@ with DAG(
             ```
             {
                 'platform_id' : datetime,
-                'guild_id' : str,
+                'forum_endpoint' : str,
                 'period' : datetime,
                 'recompute': bool,
             }
             ```
         """
         platform_id = platform_info["platform_id"]
-        guild_id = platform_info["guild_id"]
-        period = platform_info["period"]
+        forum_endpoint = platform_info["id"]
+        # period = platform_info["period"]
         recompute = platform_info["recompute"]
 
-        logging.info(
-            f"PROCESSING PLATFORM ID: {platform_id}, GUILD_ID: {guild_id}, "
-            f"PERIOD: {period}, RECOMPUTE: {recompute}"
+        extractor = ExtractRawMembers(
+            forum_endpoint=forum_endpoint, platform_id=platform_id
         )
-        # if recompute was false, then will fetch from the previously saved data date
-        # else, then will fetch all platform's members data
-        logging.info("Extracting Raw members!")
-        extractor = DiscordExtractRawMembers(guild_id=guild_id, platform_id=platform_id)
         extracted_data = extractor.extract(recompute=recompute)
-
-        logging.info(f"{len(extracted_data)} raw members extracted!")
-
-        logging.info("Transforming raw members!")
-        transformer = DiscordTransformRawMembers()
+        transformer = TransformRawMembers()
         transformed_data = transformer.transform(raw_members=extracted_data)
-
         if len(transformed_data) != 0:
-            logging.info("Loading processed raw members!")
-            loader = DiscordLoadTransformedMembers(platform_id=platform_id)
+            logging.info(f"Loading {len(transformed_data)} transformed document in db!")
+            loader = LoadTransformedMembers(platform_id=platform_id)
             loader.load(processed_data=transformed_data, recompute=recompute)
         else:
-            logging.info("No new data to load!")
+            logging.warning("No new document to load for discourse!")
 
-    @task(trigger_rule=TriggerRule.NONE_SKIPPED)
-    def analyze_discord(platform_processed: dict[str, str | bool]) -> None:
+    @task
+    def analyze_discourse(platform_processed: dict[str, str | bool]) -> None:
         """
         start the analyzer to process data
 
@@ -205,19 +176,19 @@ with DAG(
             ```
         """
         logging.info(f"platform_processed: {platform_processed}")
-        fetcher = FetchDiscordPlatforms()
+        fetcher = FetchPlatforms(platform_name="discourse")
         platform_id = platform_processed["platform_id"]
         recompute = platform_processed["recompute"]
 
         platform_data = fetcher.fetch_analyzer_parameters(platform_id)
 
-        metadata = platform_data["metadata"]
-        period = metadata["period"]
-        action = metadata["action"]
-        window = metadata["window"]
-        resources = metadata["selectedChannels"]
+        period = platform_data["period"]
+        action = platform_data["action"]
+        window = platform_data["window"]
+        resources = platform_data["resources"]
 
         analyzer = Analyzer()
+
         analyzer.analyze(
             platform_id=platform_id,
             resources=resources,
@@ -225,13 +196,16 @@ with DAG(
             action=action,
             window=window,
             recompute=recompute,
+            config=DiscourseAnalyzerConfig(),
         )
 
-    platform_modules = fetch_discord_platforms()
+    platform_modules = fetch_discourse_platforms()
 
-    raw_data_etl = discord_etl_raw_data.expand(platform_info=platform_modules)
-    raw_members_etl = discord_etl_raw_members.expand(platform_info=platform_modules)
+    raw_data_etl = discourse_etl_raw_data.expand(platform_info=platform_modules)
+    raw_members_etl = discourse_etl_raw_members.expand(platform_info=platform_modules)
 
-    analyze_discord_task = analyze_discord.expand(platform_processed=platform_modules)
+    analyze_discourse_task = analyze_discourse.expand(
+        platform_processed=platform_modules
+    )
 
-    [raw_data_etl, raw_members_etl] >> analyze_discord_task
+    [raw_data_etl, raw_members_etl] >> analyze_discourse_task
