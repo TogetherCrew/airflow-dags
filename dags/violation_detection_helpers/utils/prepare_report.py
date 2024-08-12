@@ -27,9 +27,10 @@ class PrepareReport:
 
             if label and link:
                 # report for single document
-                doc_report = f"Document link: {link} | Label: {label}"
-
-                reports.append(doc_report)
+                # if there was a specific label
+                if label != "None":
+                    doc_report = f"Document link: {link} | Label: {label}"
+                    reports.append(doc_report)
             elif label:
                 logging.error(
                     f"Document with _id: {id} doesn't have "
