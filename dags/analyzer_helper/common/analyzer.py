@@ -2,6 +2,7 @@ import asyncio
 import logging
 from datetime import datetime
 
+from tc_analyzer_lib.publish_on_success import publish_on_success
 from tc_analyzer_lib.schemas.platform_configs import DiscordAnalyzerConfig
 from tc_analyzer_lib.schemas.platform_configs.config_base import PlatformConfigBase
 from tc_analyzer_lib.tc_analyzer import TCAnalyzer
@@ -34,3 +35,6 @@ class Analyzer:
         else:
             logging.info(f"{prefix} append analytics to previous analytics results!")
             asyncio.run(analyzer.run_once())
+
+        # this will just support discord platform
+        publish_on_success(platform_id, recompute)
