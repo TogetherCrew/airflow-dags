@@ -2,10 +2,10 @@ import asyncio
 import logging
 from datetime import datetime
 
+from tc_analyzer_lib.publish_on_success import publish_on_success
 from tc_analyzer_lib.schemas.platform_configs import DiscordAnalyzerConfig
 from tc_analyzer_lib.schemas.platform_configs.config_base import PlatformConfigBase
 from tc_analyzer_lib.tc_analyzer import TCAnalyzer
-from tc_analyzer_lib.publish_on_success import publish_on_success
 
 
 class Analyzer:
