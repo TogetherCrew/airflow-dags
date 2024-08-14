@@ -21,4 +21,4 @@ redis===5.0.4
 tc-wikipedia-lib==1.0.1
 llama-index-readers-file==0.1.22
 docx2txt==0.8
-tc-analyzer-lib==1.4.0
+tc-analyzer-lib==1.4.1
