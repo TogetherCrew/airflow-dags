@@ -4,6 +4,7 @@ from typing import Dict, List, Optional
 from analyzer_helper.telegram.utils.date_time_format_converter import (
     DateTimeFormatConverter,
 )
+from typing import List, Dict, Optional, Any
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
@@ -38,7 +39,7 @@ class ExtractRawInfo:
         if comparison:
             assert comparison in {"gt", "gte"}, "comparison must be either 'gt' or 'gte'"
 
-        where_clause = "WHERE c.title = $chat_title"
+        where_clause = "WHERE c.title = $chat_title AND (m.text IS NOT NULL OR m.photo IS NOT NULL)"
         if created_at and comparison:
             print(f"Fetching raw data with created_at: {created_at} and comparison: {comparison}")
             operator = ">" if comparison == "gt" else ">="
@@ -47,32 +48,34 @@ class ExtractRawInfo:
         query = f"""
         MATCH (c:TGChat)<-[:SENT_IN]-(m:TGMessage)
         {where_clause}
-        WITH m.id AS message_id, m.text AS message_text, m.date AS message_created_at, m
+        WITH m.id AS message_id, m.text AS message_text, m.date AS message_created_at, m.edit_date as message_edited_at, m
 
         // Fetch who created the message
         OPTIONAL MATCH (u:TGUser)-[r:CREATED_MESSAGE]->(m)
-        WITH message_id, message_text, message_created_at, u.id AS user_id, r.date AS created_date, m
+        WITH message_id, message_text, message_created_at, message_edited_at, u.id AS user_id, r.date AS created_date, m
 
         // Fetch reactions to the message
         OPTIONAL MATCH (reactor:TGUser)-[r:REACTED_TO]->(m)
-        WITH message_id, message_text, message_created_at, user_id, created_date, m,
+        WITH message_id, message_text, message_created_at, message_edited_at, user_id, created_date, m,
             [reaction IN collect({{reactor_id: reactor.id, reaction: r.new_reaction, reaction_date: r.date}}) WHERE reaction.reactor_id IS NOT NULL] AS reactions
 
         // Fetch message replies
         OPTIONAL MATCH (m1:TGMessage)-[r:REPLIED]->(m)
         OPTIONAL MATCH (replier:TGUser)-[:CREATED_MESSAGE]->(m1)
-        WITH message_id, message_text, message_created_at, user_id, created_date, reactions, m,
+        WITH message_id, message_text, message_created_at, message_edited_at, user_id, created_date, reactions, m,
             [reply IN collect({{reply_message_id: m1.id, replier_id: replier.id, replied_date: m1.date}}) WHERE reply.reply_message_id IS NOT NULL] AS replies
 
         // Fetch mentions in the message
         OPTIONAL MATCH (m)-[r:MENTIONED]->(mentioned:TGUser)
-        WITH message_id, message_text, message_created_at, user_id, created_date, reactions, replies,
+        WITH message_id, message_text, message_created_at, message_edited_at, user_id, created_date, reactions, replies,
             [mention IN collect({{mentioned_user_id: mentioned.id}}) WHERE mention.mentioned_user_id IS NOT NULL] AS mentions
 
-        RETURN message_id, message_text, message_created_at, user_id, reactions, replies, mentions
+        RETURN message_id, message_text, message_created_at, message_edited_at, user_id, reactions, replies, mentions
         ORDER BY message_id
-        LIMIT 10
         """
+        # Aggregate in code
+        # Fix the tests
+        # Release
 
         parameters = {"chat_title": self.forum_endpoint}
         if created_at and comparison:
@@ -143,3 +146,53 @@ class ExtractRawInfo:
             else:
                 data = self.fetch_raw_data()
         return data
+    
+    def process_messages(self, data: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """
+        Processes a list of message data from Neo4j, aggregating reactions, replies, and mentions for each message_id,
+        and selects the most recent entry based on `message_edited_at` (or `message_created_at` if `message_edited_at` is None)
+        to represent each unique `message_id`.
+
+        Args:
+            data (List[Dict[str, Any]]): A list of dictionaries where each dictionary contains data about a message,
+                                        including its text, creation time, edit time, user ID, and associated reactions, replies,
+                                        and mentions.
+
+        Returns:
+            List[Dict[str, Any]]: A list of dictionaries, each representing a consolidated message with aggregated
+                                reactions, replies, and mentions.
+        """
+        aggregated_results = {}
+
+        for item in data:
+            message_id = item['message_id']
+            created_at = item['message_created_at']
+            edited_at = item.get('message_edited_at', None)
+            user_id = item['user_id']
+            text = item['message_text']
+
+            # Determine the effective date to use for comparison (prefer edited date if available)
+            effective_date = edited_at if edited_at is not None else created_at
+
+            if message_id not in aggregated_results or effective_date > aggregated_results[message_id].get('effective_date', 0):
+                aggregated_results[message_id] = {
+                    'message_id': message_id,
+                    'message_text': text,
+                    'message_created_at': created_at,
+                    'message_edited_at': edited_at,
+                    'effective_date': effective_date,
+                    'user_id': user_id,
+                    'reactions': item['reactions'],
+                    'replies': item['replies'],
+                    'mentions': item['mentions']
+                }
+            else:
+                # Aggregate reactions, replies, and mentions if the current record is not newer
+                aggregated_results[message_id]['reactions'].extend(
+                    [r for r in item['reactions'] if r['reactor_id'] is not None])
+                aggregated_results[message_id]['replies'].extend(
+                    [r for r in item['replies'] if r['reply_message_id'] is not None])
+                aggregated_results[message_id]['mentions'].extend(
+                    [m for m in item['mentions'] if m['mentioned_user_id'] is not None])
+
+        return list(aggregated_results.values())
