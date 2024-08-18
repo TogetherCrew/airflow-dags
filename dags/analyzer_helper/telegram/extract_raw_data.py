@@ -103,49 +103,6 @@ class ExtractRawInfo:
             data = self.fetch_message_details()
 
         return data
-
-    def extract(self, period: datetime, recompute: bool = False) -> list:
-        """
-        Extract data based on the period and recompute flag.
-
-        :param period: The datetime period to filter posts.
-        :param recompute: Flag to indicate if recompute is needed.
-        :return: List of combined dictionaries containing telegram raw data.
-        """
-        data = []
-        if recompute:
-            data = self.fetch_raw_data()
-        else:
-            latest_activity = self.rawmemberactivities_collection.find_one(
-                sort=[("date", -1)]
-            )
-            latest_activity_date = latest_activity["date"] if latest_activity else None
-            if latest_activity_date is not None:
-                # Convert latest_activity_date to datetime if it is a string
-                if isinstance(latest_activity_date, str):
-                    latest_activity_date_datetime = self.converter.string_to_datetime(latest_activity_date)
-                elif isinstance(latest_activity_date, float):  # if it is a timestamp
-                    latest_activity_date_datetime = self.converter.timestamp_to_datetime(latest_activity_date)
-                else:
-                    latest_activity_date_datetime = latest_activity_date
-                # Convert latest_activity_date_datetime to unix timestmap format
-                latest_activity_date_unix_timestamp_format = (
-                    float(self.converter.datetime_to_timestamp(latest_activity_date_datetime))
-                    if latest_activity_date_datetime
-                    else None
-                )
-                period_unix_timestamp_format = float(self.converter.datetime_to_timestamp(period))
-                print("latest_activity_date_unix_timestamp_format:", latest_activity_date_unix_timestamp_format)
-                print("period_unix_timestamp_format:", period_unix_timestamp_format)
-                if latest_activity_date_unix_timestamp_format >= period_unix_timestamp_format:
-                    data = self.fetch_raw_data(latest_activity_date_unix_timestamp_format, "gt")
-                    print("latest_activity_date is equal or greater then period")
-                else:
-                    data = self.fetch_raw_data(period_unix_timestamp_format, "gte")
-                    print("latest_activity_date is less then period")
-            else:
-                data = self.fetch_raw_data()
-        return data
     
     def process_messages(self, data: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """
@@ -196,3 +153,47 @@ class ExtractRawInfo:
                     [m for m in item['mentions'] if m['mentioned_user_id'] is not None])
 
         return list(aggregated_results.values())
+
+    def extract(self, period: datetime, recompute: bool = False) -> list:
+        """
+        Extract data based on the period and recompute flag.
+
+        :param period: The datetime period to filter posts.
+        :param recompute: Flag to indicate if recompute is needed.
+        :return: List of combined dictionaries containing telegram raw data.
+        """
+        data = []
+        if recompute:
+            data = self.fetch_raw_data()
+        else:
+            latest_activity = self.rawmemberactivities_collection.find_one(
+                sort=[("date", -1)]
+            )
+            latest_activity_date = latest_activity["date"] if latest_activity else None
+            if latest_activity_date is not None:
+                # Convert latest_activity_date to datetime if it is a string
+                if isinstance(latest_activity_date, str):
+                    latest_activity_date_datetime = self.converter.string_to_datetime(latest_activity_date)
+                elif isinstance(latest_activity_date, float):  # if it is a timestamp
+                    latest_activity_date_datetime = self.converter.timestamp_to_datetime(latest_activity_date)
+                else:
+                    latest_activity_date_datetime = latest_activity_date
+                # Convert latest_activity_date_datetime to unix timestmap format
+                latest_activity_date_unix_timestamp_format = (
+                    float(self.converter.datetime_to_timestamp(latest_activity_date_datetime))
+                    if latest_activity_date_datetime
+                    else None
+                )
+                period_unix_timestamp_format = float(self.converter.datetime_to_timestamp(period))
+                print("latest_activity_date_unix_timestamp_format:", latest_activity_date_unix_timestamp_format)
+                print("period_unix_timestamp_format:", period_unix_timestamp_format)
+                if latest_activity_date_unix_timestamp_format >= period_unix_timestamp_format:
+                    data = self.fetch_raw_data(latest_activity_date_unix_timestamp_format, "gt")
+                    print("latest_activity_date is equal or greater then period")
+                else:
+                    data = self.fetch_raw_data(period_unix_timestamp_format, "gte")
+                    print("latest_activity_date is less then period")
+            else:
+                data = self.fetch_raw_data()
+        return self.process_messages(data)
+
