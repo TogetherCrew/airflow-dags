@@ -15,7 +15,7 @@ class MailGun:
 
         Parameters
         ------------
-        to_adress : str
+        to_address : str
             the address to send email to
         subject : str
             the email subject
@@ -40,7 +40,9 @@ class MailGun:
                     f"Successfully sent an email to '{to_address}' via Mailgun API."
                 )
             else:
-                logging.error(f"Could not send the email, reason: {resp.text}")
+                logging.error(
+                    f"Could not send the email, status code: {resp.status_code}, reason: {resp.text}"
+                )
 
         except Exception as ex:
             logging.exception(f"Mailgun error: {ex}")

@@ -5,13 +5,12 @@ from violation_detection_helpers.utils.mailgun import MailGun
 
 class SendReportEmail:
     def __init__(self, platform_id: str) -> None:
-        # using codes that was written for something else
         self.platform_id = platform_id
         self.mailgun = MailGun()
 
     def send(self, email: str, message: str) -> None:
         """
-        send discord user a message
+        send an email to a user
 
         Parameters
         ------------
@@ -30,6 +29,6 @@ class SendReportEmail:
             )
         except Exception as exp:
             logging.error(
-                f"{log_prefix}Error while reporting to discord user_id: "
+                f"{log_prefix}Error while sending email to: "
                 f"{email}. Exception: {exp}"
             )
