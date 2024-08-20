@@ -10,7 +10,7 @@ from violation_detection_helpers import (
     TransformPlatformRawData,
 )
 from violation_detection_helpers.modules import ViolationDetectionModules
-from violation_detection_helpers.utils import PrepareReport, SendReportDiscordUser
+from violation_detection_helpers.utils import PrepareReport, SendReportEmail
 
 with DAG(
     dag_id="violation_detection_etl",
@@ -47,7 +47,7 @@ with DAG(
         from_date = platform["from_date"]
         to_date = platform["to_date"]
         recompute = platform["recompute"]
-        discord_users = platform["selected_discord_users"]
+        emails = platform["selected_emails"]
 
         logging.info(f"Processing PLATFORM_ID: {platform_id}!")
 
@@ -83,9 +83,9 @@ with DAG(
                 prepare_report = PrepareReport()
                 report = prepare_report.prepare(transformed_documents=transformed_data)
 
-                for discord_id in discord_users:
-                    reporter = SendReportDiscordUser(platform_id=platform_id)
-                    reporter.send(discord_user_id=discord_id, message=report)
+                for email in emails:
+                    reporter = SendReportEmail(platform_id=platform_id)
+                    reporter.send(email=email, message=report)
         else:
             logging.warning(
                 f"PLATFORM_ID: {platform_id}, No documents were transformed!"

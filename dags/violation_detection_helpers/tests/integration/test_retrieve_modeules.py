@@ -32,7 +32,10 @@ class TestRetrieveViolationDetectionModules(TestCase):
                             "name": "discourse",
                             "metadata": {
                                 "selectedResources": ["123", "321", "221", "213"],
-                                "selectedDiscordUsers": ["91555", "91888", "91777"],
+                                "selectedEmails": [
+                                    "email1@example.com",
+                                    "email2@example.com",
+                                ],
                                 "fromDate": datetime(2023, 1, 1),
                                 "toDate": None,
                             },
@@ -68,7 +71,10 @@ class TestRetrieveViolationDetectionModules(TestCase):
                                 "name": "discourse",
                                 "metadata": {
                                     "selectedResources": ["123", "321", "221", "213"],
-                                    "selectedDiscordUsers": ["91555", "91888", "91777"],
+                                    "selectedEmails": [
+                                        "email1@example.com",
+                                        "email2@example.com",
+                                    ],
                                     "fromDate": datetime(2023, 1, 1),
                                     "toDate": None,
                                 },
@@ -77,8 +83,7 @@ class TestRetrieveViolationDetectionModules(TestCase):
                                 "platform": ObjectId("515151515151515151515153"),
                                 "name": "telegram",
                                 "metadata": {
-                                    "selectedResources": ["7373", "8282", "12390"],
-                                    "selectedDiscordUsers": ["91553"],
+                                    "selectedResources": ["7373", "8282", "1"],
                                     "fromDate": datetime(2023, 1, 1),
                                     "toDate": datetime(2024, 1, 1),
                                 },
@@ -124,7 +129,10 @@ class TestRetrieveViolationDetectionModules(TestCase):
                                 "name": "discourse",
                                 "metadata": {
                                     "selectedResources": ["123", "321", "221", "213"],
-                                    "selectedDiscordUsers": ["91555", "91888", "91777"],
+                                    "selectedEmails": [
+                                        "email1@example.com",
+                                        "email2@example.com",
+                                    ],
                                     "fromDate": datetime(2023, 1, 1),
                                     "toDate": None,
                                 },
@@ -143,8 +151,7 @@ class TestRetrieveViolationDetectionModules(TestCase):
                                 "platform": ObjectId("515151515151515151515153"),
                                 "name": "discord",
                                 "metadata": {
-                                    "selectedResources": ["7373", "8282", "12390"],
-                                    "selectedDiscordUsers": ["91553"],
+                                    "selectedResources": ["7373", "8282"],
                                     "fromDate": datetime(2023, 1, 1),
                                     "toDate": datetime(2024, 1, 1),
                                 },

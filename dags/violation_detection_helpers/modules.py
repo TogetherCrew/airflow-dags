@@ -27,7 +27,7 @@ class ViolationDetectionModules:
                 community: str,
                 platform_id: str,
                 resources: list[str],
-                selected_discord_users: list[str],
+                selected_emails: list[str],
                 from_date: datetime,
                 to_date: datetime,
             }
@@ -54,7 +54,7 @@ class ViolationDetectionModules:
                 try:
                     metadata = platform["metadata"]
                     resources = metadata["selectedResources"]
-                    discord_users = metadata["selectedDiscordUsers"]
+                    discord_users = metadata["selectedEmails"]
                     from_date = metadata["fromDate"]
                     to_date = metadata["toDate"]
 
@@ -63,7 +63,7 @@ class ViolationDetectionModules:
                             "community": community_id,
                             "platform_id": platform_id,
                             "resources": resources,
-                            "selected_discord_users": discord_users,
+                            "selected_emails": discord_users,
                             "from_date": from_date,
                             "to_date": to_date,
                             "recompute": False,  # for default it's False
