@@ -19,47 +19,32 @@ class TestTransformRawInfo(unittest.TestCase):
             "user_id": 3.0,
             "reactions": [
                 {
-                    "reaction": "[{\"type\":\"emoji\",\"emoji\":\"🍓\"}]",
+                    "reaction": '[{"type":"emoji","emoji":"🍓"}]',
                     "reaction_date": 1713165102.0,
-                    "reactor_id": 4.0
+                    "reactor_id": 4.0,
                 }
             ],
             "replies": [
                 {
                     "replier_id": 203678862.0,
                     "replied_date": 1713038036.0,
-                    "reply_message_id": 5.0
+                    "reply_message_id": 5.0,
                 }
             ],
-            "mentions": []
+            "mentions": [],
         }
         expected_result = {
-                'author_id': '3.0',
-                'date': datetime.datetime(2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc),
-                'source_id': '3.0',
-                'metadata': {
-                    'category_id': None,
-                    'topic_id': None,
-                    'bot_activity': False
-                },
-                'actions': [
-                    {
-                        'name': 'message',
-                        'type': 'emitter'
-                    }
-                ],
-                'interactions': [
-                    {
-                        'name': 'reaction',
-                        'type': 'receiver',
-                        'users_engaged_id': ['4']
-                    },
-                    {
-                        'name': 'reply',
-                        'type': 'emitter',
-                        'users_engaged_id': ['203678862']
-                    }
-                ]
+            "author_id": "3.0",
+            "date": datetime.datetime(
+                2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc
+            ),
+            "source_id": "3.0",
+            "metadata": {"category_id": None, "topic_id": None, "bot_activity": False},
+            "actions": [{"name": "message", "type": "emitter"}],
+            "interactions": [
+                {"name": "reaction", "type": "receiver", "users_engaged_id": ["4"]},
+                {"name": "reply", "type": "emitter", "users_engaged_id": ["203678862"]},
+            ],
         }
         result = self.transformer.create_data_entry(raw_data)
         print("result: \n", result)
@@ -75,49 +60,27 @@ class TestTransformRawInfo(unittest.TestCase):
             "user_id": 5.0,
             "reactions": [],
             "replies": [],
-            "mentions": [
-                {
-                    "mentioned_user_id": 6.0
-                },
-                {
-                    "mentioned_user_id": 7.0
-                }
-            ]
+            "mentions": [{"mentioned_user_id": 6.0}, {"mentioned_user_id": 7.0}],
         }
         result = self.transformer.create_data_entry(raw_data)
         expected_result = {
-            'author_id': '5.0',
-            'date': datetime.datetime(2024, 4, 13, 19, 55, 25, tzinfo=datetime.timezone.utc),
-            'source_id': '7.0',
-            'metadata': {
-                'category_id': None,
-                'topic_id': None,
-                'bot_activity': False
-            },
-            'actions': [
-                {
-                    'name': 'message',
-                    'type': 'emitter'
-                }
+            "author_id": "5.0",
+            "date": datetime.datetime(
+                2024, 4, 13, 19, 55, 25, tzinfo=datetime.timezone.utc
+            ),
+            "source_id": "7.0",
+            "metadata": {"category_id": None, "topic_id": None, "bot_activity": False},
+            "actions": [{"name": "message", "type": "emitter"}],
+            "interactions": [
+                {"name": "mention", "type": "receiver", "users_engaged_id": ["6"]},
+                {"name": "mention", "type": "receiver", "users_engaged_id": ["7"]},
             ],
-            'interactions': [
-                {
-                    'name': 'mention',
-                    'type': 'receiver',
-                    'users_engaged_id': ['6']
-                },
-                {
-                    'name': 'mention',
-                    'type': 'receiver',
-                    'users_engaged_id': ['7']
-                }
-            ]
         }
         self.assertEqual(result, expected_result)
 
     def test_transform_data_with_single_reply(self):
         data = [
-                {
+            {
                 "message_id": 3.0,
                 "message_text": "🎉️️️️️️ Welcome to the TC Ingestion Pipeline",
                 "message_created_at": 1713037938.0,
@@ -127,55 +90,46 @@ class TestTransformRawInfo(unittest.TestCase):
                     {
                         "replier_id": 2.0,
                         "replied_date": 1713038036.0,
-                        "reply_message_id": 5.0
+                        "reply_message_id": 5.0,
                     }
                 ],
-                "mentions": []
+                "mentions": [],
             },
         ]
         result = self.transformer.transform(data)
         expected_result = [
             {
-                'author_id': '1.0',
-                'date': datetime.datetime(2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc),
-                'source_id': '3.0',
-                'metadata': {
-                    'category_id': None,
-                    'topic_id': None,
-                    'bot_activity': False
+                "author_id": "1.0",
+                "date": datetime.datetime(
+                    2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc
+                ),
+                "source_id": "3.0",
+                "metadata": {
+                    "category_id": None,
+                    "topic_id": None,
+                    "bot_activity": False,
                 },
-                'actions': [
-                    {
-                        'name': 'message',
-                        'type': 'emitter'
-                    }
+                "actions": [{"name": "message", "type": "emitter"}],
+                "interactions": [
+                    {"name": "reply", "type": "emitter", "users_engaged_id": ["2"]}
                 ],
-                'interactions': [
-                    {
-                        'name': 'reply',
-                        'type': 'emitter',
-                        'users_engaged_id': ['2']
-                    }
-                ]
             },
             {
-                'author_id': '2',
-                'date': datetime.datetime(2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc),
-                'source_id': '3.0',
-                'metadata': {
-                    'category_id': None,
-                    'topic_id': None,
-                    'bot_activity': False
+                "author_id": "2",
+                "date": datetime.datetime(
+                    2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc
+                ),
+                "source_id": "3.0",
+                "metadata": {
+                    "category_id": None,
+                    "topic_id": None,
+                    "bot_activity": False,
                 },
-                'actions': [],
-                'interactions': [
-                    {
-                        'name': 'reply',
-                        'type': 'receiver',
-                        'users_engaged_id': ['1.0']
-                    }
-                ]
-            }
+                "actions": [],
+                "interactions": [
+                    {"name": "reply", "type": "receiver", "users_engaged_id": ["1.0"]}
+                ],
+            },
         ]
         self.assertEqual(result, expected_result)
 
@@ -191,83 +145,68 @@ class TestTransformRawInfo(unittest.TestCase):
                     {
                         "replier_id": 2.0,
                         "replied_date": 1713038036.0,
-                        "reply_message_id": 5.0
+                        "reply_message_id": 5.0,
                     },
                     {
                         "replier_id": 3.0,
                         "replied_date": 1713038036.0,
-                        "reply_message_id": 6.0
+                        "reply_message_id": 6.0,
                     },
                 ],
-                "mentions": []
+                "mentions": [],
             },
         ]
         result = self.transformer.transform(data)
         expected_result = [
             {
-                'author_id': '1.0',
-                'date': datetime.datetime(2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc),
-                'source_id': '3.0',
-                'metadata': {
-                    'category_id': None,
-                    'topic_id': None,
-                    'bot_activity': False
+                "author_id": "1.0",
+                "date": datetime.datetime(
+                    2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc
+                ),
+                "source_id": "3.0",
+                "metadata": {
+                    "category_id": None,
+                    "topic_id": None,
+                    "bot_activity": False,
                 },
-                'actions': [
-                    {
-                        'name': 'message',
-                        'type': 'emitter'
-                    }
+                "actions": [{"name": "message", "type": "emitter"}],
+                "interactions": [
+                    {"name": "reply", "type": "emitter", "users_engaged_id": ["2"]},
+                    {"name": "reply", "type": "emitter", "users_engaged_id": ["3"]},
                 ],
-                'interactions': [
-                    {
-                        'name': 'reply',
-                        'type': 'emitter',
-                        'users_engaged_id': ['2']
-                    },
-                    {
-                        'name': 'reply',
-                        'type': 'emitter',
-                        'users_engaged_id': ['3']
-                    }
-                ]
             },
             {
-                'author_id': '2',
-                'date': datetime.datetime(2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc),
-                'source_id': '3.0',
-                'metadata': {
-                    'category_id': None,
-                    'topic_id': None,
-                    'bot_activity': False
+                "author_id": "2",
+                "date": datetime.datetime(
+                    2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc
+                ),
+                "source_id": "3.0",
+                "metadata": {
+                    "category_id": None,
+                    "topic_id": None,
+                    "bot_activity": False,
                 },
-                'actions': [],
-                'interactions': [
-                    {
-                        'name': 'reply',
-                        'type': 'receiver',
-                        'users_engaged_id': ['1.0']
-                    }
-                ]
+                "actions": [],
+                "interactions": [
+                    {"name": "reply", "type": "receiver", "users_engaged_id": ["1.0"]}
+                ],
             },
             {
-                'author_id': '3',
-                'date': datetime.datetime(2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc),
-                'source_id': '3.0',
-                'metadata': {
-                    'category_id': None,
-                    'topic_id': None,
-                    'bot_activity': False
+                "author_id": "3",
+                "date": datetime.datetime(
+                    2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc
+                ),
+                "source_id": "3.0",
+                "metadata": {
+                    "category_id": None,
+                    "topic_id": None,
+                    "bot_activity": False,
                 },
-                'actions': [],
-                'interactions': [
-                    {
-                        'name': 'reply',
-                        'type': 'receiver',
-                        'users_engaged_id': ['1.0']
-                    }
-                ]
-            }
+                "actions": [],
+                "interactions": [
+                    {"name": "reply", "type": "receiver", "users_engaged_id": ["1.0"]}
+                ],
+            },
         ]
         self.assertEqual(result, expected_result)
 
@@ -281,55 +220,44 @@ class TestTransformRawInfo(unittest.TestCase):
                 "reactions": [],
                 "replies": [],
                 "mentions": [
-                    {
-                        "mentioned_user_id": 3.0
-                    },
-                ]
+                    {"mentioned_user_id": 3.0},
+                ],
             },
         ]
         result = self.transformer.transform(data)
         expected_result = [
             {
-                'author_id': '2.0',
-                'date': datetime.datetime(2024, 4, 13, 19, 55, 25, tzinfo=datetime.timezone.utc),
-                'source_id': '7.0',
-                'metadata': {
-                    'category_id': None,
-                    'topic_id': None,
-                    'bot_activity': False
+                "author_id": "2.0",
+                "date": datetime.datetime(
+                    2024, 4, 13, 19, 55, 25, tzinfo=datetime.timezone.utc
+                ),
+                "source_id": "7.0",
+                "metadata": {
+                    "category_id": None,
+                    "topic_id": None,
+                    "bot_activity": False,
                 },
-                'actions': [
-                    {
-                        'name': 'message',
-                        'type': 'emitter'
-                    }
+                "actions": [{"name": "message", "type": "emitter"}],
+                "interactions": [
+                    {"name": "mention", "type": "receiver", "users_engaged_id": ["3"]}
                 ],
-                'interactions': [
-                    {
-                        'name': 'mention',
-                        'type': 'receiver',
-                        'users_engaged_id': ['3']
-                    }
-                ]
             },
             {
-                'author_id': '3',
-                'date': datetime.datetime(2024, 4, 13, 19, 55, 25, tzinfo=datetime.timezone.utc),
-                'source_id': '7.0',
-                'metadata': {
-                    'category_id': None,
-                    'topic_id': None,
-                    'bot_activity': False
+                "author_id": "3",
+                "date": datetime.datetime(
+                    2024, 4, 13, 19, 55, 25, tzinfo=datetime.timezone.utc
+                ),
+                "source_id": "7.0",
+                "metadata": {
+                    "category_id": None,
+                    "topic_id": None,
+                    "bot_activity": False,
                 },
-                'actions': [],
-                'interactions': [
-                    {
-                        'name': 'mention',
-                        'type': 'emitter',
-                        'users_engaged_id': ['2.0']
-                    }
-                ]
-            }
+                "actions": [],
+                "interactions": [
+                    {"name": "mention", "type": "emitter", "users_engaged_id": ["2.0"]}
+                ],
+            },
         ]
         self.assertEqual(result, expected_result)
 
@@ -342,21 +270,16 @@ class TestTransformRawInfo(unittest.TestCase):
                 "user_id": 1.0,
                 "reactions": [],
                 "replies": [],
-                "mentions": [
-                    {
-                        "mentioned_user_id": 2.0
-                    },
-                    {
-                        "mentioned_user_id": 3.0
-                    }
-                ]
+                "mentions": [{"mentioned_user_id": 2.0}, {"mentioned_user_id": 3.0}],
             },
         ]
         result = self.transformer.transform(data)
         expected_result = [
             {
                 "author_id": "1.0",
-                "date": datetime.datetime(2024, 4, 13, 19, 55, 25, tzinfo=datetime.timezone.utc),
+                "date": datetime.datetime(
+                    2024, 4, 13, 19, 55, 25, tzinfo=datetime.timezone.utc
+                ),
                 "source_id": "7.0",
                 "metadata": {
                     "category_id": None,
@@ -375,20 +298,22 @@ class TestTransformRawInfo(unittest.TestCase):
                         "type": "receiver",
                         "users_engaged_id": [
                             "2",
-                        ]
+                        ],
                     },
                     {
                         "name": "mention",
                         "type": "receiver",
                         "users_engaged_id": [
                             "3",
-                        ]
-                    }
-                ]
+                        ],
+                    },
+                ],
             },
             {
                 "author_id": "2",
-                "date": datetime.datetime(2024, 4, 13, 19, 55, 25, tzinfo=datetime.timezone.utc),
+                "date": datetime.datetime(
+                    2024, 4, 13, 19, 55, 25, tzinfo=datetime.timezone.utc
+                ),
                 "source_id": "7.0",
                 "metadata": {
                     "category_id": None,
@@ -402,13 +327,15 @@ class TestTransformRawInfo(unittest.TestCase):
                         "type": "emitter",
                         "users_engaged_id": [
                             "1.0",
-                        ]
+                        ],
                     }
-                ]
+                ],
             },
             {
                 "author_id": "3",
-                "date": datetime.datetime(2024, 4, 13, 19, 55, 25, tzinfo=datetime.timezone.utc),
+                "date": datetime.datetime(
+                    2024, 4, 13, 19, 55, 25, tzinfo=datetime.timezone.utc
+                ),
                 "source_id": "7.0",
                 "metadata": {
                     "category_id": None,
@@ -422,74 +349,65 @@ class TestTransformRawInfo(unittest.TestCase):
                         "type": "emitter",
                         "users_engaged_id": [
                             "1.0",
-                        ]
+                        ],
                     }
-                ]
-            }
+                ],
+            },
         ]
         self.assertEqual(result, expected_result)
 
     def test_transform_data_with_single_reaction(self):
         data = [
-                {
+            {
                 "message_id": 11.0,
                 "message_text": "Ah I lost the chat history",
                 "message_created_at": 1713038191.0,
                 "user_id": 2.0,
                 "reactions": [
                     {
-                        "reaction": "[{\"type\":\"emoji\",\"emoji\":\"🍓\"}]",
+                        "reaction": '[{"type":"emoji","emoji":"🍓"}]',
                         "reaction_date": 1713038348.0,
-                        "reactor_id": 1.0
+                        "reactor_id": 1.0,
                     }
                 ],
                 "replies": [],
-                "mentions": []
+                "mentions": [],
             }
         ]
         result = self.transformer.transform(data)
         expected_result = [
             {
-                'author_id': '2.0',
-                'date': datetime.datetime(2024, 4, 13, 19, 56, 31, tzinfo=datetime.timezone.utc),
-                'source_id': '11.0',
-                'metadata': {
-                    'category_id': None,
-                    'topic_id': None,
-                    'bot_activity': False
+                "author_id": "2.0",
+                "date": datetime.datetime(
+                    2024, 4, 13, 19, 56, 31, tzinfo=datetime.timezone.utc
+                ),
+                "source_id": "11.0",
+                "metadata": {
+                    "category_id": None,
+                    "topic_id": None,
+                    "bot_activity": False,
                 },
-                'actions': [
-                    {
-                        'name': 'message',
-                        'type': 'emitter'
-                    }
+                "actions": [{"name": "message", "type": "emitter"}],
+                "interactions": [
+                    {"name": "reaction", "type": "receiver", "users_engaged_id": ["1"]}
                 ],
-                'interactions': [
-                    {
-                        'name': 'reaction',
-                        'type': 'receiver',
-                        'users_engaged_id': ['1']
-                    }
-                ]
             },
             {
-                'author_id': '1',
-                'date': datetime.datetime(2024, 4, 13, 19, 56, 31, tzinfo=datetime.timezone.utc),
-                'source_id': '11.0',
-                'metadata': {
-                    'category_id': None,
-                    'topic_id': None,
-                    'bot_activity': False
+                "author_id": "1",
+                "date": datetime.datetime(
+                    2024, 4, 13, 19, 56, 31, tzinfo=datetime.timezone.utc
+                ),
+                "source_id": "11.0",
+                "metadata": {
+                    "category_id": None,
+                    "topic_id": None,
+                    "bot_activity": False,
                 },
-                'actions': [],
-                'interactions': [
-                    {
-                        'name': 'reaction',
-                        'type': 'emitter',
-                        'users_engaged_id': ['2.0']
-                    }
-                ]
-            }
+                "actions": [],
+                "interactions": [
+                    {"name": "reaction", "type": "emitter", "users_engaged_id": ["2.0"]}
+                ],
+            },
         ]
         self.assertEqual(result, expected_result)
 
@@ -502,15 +420,15 @@ class TestTransformRawInfo(unittest.TestCase):
                 "user_id": 2.0,
                 "reactions": [
                     {
-                        "reaction": "[{\"type\":\"emoji\",\"emoji\":\"🍓\"}]",
+                        "reaction": '[{"type":"emoji","emoji":"🍓"}]',
                         "reaction_date": 1713038348.0,
-                        "reactor_id": 1.0
+                        "reactor_id": 1.0,
                     },
                     {
-                        "reaction": "[{\"type\":\"emoji\",\"emoji\":\"🙌\"}]",
+                        "reaction": '[{"type":"emoji","emoji":"🙌"}]',
                         "reaction_date": 1713038349.0,
-                        "reactor_id": 2.0
-                    }
+                        "reactor_id": 2.0,
+                    },
                 ],
                 "replies": [],
                 "mentions": [],
@@ -519,71 +437,56 @@ class TestTransformRawInfo(unittest.TestCase):
         result = self.transformer.transform(data)
         expected_result = [
             {
-                'author_id': '2.0',
-                'date': datetime.datetime(2024, 4, 13, 21, 56, 31, tzinfo=datetime.timezone.utc),
-                'source_id': '11.0',
-                'metadata': {
-                    'category_id': None,
-                    'topic_id': None,
-                    'bot_activity': False
+                "author_id": "2.0",
+                "date": datetime.datetime(
+                    2024, 4, 13, 21, 56, 31, tzinfo=datetime.timezone.utc
+                ),
+                "source_id": "11.0",
+                "metadata": {
+                    "category_id": None,
+                    "topic_id": None,
+                    "bot_activity": False,
                 },
-                'actions': [
-                    {
-                        'name': 'message',
-                        'type': 'emitter'
-                    }
+                "actions": [{"name": "message", "type": "emitter"}],
+                "interactions": [
+                    {"name": "reaction", "type": "receiver", "users_engaged_id": ["1"]},
+                    {"name": "reaction", "type": "receiver", "users_engaged_id": ["2"]},
                 ],
-                'interactions': [
-                    {
-                        'name': 'reaction',
-                        'type': 'receiver',
-                        'users_engaged_id': ['1']
-                    },
-                    {
-                        'name': 'reaction',
-                        'type': 'receiver',
-                        'users_engaged_id': ['2']
-                    }
-                ]
             },
             {
-                'author_id': '1',
-                'date': datetime.datetime(2024, 4, 13, 21, 56, 31, tzinfo=datetime.timezone.utc),
-                'source_id': '11.0',
-                'metadata': {
-                    'category_id': None,
-                    'topic_id': None,
-                    'bot_activity': False
+                "author_id": "1",
+                "date": datetime.datetime(
+                    2024, 4, 13, 21, 56, 31, tzinfo=datetime.timezone.utc
+                ),
+                "source_id": "11.0",
+                "metadata": {
+                    "category_id": None,
+                    "topic_id": None,
+                    "bot_activity": False,
                 },
-                'actions': [],
-                'interactions': [
-                    {
-                        'name': 'reaction',
-                        'type': 'emitter',
-                        'users_engaged_id': ['2.0']
-                    }
-                ]
+                "actions": [],
+                "interactions": [
+                    {"name": "reaction", "type": "emitter", "users_engaged_id": ["2.0"]}
+                ],
             },
             {
-                'author_id': '2',
-                'date': datetime.datetime(2024, 4, 13, 21, 56, 31, tzinfo=datetime.timezone.utc),
-                'source_id': '11.0',
-                'metadata': {
-                    'category_id': None,
-                    'topic_id': None,
-                    'bot_activity': False
+                "author_id": "2",
+                "date": datetime.datetime(
+                    2024, 4, 13, 21, 56, 31, tzinfo=datetime.timezone.utc
+                ),
+                "source_id": "11.0",
+                "metadata": {
+                    "category_id": None,
+                    "topic_id": None,
+                    "bot_activity": False,
                 },
-                'actions': [],
-                'interactions': [
-                    {
-                        'name': 'reaction',
-                        'type': 'emitter',
-                        'users_engaged_id': ['2.0']
-                    }
-                ]
-            }
+                "actions": [],
+                "interactions": [
+                    {"name": "reaction", "type": "emitter", "users_engaged_id": ["2.0"]}
+                ],
+            },
         ]
-    
+
     def test_transform_data_with_replied_mentions_interactions(self):
         data = [
             {
@@ -593,196 +496,150 @@ class TestTransformRawInfo(unittest.TestCase):
                 "user_id": 1.0,
                 "reactions": [
                     {
-                        "reaction": "[{\"type\":\"emoji\",\"emoji\":\"🍓\"}]",
+                        "reaction": '[{"type":"emoji","emoji":"🍓"}]',
                         "reaction_date": 1713038348.0,
-                        "reactor_id": 2.0
+                        "reactor_id": 2.0,
                     },
                     {
-                        "reaction": "[{\"type\":\"emoji\",\"emoji\":\"🙌\"}]",
+                        "reaction": '[{"type":"emoji","emoji":"🙌"}]',
                         "reaction_date": 1713038349.0,
-                        "reactor_id": 3.0
-                    }
+                        "reactor_id": 3.0,
+                    },
                 ],
                 "replies": [
                     {
                         "replier_id": 4.0,
                         "replied_date": 1713038036.0,
-                        "reply_message_id": 5.0
+                        "reply_message_id": 5.0,
                     },
                     {
                         "replier_id": 5.0,
                         "replied_date": 1713038036.0,
-                        "reply_message_id": 6.0
-                    }
-                ],
-                "mentions": [
-                    {
-                        "mentioned_user_id": 6.0
+                        "reply_message_id": 6.0,
                     },
-                    {
-                        "mentioned_user_id": 7.0
-                    }
-                ]
+                ],
+                "mentions": [{"mentioned_user_id": 6.0}, {"mentioned_user_id": 7.0}],
             }
         ]
         result = self.transformer.transform(data)
         expected_result = [
             {
-                'author_id': '1.0',
-                'date': datetime.datetime(2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc),
-                'source_id': '3.0',
-                'metadata': {
-                    'category_id': None,
-                    'topic_id': None,
-                    'bot_activity': False
+                "author_id": "1.0",
+                "date": datetime.datetime(
+                    2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc
+                ),
+                "source_id": "3.0",
+                "metadata": {
+                    "category_id": None,
+                    "topic_id": None,
+                    "bot_activity": False,
                 },
-                'actions': [
-                    {
-                        'name': 'message',
-                        'type': 'emitter'
-                    }
+                "actions": [{"name": "message", "type": "emitter"}],
+                "interactions": [
+                    {"name": "reaction", "type": "receiver", "users_engaged_id": ["2"]},
+                    {"name": "reaction", "type": "receiver", "users_engaged_id": ["3"]},
+                    {"name": "reply", "type": "emitter", "users_engaged_id": ["4"]},
+                    {"name": "reply", "type": "emitter", "users_engaged_id": ["5"]},
+                    {"name": "mention", "type": "receiver", "users_engaged_id": ["6"]},
+                    {"name": "mention", "type": "receiver", "users_engaged_id": ["7"]},
                 ],
-                'interactions': [
-                    {
-                        'name': 'reaction',
-                        'type': 'receiver',
-                        'users_engaged_id': ['2']
-                    },
-                    {
-                        'name': 'reaction',
-                        'type': 'receiver',
-                        'users_engaged_id': ['3']
-                    },
-                    {
-                        'name': 'reply',
-                        'type': 'emitter',
-                        'users_engaged_id': ['4']
-                    },
-                    {
-                        'name': 'reply',
-                        'type': 'emitter',
-                        'users_engaged_id': ['5']
-                    },
-                    {
-                        'name': 'mention',
-                        'type': 'receiver',
-                        'users_engaged_id': ['6']
-                    },
-                    {
-                        'name': 'mention',
-                        'type': 'receiver',
-                        'users_engaged_id': ['7']
-                    }
-                ]
             },
             {
-                'author_id': '2',
-                'date': datetime.datetime(2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc),
-                'source_id': '3.0',
-                'metadata': {
-                    'category_id': None,
-                    'topic_id': None,
-                    'bot_activity': False
+                "author_id": "2",
+                "date": datetime.datetime(
+                    2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc
+                ),
+                "source_id": "3.0",
+                "metadata": {
+                    "category_id": None,
+                    "topic_id": None,
+                    "bot_activity": False,
                 },
-                'actions': [],
-                'interactions': [
-                    {
-                        'name': 'reaction',
-                        'type': 'emitter',
-                        'users_engaged_id': ['1.0']
-                    }
-                ]
+                "actions": [],
+                "interactions": [
+                    {"name": "reaction", "type": "emitter", "users_engaged_id": ["1.0"]}
+                ],
             },
             {
-                'author_id': '3',
-                'date': datetime.datetime(2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc),
-                'source_id': '3.0',
-                'metadata': {
-                    'category_id': None,
-                    'topic_id': None,
-                    'bot_activity': False
+                "author_id": "3",
+                "date": datetime.datetime(
+                    2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc
+                ),
+                "source_id": "3.0",
+                "metadata": {
+                    "category_id": None,
+                    "topic_id": None,
+                    "bot_activity": False,
                 },
-                'actions': [],
-                'interactions': [
-                    {
-                        'name': 'reaction',
-                        'type': 'emitter',
-                        'users_engaged_id': ['1.0']
-                    }
-                ]
+                "actions": [],
+                "interactions": [
+                    {"name": "reaction", "type": "emitter", "users_engaged_id": ["1.0"]}
+                ],
             },
             {
-                'author_id': '4',
-                'date': datetime.datetime(2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc),
-                'source_id': '3.0',
-                'metadata': {
-                    'category_id': None,
-                    'topic_id': None,
-                    'bot_activity': False
+                "author_id": "4",
+                "date": datetime.datetime(
+                    2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc
+                ),
+                "source_id": "3.0",
+                "metadata": {
+                    "category_id": None,
+                    "topic_id": None,
+                    "bot_activity": False,
                 },
-                'actions': [],
-                'interactions': [
-                    {
-                        'name': 'reply',
-                        'type': 'receiver',
-                        'users_engaged_id': ['1.0']
-                    }
-                ]
+                "actions": [],
+                "interactions": [
+                    {"name": "reply", "type": "receiver", "users_engaged_id": ["1.0"]}
+                ],
             },
             {
-                'author_id': '5',
-                'date': datetime.datetime(2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc),
-                'source_id': '3.0',
-                'metadata': {
-                    'category_id': None,
-                    'topic_id': None,
-                    'bot_activity': False
+                "author_id": "5",
+                "date": datetime.datetime(
+                    2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc
+                ),
+                "source_id": "3.0",
+                "metadata": {
+                    "category_id": None,
+                    "topic_id": None,
+                    "bot_activity": False,
                 },
-                'actions': [],
-                'interactions': [
-                    {
-                        'name': 'reply',
-                        'type': 'receiver',
-                        'users_engaged_id': ['1.0']
-                    }
-                ]
+                "actions": [],
+                "interactions": [
+                    {"name": "reply", "type": "receiver", "users_engaged_id": ["1.0"]}
+                ],
             },
             {
-                'author_id': '6',
-                'date': datetime.datetime(2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc),
-                'source_id': '3.0',
-                'metadata': {
-                    'category_id': None,
-                    'topic_id': None,
-                    'bot_activity': False
+                "author_id": "6",
+                "date": datetime.datetime(
+                    2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc
+                ),
+                "source_id": "3.0",
+                "metadata": {
+                    "category_id": None,
+                    "topic_id": None,
+                    "bot_activity": False,
                 },
-                'actions': [],
-                'interactions': [
-                    {
-                        'name': 'mention',
-                        'type': 'emitter',
-                        'users_engaged_id': ['1.0']
-                    }
-                ]
+                "actions": [],
+                "interactions": [
+                    {"name": "mention", "type": "emitter", "users_engaged_id": ["1.0"]}
+                ],
             },
             {
-                'author_id': '7',
-                'date': datetime.datetime(2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc),
-                'source_id': '3.0',
-                'metadata': {
-                    'category_id': None,
-                    'topic_id': None,
-                    'bot_activity': False
+                "author_id": "7",
+                "date": datetime.datetime(
+                    2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc
+                ),
+                "source_id": "3.0",
+                "metadata": {
+                    "category_id": None,
+                    "topic_id": None,
+                    "bot_activity": False,
                 },
-                'actions': [],
-                'interactions': [
-                    {
-                        'name': 'mention',
-                        'type': 'emitter',
-                        'users_engaged_id': ['1.0']
-                    }
-                ]
-            }
+                "actions": [],
+                "interactions": [
+                    {"name": "mention", "type": "emitter", "users_engaged_id": ["1.0"]}
+                ],
+            },
         ]
         print("result: \n", result)
         print("expected_result: \n", expected_result)

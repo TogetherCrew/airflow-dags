@@ -61,44 +61,44 @@ class TestExtractRawInfo(unittest.TestCase):
         result = self.extractor.fetch_message_details()
         expected_result = [
             {
-                "message_id": '3.0',
+                "message_id": "3.0",
                 "message_text": "🎉️️️️️️ Welcome to the TC Ingestion Pipeline",
                 "message_created_at": 1672531200.0,
-                "user_id": '927814807.0',
+                "user_id": "927814807.0",
                 "reactions": [
                     {
                         "reaction": '[{"type":"emoji","emoji":"🍓"}]',
                         "reaction_date": 1672790400.0,
-                        "reactor_id": '927814807.0',
+                        "reactor_id": "927814807.0",
                     }
                 ],
                 "replies": [
                     {
                         "replied_date": 1672704000.0,
-                        "replier_id": '203678862.0', 
-                        "reply_message_id": '5.0', 
+                        "replier_id": "203678862.0",
+                        "reply_message_id": "5.0",
                     }
                 ],
                 "mentions": [],
             },
             {
-                "message_id": '4.0',
+                "message_id": "4.0",
                 "message_text": "Hi",
                 "message_created_at": 1672617600.0,
-                "user_id": '203678862.0',
+                "user_id": "203678862.0",
                 "reactions": [],
                 "replies": [],
                 "mentions": [],
             },
             {
-                "message_id": '5.0',
+                "message_id": "5.0",
                 "message_text": "Reply🫡",
                 "message_created_at": 1672704000.0,
-                "user_id": '203678862.0',
+                "user_id": "203678862.0",
                 "reactions": [],
                 "replies": [],
                 "mentions": [],
-            }
+            },
         ]
         self.assertEqual(len(result), 3)
         self.assertEqual(result, expected_result)
@@ -113,19 +113,19 @@ class TestExtractRawInfo(unittest.TestCase):
                 "user_id": "927814807.0",
                 "reactions": [
                     {
-                        "reaction": "[{\"type\":\"emoji\",\"emoji\":\"🍓\"}]",
+                        "reaction": '[{"type":"emoji","emoji":"🍓"}]',
                         "reaction_date": 1672790400.0,
-                        "reactor_id": "927814807.0"
+                        "reactor_id": "927814807.0",
                     }
                 ],
                 "replies": [
                     {
                         "replied_date": 1672704000.0,
                         "replier_id": "203678862.0",
-                        "reply_message_id": "5.0"
+                        "reply_message_id": "5.0",
                     }
                 ],
-                "mentions": []
+                "mentions": [],
             },
             {
                 "message_id": "4.0",
@@ -134,7 +134,7 @@ class TestExtractRawInfo(unittest.TestCase):
                 "user_id": "203678862.0",
                 "reactions": [],
                 "replies": [],
-                "mentions": []
+                "mentions": [],
             },
             {
                 "message_id": "5.0",
@@ -143,8 +143,8 @@ class TestExtractRawInfo(unittest.TestCase):
                 "user_id": "203678862.0",
                 "reactions": [],
                 "replies": [],
-                "mentions": []
-            }
+                "mentions": [],
+            },
         ]
         self.assertEqual(len(result), 3)
         self.assertEqual(result, expected_result)
@@ -163,19 +163,19 @@ class TestExtractRawInfo(unittest.TestCase):
                 "user_id": "927814807.0",
                 "reactions": [
                     {
-                        "reaction": "[{\"type\":\"emoji\",\"emoji\":\"🍓\"}]",
+                        "reaction": '[{"type":"emoji","emoji":"🍓"}]',
                         "reaction_date": 1672790400.0,
-                        "reactor_id": "927814807.0"
+                        "reactor_id": "927814807.0",
                     }
                 ],
                 "replies": [
                     {
                         "replied_date": 1672704000.0,
                         "replier_id": "203678862.0",
-                        "reply_message_id": "5.0"
+                        "reply_message_id": "5.0",
                     }
                 ],
-                "mentions": []
+                "mentions": [],
             },
             {
                 "message_id": "4.0",
@@ -184,7 +184,7 @@ class TestExtractRawInfo(unittest.TestCase):
                 "user_id": "203678862.0",
                 "reactions": [],
                 "replies": [],
-                "mentions": []
+                "mentions": [],
             },
             {
                 "message_id": "5.0",
@@ -193,8 +193,8 @@ class TestExtractRawInfo(unittest.TestCase):
                 "user_id": "203678862.0",
                 "reactions": [],
                 "replies": [],
-                "mentions": []
-            }
+                "mentions": [],
+            },
         ]
         self.assertEqual(result, expected_result)
 
@@ -212,19 +212,19 @@ class TestExtractRawInfo(unittest.TestCase):
                 "user_id": "927814807.0",
                 "reactions": [
                     {
-                        "reaction": "[{\"type\":\"emoji\",\"emoji\":\"🍓\"}]",
+                        "reaction": '[{"type":"emoji","emoji":"🍓"}]',
                         "reaction_date": 1672790400.0,
-                        "reactor_id": "927814807.0"
+                        "reactor_id": "927814807.0",
                     }
                 ],
                 "replies": [
                     {
                         "replied_date": 1672704000.0,
                         "replier_id": "203678862.0",
-                        "reply_message_id": "5.0"
+                        "reply_message_id": "5.0",
                     }
                 ],
-                "mentions": []
+                "mentions": [],
             },
             {
                 "message_id": "4.0",
@@ -233,7 +233,7 @@ class TestExtractRawInfo(unittest.TestCase):
                 "user_id": "203678862.0",
                 "reactions": [],
                 "replies": [],
-                "mentions": []
+                "mentions": [],
             },
             {
                 "message_id": "5.0",
@@ -242,8 +242,8 @@ class TestExtractRawInfo(unittest.TestCase):
                 "user_id": "203678862.0",
                 "reactions": [],
                 "replies": [],
-                "mentions": []
-            }
+                "mentions": [],
+            },
         ]
         print("result: \n", result)
         print("expected_result :\n", expected_result)
@@ -293,19 +293,19 @@ class TestExtractRawInfo(unittest.TestCase):
                 "user_id": "927814807.0",
                 "reactions": [
                     {
-                        "reaction": "[{\"type\":\"emoji\",\"emoji\":\"🍓\"}]",
+                        "reaction": '[{"type":"emoji","emoji":"🍓"}]',
                         "reaction_date": 1672790400.0,
-                        "reactor_id": "927814807.0"
+                        "reactor_id": "927814807.0",
                     }
                 ],
                 "replies": [
                     {
                         "reply_message_id": "5.0",
                         "replier_id": "203678862.0",
-                        "replied_date": 1672704000.0
+                        "replied_date": 1672704000.0,
                     }
                 ],
-                "mentions": []
+                "mentions": [],
             },
             {
                 "message_id": "4.0",
@@ -314,7 +314,7 @@ class TestExtractRawInfo(unittest.TestCase):
                 "user_id": "203678862.0",
                 "reactions": [],
                 "replies": [],
-                "mentions": []
+                "mentions": [],
             },
             {
                 "message_id": "5.0",
@@ -323,8 +323,8 @@ class TestExtractRawInfo(unittest.TestCase):
                 "user_id": "203678862.0",
                 "reactions": [],
                 "replies": [],
-                "mentions": []
-            }
+                "mentions": [],
+            },
         ]
         print("result: \n", result)
         print("expected_result: \n", expected_result)
@@ -362,7 +362,7 @@ class TestExtractRawInfo(unittest.TestCase):
         )
         result = self.extractor.extract(
             period=datetime.datetime(2023, 1, 1), recompute=False
-        )        
+        )
         expected_result = [
             {
                 "message_id": "4.0",
@@ -371,7 +371,7 @@ class TestExtractRawInfo(unittest.TestCase):
                 "user_id": "203678862.0",
                 "reactions": [],
                 "replies": [],
-                "mentions": []
+                "mentions": [],
             },
             {
                 "message_id": "5.0",
@@ -380,8 +380,7 @@ class TestExtractRawInfo(unittest.TestCase):
                 "user_id": "203678862.0",
                 "reactions": [],
                 "replies": [],
-                "mentions": []
-            }
+                "mentions": [],
+            },
         ]
         self.assertEqual(result, expected_result)
-

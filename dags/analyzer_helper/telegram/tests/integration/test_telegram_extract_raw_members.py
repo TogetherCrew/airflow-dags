@@ -4,6 +4,7 @@ import datetime
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
 from analyzer_helper.telegram.extract_raw_members import ExtractRawMembers
 
+
 class TestExtractRawMembers(unittest.TestCase):
     def setUp(self):
         self.neo4jConnection = Neo4jConnection()
@@ -48,9 +49,9 @@ class TestExtractRawMembers(unittest.TestCase):
                 RETURN id(u) AS id
                 """,
                 chat_title=self.test_chat_title,
-                created_at=1688162400.0, #2023, 7, 1
-                joined_date=1688162400.0, #2023, 7, 1
-                left_date=1688248800.0, #2023, 7, 2
+                created_at=1688162400.0,  # 2023, 7, 1
+                joined_date=1688162400.0,  # 2023, 7, 1
+                left_date=1688248800.0,  # 2023, 7, 2
             )
             session.run(
                 """
@@ -62,8 +63,8 @@ class TestExtractRawMembers(unittest.TestCase):
                 chat_title=self.test_chat_title,
                 # created_at=1675292400.0, #2023, 2, 2
                 # joined_date=1675292400.0, #2023, 2, 2
-                created_at=1688342400.0, #2023, 7, 3
-                joined_date=1688342400.0, #2023, 7, 3
+                created_at=1688342400.0,  # 2023, 7, 3
+                joined_date=1688342400.0,  # 2023, 7, 3
             )
 
     def tearDown(self):
@@ -131,4 +132,3 @@ class TestExtractRawMembers(unittest.TestCase):
         print("result: \n", result)
         print("expected result: \n", expected_result)
         self.assertEqual(result, expected_result)
-

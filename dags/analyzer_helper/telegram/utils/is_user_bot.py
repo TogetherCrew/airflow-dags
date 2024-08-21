@@ -1,5 +1,6 @@
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
 
+
 class UserBotChecker:
     def __init__(self):
         """
@@ -26,6 +27,6 @@ class UserBotChecker:
             result = session.run(query, user_id=user_id)
             is_bot = result.single()
             if is_bot is not None:
-                return is_bot['is_bot']
+                return is_bot["is_bot"]
             else:
                 return False

@@ -1,4 +1,3 @@
-
 import datetime
 import unittest
 
@@ -35,21 +34,30 @@ class UserBotCheckerUnit(unittest.TestCase):
                 """,
                 {
                     "chat_title": "Test Chat",
-                    "id1": float('927814807.0'),
-                    "id2": float('203678862.0'),
-                    "created_at1": int(datetime.datetime(2023, 1, 1).timestamp() * 1000),
-                    "created_at2": int(datetime.datetime(2023, 1, 2).timestamp() * 1000),
-                    "created_at3": int(datetime.datetime(2023, 1, 3).timestamp() * 1000),
-                    "reaction_date": int(datetime.datetime(2023, 1, 4).timestamp() * 1000),
-                }
+                    "id1": float("927814807.0"),
+                    "id2": float("203678862.0"),
+                    "created_at1": int(
+                        datetime.datetime(2023, 1, 1).timestamp() * 1000
+                    ),
+                    "created_at2": int(
+                        datetime.datetime(2023, 1, 2).timestamp() * 1000
+                    ),
+                    "created_at3": int(
+                        datetime.datetime(2023, 1, 3).timestamp() * 1000
+                    ),
+                    "reaction_date": int(
+                        datetime.datetime(2023, 1, 4).timestamp() * 1000
+                    ),
+                },
             )
+
     def tearDown(cls):
         with cls.driver.session() as session:
             session.run("MATCH (n) DETACH DELETE n")
         cls.driver.close()
-    
+
     def test_user_bot_status(self):
-        result = self.user_bot_checker.is_user_bot(float('927814807.0'))
+        result = self.user_bot_checker.is_user_bot(float("927814807.0"))
         self.assertTrue(result)
-        result = self.user_bot_checker.is_user_bot(float('203678862.0'))
+        result = self.user_bot_checker.is_user_bot(float("203678862.0"))
         self.assertFalse(result)
