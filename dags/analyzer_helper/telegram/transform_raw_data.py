@@ -3,6 +3,7 @@ from analyzer_helper.telegram.utils.date_time_format_converter import (
 )
 from analyzer_helper.telegram.utils.is_user_bot import UserBotChecker
 
+
 class TransformRawInfo:
     def __init__(self):
         self.converter = DateTimeFormatConverter
@@ -11,7 +12,7 @@ class TransformRawInfo:
     def create_data_entry(
         self, raw_data: dict, interaction_type: str = None, interaction_user: int = None
     ) -> dict:
-        
+
         author_id = str(
             interaction_user
             if interaction_type in ["reply", "mention"]
@@ -19,13 +20,23 @@ class TransformRawInfo:
         )
         is_bot = self.user_bot_checker.is_user_bot(float(author_id))
         metadata = {
-            "category_id": raw_data.get("category_id") if raw_data.get("category_id") not in [None, ""] else None,
-            "topic_id": raw_data.get("topic_id") if raw_data.get("topic_id") not in [None, ""] else None,
+            "category_id": (
+                raw_data.get("category_id")
+                if raw_data.get("category_id") not in [None, ""]
+                else None
+            ),
+            "topic_id": (
+                raw_data.get("topic_id")
+                if raw_data.get("topic_id") not in [None, ""]
+                else None
+            ),
             "bot_activity": is_bot,
         }
         result = {
             "author_id": author_id,
-            "date": self.converter.timestamp_to_datetime(raw_data.get("message_created_at")),
+            "date": self.converter.timestamp_to_datetime(
+                raw_data.get("message_created_at")
+            ),
             "source_id": str(raw_data["message_id"]),
             "metadata": metadata,
             "actions": [],
@@ -86,7 +97,9 @@ class TransformRawInfo:
                         {
                             "name": "mention",
                             "type": "receiver",
-                            "users_engaged_id": [str(int(mention["mentioned_user_id"]))],
+                            "users_engaged_id": [
+                                str(int(mention["mentioned_user_id"]))
+                            ],
                         }
                     )
             result["actions"] = [{"name": "message", "type": "emitter"}]
@@ -133,7 +146,7 @@ class TransformRawInfo:
                     )
 
         return transformed_data
-    
+
 
 transformer = TransformRawInfo()
 data = [
@@ -144,19 +157,19 @@ data = [
         "user_id": 927814807.0,
         "reactions": [
             {
-                "reaction": "[{\"type\":\"emoji\",\"emoji\":\"🍓\"}]",
+                "reaction": '[{"type":"emoji","emoji":"🍓"}]',
                 "reaction_date": 1713165102.0,
-                "reactor_id": 265278326.0
+                "reactor_id": 265278326.0,
             }
         ],
         "replies": [
             {
                 "replier_id": 203678862.0,
                 "replied_date": 1713038036.0,
-                "reply_message_id": 5.0
+                "reply_message_id": 5.0,
             }
         ],
-        "mentions": []
+        "mentions": [],
     },
     {
         "message_id": 7.0,
@@ -166,13 +179,9 @@ data = [
         "reactions": [],
         "replies": [],
         "mentions": [
-            {
-                "mentioned_user_id": 6504405389.0
-            },
-            {
-                "mentioned_user_id": 927814807.0
-            }
-        ]
+            {"mentioned_user_id": 6504405389.0},
+            {"mentioned_user_id": 927814807.0},
+        ],
     },
     {
         "message_id": 11.0,
@@ -180,54 +189,35 @@ data = [
         "message_created_at": 1713038191.0,
         "user_id": 203678862.0,
         "reactions": [
-            {
-                "reaction": "[]",
-                "reaction_date": 1713038348.0,
-                "reactor_id": 927814807.0
-            }
+            {"reaction": "[]", "reaction_date": 1713038348.0, "reactor_id": 927814807.0}
         ],
         "replies": [],
-        "mentions": []
-    }
+        "mentions": [],
+    },
 ]
 data = [
-        {
+    {
         "message_id": 3.0,
         "message_text": "🎉️️️️️️ Welcome to the TC Ingestion Pipeline",
         "message_created_at": 1713037938.0,
         "user_id": 1.0,
-            "reactions": [
+        "reactions": [
             {
-                "reaction": "[{\"type\":\"emoji\",\"emoji\":\"🍓\"}]",
+                "reaction": '[{"type":"emoji","emoji":"🍓"}]',
                 "reaction_date": 1713038348.0,
-                "reactor_id": 2.0
+                "reactor_id": 2.0,
             },
             {
-                "reaction": "[{\"type\":\"emoji\",\"emoji\":\"🙌\"}]",
+                "reaction": '[{"type":"emoji","emoji":"🙌"}]',
                 "reaction_date": 1713038349.0,
-                "reactor_id": 3.0
-            }
+                "reactor_id": 3.0,
+            },
         ],
         "replies": [
-            {
-                "replier_id": 4.0,
-                "replied_date": 1713038036.0,
-                "reply_message_id": 5.0
-            },
-            {
-                "replier_id": 5.0,
-                "replied_date": 1713038036.0,
-                "reply_message_id": 6.0
-            },
+            {"replier_id": 4.0, "replied_date": 1713038036.0, "reply_message_id": 5.0},
+            {"replier_id": 5.0, "replied_date": 1713038036.0, "reply_message_id": 6.0},
         ],
-        "mentions": [
-            {
-                "mentioned_user_id": 6.0
-            },
-            {
-                "mentioned_user_id": 7.0
-            }
-        ]
+        "mentions": [{"mentioned_user_id": 6.0}, {"mentioned_user_id": 7.0}],
     },
 ]
 result = transformer.transform(data)

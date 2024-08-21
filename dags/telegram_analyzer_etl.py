@@ -33,7 +33,7 @@ with DAG(
             {
                 'platform_id' : str,
                 'period': datetime,
-                'id' : str,   # forum_endpoint
+                'id' : str,   # chat_id
                 'recompute': bool,  # default is False
             }
             ```
@@ -99,12 +99,13 @@ with DAG(
             ```
         """
         platform_id = platform_info["platform_id"]
-        forum_endpoint = platform_info["id"]
+        chat_id = platform_info["id"]
         period = platform_info["period"]
         recompute = platform_info["recompute"]
 
         extractor = ExtractRawInfo(
-            forum_endpoint=forum_endpoint, platform_id=platform_id #TODO: Here forum_endpoint is actually title of the group. Probably should be changed to id
+            chat_id=chat_id,
+            platform_id=platform_id,
         )
         extracted_data = extractor.extract(period=period, recompute=recompute)
         transformer = TransformRawInfo()
@@ -130,20 +131,18 @@ with DAG(
             ```
             {
                 'platform_id' : datetime,
-                'forum_endpoint' : str,
+                'chat_id' : str,
                 'period' : datetime,
                 'recompute': bool,
             }
             ```
         """
         platform_id = platform_info["platform_id"]
-        forum_endpoint = platform_info["id"]
+        chat_id = platform_info["id"]
         # period = platform_info["period"]
         recompute = platform_info["recompute"]
 
-        extractor = ExtractRawMembers(
-            forum_endpoint=forum_endpoint, platform_id=platform_id
-        )
+        extractor = ExtractRawMembers(chat_id=chat_id, platform_id=platform_id)
         extracted_data = extractor.extract(recompute=recompute)
         transformer = TransformRawMembers()
         transformed_data = transformer.transform(
