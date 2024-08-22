@@ -6,7 +6,7 @@ class Classifier:
         self.client = OpenAI()
 
         # configurations
-        self.model = "gpt-3.5-turbo"
+        self.model = "ft:gpt-3.5-turbo-0125:togethercrew::9mHnDhmo"
         self.system_content = "You are a classifier with a PhD in psychology and 30 years of experience teaching non-violent communication. "
         self.user_context = (
             "[INSTRUCTION]\n"

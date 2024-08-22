@@ -24,6 +24,8 @@ with DAG(
     start_date=datetime(2024, 5, 1),
     schedule_interval=None,  # we would always run this manually
     catchup=False,
+    max_active_runs=1,
+    max_active_tasks=3,
 ) as dag:
     """
     processing data just for one guild
@@ -48,24 +50,25 @@ with DAG(
             ```
 
         """
-        recompute = kwargs["dag_run"].conf.get("recompute", None)  # noqa: F841
-        platform_id = kwargs["dag_run"].conf.get("platform_id", None)  # noqa: F841
-        period = kwargs["dag_run"].conf.get("period", None)  # noqa: F841
-        guild_id = kwargs["dag_run"].conf.get("guild_id", None)  # noqa: F841
-        if recompute is None:
-            raise AttributeError("recompute is not sent!")
-        if platform_id is None:
-            raise AttributeError("platform_id is not sent!")
-        if period is None:
-            raise AttributeError("period is not sent!")
-        if guild_id is None:
-            raise AttributeError("guild_id is not sent!")
+        required_params = ["platform_id", "recompute", "period", "guild_id"]
+        params = {param: kwargs["dag_run"].conf.get(param) for param in required_params}
+
+        missing_params = [param for param, value in params.items() if value is None]
+        provided_params = {
+            param: value for param, value in params.items() if value is not None
+        }
+
+        if missing_params:
+            raise AttributeError(
+                f"Missing required parameters: {', '.join(missing_params)}. "
+                f"Provided parameters: {', '.join(f'{k}={v}' for k, v in provided_params.items())}"
+            )
 
         platform = {
-            "recompute": recompute,
-            "platform_id": platform_id,
-            "period": parse(period),
-            "guild_id": guild_id,
+            "recompute": params["recompute"],
+            "platform_id": params["platform_id"],
+            "period": parse(params["period"]),
+            "guild_id": params["guild_id"],
         }
 
         return platform
