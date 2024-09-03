@@ -67,6 +67,6 @@ class MailGun:
         missing_envs = [key for key, value in envs.items() if value is None]
 
         if missing_envs:
-            raise AttributeError(f"Missing env variables: {missing_envs}!")
+            raise AttributeError(f"Mailgun Missing env variables: {missing_envs}!")
 
         return envs
