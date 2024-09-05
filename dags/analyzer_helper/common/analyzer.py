@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from tc_analyzer_lib.publish_on_success import publish_on_success
 from tc_analyzer_lib.schemas.platform_configs import DiscordAnalyzerConfig
@@ -21,6 +21,13 @@ class Analyzer:
     ) -> None:
         prefix = f"PLATFORMID: {platform_id} "
         logging.info(f"{prefix} Starting Analyzer job!")
+
+        # limiting to 90 days
+        if (datetime.now() - period).days > 90:
+            period = (datetime.now() - timedelta(days=90)).replace(
+                hour=0, minute=0, second=0, microsecond=0
+            )
+
         analyzer = TCAnalyzer(
             platform_id=platform_id,
             resources=resources,
