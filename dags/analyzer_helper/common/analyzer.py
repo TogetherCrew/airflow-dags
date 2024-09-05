@@ -24,7 +24,7 @@ class Analyzer:
 
         # limiting to 90 days
         if (datetime.now() - period).days > 90:
-            period = (datetime.now() - timedelta(days=0)).replace(
+            period = (datetime.now() - timedelta(days=90)).replace(
                 hour=0, minute=0, second=0, microsecond=0
             )
 
