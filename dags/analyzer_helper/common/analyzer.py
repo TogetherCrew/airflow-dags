@@ -24,6 +24,7 @@ class Analyzer:
 
         # limiting to 90 days
         if (datetime.now() - period).days > 90:
+            logging.info(f"{prefix}Limiting Analytics to 90 days period!")
             period = (datetime.now() - timedelta(days=90)).replace(
                 hour=0, minute=0, second=0, microsecond=0
             )
