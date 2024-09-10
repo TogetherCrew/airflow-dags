@@ -36,7 +36,7 @@ class ExtractRawMembers:
         query = """
         MATCH (forum:DiscourseForum {endpoint: $forum_endpoint})
         MATCH (user:DiscourseUser)-[:HAS_JOINED]->(forum)
-        WHERE user.id IS NOT NULL
+        WHERE user.username IS NOT NULL
         """
 
         parameters = {"forum_endpoint": self.forum_endpoint}
@@ -46,7 +46,12 @@ class ExtractRawMembers:
             parameters["start_date"] = start_date
 
         query += """
-        RETURN user.id AS id, user.createdAt AS joined_at
+        RETURN
+            user.id AS id,
+            user.createdAt AS joined_at,
+            user.name as name,
+            user.avatarTemplate as avatar,
+            user.username as username
         ORDER BY joined_at ASC
         """
         with self.driver.session() as session:

@@ -46,7 +46,15 @@ class TestExtractRawMembers(unittest.TestCase):
             result1 = session.run(
                 """
                 MATCH (f:DiscourseForum {endpoint: $forum_endpoint})
-                CREATE (u:DiscourseUser {id: 'user1', avatarTemplate: 'avatar1', createdAt: '2023-07-01'})
+                CREATE (
+                    u:DiscourseUser {
+                        id: 'user1',
+                        avatarTemplate: 'avatar1',
+                        createdAt: '2023-07-01',
+                        name: 'user1name',
+                        username: 'username1'
+                    }
+                )
                 -[:HAS_JOINED]->(f)
                 CREATE (u)-[:HAS_BADGE]->(:Badge {id: 'badge1'})
                 RETURN id(u) AS id
@@ -58,7 +66,14 @@ class TestExtractRawMembers(unittest.TestCase):
             result2 = session.run(
                 """
                 MATCH (f:DiscourseForum {endpoint: $forum_endpoint})
-                CREATE (u:DiscourseUser {id: 'user2', avatarTemplate: 'avatar2', createdAt: '2023-07-02'})
+                CREATE (u:DiscourseUser {
+                        id: 'user2',
+                        avatarTemplate: 'avatar2',
+                        createdAt: '2023-07-02',
+                        name: 'user1name',
+                        username: 'username2'
+                    }
+                )
                 -[:HAS_JOINED]->(f)
                 CREATE (u)-[:HAS_BADGE]->(:Badge {id: 'badge2'})
                 RETURN id(u) AS id
@@ -81,10 +96,16 @@ class TestExtractRawMembers(unittest.TestCase):
             {
                 "id": "user1",
                 "joined_at": "2023-07-01",
+                "name": "user1name",
+                "username": "username1",
+                "avatar": "avatar1",
             },
             {
                 "id": "user2",
                 "joined_at": "2023-07-02",
+                "name": "user2name",
+                "username": "username2",
+                "avatar": "avatar2",
             },
         ]
         self.assertEqual(len(result), 2)
@@ -97,10 +118,16 @@ class TestExtractRawMembers(unittest.TestCase):
             {
                 "id": "user1",
                 "joined_at": "2023-07-01",
+                "name": "user1name",
+                "username": "username1",
+                "avatar": "avatar1",
             },
             {
                 "id": "user2",
                 "joined_at": "2023-07-02",
+                "name": "user2name",
+                "username": "username2",
+                "avatar": "avatar2",
             },
         ]
         self.assertEqual(len(result), 2)
@@ -115,6 +142,9 @@ class TestExtractRawMembers(unittest.TestCase):
             {
                 "id": "user2",
                 "joined_at": "2023-07-02",
+                "name": "user2name",
+                "username": "username2",
+                "avatar": "avatar2",
             }
         ]
         self.assertEqual(result, expected_result)
