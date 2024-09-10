@@ -70,7 +70,7 @@ class TestExtractRawMembers(unittest.TestCase):
                         id: 'user2',
                         avatarTemplate: 'avatar2',
                         createdAt: '2023-07-02',
-                        name: 'user1name',
+                        name: 'user2name',
                         username: 'username2'
                     }
                 )
