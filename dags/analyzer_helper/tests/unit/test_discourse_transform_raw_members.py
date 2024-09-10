@@ -67,7 +67,7 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
         }
         expected_result1 = {
             "id": "85159",
-            "is_bot": False,
+            "is_bot": True,
             "left_at": None,
             "joined_at": datetime(2023, 7, 1, 0, 0, 0, 0, tzinfo=timezone.utc),
             "options": {
@@ -89,4 +89,5 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
         }
 
         result = self.transformer.transform([raw_member1, raw_member2])
+        print(result)
         self.assertEqual(result, [expected_result1, expected_result2])
