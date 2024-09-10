@@ -26,7 +26,7 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
             "isBot": False,
             "name": "member1",
             "username": "memberUser1",
-            "avatar": "/path1/endpoint",
+            "avatar": "/path1/{size}/endpoint",
         }
 
         expected_result = [
@@ -38,7 +38,7 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
                 "options": {
                     "name": "member1",
                     "username": "memberUser1",
-                    "avatar": "https://" + self.endpoint + "/path1/endpoint",
+                    "avatar": "https://" + self.endpoint + "/path1/128/endpoint",
                 },
             }
         ]
