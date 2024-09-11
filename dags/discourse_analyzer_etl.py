@@ -149,7 +149,7 @@ with DAG(
             forum_endpoint=forum_endpoint, platform_id=platform_id
         )
         extracted_data = extractor.extract(recompute=recompute)
-        transformer = TransformRawMembers()
+        transformer = TransformRawMembers(endpoint=forum_endpoint)
         transformed_data = transformer.transform(raw_members=extracted_data)
         if len(transformed_data) != 0:
             logging.info(f"Loading {len(transformed_data)} transformed document in db!")
