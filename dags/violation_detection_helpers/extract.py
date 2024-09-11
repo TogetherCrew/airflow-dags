@@ -34,6 +34,7 @@ class ExtractPlatformRawData:
             if `None`, no filtering would be applied to it
         resources : list[str]
             a list of resources to extract data from
+            if empty, process all messages
         recompute : bool
             if `False`, extract the non-labeled data after the latest ones
             if `True`, extract `rawmemberactivities` data from the given date
@@ -98,13 +99,14 @@ class ExtractPlatformRawData:
                 },
             }
 
-        cursor = self.client[self.platform_id]["rawmemberactivities"].find(
-            {
-                **date_query,
-                "text": {"$ne": None},
-                self.resource_name: {"$in": resources},
-            }
-        )
+        query = {**date_query, "text": {"$ne": None}}
+
+        # Add resource filter only if resources are not empty
+        if resources:
+            query[self.resource_name] = {"$in": resources}
+
+        cursor = self.client[self.platform_id]["rawmemberactivities"].find(query)
+
         return cursor, override_recompute
 
     def _find_latest_labeled(self, label_field: str = "vdLabel") -> datetime | None:
