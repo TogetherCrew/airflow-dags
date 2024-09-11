@@ -18,7 +18,35 @@ class Analyzer:
         window: dict[str, int],
         recompute: bool,
         config: PlatformConfigBase = DiscordAnalyzerConfig(),
+        send_completed_message: bool = True,
     ) -> None:
+        """
+        analyze any platform data
+
+        Parameters
+        ------------
+        platform_id : str
+            the platform id to analyzer their data
+        resources : list[str]
+            a list of resource id to analyze thir data
+            could be id of channels for discord
+            or categories for discourse
+        period : datetime
+            the period of analytics
+            if bigger than 90 days we would limit it for now to 90
+        action : dict[str, int]
+            analyzer categories parameters
+        window: dict[str, int]
+            analyzer timewindow parameters
+        recompute : bool
+            to compute analytics for whole data of platform
+            or continue where analytics was left
+        config : PlatformConfigBase
+            the config for analyzer to handle platform data
+        send_completed_message : bool
+            If True, will send the analytics completed message to community manager
+            if False, nothing will be sent
+        """
         prefix = f"PLATFORMID: {platform_id} "
         logging.info(f"{prefix} Starting Analyzer job!")
 
@@ -44,5 +72,6 @@ class Analyzer:
             logging.info(f"{prefix} append analytics to previous analytics results!")
             asyncio.run(analyzer.run_once())
 
-        # this will just support discord platform
-        publish_on_success(platform_id, recompute)
+        if send_completed_message:
+            # this will just support discord platform
+            publish_on_success(platform_id, recompute)

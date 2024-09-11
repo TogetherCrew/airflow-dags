@@ -204,6 +204,7 @@ with DAG(
             window=window,
             recompute=recompute,
             config=DiscourseAnalyzerConfig(),
+            send_completed_message=False,
         )
 
     platform_modules = fetch_discourse_platforms()
