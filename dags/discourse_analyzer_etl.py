@@ -9,6 +9,7 @@ from analyzer_helper.common.load_transformed_data import LoadTransformedData
 from analyzer_helper.common.load_transformed_members import LoadTransformedMembers
 from analyzer_helper.discourse.extract_raw_data import ExtractRawInfo
 from analyzer_helper.discourse.extract_raw_members import ExtractRawMembers
+from analyzer_helper.discourse.fetch_categories import FetchDiscourseCategories
 from analyzer_helper.discourse.transform_raw_data import TransformRawInfo
 from analyzer_helper.discourse.transform_raw_members import TransformRawMembers
 from tc_analyzer_lib.schemas.platform_configs import DiscourseAnalyzerConfig
@@ -179,6 +180,7 @@ with DAG(
         fetcher = FetchPlatforms(platform_name="discourse")
         platform_id = platform_processed["platform_id"]
         recompute = platform_processed["recompute"]
+        forum_endpoint = platform_processed["id"]
 
         platform_data = fetcher.fetch_analyzer_parameters(platform_id)
 
@@ -186,6 +188,11 @@ with DAG(
         action = platform_data["action"]
         window = platform_data["window"]
         resources = platform_data["resources"]
+
+        # in case no resource given, it means to process all
+        if len(resources) == 0:
+            category_fetcher = FetchDiscourseCategories(endpoint=forum_endpoint)
+            resources = category_fetcher.fetch_all()
 
         analyzer = Analyzer()
 
