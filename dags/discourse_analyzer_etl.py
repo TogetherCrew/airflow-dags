@@ -13,6 +13,7 @@ from analyzer_helper.discourse.fetch_categories import FetchDiscourseCategories
 from analyzer_helper.discourse.transform_raw_data import TransformRawInfo
 from analyzer_helper.discourse.transform_raw_members import TransformRawMembers
 from tc_analyzer_lib.schemas.platform_configs import DiscourseAnalyzerConfig
+from dateutil.parser import parse
 
 with DAG(
     dag_id="discourse_analyzer_etl",
@@ -41,28 +42,33 @@ with DAG(
             ```
 
         """
-        # the platform that needs to be recomputed
-        platform_id_recompute = kwargs["dag_run"].conf.get(  # noqa: F841
-            "recompute_platform", None
-        )
-        # for default we're setting the recompute for all platforms to False
-        # if an id for `recompute_platform` was given
-        # then just run the ETL job for that platform with `recompute = True`
-        # meaning the return would be a list with just one platform information
-        fetcher = FetchPlatforms(
-            platform_name="discourse",
-        )
+        required_params = ["platform_id", "recompute", "period", "id"]
+        params = {param: kwargs["dag_run"].conf.get(param) for param in required_params}
 
-        platforms = fetcher.fetch_all()
+        missing_params = [param for param, value in params.items() if value is None]
+        provided_params = {
+            param: value for param, value in params.items() if value is not None
+        }
 
-        if platform_id_recompute:
+        if missing_params:
+            logging.warning(
+                f"Missing required parameters: {', '.join(missing_params)}. "
+                f"Provided parameters: {', '.join(f'{k}={v}' for k, v in provided_params.items())}"
+            )
+            logging.warning("Defaulting to run for all discourse platforms!")
+            fetcher = FetchPlatforms(
+                platform_name="discourse",
+            )
+            platforms = fetcher.fetch_all()
+        else:
             platforms = [
-                platform
-                for platform in platforms
-                if platform["platform_id"] == platform_id_recompute
+                {
+                    "recompute": params["recompute"],
+                    "platform_id": params["platform_id"],
+                    "period": parse(params["period"]),
+                    "id": params["id"],
+                }
             ]
-            for platform in platforms:
-                platform["recompute"] = True
 
         return platforms
 
