@@ -37,6 +37,7 @@ class FetchPlatforms:
                 - platform_id: The platform ID (_id from MongoDB).
                 - metadata: A dictionary containing period, and id.
                 - recompute: A boolean set to False.
+                - id: forum endpoint
         """
         query = {
             "disconnectedAt": None,
