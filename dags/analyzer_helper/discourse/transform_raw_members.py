@@ -46,7 +46,7 @@ class TransformRawMembers(TransformRawMembersBase):
         avatar = avatar.replace("{size}", "128") if avatar else None
 
         member = {
-            "id": str(discourse_id) if discourse_id is not None else None,
+            "id": str(int(discourse_id)) if discourse_id is not None else None,
             "is_bot": member.get("isBot", False),
             "left_at": None,
             "joined_at": self.converter.from_date_string(member.get("joined_at")),
