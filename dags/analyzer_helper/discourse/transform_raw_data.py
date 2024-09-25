@@ -79,7 +79,9 @@ class TransformRawInfo:
                     {
                         "name": "reply",
                         "type": "emitter",
-                        "users_engaged_id": [str(int(raw_data["replied_post_user_id"]))],
+                        "users_engaged_id": [
+                            str(int(raw_data["replied_post_user_id"]))
+                        ],
                     }
                 )
             result["actions"] = [{"name": "message", "type": "emitter"}]
