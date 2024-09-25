@@ -31,9 +31,9 @@ class TransformRawInfo:
 
         result = {
             "author_id": str(
-                interaction_user
+                int(interaction_user)
                 if interaction_type == "reply"
-                else raw_data.get("author_id")
+                else int(raw_data.get("author_id"))
             ),
             "text": raw_data["text"],
             "date": self.converter.from_iso_format(raw_data.get("created_at")),
@@ -49,20 +49,20 @@ class TransformRawInfo:
                 {
                     "name": "reaction",
                     "type": "emitter",
-                    "users_engaged_id": [str(raw_data["author_id"])],
+                    "users_engaged_id": [str(int(raw_data["author_id"]))],
                 }
             ]
-            result["author_id"] = str(interaction_user)
+            result["author_id"] = str(int(interaction_user))
         elif interaction_type == "reply":
             result["actions"] = []
             result["interactions"] = [
                 {
                     "name": "reply",
                     "type": "receiver",
-                    "users_engaged_id": [str(raw_data["author_id"])],
+                    "users_engaged_id": [str(int(raw_data["author_id"]))],
                 }
             ]
-            result["author_id"] = str(interaction_user)
+            result["author_id"] = str(int(interaction_user))
         else:
             if raw_data["reactions"]:
                 result["interactions"].append(
@@ -79,7 +79,9 @@ class TransformRawInfo:
                     {
                         "name": "reply",
                         "type": "emitter",
-                        "users_engaged_id": [str(raw_data["replied_post_user_id"])],
+                        "users_engaged_id": [
+                            str(int(raw_data["replied_post_user_id"]))
+                        ],
                     }
                 )
             result["actions"] = [{"name": "message", "type": "emitter"}]
@@ -108,7 +110,7 @@ class TransformRawInfo:
                     self.create_data_entry(
                         entry,
                         interaction_type="reply",
-                        interaction_user=entry["replied_post_user_id"],
+                        interaction_user=int(entry["replied_post_user_id"]),
                     )
                 )
             # TODO: Create entry for mentioned users
