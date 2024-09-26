@@ -1,5 +1,5 @@
-import re
 import logging
+import re
 from typing import Any
 
 from hivemind_etl_helpers.src.db.discord.utils.content_parser import (
@@ -211,7 +211,7 @@ def prepare_document(
         raise ValueError("Message just did have urls")
 
     # removing null characters
-    content_url_updated = re.sub(r'[\x00-\x1F\x7F]', '', content_url_updated)
+    content_url_updated = re.sub(r"[\x00-\x1F\x7F]", "", content_url_updated)
 
     doc: Document
     if not exclude_metadata:
