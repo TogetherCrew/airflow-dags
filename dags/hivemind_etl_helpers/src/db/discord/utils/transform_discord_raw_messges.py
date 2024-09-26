@@ -1,4 +1,5 @@
 import logging
+import re
 from typing import Any
 
 from hivemind_etl_helpers.src.db.discord.utils.content_parser import (
@@ -158,7 +159,7 @@ def prepare_document(
     content_url_updated, url_reference = prepare_raw_message_urls(content)
 
     # always has length 1
-    assert len(author_name) == 1
+    assert len(author_name) == 1, "Either None or multiple authors!"
 
     msg_meta_data = {
         "channel": message["channelName"],
@@ -208,6 +209,9 @@ def prepare_document(
 
     if check_no_content_only_links(content_url_updated):
         raise ValueError("Message just did have urls")
+
+    # removing null characters
+    content_url_updated = re.sub(r"[\x00-\x1F\x7F]", "", content_url_updated)
 
     doc: Document
     if not exclude_metadata:
