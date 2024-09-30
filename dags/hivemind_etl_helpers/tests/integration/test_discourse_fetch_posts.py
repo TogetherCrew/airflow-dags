@@ -129,7 +129,7 @@ class TestFetchRawDiscoursePosts(TestCase):
                 self.assertEqual(data["category"], "SampleCat1")
                 self.assertEqual(data["replier_usernames"], ["user#2"])
                 self.assertEqual(data["replier_names"], ["user2"])
-                self.assertEqual(data["forum_endpoint"], "sample.com")
+                self.assertEqual(data["forum_endpoint"], "wwwdwadeswdpoi123")
             elif data["author_username"] == "user#2":
                 self.assertEqual(data["author_name"], "user2")
                 self.assertEqual(data["topic"], "topic#2")
@@ -143,7 +143,7 @@ class TestFetchRawDiscoursePosts(TestCase):
                 self.assertEqual(data["category"], "SampleCat2")
                 self.assertEqual(data["replier_usernames"], [])
                 self.assertEqual(data["replier_names"], [])
-                self.assertEqual(data["forum_endpoint"], "sample.com")
+                self.assertEqual(data["forum_endpoint"], "wwwdwadeswdpoi123")
             else:
                 raise IndexError("It shouldn't get here!")
 
