@@ -111,7 +111,7 @@ def fetch_raw_posts_grouped(
     else:
         query += """
         WHERE p.raw IS NOT NULL
-        WITH P
+        WITH p
         """
 
     query += """
