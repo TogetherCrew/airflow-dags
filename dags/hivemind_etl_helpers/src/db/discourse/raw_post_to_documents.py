@@ -8,20 +8,20 @@ from llama_index.core import Document
 
 
 def fetch_discourse_documents(
-    forum_id: str, from_date: datetime | None
+    forum_endpoint: str, from_date: datetime | None
 ) -> list[Document]:
     """
     get the raw messages of a community and then convert them to llama_index documents
 
     Parameters
     -----------
-    forum_id : str
-        the id of the forum we want to process its data
+    forum_endpoint : str
+        the discourse forum we want to process its data
     from_date : datetime | None
         the posts to retrieve from a specific date
         default is `None` meaning to fetch all posts
     """
-    raw_posts = fetch_raw_posts(forum_id, from_date)
+    raw_posts = fetch_raw_posts(forum_endpoint, from_date)
     documents = transform_raw_to_documents(raw_data=raw_posts)
 
     return documents

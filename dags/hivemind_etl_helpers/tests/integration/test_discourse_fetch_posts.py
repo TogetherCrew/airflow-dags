@@ -8,7 +8,7 @@ from hivemind_etl_helpers.src.utils.neo4j import Neo4jConnection
 class TestFetchRawDiscoursePosts(TestCase):
     def test_fetch_empty_data_without_from_date(self):
         neo4j_ops = Neo4jConnection().neo4j_ops
-        forum_id = "1234"
+        forum_endpoint = "1234"
 
         neo4j_ops.neo4j_driver.execute_query(
             """
@@ -16,13 +16,13 @@ class TestFetchRawDiscoursePosts(TestCase):
             """
         )
 
-        posts = fetch_raw_posts(forum_id=forum_id, from_date=None)
+        posts = fetch_raw_posts(forum_endpoint=forum_endpoint, from_date=None)
 
         self.assertEqual(posts, [])
 
     def test_fetch_empty_data_with_from_date(self):
         neo4j_ops = Neo4jConnection().neo4j_ops
-        forum_id = "1234"
+        forum_endpoint = "1234"
 
         neo4j_ops.neo4j_driver.execute_query(
             """
@@ -30,13 +30,13 @@ class TestFetchRawDiscoursePosts(TestCase):
             """
         )
 
-        posts = fetch_raw_posts(forum_id=forum_id, from_date=datetime(2015, 1, 1))
+        posts = fetch_raw_posts(forum_endpoint=forum_endpoint, from_date=datetime(2015, 1, 1))
 
         self.assertEqual(posts, [])
 
     def test_fetch_some_data_without_from_date(self):
         neo4j_ops = Neo4jConnection().neo4j_ops
-        forum_id = "wwwdwadeswdpoi123"
+        forum_endpoint = "wwwdwadeswdpoi123"
 
         neo4j_ops.neo4j_driver.execute_query(
             """
@@ -46,18 +46,9 @@ class TestFetchRawDiscoursePosts(TestCase):
 
         neo4j_ops.neo4j_driver.execute_query(
             """
-            CREATE (f:DiscourseForum {
-                    uuid: 'wwwdwadeswdpoi123',
-                    endpoint: 'sample.com'
-                    }
-                )
-            """
-        )
-        neo4j_ops.neo4j_driver.execute_query(
-            """
             CREATE (p:DiscoursePost)
             SET
-                p.forumUuid = "wwwdwadeswdpoi123",
+                p.endpoint = "wwwdwadeswdpoi123",
                 p.raw = "texttexttext of post 1",
                 p.topicId = 1,
                 p.id = 100,
@@ -85,7 +76,7 @@ class TestFetchRawDiscoursePosts(TestCase):
             """
             CREATE (p:DiscoursePost)
             SET
-                p.forumUuid = "wwwdwadeswdpoi123",
+                p.endpoint = "wwwdwadeswdpoi123",
                 p.raw = "texttexttext of post 2",
                 p.topicId = 2,
                 p.id = 101,
@@ -113,7 +104,7 @@ class TestFetchRawDiscoursePosts(TestCase):
             """
         )
 
-        posts = fetch_raw_posts(forum_id=forum_id, from_date=datetime(2020, 1, 1))
+        posts = fetch_raw_posts(forum_endpoint=forum_endpoint, from_date=datetime(2020, 1, 1))
 
         # we inserted 2 posts
         self.assertEqual(len(posts), 2)
@@ -154,7 +145,7 @@ class TestFetchRawDiscoursePosts(TestCase):
 
     def test_fetch_some_data_with_from_date(self):
         neo4j_ops = Neo4jConnection().neo4j_ops
-        forum_id = "wwwdwadeswdpoi123"
+        forum_endpoint = "wwwdwadeswdpoi123"
 
         neo4j_ops.neo4j_driver.execute_query(
             """
@@ -175,7 +166,7 @@ class TestFetchRawDiscoursePosts(TestCase):
             """
             CREATE (p:DiscoursePost)
             SET
-                p.forumUuid = "wwwdwadeswdpoi123",
+                p.endpoint = "wwwdwadeswdpoi123",
                 p.raw = "texttexttext of post 1",
                 p.topicId = 1,
                 p.id = 100,
@@ -203,7 +194,7 @@ class TestFetchRawDiscoursePosts(TestCase):
             """
             CREATE (p:DiscoursePost)
             SET
-                p.forumUuid = "wwwdwadeswdpoi123",
+                p.endpoint = "wwwdwadeswdpoi123",
                 p.raw = "texttexttext of post 2",
                 p.topicId = 2,
                 p.id = 101,
@@ -231,7 +222,7 @@ class TestFetchRawDiscoursePosts(TestCase):
             """
         )
 
-        posts = fetch_raw_posts(forum_id=forum_id, from_date=datetime(2022, 3, 1))
+        posts = fetch_raw_posts(forum_endpoint=forum_endpoint, from_date=datetime(2022, 3, 1))
 
         # we should get one of the posts
         self.assertEqual(len(posts), 1)

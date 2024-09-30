@@ -4,7 +4,6 @@ from datetime import datetime
 from hivemind_etl_helpers.src.db.discourse.raw_post_to_documents import (
     fetch_discourse_documents,
 )
-from hivemind_etl_helpers.src.db.discourse.utils.get_forums import get_forum_uuid
 from hivemind_etl_helpers.src.document_node_parser import configure_node_parser
 from hivemind_etl_helpers.src.utils.check_documents import check_documents
 from llama_index.core import Settings
@@ -34,32 +33,21 @@ def process_discourse_vectorstore(
     prefix = f"COMMUNITYID: {community_id} "
     logging.info(prefix)
 
-    forum_uuid = get_forum_uuid(forum_endpoint=forum_endpoint)
-
-    # The below commented lines are for debugging
-    # forum_uuid = [
-    #     {
-    #         "uuid": "851d8069-fc3a-415a-b684-1261d4404092",
-    #     }
-    # ]
-    forum_id = forum_uuid[0]["uuid"]
-    forum_endpoint = forum_endpoint
     process_forum(
-        forum_id=forum_id,
+        forum_endpoint=forum_endpoint,
         community_id=community_id,
         dbname=dbname,
-        log_prefix=f"{prefix}ForumId: {forum_id}",
+        log_prefix=f"{prefix}ForumId: {forum_endpoint}",
         forum_endpoint=forum_endpoint,
         from_starting_date=from_starting_date,
     )
 
 
 def process_forum(
-    forum_id: str,
+    forum_endpoint: str,
     community_id: str,
     dbname: str,
     log_prefix: str,
-    forum_endpoint: str,
     from_starting_date: datetime,
 ):
     """
@@ -69,16 +57,14 @@ def process_forum(
 
     Parameters
     ------------
-    forum_id : str
-        the forum that the community has
+    forum_endpoint : str
+        the DiscourseForum endpoint for document checking
     community_id : str
         the community that the forum relates to
     dbname : str
         the data of the community saved within the postgres database `dbname`
     log_predix : str
         the logging prefix to print out
-    forum_endpoint : str
-        the DiscourseForum endpoint for document checking
     from_starting_date : datetime
         the time to start processing documents
     """
@@ -106,7 +92,7 @@ def process_forum(
     else:
         from_date = from_last_saved_date
 
-    documents = fetch_discourse_documents(forum_id=forum_id, from_date=from_date)
+    documents = fetch_discourse_documents(forum_endpoint=forum_endpoint, from_date=from_date)
 
     node_parser = configure_node_parser(chunk_size=chunk_size)
     pg_vector = PGVectorAccess(table_name=table_name, dbname=dbname)
