@@ -38,7 +38,7 @@ def fetch_raw_posts(
     else:
         query += """
         WHERE p.raw IS NOT NULL
-        WITH P
+        WITH p
         """
 
     # Adding the other part of query
