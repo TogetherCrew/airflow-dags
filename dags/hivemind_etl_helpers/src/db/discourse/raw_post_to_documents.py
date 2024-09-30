@@ -21,7 +21,7 @@ def fetch_discourse_documents(
         the posts to retrieve from a specific date
         default is `None` meaning to fetch all posts
     """
-    raw_posts = fetch_raw_posts(forum_endpoint, from_date)
+    raw_posts = fetch_raw_posts(forum_endpoint=forum_endpoint, from_date=from_date)
     documents = transform_raw_to_documents(raw_data=raw_posts)
 
     return documents

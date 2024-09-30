@@ -30,7 +30,9 @@ class TestFetchRawDiscoursePosts(TestCase):
             """
         )
 
-        posts = fetch_raw_posts(forum_endpoint=forum_endpoint, from_date=datetime(2015, 1, 1))
+        posts = fetch_raw_posts(
+            forum_endpoint=forum_endpoint, from_date=datetime(2015, 1, 1)
+        )
 
         self.assertEqual(posts, [])
 
@@ -104,7 +106,9 @@ class TestFetchRawDiscoursePosts(TestCase):
             """
         )
 
-        posts = fetch_raw_posts(forum_endpoint=forum_endpoint, from_date=datetime(2020, 1, 1))
+        posts = fetch_raw_posts(
+            forum_endpoint=forum_endpoint, from_date=datetime(2020, 1, 1)
+        )
 
         # we inserted 2 posts
         self.assertEqual(len(posts), 2)
@@ -153,15 +157,6 @@ class TestFetchRawDiscoursePosts(TestCase):
             """
         )
 
-        neo4j_ops.neo4j_driver.execute_query(
-            """
-            CREATE (f:DiscourseForum {
-                    uuid: 'wwwdwadeswdpoi123',
-                    endpoint: 'sample.com'
-                    }
-                )
-            """
-        )
         neo4j_ops.neo4j_driver.execute_query(
             """
             CREATE (p:DiscoursePost)
@@ -222,7 +217,9 @@ class TestFetchRawDiscoursePosts(TestCase):
             """
         )
 
-        posts = fetch_raw_posts(forum_endpoint=forum_endpoint, from_date=datetime(2022, 3, 1))
+        posts = fetch_raw_posts(
+            forum_endpoint=forum_endpoint, from_date=datetime(2022, 3, 1)
+        )
 
         # we should get one of the posts
         self.assertEqual(len(posts), 1)

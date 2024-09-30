@@ -106,7 +106,9 @@ def process_forum(
         f"{log_prefix} Fetching raw data and converting to llama_index.Documents"
     )
 
-    raw_data_grouped = fetch_raw_posts_grouped(forum_endpoint=forum_endpoint, from_date=from_date)
+    raw_data_grouped = fetch_raw_posts_grouped(
+        forum_endpoint=forum_endpoint, from_date=from_date
+    )
 
     if raw_data_grouped != []:
         (
@@ -150,7 +152,8 @@ def process_forum(
 
 
 def get_summary_documents(
-    forum_endpoint: str, raw_data_grouped: list[Record],
+    forum_endpoint: str,
+    raw_data_grouped: list[Record],
 ) -> tuple[list[Document], list[Document], list[Document],]:
     """
     prepare the summary documents for discourse based on given raw data
@@ -158,11 +161,9 @@ def get_summary_documents(
     Parameters
     ------------
     forum_endpoint : str
-        the forum uuid just for logging
+        the discourse forum endpoint to use its data
     raw_data_grouped : list[Record]
         a list of neo4j records
-    forum_endpoint : str
-        the endpoint of the forum id
 
     Returns
     --------

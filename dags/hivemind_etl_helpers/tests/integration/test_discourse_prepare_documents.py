@@ -18,7 +18,9 @@ class TestFetchRawDiscoursePosts(TestCase):
             """
         )
 
-        documents = fetch_discourse_documents(forum_endpoint=forum_endpoint, from_date=None)
+        documents = fetch_discourse_documents(
+            forum_endpoint=forum_endpoint, from_date=None
+        )
 
         self.assertEqual(documents, [])
 
@@ -168,15 +170,6 @@ class TestFetchRawDiscoursePosts(TestCase):
             """
         )
 
-        neo4j_ops.neo4j_driver.execute_query(
-            """
-            CREATE (f:DiscourseForum {
-                    uuid: 'wwwdwadeswdpoi123',
-                    endpoint: 'sample.com'
-                    }
-                )
-            """
-        )
         neo4j_ops.neo4j_driver.execute_query(
             """
             CREATE (p:DiscoursePost)

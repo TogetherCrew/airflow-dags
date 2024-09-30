@@ -38,7 +38,6 @@ def process_discourse_vectorstore(
         community_id=community_id,
         dbname=dbname,
         log_prefix=f"{prefix}ForumId: {forum_endpoint}",
-        forum_endpoint=forum_endpoint,
         from_starting_date=from_starting_date,
     )
 
@@ -92,7 +91,9 @@ def process_forum(
     else:
         from_date = from_last_saved_date
 
-    documents = fetch_discourse_documents(forum_endpoint=forum_endpoint, from_date=from_date)
+    documents = fetch_discourse_documents(
+        forum_endpoint=forum_endpoint, from_date=from_date
+    )
 
     node_parser = configure_node_parser(chunk_size=chunk_size)
     pg_vector = PGVectorAccess(table_name=table_name, dbname=dbname)
