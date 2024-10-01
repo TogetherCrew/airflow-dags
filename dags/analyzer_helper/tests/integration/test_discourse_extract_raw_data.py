@@ -24,8 +24,7 @@ class TestExtractRawInfo(unittest.TestCase):
         with cls.driver.session() as session:
             session.run(
                 """
-            CREATE (f:DiscourseForum {endpoint: $endpoint, uuid: 'forum-uuid'}),
-                (u1:DiscourseUser {id: 'user1', name: 'User One'}),
+            CREATE (u1:DiscourseUser {id: 'user1', name: 'User One'}),
                 (u2:DiscourseUser {id: 'user2', name: 'User Two'}),
                 (p1:DiscoursePost 
                     {
@@ -33,7 +32,7 @@ class TestExtractRawInfo(unittest.TestCase):
                         content: 'Post 1',
                         createdAt: '2023-01-01T00:00:00Z',
                         topicId: 'topic-uuid',
-                        forumUuid: 'forum-uuid',
+                        endpoint: 'forum-uuid',
                         raw: "Sample Text 1",
                         postNumber: 1.0
                     }
@@ -44,12 +43,12 @@ class TestExtractRawInfo(unittest.TestCase):
                         content: 'Post 2',
                         createdAt: '2023-01-02T00:00:00Z',
                         topicId: 'topic-uuid',
-                        forumUuid: 'forum-uuid',
+                        endpoint: 'forum-uuid',
                         raw: "Sample Text 2",
                         postNumber: 2.0
                     }
                 ),
-                (t:DiscourseTopic {id: 'topic-uuid', forumUuid: 'forum-uuid'}),
+                (t:DiscourseTopic {id: 'topic-uuid', endpoint: 'forum-uuid'}),
                 (c:DiscourseCategory {id: 'category1', name: 'Category 1'}),
                 (p1)<-[:HAS_POST]-(t),
                 (p2)<-[:HAS_POST]-(t),

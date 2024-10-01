@@ -61,7 +61,7 @@ def process_forum(
 
     Parameters
     ------------
-    forum_id : str
+    forum_endpoint : str
         the forum that the community has
     community_id : str
         the community that the forum relates to
@@ -69,8 +69,6 @@ def process_forum(
         the data of the community saved within the postgres database `dbname`
     log_predix : str
         the logging prefix to print out
-    forum_endpoint : str
-        the DiscourseForum endpoint for document checking
     from_starting_date : datetime
         the time to start processing documents
     """

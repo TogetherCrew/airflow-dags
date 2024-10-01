@@ -48,9 +48,7 @@ class ExtractRawInfo:
             operator = ">" if comparison == "gt" else ">="
             where_clause = f"WHERE post.createdAt {operator} $createdAt"
         query = f"""
-        MATCH (forum:DiscourseForum {{endpoint: $forum_endpoint}})
-        WITH forum
-        MATCH (post:DiscoursePost {{forumUuid: forum.uuid}})
+        MATCH (post:DiscoursePost {{endpoint: $forum_endpoint}})
         {where_clause if where_clause else ""}
         {"AND " if where_clause else "WHERE "}
         post.createdAt is NOT NULL
@@ -117,9 +115,7 @@ class ExtractRawInfo:
             Optional[str]: The created_at timestamp of the latest post, or None if no posts are found.
         """
         query = """
-        MATCH (forum:DiscourseForum {endpoint: $forum_endpoint})
-        WITH forum
-        (post:DiscoursePost {forumUuid: forum.uuid})
+        (post:DiscoursePost {endpoint: $forum_endpoint})
         RETURN post.createdAt AS created_at
         ORDER BY post.createdAt DESC
         LIMIT 1

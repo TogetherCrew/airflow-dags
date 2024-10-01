@@ -10,12 +10,6 @@ class TestDiscourseFetchingCategories(TestCase):
         self.driver = neo4jConnection.connect_neo4j()
 
         self.endpoint = "endpoint.com"
-        self.forum_uuid = 123
-        with self.driver.session() as session:
-            session.run(
-                "CREATE (forum:DiscourseForum {uuid: $f_uuid, endpoint: $forum_endpoint})",
-                {"forum_endpoint": self.endpoint, "f_uuid": self.forum_uuid},
-            )
         self.fetcher = FetchDiscourseCategories(self.endpoint)
 
     def tearDown(self):
@@ -34,7 +28,7 @@ class TestDiscourseFetchingCategories(TestCase):
                 """
                 CREATE (c:DiscourseCategory 
                     {
-                        forumUuid: $forum_uuid,
+                        endpoint: $forum_endpoint,
                         color: "0088CC",
                         name: "test category",
                         descriptionText: "category description",
@@ -42,7 +36,7 @@ class TestDiscourseFetchingCategories(TestCase):
                     }
                 )
                 """,
-                {"forum_uuid": self.forum_uuid},
+                {"forum_endpoint": self.endpoint},
             )
 
         category_ids = self.fetcher.fetch_all()
@@ -56,7 +50,7 @@ class TestDiscourseFetchingCategories(TestCase):
                 """
                 CREATE (:DiscourseCategory 
                     {
-                        forumUuid: $forum_uuid,
+                        endpoint: $forum_endpoint,
                         color: "0088CC",
                         name: "test category",
                         descriptionText: "category description",
@@ -65,7 +59,7 @@ class TestDiscourseFetchingCategories(TestCase):
                 )
                 CREATE (:DiscourseCategory 
                     {
-                        forumUuid: $forum_uuid,
+                        endpoint: $forum_endpoint,
                         color: "0088CC",
                         name: "test category 2",
                         descriptionText: "category description 2",
@@ -74,7 +68,7 @@ class TestDiscourseFetchingCategories(TestCase):
                 )
                 CREATE (:DiscourseCategory 
                     {
-                        forumUuid: $forum_uuid,
+                        endpoint: $forum_endpoint,
                         color: "0088CC",
                         name: "test category 3",
                         descriptionText: "category description 3",
@@ -82,7 +76,7 @@ class TestDiscourseFetchingCategories(TestCase):
                     }
                 )
                 """,
-                {"forum_uuid": self.forum_uuid},
+                {"forum_endpoint": self.endpoint},
             )
 
         category_ids = self.fetcher.fetch_all()
