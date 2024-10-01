@@ -11,7 +11,6 @@ class DateTimeFormatConverter:
         :return: The corresponding Unix timestamp.
         """
         return datetime.timestamp()
-        # return datetime.timestamp()
 
     @staticmethod
     def timestamp_to_datetime(timestamp: float) -> datetime.datetime:
