@@ -32,7 +32,7 @@ class TestExtractRawInfo(unittest.TestCase):
                         content: 'Post 1',
                         createdAt: '2023-01-01T00:00:00Z',
                         topicId: 'topic-uuid',
-                        endpoint: 'forum-uuid',
+                        endpoint: 'http://test_forum',
                         raw: "Sample Text 1",
                         postNumber: 1.0
                     }
@@ -43,12 +43,12 @@ class TestExtractRawInfo(unittest.TestCase):
                         content: 'Post 2',
                         createdAt: '2023-01-02T00:00:00Z',
                         topicId: 'topic-uuid',
-                        endpoint: 'forum-uuid',
+                        endpoint: 'http://test_forum',
                         raw: "Sample Text 2",
                         postNumber: 2.0
                     }
                 ),
-                (t:DiscourseTopic {id: 'topic-uuid', endpoint: 'forum-uuid'}),
+                (t:DiscourseTopic {id: 'topic-uuid', endpoint: 'http://test_forum'}),
                 (c:DiscourseCategory {id: 'category1', name: 'Category 1'}),
                 (p1)<-[:HAS_POST]-(t),
                 (p2)<-[:HAS_POST]-(t),
