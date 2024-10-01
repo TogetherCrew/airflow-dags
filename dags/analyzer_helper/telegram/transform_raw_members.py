@@ -32,6 +32,9 @@ class TransformRawMembers(TransformRawMembersBase):
         telegram_id = member.get("id")
         joined_at_timestamp = member.get("joined_at")
         left_at_timestamp = member.get("left_at")
+        username = member.get("username")
+        first_name = member.get("first_name")
+        last_name = member.get("last_name")
 
         if joined_at_timestamp:
             joined_at = DateTimeFormatConverter.timestamp_to_datetime(
@@ -54,7 +57,11 @@ class TransformRawMembers(TransformRawMembersBase):
             "joined_at": (
                 None if joined_at is None or joined_at_timestamp == 0.0 else joined_at
             ),
-            "options": {},
+            "options": {
+                "username": username,
+                "first_name": first_name,
+                "last_name": last_name,
+            },
         }
 
         return member

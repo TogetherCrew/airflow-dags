@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 
 from analyzer_helper.telegram.utils.date_time_format_converter import (
     DateTimeFormatConverter,
@@ -45,10 +45,16 @@ class ExtractRawMembers:
 
         query += """
         MATCH (u:TGUser)-[r:JOINED]->(c:TGChat {id: $chat_id})
-        WITH u, MAX(r.date) as joined_at
+        WITH u, MAX(r.date) AS joined_at
         OPTIONAL MATCH (u:TGUser)-[r:LEFT]->(c:TGChat {id: $chat_id})
-        WITH u, joined_at, MAX(r.date) as left_at
-        RETURN u.id as id, joined_at, left_at
+        WITH u, joined_at, MAX(r.date) AS left_at
+        RETURN
+            u.id AS id,
+            joined_at,
+            left_at,
+            u.username AS username,
+            u.first_name AS first_name,
+            u.last_name AS last_name
         """
 
         with self.driver.session() as session:
@@ -78,11 +84,10 @@ class ExtractRawMembers:
                 latest_rawmember["joined_at"] if latest_rawmember else None
             )
 
-            # Conversion to unix timestamp format because of neo4j
-            latest_joined_at = self.converter.datetime_to_timestamp(latest_joined_at)
-
             if latest_joined_at:
-                members = self.fetch_member_details(start_date=latest_joined_at)
+                # Conversion to unix timestamp format because of neo4j data structure
+                latest_joined_at_timestamp = self.converter.datetime_to_timestamp(latest_joined_at)
+                members = self.fetch_member_details(start_date=latest_joined_at_timestamp)
             else:
                 members = self.fetch_member_details()
 
