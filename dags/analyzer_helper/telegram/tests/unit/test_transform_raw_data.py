@@ -7,8 +7,9 @@ from analyzer_helper.telegram.transform_raw_data import TransformRawInfo
 class TestTransformRawInfo(unittest.TestCase):
     def setUp(self):
         """Initialize the TransformRawInfo instance before each test."""
-        self.transformer = TransformRawInfo()
         self.platform_id = "test_platform"
+        self.chat_id = "sample_chat_id"
+        self.transformer = TransformRawInfo(self.chat_id)
 
     def test_create_data_entry_with_reactions_replies_mentions(self):
         """Test data entry creation with reactions, replies, and mentions."""
@@ -39,7 +40,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc
             ),
             "source_id": "3.0",
-            "metadata": {"category_id": None, "topic_id": None, "bot_activity": False},
+            "metadata": {"chat_id": self.chat_id, "bot_activity": False},
             "actions": [{"name": "message", "type": "emitter"}],
             "interactions": [
                 {"name": "reaction", "type": "receiver", "users_engaged_id": ["4"]},
@@ -69,7 +70,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 2024, 4, 13, 19, 55, 25, tzinfo=datetime.timezone.utc
             ),
             "source_id": "7.0",
-            "metadata": {"category_id": None, "topic_id": None, "bot_activity": False},
+            "metadata": {"chat_id": self.chat_id, "bot_activity": False},
             "actions": [{"name": "message", "type": "emitter"}],
             "interactions": [
                 {"name": "mention", "type": "receiver", "users_engaged_id": ["6"]},
@@ -105,8 +106,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 ),
                 "source_id": "3.0",
                 "metadata": {
-                    "category_id": None,
-                    "topic_id": None,
+                    "chat_id": self.chat_id,
                     "bot_activity": False,
                 },
                 "actions": [{"name": "message", "type": "emitter"}],
@@ -121,8 +121,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 ),
                 "source_id": "3.0",
                 "metadata": {
-                    "category_id": None,
-                    "topic_id": None,
+                    "chat_id": self.chat_id,
                     "bot_activity": False,
                 },
                 "actions": [],
@@ -165,8 +164,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 ),
                 "source_id": "3.0",
                 "metadata": {
-                    "category_id": None,
-                    "topic_id": None,
+                    "chat_id": self.chat_id,
                     "bot_activity": False,
                 },
                 "actions": [{"name": "message", "type": "emitter"}],
@@ -182,8 +180,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 ),
                 "source_id": "3.0",
                 "metadata": {
-                    "category_id": None,
-                    "topic_id": None,
+                    "chat_id": self.chat_id,
                     "bot_activity": False,
                 },
                 "actions": [],
@@ -198,8 +195,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 ),
                 "source_id": "3.0",
                 "metadata": {
-                    "category_id": None,
-                    "topic_id": None,
+                    "chat_id": self.chat_id,
                     "bot_activity": False,
                 },
                 "actions": [],
@@ -233,8 +229,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 ),
                 "source_id": "7.0",
                 "metadata": {
-                    "category_id": None,
-                    "topic_id": None,
+                    "chat_id": self.chat_id,
                     "bot_activity": False,
                 },
                 "actions": [{"name": "message", "type": "emitter"}],
@@ -249,8 +244,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 ),
                 "source_id": "7.0",
                 "metadata": {
-                    "category_id": None,
-                    "topic_id": None,
+                    "chat_id": self.chat_id,
                     "bot_activity": False,
                 },
                 "actions": [],
@@ -282,8 +276,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 ),
                 "source_id": "7.0",
                 "metadata": {
-                    "category_id": None,
-                    "topic_id": None,
+                    "chat_id": self.chat_id,
                     "bot_activity": False,
                 },
                 "actions": [
@@ -316,8 +309,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 ),
                 "source_id": "7.0",
                 "metadata": {
-                    "category_id": None,
-                    "topic_id": None,
+                    "chat_id": self.chat_id,
                     "bot_activity": False,
                 },
                 "actions": [],
@@ -338,8 +330,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 ),
                 "source_id": "7.0",
                 "metadata": {
-                    "category_id": None,
-                    "topic_id": None,
+                    "chat_id": self.chat_id,
                     "bot_activity": False,
                 },
                 "actions": [],
@@ -383,8 +374,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 ),
                 "source_id": "11.0",
                 "metadata": {
-                    "category_id": None,
-                    "topic_id": None,
+                    "chat_id": self.chat_id,
                     "bot_activity": False,
                 },
                 "actions": [{"name": "message", "type": "emitter"}],
@@ -399,8 +389,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 ),
                 "source_id": "11.0",
                 "metadata": {
-                    "category_id": None,
-                    "topic_id": None,
+                    "chat_id": self.chat_id,
                     "bot_activity": False,
                 },
                 "actions": [],
@@ -443,8 +432,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 ),
                 "source_id": "11.0",
                 "metadata": {
-                    "category_id": None,
-                    "topic_id": None,
+                    "chat_id": self.chat_id,
                     "bot_activity": False,
                 },
                 "actions": [{"name": "message", "type": "emitter"}],
@@ -460,8 +448,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 ),
                 "source_id": "11.0",
                 "metadata": {
-                    "category_id": None,
-                    "topic_id": None,
+                    "chat_id": self.chat_id,
                     "bot_activity": False,
                 },
                 "actions": [],
@@ -476,8 +463,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 ),
                 "source_id": "11.0",
                 "metadata": {
-                    "category_id": None,
-                    "topic_id": None,
+                    "chat_id": self.chat_id,
                     "bot_activity": False,
                 },
                 "actions": [],
@@ -530,8 +516,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 ),
                 "source_id": "3.0",
                 "metadata": {
-                    "category_id": None,
-                    "topic_id": None,
+                    "chat_id": self.chat_id,
                     "bot_activity": False,
                 },
                 "actions": [{"name": "message", "type": "emitter"}],
@@ -551,8 +536,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 ),
                 "source_id": "3.0",
                 "metadata": {
-                    "category_id": None,
-                    "topic_id": None,
+                    "chat_id": self.chat_id,
                     "bot_activity": False,
                 },
                 "actions": [],
@@ -567,8 +551,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 ),
                 "source_id": "3.0",
                 "metadata": {
-                    "category_id": None,
-                    "topic_id": None,
+                    "chat_id": self.chat_id,
                     "bot_activity": False,
                 },
                 "actions": [],
@@ -583,8 +566,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 ),
                 "source_id": "3.0",
                 "metadata": {
-                    "category_id": None,
-                    "topic_id": None,
+                    "chat_id": self.chat_id,
                     "bot_activity": False,
                 },
                 "actions": [],
@@ -599,8 +581,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 ),
                 "source_id": "3.0",
                 "metadata": {
-                    "category_id": None,
-                    "topic_id": None,
+                    "chat_id": self.chat_id,
                     "bot_activity": False,
                 },
                 "actions": [],
@@ -615,8 +596,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 ),
                 "source_id": "3.0",
                 "metadata": {
-                    "category_id": None,
-                    "topic_id": None,
+                    "chat_id": self.chat_id,
                     "bot_activity": False,
                 },
                 "actions": [],
@@ -631,8 +611,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 ),
                 "source_id": "3.0",
                 "metadata": {
-                    "category_id": None,
-                    "topic_id": None,
+                    "chat_id": self.chat_id,
                     "bot_activity": False,
                 },
                 "actions": [],

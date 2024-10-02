@@ -112,7 +112,7 @@ with DAG(
         logging.info(
             f"CHAT_ID: {chat_id}. {len(extracted_data)} data extracted! Transforming them . . ."
         )
-        transformer = TransformRawInfo()
+        transformer = TransformRawInfo(chat_id=chat_id)
         transformed_data = transformer.transform(
             raw_data=extracted_data,
         )
