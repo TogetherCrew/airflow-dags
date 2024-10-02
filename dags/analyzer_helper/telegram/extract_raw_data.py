@@ -165,7 +165,7 @@ class ExtractRawInfo:
             edited_at = item.get("message_edited_at", None)
             author_id = item["author_id"]
             text = item["message_text"]
-            
+
             # item["reactions"] = self.fetch_message_reactions(message_id=message_id)
 
             # Determine the effective date to use for comparison (prefer edited date if available)
@@ -216,20 +216,17 @@ class ExtractRawInfo:
             latest_activity = self.rawmemberactivities_collection.find_one(
                 sort=[("date", -1)]
             )
-            latest_activity_date: datetime = latest_activity["date"] if latest_activity else None
+            latest_activity_date: datetime = (
+                latest_activity["date"] if latest_activity else None
+            )
             if latest_activity_date:
                 # Convert to unix timestmap format
                 latest_activity_date_timestamp = self.converter.datetime_to_timestamp(
                     latest_activity_date
                 )
                 period_timestamp = self.converter.datetime_to_timestamp(period)
-                if (
-                    latest_activity_date_timestamp
-                    >= period_timestamp
-                ):
-                    data = self.fetch_raw_data(
-                        latest_activity_date_timestamp, "gt"
-                    )
+                if latest_activity_date_timestamp >= period_timestamp:
+                    data = self.fetch_raw_data(latest_activity_date_timestamp, "gt")
                 else:
                     data = self.fetch_raw_data(period_timestamp, "gte")
             else:

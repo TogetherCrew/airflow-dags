@@ -87,8 +87,12 @@ class ExtractRawMembers:
 
             if latest_joined_at:
                 # Conversion to unix timestamp format because of neo4j data structure
-                latest_joined_at_timestamp = self.converter.datetime_to_timestamp(latest_joined_at)
-                members = self.fetch_member_details(start_date=latest_joined_at_timestamp)
+                latest_joined_at_timestamp = self.converter.datetime_to_timestamp(
+                    latest_joined_at
+                )
+                members = self.fetch_member_details(
+                    start_date=latest_joined_at_timestamp
+                )
             else:
                 members = self.fetch_member_details()
 
