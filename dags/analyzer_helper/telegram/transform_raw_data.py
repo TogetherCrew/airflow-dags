@@ -12,7 +12,6 @@ class TransformRawInfo:
     def create_data_entry(
         self, raw_data: dict, interaction_type: str = None, interaction_user: int = None
     ) -> dict:
-
         author_id = str(
             interaction_user
             if interaction_type in ["reply", "mention"]

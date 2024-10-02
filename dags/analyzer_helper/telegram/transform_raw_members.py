@@ -9,7 +9,6 @@ from analyzer_helper.telegram.utils.date_time_format_converter import (
 
 
 class TransformRawMembers(TransformRawMembersBase):
-
     def transform(self, raw_members: list) -> list:
         """
         Transform extracted raw members data into the rawmember structure.
