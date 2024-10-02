@@ -21,7 +21,7 @@ class DateTimeFormatConverter:
         :param timestamp: The Unix timestamp to convert.
         :return: The corresponding datetime object.
         """
-        return datetime.fromtimestamp(timestamp, datetime.timezone.utc)
+        return datetime.fromtimestamp(timestamp, timezone.utc)
 
     @staticmethod
     def string_to_datetime(date_string: str) -> datetime:

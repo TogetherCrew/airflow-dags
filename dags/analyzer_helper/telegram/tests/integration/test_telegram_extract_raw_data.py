@@ -367,11 +367,11 @@ class TestExtractRawInfo(unittest.TestCase):
         self.rawmemberactivities_collection.delete_many({})
         self.rawmemberactivities_collection.insert_one(
             {
-                "author_id": "6168",
+                "author_id": "203678862.0",
                 "date": datetime.datetime(
                     2023, 1, 2, 00, 00, 00, tzinfo=datetime.timezone.utc
                 ),
-                "source_id": "6262",
+                "source_id": "4.0",
                 "metadata": {
                     "chat_id": 6134,
                     "bot_activity": False,
@@ -396,16 +396,6 @@ class TestExtractRawInfo(unittest.TestCase):
         )
         expected_result = [
             {
-                "message_id": "4.0",
-                "message_text": "Hi",
-                "message_created_at": 1672617600.0,
-                "message_edited_at": 1672617600.0,
-                "author_id": "203678862.0",
-                "reactions": [],
-                "replies": [],
-                "mentions": [],
-            },
-            {
                 "message_id": "5.0",
                 "message_text": "Reply🫡",
                 "message_created_at": 1672704000.0,
@@ -416,6 +406,5 @@ class TestExtractRawInfo(unittest.TestCase):
                 "mentions": [],
             },
         ]
-        self.assertEqual(len(result), 2)
-        for res in result:
-            self.assertIn(res, expected_result)
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result, expected_result)
