@@ -34,6 +34,13 @@ class TestExtractRawInfo(unittest.TestCase):
                             updated_at: $created_at1
                         }
                     ),
+                    (m4:TGMessage {
+                            id: '3.0',
+                            text: '🎉️️️️️️ Welcome to the TC Ingestion Pipeline. EDITED MSG',
+                            date: $created_at4,
+                            updated_at: $created_at4
+                        }
+                    ),
                     (m2:TGMessage {
                             id: '4.0',
                             text: 'Hi',
@@ -51,15 +58,18 @@ class TestExtractRawInfo(unittest.TestCase):
                     (m1)-[:SENT_IN]->(c),
                     (m2)-[:SENT_IN]->(c),
                     (m3)-[:SENT_IN]->(c),
+                    (m4)-[:SENT_IN]->(c),
                     (u1)-[:CREATED_MESSAGE]->(m1),
                     (u2)-[:CREATED_MESSAGE]->(m2),
                     (u2)-[:CREATED_MESSAGE]->(m3),
+                    (m1)-[:EDITED]->(m4),
                     (m3)-[:REPLIED]->(m1),
                     (u1)-[:REACTED_TO {new_reaction: '[{"type":"emoji","emoji":"🍓"}]', date: $reaction_date}]->(m1)
                 """,
                 {
                     "chat_id": cls.chat_id,
                     "created_at1": 1672531200.0,
+                    "created_at4": 1672531205.0,
                     "created_at2": 1672617600.0,
                     "created_at3": 1672704000.0,
                     "reaction_date": 1672790400.0,
@@ -78,9 +88,9 @@ class TestExtractRawInfo(unittest.TestCase):
         expected_result = [
             {
                 "message_id": "3.0",
-                "message_text": "🎉️️️️️️ Welcome to the TC Ingestion Pipeline",
+                "message_text": "🎉️️️️️️ Welcome to the TC Ingestion Pipeline. EDITED MSG",
                 "message_created_at": 1672531200.0,
-                "message_edited_at": 1672531200.0,
+                "message_edited_at": 1672531205.0,
                 "author_id": "927814807.0",
                 "reactions": [
                     {
@@ -128,9 +138,9 @@ class TestExtractRawInfo(unittest.TestCase):
         expected_result = [
             {
                 "message_id": "3.0",
-                "message_text": "🎉️️️️️️ Welcome to the TC Ingestion Pipeline",
+                "message_text": "🎉️️️️️️ Welcome to the TC Ingestion Pipeline. EDITED MSG",
                 "message_created_at": 1672531200.0,
-                "message_edited_at": 1672531200.0,
+                "message_edited_at": 1672531205.0,
                 "author_id": "927814807.0",
                 "reactions": [
                     {
@@ -183,9 +193,9 @@ class TestExtractRawInfo(unittest.TestCase):
         expected_result = [
             {
                 "message_id": "3.0",
-                "message_text": "🎉️️️️️️ Welcome to the TC Ingestion Pipeline",
+                "message_text": "🎉️️️️️️ Welcome to the TC Ingestion Pipeline. EDITED MSG",
                 "message_created_at": 1672531200.0,
-                "message_edited_at": 1672531200.0,
+                "message_edited_at": 1672531205.0,
                 "author_id": "927814807.0",
                 "reactions": [
                     {
@@ -196,7 +206,7 @@ class TestExtractRawInfo(unittest.TestCase):
                 ],
                 "replies": [
                     {
-                        "replied_date": 1672704000.0,  # Getting 1672531200.0
+                        "replied_date": 1672704000.0,
                         "replier_id": "203678862.0",
                         "reply_message_id": "5.0",
                     }
@@ -236,9 +246,9 @@ class TestExtractRawInfo(unittest.TestCase):
         expected_result = [
             {
                 "message_id": "3.0",
-                "message_text": "🎉️️️️️️ Welcome to the TC Ingestion Pipeline",
+                "message_text": "🎉️️️️️️ Welcome to the TC Ingestion Pipeline. EDITED MSG",
                 "message_created_at": 1672531200.0,
-                "message_edited_at": 1672531200.0,
+                "message_edited_at": 1672531205.0,
                 "author_id": "927814807.0",
                 "reactions": [
                     {
@@ -318,9 +328,9 @@ class TestExtractRawInfo(unittest.TestCase):
         expected_result = [
             {
                 "message_id": "3.0",
-                "message_text": "🎉️️️️️️ Welcome to the TC Ingestion Pipeline",
+                "message_text": "🎉️️️️️️ Welcome to the TC Ingestion Pipeline. EDITED MSG",
                 "message_created_at": 1672531200.0,
-                "message_edited_at": 1672531200.0,
+                "message_edited_at": 1672531205.0,
                 "author_id": "927814807.0",
                 "reactions": [
                     {
