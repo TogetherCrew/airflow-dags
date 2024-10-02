@@ -29,7 +29,7 @@ class TransformRawMembers(TransformRawMembersBase):
         """
         Transform a single member's data to the rawmember structure.
         """
-        telegram_id = member.get("id")
+        user_id = member.get("id")
         joined_at_timestamp = member.get("joined_at")
         left_at_timestamp = member.get("left_at")
         username = member.get("username")
@@ -49,7 +49,7 @@ class TransformRawMembers(TransformRawMembersBase):
             left_at = None
 
         member = {
-            "id": str(telegram_id) if telegram_id is not None else None,
+            "id": int(user_id) if user_id is not None else None,
             "is_bot": member.get("isBot", False),
             "left_at": (
                 None if left_at is None or joined_at_timestamp == 0.0 else left_at

@@ -1,26 +1,27 @@
 import datetime
+from datetime import datetime, timezone
 
 
 class DateTimeFormatConverter:
     @staticmethod
-    def datetime_to_timestamp(datetime: datetime.datetime) -> float:
+    def datetime_to_timestamp(datetime: datetime) -> float:
         """
         Convert a Python datetime object to a Unix timestamp.
 
         :param datetime: The datetime object to convert.
         :return: The corresponding Unix timestamp.
         """
-        return datetime.timestamp()
+        return datetime.replace(tzinfo=timezone.utc).timestamp()
 
     @staticmethod
-    def timestamp_to_datetime(timestamp: float) -> datetime.datetime:
+    def timestamp_to_datetime(timestamp: float) -> datetime:
         """
         Convert a Unix timestamp to a Python datetime object.
 
         :param timestamp: The Unix timestamp to convert.
         :return: The corresponding datetime object.
         """
-        return datetime.datetime.fromtimestamp(timestamp, datetime.timezone.utc)
+        return datetime.fromtimestamp(timestamp, datetime.timezone.utc)
 
     @staticmethod
     def string_to_datetime(date_string: str) -> datetime:
@@ -29,4 +30,4 @@ class DateTimeFormatConverter:
         :param date_string: The date string to convert.
         :return: The corresponding datetime object.
         """
-        return datetime.datetime.fromisoformat(date_string)
+        return datetime.fromisoformat(date_string)

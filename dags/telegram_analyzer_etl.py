@@ -103,16 +103,18 @@ with DAG(
         period = platform_info["period"]
         recompute = platform_info["recompute"]
 
+        logging.info(f"CHAT_ID: {chat_id}. Extracting raw data!")
         extractor = ExtractRawInfo(
             chat_id=chat_id,
             platform_id=platform_id,
         )
         extracted_data = extractor.extract(period=period, recompute=recompute)
+        logging.info(f"CHAT_ID: {chat_id}. {len(extracted_data)} data extracted! Transforming them . . .")
         transformer = TransformRawInfo()
         transformed_data = transformer.transform(
             raw_data=extracted_data,
         )
-
+        logging.info(f"CHAT_ID: {chat_id}. Loading {len(transformed_data)} to database!")
         loader = LoadTransformedData(platform_id=platform_id)
         loader.load(processed_data=transformed_data, recompute=recompute)
 

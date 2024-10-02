@@ -1,4 +1,4 @@
-from datetime import datetime
+from pymongo import DESCENDING
 
 from analyzer_helper.telegram.utils.date_time_format_converter import (
     DateTimeFormatConverter,
@@ -26,11 +26,11 @@ class ExtractRawMembers:
         """
         self.driver.close()
 
-    def fetch_member_details(self, start_date: datetime = None):
+    def fetch_member_details(self, start_date: float | None = None):
         """
         Fetch details of members from the Telegram group.
 
-        :param start_date: Optional datetime object to filter members created after this date.
+        :param start_date: Optional float timestamp to filter members created after this date.
         :return: List of dictionaries containing member details.
         """
         parameters = {"chat_id": self.chat_id}
@@ -40,7 +40,7 @@ class ExtractRawMembers:
         """
 
         if start_date:
-            query += " AND r.date >= $start_date"
+            query += " AND r.date > $start_date"
             parameters["start_date"] = start_date
 
         query += """
@@ -52,6 +52,7 @@ class ExtractRawMembers:
             u.id AS id,
             joined_at,
             left_at,
+            u.is_bot as is_bot,
             u.username AS username,
             u.first_name AS first_name,
             u.last_name AS last_name
@@ -78,7 +79,7 @@ class ExtractRawMembers:
         else:
             # Fetch the latest joined date from rawmembers collection
             latest_rawmember = self.rawmembers_collection.find_one(
-                sort=[("joined_at", -1)]
+                sort=[("joined_at", DESCENDING)]
             )
             latest_joined_at = (
                 latest_rawmember["joined_at"] if latest_rawmember else None

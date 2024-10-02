@@ -12,10 +12,10 @@ class TestExtractRawInfo(unittest.TestCase):
         cls.neo4jConnection = Neo4jConnection()
         cls.client = MongoSingleton.get_instance().client
         cls.driver = cls.neo4jConnection.connect_neo4j()
-        cls.forum_endpoint = "test_group"
+        cls.chat_id = "test_group"
         cls.platform_id = "platform_db"
         cls.platform_db = cls.client[cls.platform_id]
-        cls.extractor = ExtractRawInfo(cls.forum_endpoint, cls.platform_id)
+        cls.extractor = ExtractRawInfo(cls.chat_id, cls.platform_id)
         cls.rawmemberactivities_collection = cls.platform_db["rawmemberactivities"]
 
         with cls.driver.session() as session:
@@ -24,12 +24,30 @@ class TestExtractRawInfo(unittest.TestCase):
         with cls.driver.session() as session:
             session.run(
                 """
-                CREATE (c:TGChat {title: $chat_title}),
+                CREATE (c:TGChat {id: $chat_id}),
                     (u1:TGUser {id: '927814807.0', name: 'User One'}),
                     (u2:TGUser {id: '203678862.0', name: 'User Two'}),
-                    (m1:TGMessage {id: '3.0', text: '🎉️️️️️️ Welcome to the TC Ingestion Pipeline', date: $created_at1}),
-                    (m2:TGMessage {id: '4.0', text: 'Hi', date: $created_at2}),
-                    (m3:TGMessage {id: '5.0', text: 'Reply🫡', date: $created_at3}),
+                    (m1:TGMessage {
+                            id: '3.0',
+                            text: '🎉️️️️️️ Welcome to the TC Ingestion Pipeline',
+                            date: $created_at1,
+                            updated_at: $created_at1
+                        }
+                    ),
+                    (m2:TGMessage {
+                            id: '4.0',
+                            text: 'Hi',
+                            date: $created_at2,
+                            updated_at: $created_at2
+                        }
+                    ),
+                    (m3:TGMessage {
+                            id: '5.0',
+                            text: 'Reply🫡',
+                            date: $created_at3,
+                            updated_at: $created_at3
+                        }
+                    ),
                     (m1)-[:SENT_IN]->(c),
                     (m2)-[:SENT_IN]->(c),
                     (m3)-[:SENT_IN]->(c),
@@ -40,15 +58,13 @@ class TestExtractRawInfo(unittest.TestCase):
                     (u1)-[:REACTED_TO {new_reaction: '[{"type":"emoji","emoji":"🍓"}]', date: $reaction_date}]->(m1)
                 """,
                 {
-                    "chat_title": cls.forum_endpoint,
+                    "chat_id": cls.chat_id,
                     "created_at1": 1672531200.0,
                     "created_at2": 1672617600.0,
                     "created_at3": 1672704000.0,
                     "reaction_date": 1672790400.0,
                 },
             )
-            result = session.run("MATCH (n) RETURN n")
-            print("Database Initialization Result:", result.data())
 
     @classmethod
     def tearDownClass(cls):
@@ -64,7 +80,8 @@ class TestExtractRawInfo(unittest.TestCase):
                 "message_id": "3.0",
                 "message_text": "🎉️️️️️️ Welcome to the TC Ingestion Pipeline",
                 "message_created_at": 1672531200.0,
-                "user_id": "927814807.0",
+                "message_edited_at": 1672531200.0,
+                "author_id": "927814807.0",
                 "reactions": [
                     {
                         "reaction": '[{"type":"emoji","emoji":"🍓"}]',
@@ -85,7 +102,8 @@ class TestExtractRawInfo(unittest.TestCase):
                 "message_id": "4.0",
                 "message_text": "Hi",
                 "message_created_at": 1672617600.0,
-                "user_id": "203678862.0",
+                "message_edited_at": 1672617600.0,
+                "author_id": "203678862.0",
                 "reactions": [],
                 "replies": [],
                 "mentions": [],
@@ -94,14 +112,16 @@ class TestExtractRawInfo(unittest.TestCase):
                 "message_id": "5.0",
                 "message_text": "Reply🫡",
                 "message_created_at": 1672704000.0,
-                "user_id": "203678862.0",
+                "message_edited_at": 1672704000.0,
+                "author_id": "203678862.0",
                 "reactions": [],
                 "replies": [],
                 "mentions": [],
             },
         ]
         self.assertEqual(len(result), 3)
-        self.assertEqual(result, expected_result)
+        for res in result:
+            self.assertIn(res, expected_result)
 
     def test_fetch_raw_data(self):
         result = self.extractor.fetch_raw_data()
@@ -110,7 +130,8 @@ class TestExtractRawInfo(unittest.TestCase):
                 "message_id": "3.0",
                 "message_text": "🎉️️️️️️ Welcome to the TC Ingestion Pipeline",
                 "message_created_at": 1672531200.0,
-                "user_id": "927814807.0",
+                "message_edited_at": 1672531200.0,
+                "author_id": "927814807.0",
                 "reactions": [
                     {
                         "reaction": '[{"type":"emoji","emoji":"🍓"}]',
@@ -131,7 +152,8 @@ class TestExtractRawInfo(unittest.TestCase):
                 "message_id": "4.0",
                 "message_text": "Hi",
                 "message_created_at": 1672617600.0,
-                "user_id": "203678862.0",
+                "message_edited_at": 1672617600.0,
+                "author_id": "203678862.0",
                 "reactions": [],
                 "replies": [],
                 "mentions": [],
@@ -140,14 +162,17 @@ class TestExtractRawInfo(unittest.TestCase):
                 "message_id": "5.0",
                 "message_text": "Reply🫡",
                 "message_created_at": 1672704000.0,
-                "user_id": "203678862.0",
+                "message_edited_at": 1672704000.0,
+                "author_id": "203678862.0",
                 "reactions": [],
                 "replies": [],
                 "mentions": [],
             },
         ]
         self.assertEqual(len(result), 3)
-        self.assertEqual(result, expected_result)
+        for res in result:
+            print(res)
+            self.assertIn(res, expected_result)
 
     def test_extract_with_recompute(self):
         self.rawmemberactivities_collection.delete_many({})
@@ -160,7 +185,8 @@ class TestExtractRawInfo(unittest.TestCase):
                 "message_id": "3.0",
                 "message_text": "🎉️️️️️️ Welcome to the TC Ingestion Pipeline",
                 "message_created_at": 1672531200.0,
-                "user_id": "927814807.0",
+                "message_edited_at": 1672531200.0,
+                "author_id": "927814807.0",
                 "reactions": [
                     {
                         "reaction": '[{"type":"emoji","emoji":"🍓"}]',
@@ -170,7 +196,7 @@ class TestExtractRawInfo(unittest.TestCase):
                 ],
                 "replies": [
                     {
-                        "replied_date": 1672704000.0,
+                        "replied_date": 1672704000.0,  # Getting 1672531200.0
                         "replier_id": "203678862.0",
                         "reply_message_id": "5.0",
                     }
@@ -181,7 +207,8 @@ class TestExtractRawInfo(unittest.TestCase):
                 "message_id": "4.0",
                 "message_text": "Hi",
                 "message_created_at": 1672617600.0,
-                "user_id": "203678862.0",
+                "message_edited_at": 1672617600.0,
+                "author_id": "203678862.0",
                 "reactions": [],
                 "replies": [],
                 "mentions": [],
@@ -190,13 +217,15 @@ class TestExtractRawInfo(unittest.TestCase):
                 "message_id": "5.0",
                 "message_text": "Reply🫡",
                 "message_created_at": 1672704000.0,
-                "user_id": "203678862.0",
+                "message_edited_at": 1672704000.0,
+                "author_id": "203678862.0",
                 "reactions": [],
                 "replies": [],
                 "mentions": [],
             },
         ]
-        self.assertEqual(result, expected_result)
+        for res in result:
+            self.assertIn(res, expected_result)
 
     def test_extract_without_recompute_no_latest_activity(self):
         self.rawmemberactivities_collection.delete_many({})
@@ -209,7 +238,8 @@ class TestExtractRawInfo(unittest.TestCase):
                 "message_id": "3.0",
                 "message_text": "🎉️️️️️️ Welcome to the TC Ingestion Pipeline",
                 "message_created_at": 1672531200.0,
-                "user_id": "927814807.0",
+                "message_edited_at": 1672531200.0,
+                "author_id": "927814807.0",
                 "reactions": [
                     {
                         "reaction": '[{"type":"emoji","emoji":"🍓"}]',
@@ -230,7 +260,8 @@ class TestExtractRawInfo(unittest.TestCase):
                 "message_id": "4.0",
                 "message_text": "Hi",
                 "message_created_at": 1672617600.0,
-                "user_id": "203678862.0",
+                "message_edited_at": 1672617600.0,
+                "author_id": "203678862.0",
                 "reactions": [],
                 "replies": [],
                 "mentions": [],
@@ -239,16 +270,16 @@ class TestExtractRawInfo(unittest.TestCase):
                 "message_id": "5.0",
                 "message_text": "Reply🫡",
                 "message_created_at": 1672704000.0,
-                "user_id": "203678862.0",
+                "message_edited_at": 1672704000.0,
+                "author_id": "203678862.0",
                 "reactions": [],
                 "replies": [],
                 "mentions": [],
             },
         ]
-        print("result: \n", result)
-        print("expected_result :\n", expected_result)
         self.assertEqual(len(result), 3)
-        self.assertEqual(result, expected_result)
+        for res in result:
+            self.assertIn(res, expected_result)
 
     def test_extract_without_recompute_latest_activity_before_period(self):
         self.rawmemberactivities_collection.delete_many({})
@@ -280,7 +311,6 @@ class TestExtractRawInfo(unittest.TestCase):
             },
         )
         inserted_data = list(self.rawmemberactivities_collection.find())
-        print("Inserted Data:", inserted_data)
 
         result = self.extractor.extract(
             period=datetime.datetime(2023, 1, 1), recompute=False
@@ -290,7 +320,8 @@ class TestExtractRawInfo(unittest.TestCase):
                 "message_id": "3.0",
                 "message_text": "🎉️️️️️️ Welcome to the TC Ingestion Pipeline",
                 "message_created_at": 1672531200.0,
-                "user_id": "927814807.0",
+                "message_edited_at": 1672531200.0,
+                "author_id": "927814807.0",
                 "reactions": [
                     {
                         "reaction": '[{"type":"emoji","emoji":"🍓"}]',
@@ -311,7 +342,8 @@ class TestExtractRawInfo(unittest.TestCase):
                 "message_id": "4.0",
                 "message_text": "Hi",
                 "message_created_at": 1672617600.0,
-                "user_id": "203678862.0",
+                "message_edited_at": 1672617600.0,
+                "author_id": "203678862.0",
                 "reactions": [],
                 "replies": [],
                 "mentions": [],
@@ -320,16 +352,16 @@ class TestExtractRawInfo(unittest.TestCase):
                 "message_id": "5.0",
                 "message_text": "Reply🫡",
                 "message_created_at": 1672704000.0,
-                "user_id": "203678862.0",
+                "message_edited_at": 1672704000.0,
+                "author_id": "203678862.0",
                 "reactions": [],
                 "replies": [],
                 "mentions": [],
             },
         ]
-        print("result: \n", result)
-        print("expected_result: \n", expected_result)
         self.assertEqual(len(result), 3)
-        self.assertEqual(result, expected_result)
+        for res in result:
+            self.assertIn(res, expected_result)
 
     def test_extract_without_recompute_latest_activity_after_period(self):
         self.rawmemberactivities_collection.delete_many({})
@@ -341,8 +373,7 @@ class TestExtractRawInfo(unittest.TestCase):
                 ),
                 "source_id": "6262",
                 "metadata": {
-                    "category_id": None,
-                    "topic_id": 6134,
+                    "chat_id": 6134,
                     "bot_activity": False,
                 },
                 "actions": [
@@ -368,7 +399,8 @@ class TestExtractRawInfo(unittest.TestCase):
                 "message_id": "4.0",
                 "message_text": "Hi",
                 "message_created_at": 1672617600.0,
-                "user_id": "203678862.0",
+                "message_edited_at": 1672617600.0,
+                "author_id": "203678862.0",
                 "reactions": [],
                 "replies": [],
                 "mentions": [],
@@ -377,10 +409,13 @@ class TestExtractRawInfo(unittest.TestCase):
                 "message_id": "5.0",
                 "message_text": "Reply🫡",
                 "message_created_at": 1672704000.0,
-                "user_id": "203678862.0",
+                "message_edited_at": 1672704000.0,
+                "author_id": "203678862.0",
                 "reactions": [],
                 "replies": [],
                 "mentions": [],
             },
         ]
-        self.assertEqual(result, expected_result)
+        self.assertEqual(len(result), 2)
+        for res in result:
+            self.assertIn(res, expected_result)

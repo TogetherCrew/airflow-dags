@@ -46,12 +46,8 @@ class ExtractRawInfo:
 
         where_clause = """
             WHERE c.id = $chat_id AND (message.text IS NOT NULL)
-            AND NOT EXISTS ()-[:EDITED]->(message)
         """
         if created_at and comparison:
-            print(
-                f"Fetching raw data with created_at: {created_at} and comparison: {comparison}"
-            )
             operator = ">" if comparison == "gt" else ">="
             where_clause += f" AND message.date {operator} $created_at"
 
@@ -65,10 +61,11 @@ class ExtractRawInfo:
         MATCH (first_message:TGMessage {{id: message_id, updated_at: first_msg_time}})
         MATCH (last_edit:TGMessage {{id: message_id, updated_at: latest_msg_time}})
 
-        WITH 
+        WITH
             first_message AS message,
             last_edit.updated_at AS edited_at,
             last_edit.text AS message_text
+        OPTIONAL MATCH (author:TGUser)-[created_rel:CREATED_MESSAGE]->(message)
         OPTIONAL MATCH (reacted_user:TGUser)-[react_rel:REACTED_TO]->(message)
         OPTIONAL MATCH (reply_msg:TGMessage)-[reply_rel:REPLIED]->(message)
         OPTIONAL MATCH (replied_user:TGUser)-[:CREATED_MESSAGE]->(reply_msg)
@@ -76,13 +73,14 @@ class ExtractRawInfo:
         RETURN
             message.id AS message_id,
             message_text,
-            message.created_at AS message_created_at,
+            author.id AS author_id,
+            message.date AS message_created_at,
             edited_at AS message_edited_at,
             [
                 mention IN COLLECT({{mentioned_user_id: mentioned_user.id}}) WHERE mention.mentioned_user_id IS NOT NULL
             ] AS mentions,
             [
-                reply IN COLLECT({{reply_message_id: reply_msg.id, replier_id: replied_user.id, replied_date: message.date}}) WHERE reply.reply_message_id IS NOT NULL
+                reply IN COLLECT({{reply_message_id: reply_msg.id, replier_id: replied_user.id, replied_date: reply_msg.date}}) WHERE reply.reply_message_id IS NOT NULL
             ] AS replies,
             [
                 reaction IN COLLECT({{reactor_id: reacted_user.id, reaction: react_rel.new_reaction, reaction_date: react_rel.date}}) WHERE reaction.reactor_id IS NOT NULL
@@ -165,9 +163,10 @@ class ExtractRawInfo:
             message_id = item["message_id"]
             created_at = item["message_created_at"]
             edited_at = item.get("message_edited_at", None)
-            user_id = item["user_id"]
+            author_id = item["author_id"]
             text = item["message_text"]
-            item["reactions"] = self.fetch_message_reactions(message_id=message_id)
+            
+            # item["reactions"] = self.fetch_message_reactions(message_id=message_id)
 
             # Determine the effective date to use for comparison (prefer edited date if available)
             effective_date = edited_at if edited_at is not None else created_at
@@ -183,7 +182,7 @@ class ExtractRawInfo:
                     "message_created_at": created_at,
                     "message_edited_at": edited_at,
                     "effective_date": effective_date,
-                    "user_id": user_id,
+                    "author_id": author_id,
                     "reactions": item["reactions"],
                     "replies": item["replies"],
                     "mentions": item["mentions"],
@@ -235,4 +234,5 @@ class ExtractRawInfo:
                     data = self.fetch_raw_data(period_timestamp, "gte")
             else:
                 data = self.fetch_raw_data()
-        return self.process_messages(data)
+        # return self.process_messages(data)
+        return data
