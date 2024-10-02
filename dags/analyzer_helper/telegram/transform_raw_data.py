@@ -5,9 +5,10 @@ from analyzer_helper.telegram.utils.is_user_bot import UserBotChecker
 
 
 class TransformRawInfo:
-    def __init__(self):
+    def __init__(self, chat_id: str):
         self.converter = DateTimeFormatConverter
         self.user_bot_checker = UserBotChecker()
+        self.chat_id = chat_id
 
     def create_data_entry(
         self, raw_data: dict, interaction_type: str = None, interaction_user: int = None
@@ -19,16 +20,7 @@ class TransformRawInfo:
         )
         is_bot = self.user_bot_checker.is_user_bot(float(author_id))
         metadata = {
-            "category_id": (
-                raw_data.get("category_id")
-                if raw_data.get("category_id") not in [None, ""]
-                else None
-            ),
-            "topic_id": (
-                raw_data.get("topic_id")
-                if raw_data.get("topic_id") not in [None, ""]
-                else None
-            ),
+            "chat_id": self.chat_id,
             "bot_activity": is_bot,
         }
         result = {
