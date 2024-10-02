@@ -1,5 +1,5 @@
-import unittest
 import datetime
+import unittest
 
 from analyzer_helper.telegram.transform_raw_members import TransformRawMembers
 

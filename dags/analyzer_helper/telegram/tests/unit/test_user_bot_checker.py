@@ -51,10 +51,10 @@ class UserBotCheckerUnit(unittest.TestCase):
                 },
             )
 
-    def tearDown(cls):
-        with cls.driver.session() as session:
+    def tearDown(self):
+        with self.driver.session() as session:
             session.run("MATCH (n) DETACH DELETE n")
-        cls.driver.close()
+        self.driver.close()
 
     def test_user_bot_status(self):
         result = self.user_bot_checker.is_user_bot(float("927814807.0"))

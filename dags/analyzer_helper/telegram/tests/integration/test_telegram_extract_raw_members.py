@@ -1,8 +1,8 @@
-import unittest
 import datetime
+import unittest
 
-from github.neo4j_storage.neo4j_connection import Neo4jConnection
 from analyzer_helper.telegram.extract_raw_members import ExtractRawMembers
+from github.neo4j_storage.neo4j_connection import Neo4jConnection
 
 
 class TestExtractRawMembers(unittest.TestCase):

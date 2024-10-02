@@ -1,10 +1,9 @@
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from analyzer_helper.telegram.utils.date_time_format_converter import (
     DateTimeFormatConverter,
 )
-from typing import List, Dict, Optional, Any
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
