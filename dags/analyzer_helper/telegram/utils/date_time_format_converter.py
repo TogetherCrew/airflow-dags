@@ -27,7 +27,7 @@ class DateTimeFormatConverter:
     def string_to_datetime(date_string: str) -> datetime:
         """
         Convert an ISO format date string to a Python datetime object.
-        
+
         :param date_string: The date string to convert (e.g., "2023-06-01T12:00:00").
         :return: The corresponding datetime object.
         :raises ValueError: If the input string is not in a valid ISO format.
