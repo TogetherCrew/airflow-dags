@@ -151,9 +151,7 @@ with DAG(
         extractor = ExtractRawMembers(chat_id=chat_id, platform_id=platform_id)
         extracted_data = extractor.extract(recompute=recompute)
         transformer = TransformRawMembers()
-        transformed_data = transformer.transform(
-            raw_data=extracted_data, platform_id=platform_id
-        )
+        transformed_data = transformer.transform(raw_members=extracted_data)
         loader = LoadTransformedMembers(platform_id=platform_id)
         loader.load(processed_data=transformed_data, recompute=recompute)
 
