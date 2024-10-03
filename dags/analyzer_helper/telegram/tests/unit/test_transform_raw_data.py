@@ -17,7 +17,7 @@ class TestTransformRawInfo(unittest.TestCase):
             "message_id": 3.0,
             "message_text": "🎉️️️️️️ Welcome to the TC Ingestion Pipeline",
             "message_created_at": 1713037938.0,
-            "user_id": 3.0,
+            "author_id": "3",
             "reactions": [
                 {
                     "reaction": '[{"type":"emoji","emoji":"🍓"}]',
@@ -35,7 +35,7 @@ class TestTransformRawInfo(unittest.TestCase):
             "mentions": [],
         }
         expected_result = {
-            "author_id": "3.0",
+            "author_id": "3",
             "date": datetime.datetime(
                 2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc
             ),
@@ -56,14 +56,14 @@ class TestTransformRawInfo(unittest.TestCase):
             "message_id": 7.0,
             "message_text": "@togethercrewdev @user2 🙌",
             "message_created_at": 1713038125.0,
-            "user_id": 5.0,
+            "author_id": "5",
             "reactions": [],
             "replies": [],
             "mentions": [{"mentioned_user_id": 6.0}, {"mentioned_user_id": 7.0}],
         }
         result = self.transformer.create_data_entry(raw_data)
         expected_result = {
-            "author_id": "5.0",
+            "author_id": "5",
             "date": datetime.datetime(
                 2024, 4, 13, 19, 55, 25, tzinfo=datetime.timezone.utc
             ),
@@ -83,7 +83,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 "message_id": 3.0,
                 "message_text": "🎉️️️️️️ Welcome to the TC Ingestion Pipeline",
                 "message_created_at": 1713037938.0,
-                "user_id": 1.0,
+                "author_id": "1",
                 "reactions": [],
                 "replies": [
                     {
@@ -98,7 +98,7 @@ class TestTransformRawInfo(unittest.TestCase):
         result = self.transformer.transform(data)
         expected_result = [
             {
-                "author_id": "1.0",
+                "author_id": "1",
                 "date": datetime.datetime(
                     2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc
                 ),
@@ -124,7 +124,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 },
                 "actions": [],
                 "interactions": [
-                    {"name": "reply", "type": "receiver", "users_engaged_id": ["1.0"]}
+                    {"name": "reply", "type": "receiver", "users_engaged_id": ["1"]}
                 ],
             },
         ]
@@ -136,7 +136,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 "message_id": 3.0,
                 "message_text": "🎉️️️️️️ Welcome to the TC Ingestion Pipeline",
                 "message_created_at": 1713037938.0,
-                "user_id": 1.0,
+                "author_id": "1",
                 "reactions": [],
                 "replies": [
                     {
@@ -156,7 +156,7 @@ class TestTransformRawInfo(unittest.TestCase):
         result = self.transformer.transform(data)
         expected_result = [
             {
-                "author_id": "1.0",
+                "author_id": "1",
                 "date": datetime.datetime(
                     2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc
                 ),
@@ -183,7 +183,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 },
                 "actions": [],
                 "interactions": [
-                    {"name": "reply", "type": "receiver", "users_engaged_id": ["1.0"]}
+                    {"name": "reply", "type": "receiver", "users_engaged_id": ["1"]}
                 ],
             },
             {
@@ -198,7 +198,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 },
                 "actions": [],
                 "interactions": [
-                    {"name": "reply", "type": "receiver", "users_engaged_id": ["1.0"]}
+                    {"name": "reply", "type": "receiver", "users_engaged_id": ["1"]}
                 ],
             },
         ]
@@ -210,7 +210,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 "message_id": 7.0,
                 "message_text": "@togethercrewdev @user3 🙌",
                 "message_created_at": 1713038125.0,
-                "user_id": 2.0,
+                "author_id": "2",
                 "reactions": [],
                 "replies": [],
                 "mentions": [
@@ -221,7 +221,7 @@ class TestTransformRawInfo(unittest.TestCase):
         result = self.transformer.transform(data)
         expected_result = [
             {
-                "author_id": "2.0",
+                "author_id": "2",
                 "date": datetime.datetime(
                     2024, 4, 13, 19, 55, 25, tzinfo=datetime.timezone.utc
                 ),
@@ -247,7 +247,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 },
                 "actions": [],
                 "interactions": [
-                    {"name": "mention", "type": "emitter", "users_engaged_id": ["2.0"]}
+                    {"name": "mention", "type": "emitter", "users_engaged_id": ["2"]}
                 ],
             },
         ]
@@ -259,7 +259,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 "message_id": 7.0,
                 "message_text": "@togethercrewdev @user4 🙌",
                 "message_created_at": 1713038125.0,
-                "user_id": 1.0,
+                "author_id": "1",
                 "reactions": [],
                 "replies": [],
                 "mentions": [{"mentioned_user_id": 2.0}, {"mentioned_user_id": 3.0}],
@@ -268,7 +268,7 @@ class TestTransformRawInfo(unittest.TestCase):
         result = self.transformer.transform(data)
         expected_result = [
             {
-                "author_id": "1.0",
+                "author_id": "1",
                 "date": datetime.datetime(
                     2024, 4, 13, 19, 55, 25, tzinfo=datetime.timezone.utc
                 ),
@@ -316,7 +316,7 @@ class TestTransformRawInfo(unittest.TestCase):
                         "name": "mention",
                         "type": "emitter",
                         "users_engaged_id": [
-                            "1.0",
+                            "1",
                         ],
                     }
                 ],
@@ -337,7 +337,7 @@ class TestTransformRawInfo(unittest.TestCase):
                         "name": "mention",
                         "type": "emitter",
                         "users_engaged_id": [
-                            "1.0",
+                            "1",
                         ],
                     }
                 ],
@@ -351,7 +351,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 "message_id": 11.0,
                 "message_text": "Ah I lost the chat history",
                 "message_created_at": 1713038191.0,
-                "user_id": 2.0,
+                "author_id": "2",
                 "reactions": [
                     {
                         "reaction": '[{"type":"emoji","emoji":"🍓"}]',
@@ -366,7 +366,7 @@ class TestTransformRawInfo(unittest.TestCase):
         result = self.transformer.transform(data)
         expected_result = [
             {
-                "author_id": "2.0",
+                "author_id": "2",
                 "date": datetime.datetime(
                     2024, 4, 13, 19, 56, 31, tzinfo=datetime.timezone.utc
                 ),
@@ -392,7 +392,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 },
                 "actions": [],
                 "interactions": [
-                    {"name": "reaction", "type": "emitter", "users_engaged_id": ["2.0"]}
+                    {"name": "reaction", "type": "emitter", "users_engaged_id": ["2"]}
                 ],
             },
         ]
@@ -404,7 +404,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 "message_id": 11.0,
                 "message_text": "Ah I lost the chat history",
                 "message_created_at": 1713038191.0,
-                "user_id": 2.0,
+                "author_id": "2",
                 "reactions": [
                     {
                         "reaction": '[{"type":"emoji","emoji":"🍓"}]',
@@ -424,9 +424,9 @@ class TestTransformRawInfo(unittest.TestCase):
         result = self.transformer.transform(data)
         expected_result = [
             {
-                "author_id": "2.0",
+                "author_id": "2",
                 "date": datetime.datetime(
-                    2024, 4, 13, 21, 56, 31, tzinfo=datetime.timezone.utc
+                    2024, 4, 13, 19, 56, 31, tzinfo=datetime.timezone.utc
                 ),
                 "source_id": "11.0",
                 "metadata": {
@@ -442,7 +442,7 @@ class TestTransformRawInfo(unittest.TestCase):
             {
                 "author_id": "1",
                 "date": datetime.datetime(
-                    2024, 4, 13, 21, 56, 31, tzinfo=datetime.timezone.utc
+                    2024, 4, 13, 19, 56, 31, tzinfo=datetime.timezone.utc
                 ),
                 "source_id": "11.0",
                 "metadata": {
@@ -451,13 +451,13 @@ class TestTransformRawInfo(unittest.TestCase):
                 },
                 "actions": [],
                 "interactions": [
-                    {"name": "reaction", "type": "emitter", "users_engaged_id": ["2.0"]}
+                    {"name": "reaction", "type": "emitter", "users_engaged_id": ["2"]}
                 ],
             },
             {
                 "author_id": "2",
                 "date": datetime.datetime(
-                    2024, 4, 13, 21, 56, 31, tzinfo=datetime.timezone.utc
+                    2024, 4, 13, 19, 56, 31, tzinfo=datetime.timezone.utc
                 ),
                 "source_id": "11.0",
                 "metadata": {
@@ -466,10 +466,12 @@ class TestTransformRawInfo(unittest.TestCase):
                 },
                 "actions": [],
                 "interactions": [
-                    {"name": "reaction", "type": "emitter", "users_engaged_id": ["2.0"]}
+                    {"name": "reaction", "type": "emitter", "users_engaged_id": ["2"]}
                 ],
             },
         ]
+        print(result)
+        self.assertEqual(result, expected_result)
 
     def test_transform_data_with_replied_mentions_interactions(self):
         data = [
@@ -477,7 +479,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 "message_id": 3.0,
                 "message_text": "🎉️️️️️️ Welcome to the TC Ingestion Pipeline",
                 "message_created_at": 1713037938.0,
-                "user_id": 1.0,
+                "author_id": "1",
                 "reactions": [
                     {
                         "reaction": '[{"type":"emoji","emoji":"🍓"}]',
@@ -508,7 +510,7 @@ class TestTransformRawInfo(unittest.TestCase):
         result = self.transformer.transform(data)
         expected_result = [
             {
-                "author_id": "1.0",
+                "author_id": "1",
                 "date": datetime.datetime(
                     2024, 4, 13, 19, 52, 18, tzinfo=datetime.timezone.utc
                 ),
@@ -539,7 +541,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 },
                 "actions": [],
                 "interactions": [
-                    {"name": "reaction", "type": "emitter", "users_engaged_id": ["1.0"]}
+                    {"name": "reaction", "type": "emitter", "users_engaged_id": ["1"]}
                 ],
             },
             {
@@ -554,7 +556,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 },
                 "actions": [],
                 "interactions": [
-                    {"name": "reaction", "type": "emitter", "users_engaged_id": ["1.0"]}
+                    {"name": "reaction", "type": "emitter", "users_engaged_id": ["1"]}
                 ],
             },
             {
@@ -569,7 +571,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 },
                 "actions": [],
                 "interactions": [
-                    {"name": "reply", "type": "receiver", "users_engaged_id": ["1.0"]}
+                    {"name": "reply", "type": "receiver", "users_engaged_id": ["1"]}
                 ],
             },
             {
@@ -584,7 +586,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 },
                 "actions": [],
                 "interactions": [
-                    {"name": "reply", "type": "receiver", "users_engaged_id": ["1.0"]}
+                    {"name": "reply", "type": "receiver", "users_engaged_id": ["1"]}
                 ],
             },
             {
@@ -599,7 +601,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 },
                 "actions": [],
                 "interactions": [
-                    {"name": "mention", "type": "emitter", "users_engaged_id": ["1.0"]}
+                    {"name": "mention", "type": "emitter", "users_engaged_id": ["1"]}
                 ],
             },
             {
@@ -614,7 +616,7 @@ class TestTransformRawInfo(unittest.TestCase):
                 },
                 "actions": [],
                 "interactions": [
-                    {"name": "mention", "type": "emitter", "users_engaged_id": ["1.0"]}
+                    {"name": "mention", "type": "emitter", "users_engaged_id": ["1"]}
                 ],
             },
         ]
