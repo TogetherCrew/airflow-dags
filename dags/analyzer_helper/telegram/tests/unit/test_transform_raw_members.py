@@ -31,7 +31,7 @@ class TestTelegramTransformRawMembers(unittest.TestCase):
 
         expected_result = [
             {
-                "id": 203678862,
+                "id": "203678862",
                 "is_bot": False,
                 "left_at": None,
                 "joined_at": datetime.datetime(
@@ -120,7 +120,7 @@ class TestTelegramTransformRawMembers(unittest.TestCase):
 
         expected_result = [
             {
-                "id": 203678862,
+                "id": "203678862",
                 "is_bot": False,
                 "left_at": None,
                 "joined_at": datetime.datetime(
@@ -133,7 +133,7 @@ class TestTelegramTransformRawMembers(unittest.TestCase):
                 },
             },
             {
-                "id": 265278326,
+                "id": "265278326",
                 "is_bot": False,
                 "left_at": None,
                 "joined_at": datetime.datetime(
@@ -146,7 +146,7 @@ class TestTelegramTransformRawMembers(unittest.TestCase):
                 },
             },
             {
-                "id": 501641383,
+                "id": "501641383",
                 "is_bot": False,
                 "left_at": None,
                 "joined_at": datetime.datetime(
@@ -159,7 +159,7 @@ class TestTelegramTransformRawMembers(unittest.TestCase):
                 },
             },
             {
-                "id": 551595722,
+                "id": "551595722",
                 "is_bot": False,
                 "left_at": None,
                 "joined_at": datetime.datetime(
@@ -172,7 +172,7 @@ class TestTelegramTransformRawMembers(unittest.TestCase):
                 },
             },
             {
-                "id": 926245054,
+                "id": "926245054",
                 "is_bot": False,
                 "left_at": None,
                 "joined_at": datetime.datetime(
@@ -185,7 +185,7 @@ class TestTelegramTransformRawMembers(unittest.TestCase):
                 },
             },
             {
-                "id": 927814807,
+                "id": "927814807",
                 "is_bot": False,
                 "left_at": None,
                 "joined_at": None,
@@ -196,7 +196,7 @@ class TestTelegramTransformRawMembers(unittest.TestCase):
                 },
             },
             {
-                "id": 6504405389,
+                "id": "6504405389",
                 "is_bot": False,
                 "left_at": None,
                 "joined_at": None,

@@ -11,14 +11,16 @@ class TransformRawInfo:
         self.chat_id = chat_id
 
     def create_data_entry(
-        self, raw_data: dict, interaction_type: str = None, interaction_user: int = None
+        self, raw_data: dict, interaction_type: str = None, interaction_user: str = None
     ) -> dict:
         author_id = str(
-            interaction_user
-            if interaction_type in ["reply", "mention"]
-            else raw_data.get("user_id")
+            int(
+                interaction_user
+                if interaction_type in ["reply", "mention"]
+                else raw_data.get("author_id")
+            )
         )
-        is_bot = self.user_bot_checker.is_user_bot(float(author_id))
+        is_bot = self.user_bot_checker.is_user_bot(str(int(author_id)))
         metadata = {
             "chat_id": self.chat_id,
             "bot_activity": is_bot,
@@ -39,30 +41,30 @@ class TransformRawInfo:
                 {
                     "name": "reaction",
                     "type": "emitter",
-                    "users_engaged_id": [str(raw_data["user_id"])],
+                    "users_engaged_id": [str(int(raw_data["author_id"]))],
                 }
             ]
-            result["author_id"] = str(interaction_user)
+            result["author_id"] = interaction_user
         elif interaction_type == "reply":
             result["actions"] = []
             result["interactions"] = [
                 {
                     "name": "reply",
                     "type": "receiver",
-                    "users_engaged_id": [str(raw_data["user_id"])],
+                    "users_engaged_id": [str(int(raw_data["author_id"]))],
                 }
             ]
-            result["author_id"] = str(interaction_user)
+            result["author_id"] = interaction_user
         elif interaction_type == "mention":
             result["actions"] = []
             result["interactions"] = [
                 {
                     "name": "mention",
                     "type": "emitter",
-                    "users_engaged_id": [str(raw_data["user_id"])],
+                    "users_engaged_id": [str(int(raw_data["author_id"]))],
                 }
             ]
-            result["author_id"] = str(interaction_user)
+            result["author_id"] = interaction_user
         else:
             for reaction in raw_data["reactions"]:
                 if reaction["reactor_id"] is not None:
@@ -110,7 +112,7 @@ class TransformRawInfo:
                         self.create_data_entry(
                             entry,
                             interaction_type="reaction",
-                            interaction_user=int(reaction["reactor_id"]),
+                            interaction_user=str(int(reaction["reactor_id"])),
                         )
                     )
 
@@ -121,7 +123,7 @@ class TransformRawInfo:
                         self.create_data_entry(
                             entry,
                             interaction_type="reply",
-                            interaction_user=int(reply["replier_id"]),
+                            interaction_user=str(int(reply["replier_id"])),
                         )
                     )
 
@@ -132,7 +134,7 @@ class TransformRawInfo:
                         self.create_data_entry(
                             entry,
                             interaction_type="mention",
-                            interaction_user=int(mention["mentioned_user_id"]),
+                            interaction_user=str(int(mention["mentioned_user_id"])),
                         )
                     )
 
