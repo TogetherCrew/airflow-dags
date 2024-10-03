@@ -46,7 +46,7 @@ class ExtractRawMembers:
         MATCH (u:TGUser)-[r2:JOINED]->(c:TGChat {id: $chat_id})
         WITH u, MAX(r2.date) AS joined_at
         OPTIONAL MATCH (u:TGUser)-[r3:LEFT]->(c:TGChat {id: $chat_id})
-        WITH u, joined_at, MAX(r.date) AS left_at
+        WITH u, joined_at, MAX(r3.date) AS left_at
         RETURN
             u.id AS id,
             joined_at,
