@@ -320,7 +320,6 @@ class TestExtractRawInfo(unittest.TestCase):
                 ],
             },
         )
-        inserted_data = list(self.rawmemberactivities_collection.find())
 
         result = self.extractor.extract(
             period=datetime.datetime(2023, 1, 1), recompute=False

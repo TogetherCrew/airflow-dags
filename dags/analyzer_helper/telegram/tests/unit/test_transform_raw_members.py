@@ -179,19 +179,6 @@ class TestTelegramTransformRawMembers(unittest.TestCase):
                     2024, 4, 15, 10, 48, 19, tzinfo=datetime.timezone.utc
                 ),
                 "options": {
-                    "username": "user4",
-                    "first_name": "user",
-                    "last_name": "4",
-                },
-            },
-            {
-                "id": 926245054,
-                "is_bot": False,
-                "left_at": None,
-                "joined_at": datetime.datetime(
-                    2024, 4, 15, 10, 48, 19, tzinfo=datetime.timezone.utc
-                ),
-                "options": {
                     "username": "user5",
                     "first_name": "user",
                     "last_name": "5",

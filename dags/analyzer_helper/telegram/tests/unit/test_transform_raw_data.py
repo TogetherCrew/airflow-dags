@@ -48,8 +48,6 @@ class TestTransformRawInfo(unittest.TestCase):
             ],
         }
         result = self.transformer.create_data_entry(raw_data)
-        print("result: \n", result)
-        print("expected_result: \n", expected_result)
         self.assertEqual(result, expected_result)
 
     def test_create_data_entry_with_mentions(self):
@@ -620,8 +618,6 @@ class TestTransformRawInfo(unittest.TestCase):
                 ],
             },
         ]
-        print("result: \n", result)
-        print("expected_result: \n", expected_result)
         self.assertEqual(result, expected_result)
 
     def test_transform_data_empty(self):

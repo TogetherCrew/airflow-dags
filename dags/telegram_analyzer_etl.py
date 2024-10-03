@@ -78,7 +78,7 @@ with DAG(
             the data should be something like this
             ```
             {
-                'platform_id' : datetime,
+                'platform_id' : str,
                 'id' : str,
                 'period' : datetime,
                 'recompute': bool,
@@ -136,8 +136,8 @@ with DAG(
             the data should be something like this
             ```
             {
-                'platform_id' : datetime,
-                'chat_id' : str,
+                'platform_id' : str,
+                'id' : str,
                 'period' : datetime,
                 'recompute': bool,
             }
@@ -175,7 +175,7 @@ with DAG(
             ```
         """
         logging.info(f"platform_processed: {platform_processed}")
-        fetcher = FetchPlatforms(plaform_name="telegram")
+        fetcher = FetchPlatforms(platform_name="telegram")
         platform_id = platform_processed["platform_id"]
         recompute = platform_processed["recompute"]
 
