@@ -57,6 +57,9 @@ services:
         condition: service_healthy
   neo4j:
     image: "neo4j:5.9.0"
+    ports:
+      - "7687:7687"
+      - "7474:7474"
     environment:
       - NEO4J_AUTH=neo4j/password
       - NEO4J_PLUGINS=["apoc", "graph-data-science"]
@@ -69,6 +72,8 @@ services:
       start_period: 40s
   mongo:
     image: "mongo:6.0.8"
+    ports:
+      - "27017:27017"
     environment:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=pass
