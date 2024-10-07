@@ -206,7 +206,7 @@ with DAG(
         resources = platform_data["resources"]
 
         analyzer = Analyzer()
-        
+
         analyzer.analyze(
             platform_id=platform_id,
             resources=resources,
