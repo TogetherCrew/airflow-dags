@@ -12,6 +12,7 @@ from analyzer_helper.telegram.extract_raw_members import ExtractRawMembers
 from analyzer_helper.telegram.transform_raw_data import TransformRawInfo
 from analyzer_helper.telegram.transform_raw_members import TransformRawMembers
 from dateutil.parser import parse
+from tc_analyzer_lib.schemas.platform_configs import TelegramAnalyzerConfig
 
 with DAG(
     dag_id="telegram_analyzer_etl",
@@ -199,14 +200,13 @@ with DAG(
 
         platform_data = fetcher.fetch_analyzer_parameters(platform_id)
 
-        metadata = platform_data["metadata"]
-        period = metadata["period"]
-        action = metadata["action"]
-        window = metadata["window"]
-        resources = metadata["resources"]
+        period = platform_data["period"]
+        action = platform_data["action"]
+        window = platform_data["window"]
+        resources = platform_data["resources"]
 
         analyzer = Analyzer()
-
+        
         analyzer.analyze(
             platform_id=platform_id,
             resources=resources,
@@ -214,6 +214,8 @@ with DAG(
             action=action,
             window=window,
             recompute=recompute,
+            config=TelegramAnalyzerConfig(),
+            send_completed_message=False,
         )
 
     platform_modules = fetch_telegram_platforms()
