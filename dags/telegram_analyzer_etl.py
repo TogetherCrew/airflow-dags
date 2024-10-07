@@ -11,6 +11,7 @@ from analyzer_helper.telegram.extract_raw_data import ExtractRawInfo
 from analyzer_helper.telegram.extract_raw_members import ExtractRawMembers
 from analyzer_helper.telegram.transform_raw_data import TransformRawInfo
 from analyzer_helper.telegram.transform_raw_members import TransformRawMembers
+from dateutil.parser import parse
 
 with DAG(
     dag_id="telegram_analyzer_etl",
@@ -39,28 +40,33 @@ with DAG(
             ```
 
         """
-        # the platform that needs to be recomputed
-        platform_id_recompute = kwargs["dag_run"].conf.get(  # noqa: F841
-            "recompute_platform", None
-        )
-        # for default we're setting the recompute for all platforms to False
-        # if an id for `recompute_platform` was given
-        # then just run the ETL job for that platform with `recompute = True`
-        # meaning the return would be a list with just one platform information
-        fetcher = FetchPlatforms(
-            platform_name="telegram",
-        )
+        required_params = ["platform_id", "recompute", "period", "id"]
+        params = {param: kwargs["dag_run"].conf.get(param) for param in required_params}
 
-        platforms = fetcher.fetch_all()
+        missing_params = [param for param, value in params.items() if value is None]
+        provided_params = {
+            param: value for param, value in params.items() if value is not None
+        }
 
-        if platform_id_recompute:
+        if missing_params:
+            logging.warning(
+                f"Missing required parameters: {', '.join(missing_params)}. "
+                f"Provided parameters: {', '.join(f'{k}={v}' for k, v in provided_params.items())}"
+            )
+            logging.warning("Defaulting to run for all telegram platforms!")
+            fetcher = FetchPlatforms(
+                platform_name="telegram",
+            )
+            platforms = fetcher.fetch_all()
+        else:
             platforms = [
-                platform
-                for platform in platforms
-                if platform["platform_id"] == platform_id_recompute
+                {
+                    "recompute": params["recompute"],
+                    "platform_id": params["platform_id"],
+                    "period": parse(params["period"]),
+                    "id": params["id"],
+                }
             ]
-            for platform in platforms:
-                platform["recompute"] = True
 
         return platforms
 
@@ -109,18 +115,21 @@ with DAG(
             platform_id=platform_id,
         )
         extracted_data = extractor.extract(period=period, recompute=recompute)
-        logging.info(
-            f"CHAT_ID: {chat_id}. {len(extracted_data)} data extracted! Transforming them . . ."
-        )
-        transformer = TransformRawInfo(chat_id=chat_id)
-        transformed_data = transformer.transform(
-            raw_data=extracted_data,
-        )
-        logging.info(
-            f"CHAT_ID: {chat_id}. Loading {len(transformed_data)} to database!"
-        )
-        loader = LoadTransformedData(platform_id=platform_id)
-        loader.load(processed_data=transformed_data, recompute=recompute)
+        if len(extracted_data) != 0:
+            logging.info(
+                f"CHAT_ID: {chat_id}. {len(extracted_data)} data extracted! Transforming them . . ."
+            )
+            transformer = TransformRawInfo(chat_id=chat_id)
+            transformed_data = transformer.transform(
+                raw_data=extracted_data,
+            )
+            logging.info(
+                f"CHAT_ID: {chat_id}. Loading {len(transformed_data)} to database!"
+            )
+            loader = LoadTransformedData(platform_id=platform_id)
+            loader.load(processed_data=transformed_data, recompute=recompute)
+        else:
+            logging.info(f"CHAT_ID: {chat_id}. No raw data extracted!")
 
     @task
     def telegram_etl_raw_members(
@@ -148,12 +157,23 @@ with DAG(
         # period = platform_info["period"]
         recompute = platform_info["recompute"]
 
+        logging.info(f"CHAT_ID: {chat_id}. Extracting raw members!")
+
         extractor = ExtractRawMembers(chat_id=chat_id, platform_id=platform_id)
         extracted_data = extractor.extract(recompute=recompute)
-        transformer = TransformRawMembers()
-        transformed_data = transformer.transform(raw_members=extracted_data)
-        loader = LoadTransformedMembers(platform_id=platform_id)
-        loader.load(processed_data=transformed_data, recompute=recompute)
+        if len(extracted_data) != 0:
+            logging.info(
+                f"CHAT_ID: {chat_id}. {len(extracted_data)} data extracted! Transforming them . . ."
+            )
+            transformer = TransformRawMembers()
+            transformed_data = transformer.transform(raw_members=extracted_data)
+            logging.info(
+                f"CHAT_ID: {chat_id}. Loading {len(transformed_data)} to database!"
+            )
+            loader = LoadTransformedMembers(platform_id=platform_id)
+            loader.load(processed_data=transformed_data, recompute=recompute)
+        else:
+            logging.info(f"CHAT_ID: {chat_id}. No raw members extracted!")
 
     @task
     def analyze_telegram(platform_processed: dict[str, str | bool]) -> None:
@@ -200,4 +220,6 @@ with DAG(
 
     raw_data_etl = telegram_etl_raw_data.expand(platform_info=platform_modules)
     raw_members_etl = telegram_etl_raw_members.expand(platform_info=platform_modules)
-    raw_members_etl >> analyze_telegram(platform_processed=raw_data_etl)
+
+    analyze_telegram_task = analyze_telegram.expand(platform_processed=platform_modules)
+    [raw_data_etl, raw_members_etl] >> analyze_telegram_task
