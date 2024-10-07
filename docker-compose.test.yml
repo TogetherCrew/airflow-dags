@@ -39,6 +39,9 @@ services:
       - SMART_PROXY_USER=user1
       - SMART_PROXY_PASSWORD=password
       - SMART_PROXY_HOST=sample_smart_proxy_host
+      - MAILGUN_API_KEY=sample_value
+      - FROM_EMAIL_ADDRESS=email@example.com
+      - MAILGUN_API_URL=https://api.example.net/v1/endpoint
     volumes:
       - ./coverage:/project/coverage
     depends_on:

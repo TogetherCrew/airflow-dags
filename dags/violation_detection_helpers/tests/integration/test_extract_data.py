@@ -67,6 +67,60 @@ class TestExtractRawData(TestCase):
         self.assertEqual(results, sample_data)
         self.assertTrue(override_recompute)
 
+    def test_extract_all_resources_given_empty_resource(self):
+        sample_data = [
+            {
+                "author_id": "1",
+                "date": datetime(2022, 1, 1),
+                "source_id": "8888",
+                "text": "test_test",
+                "metadata": {
+                    "topic_id": None,
+                    "category_id": "34567",
+                },
+                "actions": [
+                    {
+                        "name": "message",
+                        "type": "emitter",
+                    }
+                ],
+                "interactions": [],
+            },
+            {
+                "author_id": "2",
+                "date": datetime(2022, 1, 1),
+                "source_id": "8880",
+                "text": "test_test 2",
+                "metadata": {
+                    "topic_id": None,
+                    "category_id": "34569",
+                },
+                "actions": [
+                    {
+                        "name": "message",
+                        "type": "emitter",
+                    }
+                ],
+                "interactions": [],
+            },
+        ]
+        self.client[self.platform_id]["rawmemberactivities"].insert_many(sample_data)
+        extract_data = ExtractPlatformRawData(self.platform_id, "category_id")
+
+        cursor, override_recompute = extract_data.extract(
+            from_date=datetime(2020, 1, 1),
+            to_date=None,
+            resources=[],
+            recompute=False,
+        )
+        results = list(cursor)
+
+        self.assertEqual(
+            len(results), 2, "We need to fetch all data if no resource was given"
+        )
+        self.assertEqual(results, sample_data)
+        self.assertTrue(override_recompute)
+
     def test_extract_some_resources(self):
         sample_data = [
             {

@@ -32,7 +32,10 @@ class TestRetrieveViolationDetectionModules(TestCase):
                             "name": "discourse",
                             "metadata": {
                                 "selectedResources": ["123", "321", "221", "213"],
-                                "selectedDiscordUsers": ["91555", "91888", "91777"],
+                                "selectedEmails": [
+                                    "email1@example.com",
+                                    "email2@example.com",
+                                ],
                                 "fromDate": datetime(2023, 1, 1),
                                 "toDate": None,
                             },
@@ -50,7 +53,7 @@ class TestRetrieveViolationDetectionModules(TestCase):
         self.assertEqual(modules[0]["community"], "515151515151515151515151")
         self.assertEqual(modules[0]["resources"], ["123", "321", "221", "213"])
         self.assertEqual(
-            modules[0]["selected_discord_users"], ["91555", "91888", "91777"]
+            modules[0]["selected_emails"], ["email1@example.com", "email2@example.com"]
         )
         self.assertEqual(modules[0]["from_date"], datetime(2023, 1, 1))
         self.assertEqual(modules[0]["to_date"], None)
@@ -68,7 +71,10 @@ class TestRetrieveViolationDetectionModules(TestCase):
                                 "name": "discourse",
                                 "metadata": {
                                     "selectedResources": ["123", "321", "221", "213"],
-                                    "selectedDiscordUsers": ["91555", "91888", "91777"],
+                                    "selectedEmails": [
+                                        "email1@example.com",
+                                        "email2@example.com",
+                                    ],
                                     "fromDate": datetime(2023, 1, 1),
                                     "toDate": None,
                                 },
@@ -77,8 +83,11 @@ class TestRetrieveViolationDetectionModules(TestCase):
                                 "platform": ObjectId("515151515151515151515153"),
                                 "name": "telegram",
                                 "metadata": {
-                                    "selectedResources": ["7373", "8282", "12390"],
-                                    "selectedDiscordUsers": ["91553"],
+                                    "selectedResources": ["7373", "8282", "1"],
+                                    "selectedEmails": [
+                                        "email4@example.com",
+                                        "email5@example.com",
+                                    ],
                                     "fromDate": datetime(2023, 1, 1),
                                     "toDate": datetime(2024, 1, 1),
                                 },
@@ -99,7 +108,11 @@ class TestRetrieveViolationDetectionModules(TestCase):
                 self.assertEqual(module["community"], "515151515151515151515151")
                 self.assertEqual(module["resources"], ["123", "321", "221", "213"])
                 self.assertEqual(
-                    module["selected_discord_users"], ["91555", "91888", "91777"]
+                    module["selected_emails"],
+                    [
+                        "email1@example.com",
+                        "email2@example.com",
+                    ],
                 )
                 self.assertEqual(module["from_date"], datetime(2023, 1, 1))
                 self.assertEqual(module["to_date"], None)
@@ -107,7 +120,13 @@ class TestRetrieveViolationDetectionModules(TestCase):
                 self.assertEqual(module["platform_id"], "515151515151515151515153")
                 self.assertEqual(module["community"], "515151515151515151515154")
                 self.assertEqual(module["resources"], ["7373", "8282", "12390"])
-                self.assertEqual(module["selected_discord_users"], ["91553"])
+                self.assertEqual(
+                    module["selected_emails"],
+                    [
+                        "email4@example.com",
+                        "email5@example.com",
+                    ],
+                )
                 self.assertEqual(module["from_date"], datetime(2023, 1, 1))
                 self.assertEqual(module["to_date"], datetime(2024, 1, 1))
 
@@ -124,7 +143,10 @@ class TestRetrieveViolationDetectionModules(TestCase):
                                 "name": "discourse",
                                 "metadata": {
                                     "selectedResources": ["123", "321", "221", "213"],
-                                    "selectedDiscordUsers": ["91555", "91888", "91777"],
+                                    "selectedEmails": [
+                                        "email1@example.com",
+                                        "email2@example.com",
+                                    ],
                                     "fromDate": datetime(2023, 1, 1),
                                     "toDate": None,
                                 },
@@ -143,8 +165,11 @@ class TestRetrieveViolationDetectionModules(TestCase):
                                 "platform": ObjectId("515151515151515151515153"),
                                 "name": "discord",
                                 "metadata": {
-                                    "selectedResources": ["7373", "8282", "12390"],
-                                    "selectedDiscordUsers": ["91553"],
+                                    "selectedResources": ["7373", "8282"],
+                                    "selectedEmails": [
+                                        "email4@example.com",
+                                        "email5@example.com",
+                                    ],
                                     "fromDate": datetime(2023, 1, 1),
                                     "toDate": datetime(2024, 1, 1),
                                 },
@@ -165,7 +190,8 @@ class TestRetrieveViolationDetectionModules(TestCase):
                 self.assertEqual(module["community"], "515151515151515151515151")
                 self.assertEqual(module["resources"], ["123", "321", "221", "213"])
                 self.assertEqual(
-                    module["selected_discord_users"], ["91555", "91888", "91777"]
+                    module["selected_emails"],
+                    ["email1@example.com", "email2@example.com"],
                 )
                 self.assertEqual(module["from_date"], datetime(2023, 1, 1))
                 self.assertEqual(module["to_date"], None)
@@ -173,6 +199,9 @@ class TestRetrieveViolationDetectionModules(TestCase):
                 self.assertEqual(module["platform_id"], "515151515151515151515153")
                 self.assertEqual(module["community"], "515151515151515151515154")
                 self.assertEqual(module["resources"], ["7373", "8282", "12390"])
-                self.assertEqual(module["selected_discord_users"], ["91553"])
+                self.assertEqual(
+                    module["selected_emails"],
+                    ["email4@example.com", "email5@example.com"],
+                )
                 self.assertEqual(module["from_date"], datetime(2023, 1, 1))
                 self.assertEqual(module["to_date"], datetime(2024, 1, 1))
