@@ -175,7 +175,6 @@ with DAG(
         else:
             logging.info(f"CHAT_ID: {chat_id}. No raw members extracted!")
 
-
     @task
     def analyze_telegram(platform_processed: dict[str, str | bool]) -> None:
         """
