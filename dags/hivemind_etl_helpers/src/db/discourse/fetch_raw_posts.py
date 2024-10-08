@@ -5,15 +5,15 @@ from hivemind_etl_helpers.src.utils.neo4j import Neo4jConnection
 
 
 def fetch_raw_posts(
-    forum_id: str, from_date: datetime | None = None
+    forum_endpoint: str, from_date: datetime | None = None
 ) -> list[neo4j._data.Record]:
     """
     fetch raw posts from discourse neo4j database
 
     Parameters
     ------------
-    forum_id : str
-        the id of the forum we want to process its data
+    forum_endpoint : str
+        the forum endpoint we want to process its data
     from_date : datetime | None
         the posts to retrieve from a specific date
         default is `None` meaning to fetch all posts
@@ -26,25 +26,27 @@ def fetch_raw_posts(
     neo4j = Neo4jConnection()
 
     query = """
-        MATCH (p:DiscoursePost {forumUuid: $forum_id})
-        MATCH (f:DiscourseForum {uuid: $forum_id})
-        WHERE
-            p.raw IS NOT NULL
-        WITH p, f.endpoint AS forum_endpoint
+    MATCH (p:DiscoursePost {endpoint: $forum_endpoint})
     """
-    if from_date is not None:
+    if from_date:
         query += """
             WHERE
                 datetime(p.createdAt) >= datetime($from_date)
-            WITH p, forum_endpoint
+                AND p.raw IS NOT NULL
+            WITH p
+        """
+    else:
+        query += """
+        WHERE p.raw IS NOT NULL
+        WITH p
         """
 
     # Adding the other part of query
     query += """
         MATCH (author:DiscourseUser)-[:POSTED]->(p)
-        WITH author, p, forum_endpoint
+        WITH author, p
         OPTIONAL MATCH (u:DiscourseUser)-[:LIKED]->(p)
-        WITH author, p, forum_endpoint, COLLECT(u.username) AS liker_usernames, COLLECT(u.name) AS liker_names
+        WITH author, p, COLLECT(u.username) AS liker_usernames, COLLECT(u.name) AS liker_names
         OPTIONAL MATCH (t:DiscourseTopic {id: p.topicId})
         OPTIONAL MATCH (c:DiscourseCategory)-[:HAS_TOPIC]->(t)
         OPTIONAL MATCH (pr:DiscoursePost)-[:REPLIED_TO]->(p)
@@ -54,7 +56,7 @@ def fetch_raw_posts(
             author.name AS author_name,
             t.title AS topic,
             p.id AS postId,
-            forum_endpoint,
+            $forum_endpoint AS forum_endpoint,
             p.raw AS raw,
             p.createdAt AS createdAt,
             p.updatedAt AS updatedAt,
@@ -67,14 +69,14 @@ def fetch_raw_posts(
         ORDER BY createdAt
     """
     raw_records, _, _ = neo4j.neo4j_ops.neo4j_driver.execute_query(
-        query, from_date=from_date, forum_id=forum_id
+        query, from_date=from_date, forum_endpoint=forum_endpoint
     )
 
     return raw_records
 
 
 def fetch_raw_posts_grouped(
-    forum_id: str, from_date: datetime | None = None
+    forum_endpoint: str, from_date: datetime | None = None
 ) -> list[neo4j._data.Record]:
     """
     fetch the raw posts from disocurse grouped by date.
@@ -82,7 +84,7 @@ def fetch_raw_posts_grouped(
 
     Parameters
     ----------
-    forum_id : str
+    forum_endpoint : str
         the forum to extract its data
     from_date : datetime | None
         the posts to retrieve from a specific date
@@ -96,27 +98,29 @@ def fetch_raw_posts_grouped(
     neo4j = Neo4jConnection()
 
     query = """
-        MATCH (p:DiscoursePost {forumUuid: $forum_id})
-        MATCH (f:DiscourseForum {uuid: $forum_id})
-        WHERE
-            p.raw IS NOT NULL
-        WITH p, f.endpoint AS forum_endpoint
+    MATCH (p:DiscoursePost {endpoint: $forum_endpoint})
     """
-    if from_date is not None:
+
+    if from_date:
         query += """
             WHERE
                 datetime(p.createdAt) >= datetime($from_date)
-            WITH p, forum_endpoint
+                AND p.raw IS NOT NULL
+            WITH p
+        """
+    else:
+        query += """
+        WHERE p.raw IS NOT NULL
+        WITH p
         """
 
     query += """
         MATCH (author:DiscourseUser)-[:POSTED]->(p)
-        WITH author, p, forum_endpoint
+        WITH author, p
         OPTIONAL MATCH (u:DiscourseUser)-[:LIKED]->(p)
         WITH
             author,
             p,
-            forum_endpoint,
             COLLECT(u.username) AS liker_usernames,
             COLLECT(u.name) AS liker_names
         OPTIONAL MATCH (t:DiscourseTopic {id: p.topicId})
@@ -124,7 +128,7 @@ def fetch_raw_posts_grouped(
         OPTIONAL MATCH (pr:DiscoursePost)-[:REPLIED_TO]->(p)
         OPTIONAL MATCH (replier_user: DiscourseUser)-[:POSTED]->(pr)
 
-        WITH author, p, forum_endpoint, liker_usernames, liker_names,
+        WITH author, p, liker_usernames, liker_names,
             t.title AS topic,
             p.id AS postId,
             p.raw AS raw,
@@ -144,7 +148,7 @@ def fetch_raw_posts_grouped(
                 author_name: author.name,
                 topic: topic,
                 postId: postId,
-                forum_endpoint: forum_endpoint,
+                forum_endpoint: $forum_endpoint,
                 raw: raw,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
@@ -159,7 +163,7 @@ def fetch_raw_posts_grouped(
     """
 
     raw_records_grouped, _, _ = neo4j.neo4j_ops.neo4j_driver.execute_query(
-        query, from_date=from_date, forum_id=forum_id
+        query, from_date=from_date, forum_endpoint=forum_endpoint
     )
 
     return raw_records_grouped

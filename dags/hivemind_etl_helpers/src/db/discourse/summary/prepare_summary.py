@@ -15,7 +15,6 @@ from llama_index.core.response_synthesizers.base import BaseSynthesizer
 class DiscourseSummary(SummaryBase):
     def __init__(
         self,
-        forum_id: str,
         forum_endpoint: str,
         response_synthesizer: BaseSynthesizer | None = None,
         verbose: bool = False,
@@ -26,7 +25,7 @@ class DiscourseSummary(SummaryBase):
         super().__init__(
             llm=llm, response_synthesizer=response_synthesizer, verbose=verbose
         )
-        self.prefix = f"FORUM_ID: {forum_id} "
+        self.prefix = f"Forum endpoint: {forum_endpoint} "
         self.forum_endpoint = forum_endpoint
 
     def prepare_topic_summaries(

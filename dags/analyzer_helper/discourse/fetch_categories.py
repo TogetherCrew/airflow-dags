@@ -19,9 +19,7 @@ class FetchDiscourseCategories:
             a list of category ids
         """
         query = """
-        MATCH (forum:DiscourseForum {endpoint: $forum_endpoint})
-        WITH forum.uuid as forumUuid
-        MATCH (c:DiscourseCategory {forumUuid: forumUuid})
+        MATCH (c:DiscourseCategory {endpoint: $forum_endpoint})
         RETURN c.id as category_ids
         """
 

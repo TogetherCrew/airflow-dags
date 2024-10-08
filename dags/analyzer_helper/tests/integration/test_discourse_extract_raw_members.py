@@ -34,28 +34,19 @@ class TestExtractRawMembers(unittest.TestCase):
         )
 
         with self.driver.session() as session:
-            result_forum = session.run(
-                """
-                CREATE (f:DiscourseForum {endpoint: $forum_endpoint})
-                RETURN id(f) AS id
-                """,
-                forum_endpoint=self.test_forum_endpoint,
-            )
-            self.forum_id = result_forum.single()["id"]
             # Create user1 and relate to forum
             result1 = session.run(
                 """
-                MATCH (f:DiscourseForum {endpoint: $forum_endpoint})
                 CREATE (
                     u:DiscourseUser {
                         id: 'user1',
                         avatarTemplate: 'avatar1',
                         createdAt: '2023-07-01',
                         name: 'user1name',
-                        username: 'username1'
+                        username: 'username1',
+                        endpoint: $forum_endpoint
                     }
                 )
-                -[:HAS_JOINED]->(f)
                 CREATE (u)-[:HAS_BADGE]->(:Badge {id: 'badge1'})
                 RETURN id(u) AS id
                 """,
@@ -65,16 +56,15 @@ class TestExtractRawMembers(unittest.TestCase):
             # Create user2 and relate to forum
             result2 = session.run(
                 """
-                MATCH (f:DiscourseForum {endpoint: $forum_endpoint})
                 CREATE (u:DiscourseUser {
                         id: 'user2',
                         avatarTemplate: 'avatar2',
                         createdAt: '2023-07-02',
                         name: 'user2name',
-                        username: 'username2'
+                        username: 'username2',
+                        endpoint: $forum_endpoint
                     }
                 )
-                -[:HAS_JOINED]->(f)
                 CREATE (u)-[:HAS_BADGE]->(:Badge {id: 'badge2'})
                 RETURN id(u) AS id
                 """,

@@ -34,8 +34,7 @@ class ExtractRawMembers:
         :return: List of dictionaries containing member details.
         """
         query = """
-        MATCH (forum:DiscourseForum {endpoint: $forum_endpoint})
-        MATCH (user:DiscourseUser)-[:HAS_JOINED]->(forum)
+        MATCH (user:DiscourseUser {endpoint: $forum_endpoint})
         WHERE user.username IS NOT NULL
         """
 

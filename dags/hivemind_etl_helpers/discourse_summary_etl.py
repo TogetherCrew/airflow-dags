@@ -7,7 +7,6 @@ from hivemind_etl_helpers.src.db.discourse.fetch_raw_posts import (
 from hivemind_etl_helpers.src.db.discourse.summary.prepare_summary import (
     DiscourseSummary,
 )
-from hivemind_etl_helpers.src.db.discourse.utils.get_forums import get_forum_uuid
 from hivemind_etl_helpers.src.document_node_parser import configure_node_parser
 from hivemind_etl_helpers.src.utils.sort_summary_docs import sort_summaries_daily
 from llama_index.core import Document, Settings
@@ -40,32 +39,20 @@ def process_discourse_summary(
     prefix = f"COMMUNITYID: {community_id} "
     logging.info(prefix + "Processing summaries")
 
-    forum_uuid = get_forum_uuid(forum_endpoint=forum_endpoint)
-
-    # The below commented lines are for debugging
-    # forum_uuid = [
-    #     {
-    #         "uuid": "851d8069-fc3a-415a-b684-1261d4404092",
-    #     }
-    # ]
-    forum_id = forum_uuid[0]["uuid"]
-    forum_endpoint = forum_endpoint
     process_forum(
-        forum_id=forum_id,
+        forum_endpoint=forum_endpoint,
         community_id=community_id,
         dbname=dbname,
-        log_prefix=f"{prefix}ForumId: {forum_id}",
-        forum_endpoint=forum_endpoint,
+        log_prefix=f"{prefix}Forum endpoint: {forum_endpoint}",
         from_starting_date=from_starting_date,
     )
 
 
 def process_forum(
-    forum_id: str,
+    forum_endpoint: str,
     community_id: str,
     dbname: str,
     log_prefix: str,
-    forum_endpoint: str,
     from_starting_date: datetime,
 ):
     """
@@ -74,7 +61,7 @@ def process_forum(
 
     Parameters
     ------------
-    forum_id : str
+    forum_endpoint : str
         the forum that the community has
     community_id : str
         the community that the forum relates to
@@ -82,8 +69,6 @@ def process_forum(
         the data of the community saved within the postgres database `dbname`
     log_predix : str
         the logging prefix to print out
-    forum_endpoint : str
-        the DiscourseForum endpoint for document checking
     from_starting_date : datetime
         the time to start processing documents
     """
@@ -119,7 +104,9 @@ def process_forum(
         f"{log_prefix} Fetching raw data and converting to llama_index.Documents"
     )
 
-    raw_data_grouped = fetch_raw_posts_grouped(forum_id=forum_id, from_date=from_date)
+    raw_data_grouped = fetch_raw_posts_grouped(
+        forum_endpoint=forum_endpoint, from_date=from_date
+    )
 
     if raw_data_grouped != []:
         (
@@ -127,9 +114,8 @@ def process_forum(
             category_summary_documenets,
             daily_summary_documents,
         ) = get_summary_documents(
-            forum_id=forum_id,
-            raw_data_grouped=raw_data_grouped,
             forum_endpoint=forum_endpoint,
+            raw_data_grouped=raw_data_grouped,
         )
 
         node_parser = configure_node_parser(chunk_size=chunk_size)
@@ -164,19 +150,18 @@ def process_forum(
 
 
 def get_summary_documents(
-    forum_id: str, raw_data_grouped: list[Record], forum_endpoint: str
+    forum_endpoint: str,
+    raw_data_grouped: list[Record],
 ) -> tuple[list[Document], list[Document], list[Document],]:
     """
     prepare the summary documents for discourse based on given raw data
 
     Parameters
     ------------
-    forum_id : str
-        the forum uuid just for logging
+    forum_endpoint : str
+        the discourse forum endpoint to use its data
     raw_data_grouped : list[Record]
         a list of neo4j records
-    forum_endpoint : str
-        the endpoint of the forum id
 
     Returns
     --------
@@ -189,9 +174,8 @@ def get_summary_documents(
     """
 
     discourse_summary = DiscourseSummary(
-        forum_id=forum_id,
-        response_synthesizer=get_response_synthesizer(response_mode="tree_summarize"),
         forum_endpoint=forum_endpoint,
+        response_synthesizer=get_response_synthesizer(response_mode="tree_summarize"),
     )
 
     summarization_query = (

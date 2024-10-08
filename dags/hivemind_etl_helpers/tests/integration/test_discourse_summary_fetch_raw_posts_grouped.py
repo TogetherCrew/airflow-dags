@@ -11,7 +11,7 @@ from hivemind_etl_helpers.src.utils.neo4j import Neo4jConnection
 class TestFetchRawPostsGrouped(unittest.TestCase):
     def test_fetch_all_posts(self):
         neo4j_ops = Neo4jConnection().neo4j_ops
-        forum_id = "636363636363"
+        forum_endpoint = "636363636363"
 
         neo4j_ops.neo4j_driver.execute_query(
             """
@@ -20,18 +20,9 @@ class TestFetchRawPostsGrouped(unittest.TestCase):
         )
         neo4j_ops.neo4j_driver.execute_query(
             """
-            CREATE (f:DiscourseForum {
-                    uuid: '636363636363',
-                    endpoint: 'sample.com'
-                    }
-                )
-            """
-        )
-        neo4j_ops.neo4j_driver.execute_query(
-            """
             CREATE (p:DiscoursePost)
             SET
-                p.forumUuid = "636363636363",
+                p.endpoint = "636363636363",
                 p.raw = "texttexttext of post 1",
                 p.topicId = 1,
                 p.id = 100,
@@ -59,7 +50,7 @@ class TestFetchRawPostsGrouped(unittest.TestCase):
             """
             CREATE (p:DiscoursePost)
             SET
-                p.forumUuid = "636363636363",
+                p.endpoint = "636363636363",
                 p.raw = "texttexttext of post 2",
                 p.topicId = 2,
                 p.id = 101,
@@ -85,7 +76,7 @@ class TestFetchRawPostsGrouped(unittest.TestCase):
             """
         )
 
-        result = fetch_raw_posts_grouped(forum_id)
+        result = fetch_raw_posts_grouped(forum_endpoint)
         self.assertIsInstance(result, list)
         self.assertTrue(
             all(isinstance(record, neo4j._data.Record) for record in result)
@@ -94,7 +85,7 @@ class TestFetchRawPostsGrouped(unittest.TestCase):
 
     def test_fetch_posts_from_date(self):
         neo4j_ops = Neo4jConnection().neo4j_ops
-        forum_id = "636363636363"
+        forum_endpoint = "636363636363"
 
         neo4j_ops.neo4j_driver.execute_query(
             """
@@ -103,18 +94,9 @@ class TestFetchRawPostsGrouped(unittest.TestCase):
         )
         neo4j_ops.neo4j_driver.execute_query(
             """
-            CREATE (f:DiscourseForum {
-                    uuid: '636363636363',
-                    endpoint: 'sample.com'
-                    }
-                )
-            """
-        )
-        neo4j_ops.neo4j_driver.execute_query(
-            """
             CREATE (p:DiscoursePost)
             SET
-                p.forumUuid = "636363636363",
+                p.endpoint = "636363636363",
                 p.raw = "texttexttext of post 1",
                 p.topicId = 1,
                 p.id = 100,
@@ -142,7 +124,7 @@ class TestFetchRawPostsGrouped(unittest.TestCase):
             """
             CREATE (p:DiscoursePost)
             SET
-                p.forumUuid = "636363636363",
+                p.endpoint = "636363636363",
                 p.raw = "texttexttext of post 2",
                 p.topicId = 2,
                 p.id = 101,
@@ -169,7 +151,7 @@ class TestFetchRawPostsGrouped(unittest.TestCase):
         )
 
         from_date = datetime(2022, 1, 2)
-        result = fetch_raw_posts_grouped(forum_id, from_date)
+        result = fetch_raw_posts_grouped(forum_endpoint, from_date)
         self.assertIsInstance(result, list)
         self.assertTrue(
             all(isinstance(record, neo4j._data.Record) for record in result)
@@ -178,7 +160,7 @@ class TestFetchRawPostsGrouped(unittest.TestCase):
 
     def test_fetch_posts_invalid_forum_id(self):
         neo4j_ops = Neo4jConnection().neo4j_ops
-        forum_id = "invalid_forum"
+        forum_endpoint = "invalid_forum"
 
         neo4j_ops.neo4j_driver.execute_query(
             """
@@ -187,18 +169,9 @@ class TestFetchRawPostsGrouped(unittest.TestCase):
         )
         neo4j_ops.neo4j_driver.execute_query(
             """
-            CREATE (f:DiscourseForum {
-                    uuid: '636363636363',
-                    endpoint: 'sample.com'
-                    }
-                )
-            """
-        )
-        neo4j_ops.neo4j_driver.execute_query(
-            """
             CREATE (p:DiscoursePost)
             SET
-                p.forumUuid = "636363636363",
+                p.endpoint = "636363636363",
                 p.raw = "texttexttext of post 1",
                 p.topicId = 1,
                 p.id = 100,
@@ -226,7 +199,7 @@ class TestFetchRawPostsGrouped(unittest.TestCase):
             """
             CREATE (p:DiscoursePost)
             SET
-                p.forumUuid = "636363636363",
+                p.endpoint = "636363636363",
                 p.raw = "texttexttext of post 2",
                 p.topicId = 2,
                 p.id = 101,
@@ -252,7 +225,7 @@ class TestFetchRawPostsGrouped(unittest.TestCase):
             """
         )
 
-        result = fetch_raw_posts_grouped(forum_id)
+        result = fetch_raw_posts_grouped(forum_endpoint)
         self.assertIsInstance(result, list)
         self.assertEqual(len(result), 0)
 
@@ -264,16 +237,7 @@ class TestFetchRawPostsGrouped(unittest.TestCase):
             """
         )
 
-        neo4j_ops.neo4j_driver.execute_query(
-            """
-            CREATE (f:DiscourseForum {
-                    uuid: '636363636363',
-                    endpoint: 'sample.com'
-                    }
-                )
-            """
-        )
-        forum_id = "636363636363"
-        result = fetch_raw_posts_grouped(forum_id)
+        forum_endpoint = "636363636363"
+        result = fetch_raw_posts_grouped(forum_endpoint)
         self.assertIsInstance(result, list)
         self.assertEqual(len(result), 0)
