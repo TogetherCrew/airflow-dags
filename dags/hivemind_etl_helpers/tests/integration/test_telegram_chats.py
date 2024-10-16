@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from dotenv import load_dotenv
-from hivemind_etl_helpers.src.db.telegram import TelegramChats
+from hivemind_etl_helpers.src.db.telegram.extract import TelegramChats
 
 class TestTelegramChats(TestCase):
     def setUp(self) -> None:

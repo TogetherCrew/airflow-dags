@@ -6,7 +6,7 @@ from airflow.decorators import task
 from dotenv import load_dotenv
 from llama_index.core import Document
 from hivemind_etl_helpers.ingestion_pipeline import CustomIngestionPipeline
-from hivemind_etl_helpers.src.db.telegram import TelegramChats
+from hivemind_etl_helpers.src.db.telegram.extract import TelegramChats
 
 with DAG(
     dag_id="telegram_vector_store",
