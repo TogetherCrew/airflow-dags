@@ -7,6 +7,13 @@ class TestTelegramChats(TestCase):
     def setUp(self) -> None:
         load_dotenv()
         self.tc_chats = TelegramChats()
+        self._delete_everything()
+
+    def tearDown(self) -> None:
+        self._delete_everything()
+    
+    def _delete_everything(self):
+        """remove everything on neo4j db"""
         with self.tc_chats._connection.neo4j_driver.session() as session:
             session.execute_write(lambda tx: tx.run("MATCH (n) DETACH DELETE (n)"))
     
