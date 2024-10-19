@@ -1,41 +1,65 @@
+from bson import ObjectId
+
+from datetime import datetime
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
 class TelegramPlatform:
-    def __init__(self, chat_id: str) -> None:
+    def __init__(self, chat_id: str, chat_name: str) -> None:
         """
         Parameters
         -----------
         chat_id : str
             check if there's any platform exists
+        chat_name : str
+            the chat name to create later (if not already exists)
         """
         self._client = MongoSingleton.get_instance().get_client()
         self.chat_id = chat_id
+        self.chat_name = chat_name
 
-    def check_platform_existance(self) -> bool:
+        self.database = "Core"
+        self.collection = "platforms"
+
+    def check_platform_existance(self) -> ObjectId | None:
         """
         check if there's any platform exist for a chat_id
 
         Returns
         --------
-        exists : bool
-            if the platform exist, return True
-            else, False
+        community_id : ObjectId | None
+            the community id if available
+            else will be None
         """
-        pass
+        document = self._client[self.database][self.collection].find_one(
+            {"metadata.id": self.chat_id},
+            {
+                "community": 1,
+            },
+        )
 
-    def create_platform(self, community_id: str) -> bool:
+        return document["community"] if document else None
+
+    def create_platform(self) -> ObjectId:
         """
         create a platform for the chat_id having the community id
 
-        Parameters
-        -----------
-        community_id : str
-            the community id to assign a platform
-
         Returns
         ---------
-        is_created : bool
-            whether the creation of the platform was successful
+        community_id : str
+            the community id that was assigned to a platform
         """
-        pass
+        community_id = ObjectId()
+        self._client[self.database][self.collection].insert_one(
+            {
+                "metadata": {
+                    "id": self.chat_id,
+                    "name": self.chat_name,
+                },
+                "community": community_id,
+                "disconnectedAt": None,
+                "createdAt": datetime.now(),
+                "updatedAt": datetime.now(),
+            }
+        )
+        return community_id

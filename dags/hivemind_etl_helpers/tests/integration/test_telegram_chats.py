@@ -18,7 +18,7 @@ class TestTelegramChats(TestCase):
             session.execute_write(lambda tx: tx.run("MATCH (n) DETACH DELETE (n)"))
     
     def test_extract_chats_empty_db(self):
-        chat_ids = self.tc_chats.extract_chat_ids()
+        chat_ids = self.tc_chats.extract_chats()
         self.assertEqual(
             chat_ids, [],
             msg="No chat id should be available in case no data available!"
@@ -49,7 +49,7 @@ class TestTelegramChats(TestCase):
                 )
             )
         
-        chat_ids = self.tc_chats.extract_chat_ids()
+        chat_ids = self.tc_chats.extract_chats()
         self.assertEqual(chat_ids, ["100000"])
 
     def test_extract_chats_multiple_chats(self):
@@ -103,5 +103,5 @@ class TestTelegramChats(TestCase):
                 )
             )
         
-        chat_ids = self.tc_chats.extract_chat_ids()
+        chat_ids = self.tc_chats.extract_chats()
         self.assertEqual(chat_ids, ["100001", "100002", "100003"])

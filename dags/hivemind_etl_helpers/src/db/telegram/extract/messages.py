@@ -1,0 +1,56 @@
+from tc_neo4j_lib import Neo4jOps
+from hivemind_etl_helpers.src.db.telegram.schema import TelegramMessagesModel
+
+
+class ExtractMessages:
+    def __init__(self, chat_id: str) -> None:
+        self.chat_id = chat_id
+        self._connection = Neo4jOps.get_instance()
+
+    def extract(self) -> list[TelegramMessagesModel]:
+        """
+        extract messages related to the given `chat_id`
+
+        Returns
+        ---------
+        tg_messages : list[TelegramMessagesModel]
+            the telegram messages
+        """
+        query = """
+            MATCH (c:TGChat {id: $chat_id})<-[:SENT_IN]-(message:TGMessage)
+            WHERE message.text IS NOT NULL
+            WITH
+                message.id AS message_id,
+                MAX(message.updated_at) AS latest_msg_time,
+                MIN(message.updated_at) AS first_msg_time
+
+            MATCH (first_message:TGMessage {id: message_id, updated_at: first_msg_time})
+            MATCH (last_edit:TGMessage {id: message_id, updated_at: latest_msg_time})
+
+            WITH
+                first_message AS message,
+                last_edit.updated_at AS edited_at,
+                last_edit.text AS message_text
+            OPTIONAL MATCH (author:TGUser)-[created_rel:CREATED_MESSAGE]->(message)
+            OPTIONAL MATCH (reacted_user:TGUser)-[react_rel:REACTED_TO]->(message)
+            OPTIONAL MATCH (reply_msg:TGMessage)-[:REPLIED]->(message)
+            OPTIONAL MATCH (replied_user:TGUser)-[:CREATED_MESSAGE]->(reply_msg)
+            OPTIONAL MATCH (message)-[:MENTIONED]->(mentioned_user:TGUser)
+            RETURN
+                message.id AS message_id,
+                message_text,
+                author.username AS author_username,
+                message.date AS message_created_at,
+                edited_at AS message_edited_at,
+                COLLECT(DISTINCT mentioned_user.username) AS mentions,
+                COLLECT(DISTINCT replied_user.username) AS repliers,
+                COLLECT(DISTINCT reacted_user.username) AS reactors
+            ORDER BY message_created_at DESC
+        """
+        tg_messages = []
+        with self._connection.neo4j_driver.session() as session:
+            result = session.run(query, {"chat_id": self.chat_id})
+            messages = result.data()
+            tg_messages = [TelegramMessagesModel(**message) for message in messages]
+
+        return tg_messages
