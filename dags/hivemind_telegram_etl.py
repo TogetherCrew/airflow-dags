@@ -114,7 +114,7 @@ with DAG(
 
         logging.info(f"Extracted {len(messages)} messages!")
         documents = transformer.transform(messages=messages)
-        logging.info(f"Messages transformed!")
+        logging.info(f"{len(messages)} Messages transformed!")
         ingestion_pipeline.run_pipeline(docs=documents)
         logging.info("Finished loading into database!")
 
