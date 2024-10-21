@@ -28,12 +28,11 @@ with DAG(
             a list of Telegram chat id and name
         """
         load_dotenv()
-        chat_infos = TelegramChats.extract_chats()
-        logging.info(f"Extracted chats: {chat_infos}")
+        chat_infos = TelegramChats().extract_chats()
         return chat_infos
 
     @task
-    def chat_existence(chat_info: tuple[str, str]) -> tuple[str, str]:
+    def chat_existence(chat_info: tuple[str, str]) -> dict[str, tuple[str, str] | str]:
         """
         check if the community & platform was created for the telegram or not
         if not, create a community and platform and hivemind module for it
@@ -46,7 +45,9 @@ with DAG(
 
         Returns
         ---------
-        chat_info : tuple[str, str]
+        details : dict[str, tuple[str, str] | str]
+            the chat details containing the chat_info
+            and a community id related to that
             tuple containing telegram chat id and chat name
         """
         chat_id = chat_info[0]
@@ -62,20 +63,29 @@ with DAG(
 
             community_id = utils.create_platform()
 
-        return chat_info, community_id
+        return {
+            "chat_info": chat_info,
+            "community_id": str(community_id),
+        }
 
     @task
-    def processor(chat_info: tuple[str, str], community_id: str) -> None:
+    def processor(
+        details: dict[str, tuple[str, str] | str],
+    ) -> None:
         """
         extract, transform, and load telegram data
 
         Parameters
         -----------
-        chat_id : str
-            a telegram chat id
-        community_id : str
-            the community id, related the created community
+        details : dict[str, tuple[str, str] | str]
+            the chat details containing the chat_info
+            and a community id related to that
+            tuple containing telegram chat id and chat name
         """
+        # unwrapping data
+        chat_info = details["chat_info"]
+        community_id = details["community_id"]
+
         chat_id = chat_info[0]
         chat_name = chat_info[1]
 
@@ -99,5 +109,5 @@ with DAG(
         ingestion_pipeline.run_pipeline(docs=documents)
 
     chat_infos = fetch_chat_ids()
-    chat_info, community_id = chat_existence.expand(chat_info=chat_infos)
-    processor(chat_info=chat_info, community_id=community_id)
+    details = chat_existence.expand(chat_info=chat_infos)
+    processor(details=details)
