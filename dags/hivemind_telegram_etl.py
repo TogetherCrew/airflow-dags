@@ -24,12 +24,13 @@ with DAG(
 
         Returns
         ---------
-        chat_info : list[tuple[str, str]]
+        chat_infos : list[tuple[str, str]]
             a list of Telegram chat id and name
         """
         load_dotenv()
-        chat_info = TelegramChats.extract_chats()
-        return chat_info
+        chat_infos = TelegramChats.extract_chats()
+        logging.info(f"Extracted chats: {chat_infos}")
+        return chat_infos
 
     @task
     def chat_existence(chat_info: tuple[str, str]) -> tuple[str, str]:
