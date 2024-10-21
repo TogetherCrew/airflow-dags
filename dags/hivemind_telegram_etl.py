@@ -8,7 +8,6 @@ from hivemind_etl_helpers.ingestion_pipeline import CustomIngestionPipeline
 from hivemind_etl_helpers.src.db.telegram.extract import TelegramChats, ExtractMessages
 from hivemind_etl_helpers.src.db.telegram.transform import TransformMessages
 from hivemind_etl_helpers.src.db.telegram.utility import TelegramUtils
-from qdrant_client.http import models
 
 with DAG(
     dag_id="telegram_vector_store",
@@ -21,18 +20,19 @@ with DAG(
     @task
     def fetch_chat_ids() -> list[tuple[str, str]]:
         """
-        Getting all communities having discord from database
+        Getting all Telegram chats from the database
 
         Returns
         ---------
         chat_info : list[tuple[str, str]]
-            a list of Telegram chat name and id
+            a list of Telegram chat id and name
         """
+        load_dotenv()
         chat_info = TelegramChats.extract_chats()
         return chat_info
 
     @task
-    def chat_existance(chat_info: tuple[str, str]) -> tuple[str, str]:
+    def chat_existence(chat_info: tuple[str, str]) -> tuple[str, str]:
         """
         check if the community & platform was created for the telegram or not
         if not, create a community and platform and hivemind module for it
@@ -45,16 +45,14 @@ with DAG(
 
         Returns
         ---------
-        chat_id : str
-            a telegram chat id
-        community_id : str
-            the community id, related the created community
+        chat_info : tuple[str, str]
+            tuple containing telegram chat id and chat name
         """
         chat_id = chat_info[0]
         chat_name = chat_info[1]
 
         utils = TelegramUtils(chat_id=chat_id, chat_name=chat_name)
-        community_id = utils.check_platform_existance()
+        community_id = utils.check_platform_existence()
         if community_id is None:
             logging.info(
                 f"Platform with chat_id: {chat_id} doesn't exist. "
@@ -63,7 +61,7 @@ with DAG(
 
             community_id = utils.create_platform()
 
-        return chat_id, community_id
+        return chat_info, community_id
 
     @task
     def processor(chat_info: tuple[str, str], community_id: str) -> None:
@@ -100,5 +98,5 @@ with DAG(
         ingestion_pipeline.run_pipeline(docs=documents)
 
     chat_infos = fetch_chat_ids()
-    chat_id, community_id = chat_existance.expand(chat_info=chat_infos)
-    processor(chat_id=chat_id, community_id=community_id)
+    chat_info, community_id = chat_existence.expand(chat_info=chat_infos)
+    processor(chat_info=chat_info, community_id=community_id)

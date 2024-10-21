@@ -15,7 +15,7 @@ from llama_index.core.node_parser import SemanticSplitterNodeParser
 from llama_index.core.schema import BaseNode
 from llama_index.storage.docstore.mongodb import MongoDocumentStore
 from llama_index.storage.kvstore.redis import RedisKVStore as RedisCache
-from qdrant_client.conversions import common_types as types
+from qdrant_client.conversions import common_types as qdrant_types
 from qdrant_client.http import models
 from tc_hivemind_backend.db.credentials import load_postgres_credentials
 from tc_hivemind_backend.db.qdrant import QdrantSingleton
@@ -93,8 +93,8 @@ class CustomIngestionPipeline:
     def _create_payload_index(
         self,
         field_name: str,
-        field_schema: types.PayloadSchemaType,
-    ) -> types.UpdateResult:
+        field_schema: qdrant_types.PayloadSchemaType,
+    ) -> qdrant_types.UpdateResult:
         """
         Creates an index on a field under the payload of points in qdrant db
 
@@ -104,7 +104,7 @@ class CustomIngestionPipeline:
         ------------
         field_name : str
             the field name under points' payload to create the index for
-        field_schema : types.PayloadSchemaType
+        field_schema : qdrant_client.conversions.common_types.PayloadSchemaType
             the schema type of the field
 
         Returns
@@ -162,5 +162,5 @@ class CustomIngestionPipeline:
         except Exception as exp:
             logging.error(f"Error: {exp} while loading latest point!")
             latest_date = None
-        finally:
-            return latest_date
+
+        return latest_date

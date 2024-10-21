@@ -24,18 +24,16 @@ class ExtractMessages:
         tg_messages : list[TelegramMessagesModel]
             the telegram messages
         """
-        query = "MATCH (c:TGChat {id: $chat_id})<-[:SENT_IN]-(message:TGMessage)"
-
         # initialize
         where_clause: str | None = None
         from_date_timestamp: int | None = None
 
         if from_date:
             from_date_timestamp = int(from_date.timestamp() * 1000)
-            where_clause = f"""
+            where_clause = """
             AND message.date >= $from_date_timestamp
             """
-        query += f"""
+        query = f"""
             MATCH (c:TGChat {{id: $chat_id}})<-[:SENT_IN]-(message:TGMessage)
             WHERE message.text IS NOT NULL
             {where_clause if where_clause else ""}

@@ -1,6 +1,6 @@
 from bson import ObjectId
 
-from datetime import datetime
+from datetime import datetime, timezone
 from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
@@ -21,7 +21,7 @@ class TelegramPlatform:
         self.database = "Core"
         self.collection = "platforms"
 
-    def check_platform_existance(self) -> ObjectId | None:
+    def check_platform_existence(self) -> ObjectId | None:
         """
         check if there's any platform exist for a chat_id
 
@@ -58,8 +58,8 @@ class TelegramPlatform:
                 },
                 "community": community_id,
                 "disconnectedAt": None,
-                "createdAt": datetime.now(),
-                "updatedAt": datetime.now(),
+                "createdAt": datetime.now().replace(tzinfo=timezone.utc),
+                "updatedAt": datetime.now().replace(tzinfo=timezone.utc),
             }
         )
         return community_id
