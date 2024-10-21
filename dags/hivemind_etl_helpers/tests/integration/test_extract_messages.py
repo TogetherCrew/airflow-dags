@@ -255,7 +255,7 @@ class TestExtractTelegramMessages(TestCase):
 
         self.assertEqual(data, [])
 
-    def test_exract_single_banned_user(self):
+    def test_extract_single_banned_user(self):
         with self.extractor._connection.neo4j_driver.session() as session:
             session.run(
                 """
