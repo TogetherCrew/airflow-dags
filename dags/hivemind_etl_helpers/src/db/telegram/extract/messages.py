@@ -49,7 +49,13 @@ class ExtractMessages:
                 first_message AS message,
                 last_edit.updated_at AS edited_at,
                 last_edit.text AS message_text
-            OPTIONAL MATCH (author:TGUser)-[created_rel:CREATED_MESSAGE]->(message)
+            MATCH (author:TGUser)-[created_rel:CREATED_MESSAGE]->(message)
+            WHERE NOT EXISTS {{
+                MATCH (author)-[banned_rel:BANNED]->(c:TGChat {{id: $chat_id}})
+                MATCH (author)-[joined_rel:JOINED|UNBANNED]->(c)
+                WITH author, MAX(banned_rel.date) AS banned_time, MAX(joined_rel.date) AS joined_time
+                WHERE banned_time > joined_time
+            }}
             OPTIONAL MATCH (reacted_user:TGUser)-[react_rel:REACTED_TO]->(message)
             OPTIONAL MATCH (reply_msg:TGMessage)-[:REPLIED]->(message)
             OPTIONAL MATCH (replied_user:TGUser)-[:CREATED_MESSAGE]->(reply_msg)

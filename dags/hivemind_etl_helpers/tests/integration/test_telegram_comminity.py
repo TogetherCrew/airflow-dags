@@ -18,6 +18,9 @@ class TestTelegramPlatform(TestCase):
         self.telegram_platform.database = "TempPlatforms"
         self.client.drop_database(self.telegram_platform.database)
 
+    def tearDown(self) -> None:
+        self.client.drop_database(self.telegram_platform.database)
+
     def test_check_no_platform_available(self):
         result = self.telegram_platform.check_platform_existence()
         self.assertFalse(result)
@@ -29,6 +32,7 @@ class TestTelegramPlatform(TestCase):
             self.telegram_platform.collection
         ].insert_one(
             {
+                "name": "telegram",
                 "metadata": {
                     "id": self.chat_id,
                     "name": self.chat_name,
@@ -55,6 +59,7 @@ class TestTelegramPlatform(TestCase):
         ].insert_many(
             [
                 {
+                    "name": "telegram",
                     "metadata": {
                         "id": chat_id,
                         "name": chat_name,
@@ -65,6 +70,7 @@ class TestTelegramPlatform(TestCase):
                     "updatedAt": datetime.now(),
                 },
                 {
+                    "name": "telegram",
                     "metadata": {
                         "id": chat_id2,
                         "name": chat_name2,
@@ -75,6 +81,7 @@ class TestTelegramPlatform(TestCase):
                     "updatedAt": datetime.now(),
                 },
                 {
+                    "name": "telegram",
                     "metadata": {
                         "id": chat_id3,
                         "name": chat_name3,

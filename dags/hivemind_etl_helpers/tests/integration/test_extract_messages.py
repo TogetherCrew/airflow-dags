@@ -254,3 +254,82 @@ class TestExtractTelegramMessages(TestCase):
         data = self.extractor.extract(from_date=datetime(2024, 1, 1))
 
         self.assertEqual(data, [])
+
+    def test_extract_single_banned_user(self):
+        with self.extractor._connection.neo4j_driver.session() as session:
+            session.run(
+                """
+                CREATE (c:TGChat {id: $chat_id}),
+                    (u1:TGUser {id: '927814807.0', username: 'User One'}),
+                    (u2:TGUser {id: '203678862.0', username: 'User Two'}),
+                    (u1)-[:JOINED {date: $joined_date1}]->(c),
+                    (u2)-[:JOINED {date: $joined_date2}]->(c),
+                    (m1:TGMessage {
+                            id: '3.0',
+                            text: '🎉️️️️️️ Welcome to the TC Ingestion Pipeline',
+                            date: $created_at1,
+                            updated_at: $created_at1
+                        }
+                    ),
+                    (m4:TGMessage {
+                            id: '3.0',
+                            text: '🎉️️️️️️ Welcome to the TC Ingestion Pipeline. EDITED MSG',
+                            date: $created_at4,
+                            updated_at: $created_at4
+                        }
+                    ),
+                    (m2:TGMessage {
+                            id: '4.0',
+                            text: 'Hi',
+                            date: $created_at2,
+                            updated_at: $created_at2
+                        }
+                    ),
+                    (m3:TGMessage {
+                            id: '5.0',
+                            text: 'Reply🫡',
+                            date: $created_at3,
+                            updated_at: $created_at3
+                        }
+                    ),
+                    (m1)-[:SENT_IN]->(c),
+                    (m2)-[:SENT_IN]->(c),
+                    (m3)-[:SENT_IN]->(c),
+                    (m4)-[:SENT_IN]->(c),
+                    (u1)-[:CREATED_MESSAGE]->(m1),
+                    (u2)-[:CREATED_MESSAGE]->(m2),
+                    (u2)-[:CREATED_MESSAGE]->(m3),
+                    (m1)-[:EDITED]->(m4),
+                    (m3)-[:REPLIED]->(m1),
+                    (u2)-[:REACTED_TO {new_reaction: '[{"type":"emoji","emoji":"🍓"}]', date: $reaction_date}]->(m1),
+                    (u2)-[:BANNED {date: $banned_date}]->(c)
+                """,
+                {
+                    "chat_id": self.chat_id,
+                    "created_at1": 1672531200.0,  # Sunday, January 1, 2023 12:00:00 AM
+                    "joined_date1": 1672531100.0,  # Saturday, December 31, 2022 11:58:20 PM
+                    "joined_date2": 1672531105.0,  # Saturday, December 31, 2022 11:58:25 PM
+                    "created_at4": 1672531205.0,  # Sunday, January 1, 2023 12:00:05 AM
+                    "created_at2": 1672617600.0,  # Monday, January 2, 2023 12:00:00 AM
+                    "created_at3": 1672704000.0,  # Tuesday, January 3, 2023 12:00:00 AM
+                    "reaction_date": 1672790400.0,  # Wednesday, January 4, 2023 12:00:00 AM
+                    "banned_date": 1673633100.0,  # Friday, January 13, 2023 6:05:00 PM
+                },
+            )
+        data = self.extractor.extract()
+
+        self.assertEqual(
+            data,
+            [
+                TelegramMessagesModel(
+                    message_id=3,
+                    message_text="🎉️️️️️️ Welcome to the TC Ingestion Pipeline. EDITED MSG",
+                    author_username="User One",
+                    message_created_at=1672531200.0,
+                    message_edited_at=1672531205.0,
+                    mentions=[],
+                    repliers=["User Two"],
+                    reactors=["User Two"],
+                ),
+            ],
+        )
