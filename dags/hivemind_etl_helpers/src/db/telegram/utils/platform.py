@@ -52,6 +52,7 @@ class TelegramPlatform:
         community_id = ObjectId()
         self._client[self.database][self.collection].insert_one(
             {
+                "name": "telegram",
                 "metadata": {
                     "id": self.chat_id,
                     "name": self.chat_name,
