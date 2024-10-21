@@ -18,13 +18,13 @@ with DAG(
 ) as dag:
 
     @task
-    def fetch_chat_ids() -> list[tuple[str, str]]:
+    def fetch_chat_ids() -> list[tuple[int, str]]:
         """
         Getting all Telegram chats from the database
 
         Returns
         ---------
-        chat_infos : list[tuple[str, str]]
+        chat_infos : list[tuple[int, str]]
             a list of Telegram chat id and name
         """
         load_dotenv()

@@ -52,7 +52,7 @@ class TestTelegramChats(TestCase):
             )
 
         chat_infos = self.tc_chats.extract_chats()
-        self.assertEqual(chat_infos, [("100000", "test chat")])
+        self.assertEqual(chat_infos, [(100000, "test chat")])
 
     def test_extract_chats_multiple_chats(self):
         neo4j_driver = self.tc_chats._connection.neo4j_driver
@@ -109,8 +109,8 @@ class TestTelegramChats(TestCase):
         self.assertEqual(
             chat_ids,
             [
-                ("100001", "test chat"),
-                ("100002", "test chat 2"),
-                ("100003", "test chat 3"),
+                (100001, "test chat"),
+                (100002, "test chat 2"),
+                (100003, "test chat 3"),
             ],
         )
