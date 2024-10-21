@@ -1,5 +1,5 @@
-from unittest import TestCase
 from datetime import datetime
+from unittest import TestCase
 
 from dotenv import load_dotenv
 from hivemind_etl_helpers.src.db.telegram.extract import ExtractMessages

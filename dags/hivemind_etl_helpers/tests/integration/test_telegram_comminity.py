@@ -1,10 +1,9 @@
-from bson import ObjectId
+from datetime import datetime
 from unittest import TestCase
 
-from datetime import datetime
-
-from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
+from bson import ObjectId
 from hivemind_etl_helpers.src.db.telegram.utils import TelegramPlatform
+from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
 class TestTelegramPlatform(TestCase):

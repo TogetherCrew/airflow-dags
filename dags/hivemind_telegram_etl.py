@@ -5,7 +5,7 @@ from airflow import DAG
 from airflow.decorators import task
 from dotenv import load_dotenv
 from hivemind_etl_helpers.ingestion_pipeline import CustomIngestionPipeline
-from hivemind_etl_helpers.src.db.telegram.extract import TelegramChats, ExtractMessages
+from hivemind_etl_helpers.src.db.telegram.extract import ExtractMessages, TelegramChats
 from hivemind_etl_helpers.src.db.telegram.transform import TransformMessages
 from hivemind_etl_helpers.src.db.telegram.utility import TelegramUtils
 

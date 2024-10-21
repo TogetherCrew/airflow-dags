@@ -1,7 +1,7 @@
-from tc_neo4j_lib import Neo4jOps
 from datetime import datetime
 
 from hivemind_etl_helpers.src.db.telegram.schema import TelegramMessagesModel
+from tc_neo4j_lib import Neo4jOps
 
 
 class ExtractMessages:

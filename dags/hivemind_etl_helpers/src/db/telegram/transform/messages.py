@@ -1,5 +1,5 @@
-from llama_index.core import Document
 from hivemind_etl_helpers.src.db.telegram.schema import TelegramMessagesModel
+from llama_index.core import Document
 
 
 class TransformMessages:

@@ -1,6 +1,4 @@
-from hivemind_etl_helpers.src.db.telegram.utils import (
-    TelegramPlatform,
-)
+from hivemind_etl_helpers.src.db.telegram.utils import TelegramPlatform
 
 
 class TelegramUtils(TelegramPlatform):
