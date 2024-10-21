@@ -1,4 +1,6 @@
 from tc_neo4j_lib import Neo4jOps
+from datetime import datetime
+
 from hivemind_etl_helpers.src.db.telegram.schema import TelegramMessagesModel
 
 
@@ -7,25 +9,40 @@ class ExtractMessages:
         self.chat_id = chat_id
         self._connection = Neo4jOps.get_instance()
 
-    def extract(self) -> list[TelegramMessagesModel]:
+    def extract(self, from_date: datetime | None = None) -> list[TelegramMessagesModel]:
         """
         extract messages related to the given `chat_id`
+
+        Parameters
+        -----------
+        from_date : datetime | None
+            load from a specific date
+            if not given, load all data
 
         Returns
         ---------
         tg_messages : list[TelegramMessagesModel]
             the telegram messages
         """
-        query = """
-            MATCH (c:TGChat {id: $chat_id})<-[:SENT_IN]-(message:TGMessage)
+        query = "MATCH (c:TGChat {id: $chat_id})<-[:SENT_IN]-(message:TGMessage)"
+
+        where_clause: str | None = None
+        from_date_timestamp = int(from_date.timestamp() * 1000)
+        if from_date:
+            where_clause = f"""
+            AND message.date >= $from_date_timestamp
+            """
+        query += f"""
+            MATCH (c:TGChat {{id: $chat_id}})<-[:SENT_IN]-(message:TGMessage)
             WHERE message.text IS NOT NULL
+            {where_clause if where_clause else ""}
             WITH
                 message.id AS message_id,
                 MAX(message.updated_at) AS latest_msg_time,
                 MIN(message.updated_at) AS first_msg_time
 
-            MATCH (first_message:TGMessage {id: message_id, updated_at: first_msg_time})
-            MATCH (last_edit:TGMessage {id: message_id, updated_at: latest_msg_time})
+            MATCH (first_message:TGMessage {{id: message_id, updated_at: first_msg_time}})
+            MATCH (last_edit:TGMessage {{id: message_id, updated_at: latest_msg_time}})
 
             WITH
                 first_message AS message,
@@ -49,7 +66,10 @@ class ExtractMessages:
         """
         tg_messages = []
         with self._connection.neo4j_driver.session() as session:
-            result = session.run(query, {"chat_id": self.chat_id})
+            result = session.run(
+                query,
+                {"chat_id": self.chat_id, "from_date_timestamp": from_date_timestamp},
+            )
             messages = result.data()
             tg_messages = [TelegramMessagesModel(**message) for message in messages]
 

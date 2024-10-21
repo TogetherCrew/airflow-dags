@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.decorators import task
@@ -8,6 +8,7 @@ from hivemind_etl_helpers.ingestion_pipeline import CustomIngestionPipeline
 from hivemind_etl_helpers.src.db.telegram.extract import TelegramChats, ExtractMessages
 from hivemind_etl_helpers.src.db.telegram.transform import TransformMessages
 from hivemind_etl_helpers.src.db.telegram.utility import TelegramUtils
+from qdrant_client.http import models
 
 with DAG(
     dag_id="telegram_vector_store",
@@ -61,7 +62,7 @@ with DAG(
             )
 
             community_id = utils.create_platform()
-    
+
         return chat_id, community_id
 
     @task
@@ -80,13 +81,22 @@ with DAG(
         chat_name = chat_info[1]
 
         extractor = ExtractMessages(chat_id=chat_id)
-        messages = extractor.extract()
-
         transformer = TransformMessages(chat_id=chat_id, chat_name=chat_name)
-        documents = transformer.transform(messages=messages)
+        ingestion_pipeline = CustomIngestionPipeline(
+            community_id=community_id, collection_name="telegram"
+        )
 
-        # Load
-        ingestion_pipeline = CustomIngestionPipeline(community_id=community_id, collection_name="telegram")
+        latest_date = ingestion_pipeline.get_latest_document_date(
+            field_name="createdAt"
+        )
+
+        if latest_date:
+            # this is to catch any edits for messages of 30 days ago
+            from_date = latest_date - timedelta(days=30)
+            messages = extractor.extract(from_date=from_date)
+        else:
+            messages = extractor.extract()
+        documents = transformer.transform(messages=messages)
         ingestion_pipeline.run_pipeline(docs=documents)
 
     chat_infos = fetch_chat_ids()

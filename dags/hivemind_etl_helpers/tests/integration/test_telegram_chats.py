@@ -3,6 +3,7 @@ from unittest import TestCase
 from dotenv import load_dotenv
 from hivemind_etl_helpers.src.db.telegram.extract import TelegramChats
 
+
 class TestTelegramChats(TestCase):
     def setUp(self) -> None:
         load_dotenv()
@@ -11,17 +12,18 @@ class TestTelegramChats(TestCase):
 
     def tearDown(self) -> None:
         self._delete_everything()
-    
+
     def _delete_everything(self):
         """remove everything on neo4j db"""
         with self.tc_chats._connection.neo4j_driver.session() as session:
             session.execute_write(lambda tx: tx.run("MATCH (n) DETACH DELETE (n)"))
-    
+
     def test_extract_chats_empty_db(self):
         chat_ids = self.tc_chats.extract_chats()
         self.assertEqual(
-            chat_ids, [],
-            msg="No chat id should be available in case no data available!"
+            chat_ids,
+            [],
+            msg="No chat id should be available in case no data available!",
         )
 
     def test_extract_chats_single_chat(self):
@@ -45,10 +47,10 @@ class TestTelegramChats(TestCase):
                         "type": "supergroup",
                         "created_at": 1724224885211,
                         "updated_at": 1728985245911,
-                    }
+                    },
                 )
             )
-        
+
         chat_ids = self.tc_chats.extract_chats()
         self.assertEqual(chat_ids, ["100000"])
 
@@ -99,9 +101,9 @@ class TestTelegramChats(TestCase):
                         "type3": "supergroup",
                         "created_at3": 1724224885213,
                         "updated_at3": 1728985245913,
-                    }
+                    },
                 )
             )
-        
+
         chat_ids = self.tc_chats.extract_chats()
         self.assertEqual(chat_ids, ["100001", "100002", "100003"])
