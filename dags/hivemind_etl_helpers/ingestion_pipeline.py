@@ -154,7 +154,12 @@ class CustomIngestionPipeline:
                     ),
                 )
 
-                latest_date = parse(latest_document[0][0].payload[field_name])
+                if not latest_document[0]:
+                    logging.info("No documents found in the collection.")
+                    latest_date = None
+                else:
+                    latest_date = parse(latest_document[0][0].payload[field_name])
+
             else:
                 raise ValueError(
                     f"Index not created successfully! index creation result: {result}"
