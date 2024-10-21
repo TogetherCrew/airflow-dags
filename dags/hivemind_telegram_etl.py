@@ -82,9 +82,13 @@ with DAG(
             and a community id related to that
             tuple containing telegram chat id and chat name
         """
+        load_dotenv()
+        logging.info(f"received details: {details}!")
         # unwrapping data
         chat_info = details["chat_info"]
         community_id = details["community_id"]
+
+        logging.info(f"Started processing community: {community_id}")
 
         chat_id = chat_info[0]
         chat_name = chat_info[1]
@@ -102,12 +106,18 @@ with DAG(
         if latest_date:
             # this is to catch any edits for messages of 30 days ago
             from_date = latest_date - timedelta(days=30)
+            logging.info(f"Started extracting from date: {from_date}!")
             messages = extractor.extract(from_date=from_date)
         else:
+            logging.info("Started extracting data from scratch!")
             messages = extractor.extract()
+
+        logging.info(f"Extracted {len(messages)} messages!")
         documents = transformer.transform(messages=messages)
+        logging.info(f"Messages transformed!")
         ingestion_pipeline.run_pipeline(docs=documents)
+        logging.info("Finished loading into database!")
 
     chat_infos = fetch_chat_ids()
     details = chat_existence.expand(chat_info=chat_infos)
-    processor(details=details)
+    processor.expand(details=details)
