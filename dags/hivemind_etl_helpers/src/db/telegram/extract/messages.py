@@ -26,9 +26,12 @@ class ExtractMessages:
         """
         query = "MATCH (c:TGChat {id: $chat_id})<-[:SENT_IN]-(message:TGMessage)"
 
+        # initialize
         where_clause: str | None = None
-        from_date_timestamp = int(from_date.timestamp() * 1000)
+        from_date_timestamp: int | None = None
+
         if from_date:
+            from_date_timestamp = int(from_date.timestamp() * 1000)
             where_clause = f"""
             AND message.date >= $from_date_timestamp
             """
@@ -64,11 +67,16 @@ class ExtractMessages:
                 COLLECT(DISTINCT reacted_user.username) AS reactors
             ORDER BY message_created_at DESC
         """
+
+        parameters = {"chat_id": self.chat_id}
+        if from_date_timestamp:
+            parameters["from_date_timestamp"] = from_date_timestamp
+
         tg_messages = []
         with self._connection.neo4j_driver.session() as session:
             result = session.run(
                 query,
-                {"chat_id": self.chat_id, "from_date_timestamp": from_date_timestamp},
+                parameters=parameters,
             )
             messages = result.data()
             tg_messages = [TelegramMessagesModel(**message) for message in messages]
