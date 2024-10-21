@@ -46,8 +46,8 @@ class TelegramPlatform:
 
         Returns
         ---------
-        community_id : str
-            the community id that was assigned to a platform
+        community_id : ObjectId
+            the community ID that was assigned to a platform
         """
         community_id = ObjectId()
         self._client[self.database][self.collection].insert_one(
