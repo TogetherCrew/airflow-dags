@@ -38,7 +38,8 @@ class TelegramModules:
             platform_exists = self._check_platform_existence()
             if not platform_exists:
                 logging.info(
-                    f"Adding platform the already exists community with id: {self.community_id}"
+                    "Adding platform to the already"
+                    f" existing community with id: {self.community_id}!"
                 )
                 self._add_platform_to_community()
             else:
@@ -46,7 +47,7 @@ class TelegramModules:
 
     def _check_module_existence(self) -> bool:
         """
-        check if there's any module exists for a chat_id
+        Check if there's any module that exists for the community_id
 
         Returns
         --------
@@ -60,9 +61,9 @@ class TelegramModules:
                 "_id": 1,
             },
         )
-        return True if document else False
+        return bool(document)
 
-    def _check_platform_existence(self):
+    def _check_platform_existence(self) -> bool:
         """
         check if the platform exist in a module holding the community id
         """
@@ -75,9 +76,9 @@ class TelegramModules:
                 "_id": 1,
             },
         )
-        return True if document else False
+        return bool(document)
 
-    def _add_platform_to_community(self):
+    def _add_platform_to_community(self) -> bool:
         """
         Having the community_id modules insert the platform into it
         """
