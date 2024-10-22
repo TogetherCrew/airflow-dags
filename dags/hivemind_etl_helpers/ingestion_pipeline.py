@@ -119,7 +119,11 @@ class CustomIngestionPipeline:
 
         return operation_result
 
-    def get_latest_document_date(self, field_name: str) -> datetime | None:
+    def get_latest_document_date(
+        self,
+        field_name: str,
+        field_schema: qdrant_types.PayloadSchemaType = models.PayloadSchemaType.FLOAT,
+    ) -> datetime | None:
         """
         get the latest date for the most recent available document
 
@@ -129,6 +133,10 @@ class CustomIngestionPipeline:
         ------------
         field_name : str
             the datetime field name in qdrant points' payload
+        field_schema : qdrant_client.conversions.common_types.PayloadSchemaType
+            the date field schema
+            for default we're assuming it is a float timestamp
+            but it also could be DATETIME
 
         Returns
         ---------
@@ -140,7 +148,7 @@ class CustomIngestionPipeline:
         try:
             result = self._create_payload_index(
                 field_name=field_name,
-                field_schema=models.PayloadSchemaType.DATETIME,
+                field_schema=field_schema,
             )
             if result.status.name == "COMPLETED":
                 latest_document = self.qdrant_client.scroll(
