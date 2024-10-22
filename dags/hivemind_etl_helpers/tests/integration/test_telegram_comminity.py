@@ -45,7 +45,7 @@ class TestTelegramPlatform(TestCase):
         )
         created_community_id, created_platform_id = self.telegram_platform.check_platform_existence()
         self.assertEqual(community_id, created_community_id)
-        self.assertEqual(result.inserted_id, created_community_id)
+        self.assertEqual(result.inserted_id, created_platform_id)
 
 
     def test_telegram_multiple_platform_not_available(self):

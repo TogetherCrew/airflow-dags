@@ -104,7 +104,7 @@ class TelegramModules:
         self._client[self.database][self.collection].insert_one(
             {
                 "name": "hivemind",
-                "community": self.community_id,
+                "community": ObjectId(self.community_id),
                 "options": {
                     "platforms": [{
                         "platform": ObjectId(self.platform_id),
