@@ -21,7 +21,7 @@ class TelegramPlatform:
         self.database = "Core"
         self.collection = "platforms"
 
-    def check_platform_existence(self) -> ObjectId | None:
+    def check_platform_existence(self) -> tuple[ObjectId | None, ObjectId | None]:
         """
         check if there's any platform exist for a chat_id
 
@@ -30,17 +30,23 @@ class TelegramPlatform:
         community_id : ObjectId | None
             the community id if available
             else will be None
+        platform_id : ObjectId | None
+            the paltform id if available
+            else will be None
         """
         document = self._client[self.database][self.collection].find_one(
             {"metadata.id": self.chat_id},
             {
                 "community": 1,
+                "_id": 1,
             },
         )
+        community_id = document["community"] if document else None
+        platform_id = document["_id"] if document else None
 
-        return document["community"] if document else None
+        return community_id, platform_id
 
-    def create_platform(self) -> ObjectId:
+    def create_platform(self) -> tuple[ObjectId, ObjectId]:
         """
         create a platform for the chat_id having the community id
 
@@ -48,9 +54,11 @@ class TelegramPlatform:
         ---------
         community_id : ObjectId
             the community ID that was assigned to a platform
+        platform_id : ObjectId
+            the created platform ID
         """
         community_id = ObjectId()
-        self._client[self.database][self.collection].insert_one(
+        result = self._client[self.database][self.collection].insert_one(
             {
                 "name": "telegram",
                 "metadata": {
@@ -63,4 +71,5 @@ class TelegramPlatform:
                 "updatedAt": datetime.now().replace(tzinfo=timezone.utc),
             }
         )
-        return community_id
+        platform_id = result.inserted_id
+        return community_id, platform_id

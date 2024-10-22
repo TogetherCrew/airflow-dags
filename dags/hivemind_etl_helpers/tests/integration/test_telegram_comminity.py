@@ -23,12 +23,12 @@ class TestTelegramPlatform(TestCase):
 
     def test_check_no_platform_available(self):
         result = self.telegram_platform.check_platform_existence()
-        self.assertFalse(result)
+        self.assertIsNone(result)
 
     def test_single_platform_available(self):
         community_id = ObjectId()
 
-        self.client[self.telegram_platform.database][
+        result = self.client[self.telegram_platform.database][
             self.telegram_platform.collection
         ].insert_one(
             {
@@ -43,8 +43,10 @@ class TestTelegramPlatform(TestCase):
                 "updatedAt": datetime.now(),
             }
         )
-        created_community_id = self.telegram_platform.check_platform_existence()
+        created_community_id, created_platform_id = self.telegram_platform.check_platform_existence()
         self.assertEqual(community_id, created_community_id)
+        self.assertEqual(result.inserted_id, created_community_id)
+
 
     def test_telegram_multiple_platform_not_available(self):
         chat_id = "111111"
@@ -94,12 +96,15 @@ class TestTelegramPlatform(TestCase):
             ]
         )
 
-        result = self.telegram_platform.check_platform_existence()
-        self.assertIsNone(result)
+        community_id, platform_id = self.telegram_platform.check_platform_existence()
+        self.assertIsNone(community_id)
+        self.assertIsNone(platform_id)
 
     def test_create_platform(self):
-        community_id = self.telegram_platform.create_platform()
+        community_id, platform_id = self.telegram_platform.create_platform()
 
         self.assertIsNotNone(community_id)
-        fetched_community_id = self.telegram_platform.check_platform_existence()
+        self.assertIsNotNone(platform_id)
+        fetched_community_id, fetched_platform_id = self.telegram_platform.check_platform_existence()
         self.assertEqual(fetched_community_id, community_id)
+        self.assertEqual(fetched_platform_id, platform_id)
