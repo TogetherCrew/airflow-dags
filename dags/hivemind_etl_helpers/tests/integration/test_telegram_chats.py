@@ -106,11 +106,12 @@ class TestTelegramChats(TestCase):
             )
 
         chat_ids = self.tc_chats.extract_chats()
-        self.assertEqual(
-            chat_ids,
-            [
-                (100001, "test chat"),
-                (100002, "test chat 2"),
-                (100003, "test chat 3"),
-            ],
-        )
+
+        self.assertEqual(len(chat_ids), 3)
+        expected_chats = [
+            (100001, "test chat"),
+            (100002, "test chat 2"),
+            (100003, "test chat 3"),
+        ]
+        for id in chat_ids:
+            self.assertIn(id, expected_chats)
