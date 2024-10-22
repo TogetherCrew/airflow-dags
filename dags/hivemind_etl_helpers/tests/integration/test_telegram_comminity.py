@@ -46,7 +46,7 @@ class TestTelegramPlatform(TestCase):
         )
         (
             created_community_id,
-            created_platform_id
+            created_platform_id,
         ) = self.telegram_platform.check_platform_existence()
         self.assertEqual(community_id, created_community_id)
         self.assertEqual(result.inserted_id, created_platform_id)
@@ -110,7 +110,7 @@ class TestTelegramPlatform(TestCase):
         self.assertIsNotNone(platform_id)
         (
             fetched_community_id,
-            fetched_platform_id
+            fetched_platform_id,
         ) = self.telegram_platform.check_platform_existence()
         self.assertEqual(fetched_community_id, community_id)
         self.assertEqual(fetched_platform_id, platform_id)
