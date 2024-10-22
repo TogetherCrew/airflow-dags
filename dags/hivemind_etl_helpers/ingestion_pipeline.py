@@ -165,7 +165,15 @@ class CustomIngestionPipeline:
                     logging.info("No documents found in the collection.")
                     latest_date = None
                 else:
-                    latest_date = parse(latest_document[0][0].payload[field_name])
+                    date_field = latest_document[0][0].payload[field_name]
+
+                    # if it was float timestamp
+                    if field_schema == models.PayloadSchemaType.FLOAT:
+                        latest_date = datetime.fromtimestamp(date_field)
+
+                    # it should be datetime in any other case
+                    else:
+                        latest_date = parse(latest_document[0][0].payload[field_name])
 
             else:
                 raise ValueError(
