@@ -173,7 +173,7 @@ class CustomIngestionPipeline:
 
                     # it should be datetime in any other case
                     else:
-                        latest_date = parse(latest_document[0][0].payload[field_name])
+                        latest_date = parse(date_field)
 
             else:
                 raise ValueError(
