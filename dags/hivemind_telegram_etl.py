@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from hivemind_etl_helpers.ingestion_pipeline import CustomIngestionPipeline
 from hivemind_etl_helpers.src.db.telegram.extract import ExtractMessages, TelegramChats
 from hivemind_etl_helpers.src.db.telegram.transform import TransformMessages
-from hivemind_etl_helpers.src.db.telegram.utility import TelegramUtils
+from hivemind_etl_helpers.src.db.telegram.utils import TelegramModules, TelegramPlatform
 
 with DAG(
     dag_id="telegram_vector_store",
@@ -53,15 +53,18 @@ with DAG(
         chat_id = chat_info[0]
         chat_name = chat_info[1]
 
-        utils = TelegramUtils(chat_id=chat_id, chat_name=chat_name)
-        community_id = utils.check_platform_existence()
+        platform_utils = TelegramPlatform(chat_id=chat_id, chat_name=chat_name)
+        community_id, platform_id = platform_utils.check_platform_existence()
         if community_id is None:
             logging.info(
                 f"Platform with chat_id: {chat_id} doesn't exist. "
                 "Creating one instead!"
             )
 
-            community_id = utils.create_platform()
+            community_id, platform_id = platform_utils.create_platform()
+
+        modules = TelegramModules(community_id, platform_id)
+        modules.create()
 
         return {
             "chat_info": chat_info,
