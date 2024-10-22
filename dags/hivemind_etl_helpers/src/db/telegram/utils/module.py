@@ -69,34 +69,34 @@ class TelegramModules:
         document = self._client[self.database][self.collection].find_one(
             {
                 "community": ObjectId(self.community_id),
-                "options.platforms.platform": ObjectId(self.platform_id)
+                "options.platforms.platform": ObjectId(self.platform_id),
             },
             {
                 "_id": 1,
             },
         )
         return True if document else False
-    
+
     def _add_platform_to_community(self):
         """
         Having the community_id modules insert the platform into it
         """
         result = self._client[self.database][self.collection].update_one(
-                {"community": ObjectId(self.community_id)},
-                {
-                    "$push": {
-                        "options.platforms": {
-                            "platform": ObjectId(self.platform_id),
-                            "name": "telegram",
-                            "_id": ObjectId(),
-                        }
-                    },
-                    "$set": {"updatedAt": datetime.now().replace(tzinfo=timezone.utc)},
-                    "$inc": {"__v": 1}
-                }
-            )
+            {"community": ObjectId(self.community_id)},
+            {
+                "$push": {
+                    "options.platforms": {
+                        "platform": ObjectId(self.platform_id),
+                        "name": "telegram",
+                        "_id": ObjectId(),
+                    }
+                },
+                "$set": {"updatedAt": datetime.now().replace(tzinfo=timezone.utc)},
+                "$inc": {"__v": 1},
+            },
+        )
         return result.modified_count > 0
-        
+
     def _create_module(self) -> None:
         """
         create a module for the community holding platform
@@ -106,14 +106,15 @@ class TelegramModules:
                 "name": "hivemind",
                 "community": ObjectId(self.community_id),
                 "options": {
-                    "platforms": [{
-                        "platform": ObjectId(self.platform_id),
-                        "name": "telegram",
-                        "_id": ObjectId()
-                    }]
+                    "platforms": [
+                        {
+                            "platform": ObjectId(self.platform_id),
+                            "name": "telegram",
+                            "_id": ObjectId(),
+                        }
+                    ]
                 },
                 "createdAt": datetime.now().replace(tzinfo=timezone.utc),
                 "updatedAt": datetime.now().replace(tzinfo=timezone.utc),
             }
         )
-
