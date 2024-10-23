@@ -50,13 +50,6 @@ class Analyzer:
         prefix = f"PLATFORMID: {platform_id} "
         logging.info(f"{prefix} Starting Analyzer job!")
 
-        # limiting to 90 days
-        if (datetime.now() - period).days > 90:
-            logging.info(f"{prefix}Limiting Analytics to 90 days period!")
-            period = (datetime.now() - timedelta(days=90)).replace(
-                hour=0, minute=0, second=0, microsecond=0
-            )
-
         analyzer = TCAnalyzer(
             platform_id=platform_id,
             resources=resources,
