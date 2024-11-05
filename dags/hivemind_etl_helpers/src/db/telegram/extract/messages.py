@@ -16,8 +16,8 @@ class ExtractMessages:
         Parameters
         -----------
         from_date : datetime | None
-            load from a specific date
-            if not given, load all data
+            extract from a specific date
+            if not given, extract all data
 
         Returns
         ---------
