@@ -10,7 +10,7 @@ from llama_index.core.response_synthesizers.base import BaseSynthesizer
 class SummarizeMessages(SummaryBase):
     def __init__(
         self,
-        chat_id: str,
+        chat_id: int,
         chat_name: str,
         response_synthesizer: BaseSynthesizer | None = None,
         verbose: bool = False,

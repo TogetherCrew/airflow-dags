@@ -3,7 +3,7 @@ from llama_index.core import Document
 
 
 class TransformMessages:
-    def __init__(self, chat_id: str, chat_name: str) -> None:
+    def __init__(self, chat_id: int, chat_name: str) -> None:
         self.chat_id = chat_id
         self.chat_name = chat_name
 

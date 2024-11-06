@@ -5,7 +5,7 @@ from tc_neo4j_lib import Neo4jOps
 
 
 class ExtractMessages:
-    def __init__(self, chat_id: str) -> None:
+    def __init__(self, chat_id: int) -> None:
         self.chat_id = chat_id
         self._connection = Neo4jOps.get_instance()
 

@@ -12,7 +12,7 @@ class TestExtractRawInfo(unittest.TestCase):
         cls.neo4jConnection = Neo4jConnection()
         cls.client = MongoSingleton.get_instance().client
         cls.driver = cls.neo4jConnection.connect_neo4j()
-        cls.chat_id = "test_group"
+        cls.chat_id = 1234554321
         cls.platform_id = "platform_db"
         cls.platform_db = cls.client[cls.platform_id]
         cls.extractor = ExtractRawInfo(cls.chat_id, cls.platform_id)

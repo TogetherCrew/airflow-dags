@@ -7,7 +7,7 @@ from . import ExtractMessages
 
 
 class ExtractMessagesDaily:
-    def __init__(self, chat_id: str) -> None:
+    def __init__(self, chat_id: int) -> None:
         self.extractor = ExtractMessages(chat_id=chat_id)
 
     def extract(
@@ -31,7 +31,7 @@ class ExtractMessagesDaily:
 
         daily_tg_messages: dict[date, list[TelegramMessagesModel]] = defaultdict(list)
         for msg in messages:
-            msg_date = datetime.fromtimestamp(msg.message_created_at / 1000).date()
+            msg_date = datetime.fromtimestamp(msg.message_created_at).date()
             daily_tg_messages[msg_date].append(msg)
 
         return daily_tg_messages

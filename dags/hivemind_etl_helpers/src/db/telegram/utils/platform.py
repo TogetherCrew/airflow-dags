@@ -5,11 +5,11 @@ from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
 class TelegramPlatform:
-    def __init__(self, chat_id: str, chat_name: str) -> None:
+    def __init__(self, chat_id: int, chat_name: str) -> None:
         """
         Parameters
         -----------
-        chat_id : str
+        chat_id : int
             check if there's any platform exists
         chat_name : str
             the chat name to create later (if not already exists)
