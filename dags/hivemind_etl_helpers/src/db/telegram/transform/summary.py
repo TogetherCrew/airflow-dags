@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta, timezone
 
 from llama_index.core import Document
 
@@ -32,7 +32,9 @@ class TransformSummary:
                 + (day + timedelta(days=1)).strftime("%Y-%m-%d"),
                 text=summary,
                 metadata={
-                    "date": day,
+                    "date": datetime.combine(
+                        day, datetime.min.time(), tzinfo=timezone.utc
+                    ),
                 },
             )
             summary_docs.append(document)
