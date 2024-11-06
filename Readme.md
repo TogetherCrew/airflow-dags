@@ -18,7 +18,6 @@ In this repository, we've shared all dags for TogetherCrew. The dags are
 - [All Discord Guilds Analyzer](https://github.com/TogetherCrew/airflow-dags/blob/main/dags/all_discord_guilds_analyzer_etl.py)
 - [Single Discord Guild Analyzer](https://github.com/TogetherCrew/airflow-dags/blob/main/dags/discord_guild_analyzer_etl.py)
 - [Discourse Analyzer](https://github.com/TogetherCrew/airflow-dags/blob/main/dags/discourse_analyzer_etl.py)
-- [Telegram Analyzer](https://github.com/TogetherCrew/airflow-dags/blob/main/dags/telegram_analyzer_etl.py)
 
 **Notes:**
 
