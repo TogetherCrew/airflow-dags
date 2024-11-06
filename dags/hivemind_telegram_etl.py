@@ -105,7 +105,7 @@ def create_telegram_dag(dag_type: Literal["messages", "summaries"]) -> DAG:
                 transformer = TransformSummary()
                 collection_name = "telegram_summary"
                 date_field = "date"
-                date_schema = models.PayloadSchemaType.DATETIME
+                date_schema = models.PayloadSchemaType.FLOAT
 
                 def process_data(messages):
                     summaries = summarizer.summarize_daily(messages=messages)
