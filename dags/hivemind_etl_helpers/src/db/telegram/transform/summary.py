@@ -34,7 +34,7 @@ class TransformSummary:
                 metadata={
                     "date": datetime.combine(
                         day, datetime.min.time(), tzinfo=timezone.utc
-                    ),
+                    ).timestamp(),
                 },
             )
             summary_docs.append(document)
