@@ -10,7 +10,7 @@ from hivemind_etl_helpers.src.db.telegram.schema import TelegramMessagesModel
 class TestExtractMessagesDaily(unittest.TestCase):
     def setUp(self):
         load_dotenv()
-        self.chat_id = "test_chat"
+        self.chat_id = 12344321
         self.extractor = ExtractMessagesDaily(chat_id=self.chat_id)
 
     @patch(
@@ -32,8 +32,8 @@ class TestExtractMessagesDaily(unittest.TestCase):
             message_id=1,
             message_text="Hello, World!",
             author_username="user1",
-            message_created_at=1633046400000.0,  # Equivalent to 2021-10-01T00:00:00 UTC
-            message_edited_at=1633046500000.0,
+            message_created_at=1633046400.0,  # Equivalent to 2021-10-01T00:00:00 UTC
+            message_edited_at=1633046500.0,
             mentions=["user2"],
             repliers=["user3"],
             reactors=["user4"],
@@ -41,7 +41,7 @@ class TestExtractMessagesDaily(unittest.TestCase):
         mock_extract.return_value = [msg]
 
         result = self.extractor.extract(from_date=None)
-        expected_date = datetime.fromtimestamp(msg.message_created_at / 1000).date()
+        expected_date = datetime.fromtimestamp(msg.message_created_at).date()
 
         self.assertIn(expected_date, result, "Expected date key in result")
         self.assertEqual(
@@ -59,8 +59,8 @@ class TestExtractMessagesDaily(unittest.TestCase):
             message_id=1,
             message_text="Message 1",
             author_username="user1",
-            message_created_at=1633046400000.0,  # Equivalent to 2021-10-01
-            message_edited_at=1633046500000.0,
+            message_created_at=1633046400.0,  # Equivalent to 2021-10-01
+            message_edited_at=1633046500.0,
             mentions=["user2"],
             repliers=["user3"],
             reactors=["user4"],
@@ -69,8 +69,8 @@ class TestExtractMessagesDaily(unittest.TestCase):
             message_id=2,
             message_text="Message 2",
             author_username="user2",
-            message_created_at=1633050000000.0,  # Same date as msg1
-            message_edited_at=1633050500000.0,
+            message_created_at=1633050000.0,  # Same date as msg1
+            message_edited_at=1633050500.0,
             mentions=["user1"],
             repliers=["user3"],
             reactors=["user4"],
@@ -78,7 +78,7 @@ class TestExtractMessagesDaily(unittest.TestCase):
         mock_extract.return_value = [msg1, msg2]
 
         result = self.extractor.extract(from_date=None)
-        expected_date = datetime.fromtimestamp(msg1.message_created_at / 1000).date()
+        expected_date = datetime.fromtimestamp(msg1.message_created_at).date()
 
         self.assertIn(expected_date, result, "Expected date key in result")
         self.assertEqual(
@@ -94,8 +94,8 @@ class TestExtractMessagesDaily(unittest.TestCase):
             message_id=1,
             message_text="Message 1",
             author_username="user1",
-            message_created_at=1633046400000.0,  # 2021-10-01
-            message_edited_at=1633046500000.0,
+            message_created_at=1633046400.0,  # 2021-10-01
+            message_edited_at=1633046500.0,
             mentions=["user2"],
             repliers=["user3"],
             reactors=["user4"],
@@ -104,8 +104,8 @@ class TestExtractMessagesDaily(unittest.TestCase):
             message_id=2,
             message_text="Message 2",
             author_username="user2",
-            message_created_at=1633132800000.0,  # 2021-10-02
-            message_edited_at=1633132900000.0,
+            message_created_at=1633132800.0,  # 2021-10-02
+            message_edited_at=1633132900.0,
             mentions=["user1"],
             repliers=["user3"],
             reactors=["user4"],
@@ -113,8 +113,8 @@ class TestExtractMessagesDaily(unittest.TestCase):
         mock_extract.return_value = [msg1, msg2]
 
         result = self.extractor.extract(from_date=None)
-        date1 = datetime.fromtimestamp(msg1.message_created_at / 1000).date()
-        date2 = datetime.fromtimestamp(msg2.message_created_at / 1000).date()
+        date1 = datetime.fromtimestamp(msg1.message_created_at).date()
+        date2 = datetime.fromtimestamp(msg2.message_created_at).date()
 
         self.assertIn(date1, result, "Expected first date key in result")
         self.assertIn(date2, result, "Expected second date key in result")
