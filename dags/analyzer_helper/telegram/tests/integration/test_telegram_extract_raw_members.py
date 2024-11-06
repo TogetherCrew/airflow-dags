@@ -9,7 +9,7 @@ class TestExtractRawMembers(unittest.TestCase):
     def setUp(self):
         self.neo4jConnection = Neo4jConnection()
         self.driver = self.neo4jConnection.connect_neo4j()
-        self.chat_id = "telegram_test_group"
+        self.chat_id = 12345665432
         self.platform_id = "telegram_test_platform"
         self.extractor = ExtractRawMembers(self.chat_id, self.platform_id)
         self.rawmembers_collection = self.extractor.rawmembers_collection

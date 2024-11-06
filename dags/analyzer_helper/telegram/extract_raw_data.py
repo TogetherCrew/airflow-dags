@@ -9,7 +9,7 @@ from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
 
 
 class ExtractRawInfo:
-    def __init__(self, chat_id: str, platform_id: str):
+    def __init__(self, chat_id: int, platform_id: str):
         """
         Initialize the ExtractRawInfo with the forum endpoint, platform id and set up Neo4j and MongoDB connection.
         """
