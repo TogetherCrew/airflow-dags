@@ -44,7 +44,7 @@ class SummarizeMessages(SummaryBase):
         # per each daily messages
         for day, msgs in messages.items():
             # if no messages were available
-            if msgs:
+            if not msgs:
                 continue
 
             start_date = day.strftime("%d/%m/%Y")
