@@ -16,8 +16,8 @@ class ExtractMessages:
         Parameters
         -----------
         from_date : datetime | None
-            load from a specific date
-            if not given, load all data
+            extract from a specific date
+            if not given, extract all data
 
         Returns
         ---------
@@ -69,7 +69,7 @@ class ExtractMessages:
                 COLLECT(DISTINCT mentioned_user.username) AS mentions,
                 COLLECT(DISTINCT replied_user.username) AS repliers,
                 COLLECT(DISTINCT reacted_user.username) AS reactors
-            ORDER BY message_created_at DESC
+            ORDER BY message_created_at ASC
         """
 
         parameters = {"chat_id": self.chat_id}
