@@ -1,10 +1,10 @@
 import unittest
-from unittest.mock import patch
-from dotenv import load_dotenv
-
 from datetime import datetime
-from hivemind_etl_helpers.src.db.telegram.schema import TelegramMessagesModel
+from unittest.mock import patch
+
+from dotenv import load_dotenv
 from hivemind_etl_helpers.src.db.telegram.extract import ExtractMessagesDaily
+from hivemind_etl_helpers.src.db.telegram.schema import TelegramMessagesModel
 
 
 class TestExtractMessagesDaily(unittest.TestCase):

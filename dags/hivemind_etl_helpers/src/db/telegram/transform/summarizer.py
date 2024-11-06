@@ -1,11 +1,10 @@
 from datetime import date, timedelta
 
-from llama_index.core import Settings
-from llama_index.core.response_synthesizers.base import BaseSynthesizer
-
 from hivemind_etl_helpers.src.db.telegram.schema import TelegramMessagesModel
 from hivemind_etl_helpers.src.db.telegram.transform import TransformMessages
 from hivemind_etl_helpers.src.utils.summary.summary_base import SummaryBase
+from llama_index.core import Settings
+from llama_index.core.response_synthesizers.base import BaseSynthesizer
 
 
 class SummarizeMessages(SummaryBase):

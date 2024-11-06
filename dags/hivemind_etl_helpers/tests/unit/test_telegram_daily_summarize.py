@@ -1,5 +1,5 @@
-from datetime import date
 import unittest
+from datetime import date
 
 from hivemind_etl_helpers.src.db.telegram.schema import TelegramMessagesModel
 from hivemind_etl_helpers.src.db.telegram.transform import SummarizeMessages
@@ -41,7 +41,7 @@ class TestTelegramSummarize(unittest.TestCase):
             self.assertEqual(key, date(2024, 6, 6))
             self.assertIsInstance(summary, str)
 
-    def test_summarize_single_day_single_document(self):
+    def test_summarize_single_day_multiple_documents(self):
         summaries = self.summarizer.summarize_daily(
             messages={
                 date(2024, 6, 6): [

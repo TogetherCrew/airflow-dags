@@ -1,7 +1,8 @@
 from collections import defaultdict
-from datetime import datetime, date
+from datetime import date, datetime
 
 from hivemind_etl_helpers.src.db.telegram.schema import TelegramMessagesModel
+
 from . import ExtractMessages
 
 
