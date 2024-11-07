@@ -32,9 +32,7 @@ class TransformSummary:
                 + (day + timedelta(days=1)).strftime("%Y-%m-%d"),
                 text=summary,
                 metadata={
-                    "date": datetime.combine(
-                        day, datetime.min.time(), tzinfo=timezone.utc
-                    ).timestamp(),
+                    "date": day.strftime("%Y-%m-%d"),
                 },
             )
             summary_docs.append(document)
