@@ -5,7 +5,7 @@ from analyzer_helper.telegram.utils.is_user_bot import UserBotChecker
 
 
 class TransformRawInfo:
-    def __init__(self, chat_id: str):
+    def __init__(self, chat_id: int):
         self.converter = DateTimeFormatConverter
         self.user_bot_checker = UserBotChecker()
         self.chat_id = chat_id

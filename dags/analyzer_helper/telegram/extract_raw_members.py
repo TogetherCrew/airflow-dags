@@ -7,7 +7,7 @@ from pymongo import DESCENDING
 
 
 class ExtractRawMembers:
-    def __init__(self, chat_id: str, platform_id: str):
+    def __init__(self, chat_id: int, platform_id: str):
         """
         Initialize the ExtractRawMembers with the Neo4j connection parameters.
         """
