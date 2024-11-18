@@ -88,20 +88,3 @@ class WebsiteETL:
         """
         # loading data into db
         self.ingestion_pipeline.run_pipeline(docs=documents)
-
-    def _prepare_id(data: str) -> str:
-        """
-        hash the given data to prepare an id for the document
-
-        Parameters
-        -----------
-        data : str
-            the string data to be hashed
-
-        Returns
-        --------
-        hashed_data : str
-            data hashed using sha256 algorithm
-        """
-        hashed_data = hashlib.sha256(data.encode("utf-8"))
-        return hashed_data.hexdigest()

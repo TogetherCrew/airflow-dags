@@ -79,14 +79,3 @@ class TestWebsiteETL(IsolatedAsyncioTestCase):
         self.website_etl.ingestion_pipeline.run_pipeline.assert_called_once_with(
             docs=documents
         )
-
-    def test_prepare_id(self):
-        """
-        Test the _prepare_id method.
-        """
-        data = "example_data"
-        expected_hash = hashlib.sha256(data.encode("utf-8")).hexdigest()
-
-        hashed_data = WebsiteETL._prepare_id(data)
-
-        self.assertEqual(hashed_data, expected_hash)
