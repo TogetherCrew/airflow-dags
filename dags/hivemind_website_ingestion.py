@@ -1,12 +1,12 @@
+import asyncio
 import logging
 from datetime import datetime
-import asyncio
 
 from airflow import DAG
 from airflow.decorators import task
 from dotenv import load_dotenv
-from hivemind_etl_helpers.website_etl import WebsiteETL
 from hivemind_etl_helpers.src.utils.modules import ModulesWebsite
+from hivemind_etl_helpers.website_etl import WebsiteETL
 
 with DAG(
     dag_id="website_ingestion_embedding",
@@ -42,7 +42,7 @@ with DAG(
         documents = website_etl.transform(raw_data=raw_data)
         # load into db
         website_etl.load(documents=documents)
-        
+
         logging.info(
             f"Community {community_id} Job finished | platform_id: {platform_id}"
         )

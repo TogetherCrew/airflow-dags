@@ -1,9 +1,9 @@
 from unittest import IsolatedAsyncioTestCase
-from dotenv import load_dotenv
 from unittest.mock import AsyncMock, MagicMock
-from llama_index.core import Document
+
+from dotenv import load_dotenv
 from hivemind_etl_helpers.website_etl import WebsiteETL
-import hashlib
+from llama_index.core import Document
 
 
 class TestWebsiteETL(IsolatedAsyncioTestCase):

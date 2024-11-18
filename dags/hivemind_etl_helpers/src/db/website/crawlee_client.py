@@ -1,5 +1,6 @@
-from typing import Any
 import asyncio
+from typing import Any
+
 from crawlee.playwright_crawler import PlaywrightCrawler, PlaywrightCrawlingContext
 from defusedxml import ElementTree as ET
 
