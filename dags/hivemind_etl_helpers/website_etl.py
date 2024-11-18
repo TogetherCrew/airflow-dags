@@ -16,8 +16,6 @@ class WebsiteETL:
         -----------
         community_id : str
             the community to save its data
-        access_token : str | None
-            notion ingegration access token
         """
         self.community_id = community_id
         collection_name = "website"
@@ -29,7 +27,8 @@ class WebsiteETL:
         )
 
     async def extract(
-          self, urls: list[str],
+        self,
+        urls: list[str],
     ) -> list[dict[str, Any]]:
         """
         Extract given urls
@@ -47,7 +46,7 @@ class WebsiteETL:
         extracted_data = await self.crawlee_client.crawl(urls)
 
         return extracted_data
-    
+
     def transform(self, raw_data: list[dict[str, Any]]) -> list[Document]:
         """
         transform raw data to llama-index documents
@@ -72,7 +71,7 @@ class WebsiteETL:
                 metadata={
                     "title": data["title"],
                     "url": data["url"],
-                }
+                },
             )
             documents.append(doc)
 
@@ -90,7 +89,6 @@ class WebsiteETL:
         # loading data into db
         self.ingestion_pipeline.run_pipeline(docs=documents)
 
-    
     def _prepare_id(data: str) -> str:
         """
         hash the given data to prepare an id for the document
@@ -105,5 +103,5 @@ class WebsiteETL:
         hashed_data : str
             data hashed using sha256 algorithm
         """
-        hashed_data = hashlib.sha256(data.encode('utf-8'))
+        hashed_data = hashlib.sha256(data.encode("utf-8"))
         return hashed_data.hexdigest()
