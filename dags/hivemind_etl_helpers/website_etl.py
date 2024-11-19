@@ -42,7 +42,12 @@ class WebsiteETL:
         extracted_data : list[dict[str, Any]]
             The crawled data from urls
         """
+        if not urls:
+            raise ValueError("No URLs provided for crawling")
         extracted_data = await self.crawlee_client.crawl(urls)
+
+        if not extracted_data:
+            raise ValueError(f"No data extracted from URLs: {urls}")
 
         return extracted_data
 

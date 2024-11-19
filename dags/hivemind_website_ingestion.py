@@ -20,7 +20,7 @@ with DAG(
     def get_website_communities() -> list[dict[str, str | datetime | list]]:
         """
         Retrieve all communities with associated website URLs from the database.
-        
+
         Returns:
             list[dict]: List of community information containing:
                 - community_id (str)
