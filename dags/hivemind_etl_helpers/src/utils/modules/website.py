@@ -50,7 +50,7 @@ class ModulesWebsite(ModulesBase):
                     communities_data.append(
                         {
                             "community_id": str(community),
-                            "platform_id": platform_id,
+                            "platform_id": str(platform_id),
                             "urls": website_links,
                         }
                     )
