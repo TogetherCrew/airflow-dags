@@ -98,7 +98,7 @@ class ModulesBase:
 
     def get_platform_metadata(
         self, platform_id: ObjectId, metadata_name: str
-    ) -> str | dict:
+    ) -> str | dict | list:
         """
         get the userid that belongs to a platform
 
@@ -111,8 +111,8 @@ class ModulesBase:
 
         Returns
         ---------
-        user_id : str
-            the user id that the platform belongs to
+        metadata_value : Any
+            the values that the metadata belongs to
         """
         client = MongoSingleton.get_instance().get_client()
 
