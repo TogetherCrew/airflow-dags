@@ -62,15 +62,14 @@ class CrawleeClient:
         links : list[str]
             list of valid URLs extracted from the sitemap
         """
+        links = []
         try:
             root = ET.fromstring(sitemap_content)
             namespace = {"ns": "http://www.sitemaps.org/schemas/sitemap/0.9"}
-            links = []
             for element in root.findall("ns:url/ns:loc", namespace):
                 url = element.text.strip() if element.text else None
                 if url and url.startswith(("http://", "https://")):
                     links.append(url)
-                return links
         except ET.ParseError as e:
             raise ValueError(f"Invalid sitemap XML: {str(e)}")
 
