@@ -19,7 +19,13 @@ with DAG(
     @task
     def get_website_communities() -> list[dict[str, str | datetime | list]]:
         """
-        Getting all communities having discord from database
+        Retrieve all communities with associated website URLs from the database.
+        
+        Returns:
+            list[dict]: List of community information containing:
+                - community_id (str)
+                - platform_id (str)
+                - urls (list)
         """
         communities = ModulesWebsite().get_learning_platforms()
         return communities
