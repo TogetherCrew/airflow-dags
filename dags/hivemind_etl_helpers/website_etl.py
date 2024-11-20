@@ -1,3 +1,4 @@
+import asyncio
 from typing import Any
 
 from hivemind_etl_helpers.ingestion_pipeline import CustomIngestionPipeline
@@ -25,7 +26,7 @@ class WebsiteETL:
             self.community_id, collection_name=collection_name
         )
 
-    async def extract(
+    def extract(
         self,
         urls: list[str],
     ) -> list[dict[str, Any]]:
@@ -44,7 +45,7 @@ class WebsiteETL:
         """
         if not urls:
             raise ValueError("No URLs provided for crawling")
-        extracted_data = await self.crawlee_client.crawl(urls)
+        extracted_data = asyncio.run(self.crawlee_client.crawl(urls))
 
         if not extracted_data:
             raise ValueError(f"No data extracted from URLs: {urls}")

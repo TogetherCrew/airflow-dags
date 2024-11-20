@@ -1,4 +1,3 @@
-import asyncio
 import logging
 from datetime import datetime
 
@@ -42,11 +41,11 @@ with DAG(
         )
         website_etl = WebsiteETL(community_id=community_id)
 
-        # Extract
-        raw_data = asyncio.run(website_etl.extract(urls=urls))
-        # transform
+        logging.info(f"Extracting data from {len(urls)} urls!")
+        raw_data = website_etl.extract(urls=urls)
+        logging.info(f"Transforming {len(raw_data)} raw data!")
         documents = website_etl.transform(raw_data=raw_data)
-        # load into db
+        logging.info(f"loading {len(documents)} documents into vector db!")
         website_etl.load(documents=documents)
 
         logging.info(
