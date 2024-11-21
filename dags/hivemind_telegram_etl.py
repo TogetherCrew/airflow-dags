@@ -5,7 +5,6 @@ from typing import Literal
 from airflow import DAG
 from airflow.decorators import task
 from dotenv import load_dotenv
-from tc_hivemind_backend.ingest_qdrant import CustomIngestionPipeline
 from hivemind_etl_helpers.src.db.telegram.extract import (
     ExtractMessages,
     ExtractMessagesDaily,
@@ -18,6 +17,7 @@ from hivemind_etl_helpers.src.db.telegram.transform import (
 )
 from hivemind_etl_helpers.src.db.telegram.utils import TelegramModules, TelegramPlatform
 from qdrant_client.http import models
+from tc_hivemind_backend.ingest_qdrant import CustomIngestionPipeline
 
 # Common DAG configuration
 default_args = {

@@ -1,8 +1,8 @@
 import logging
 from datetime import datetime
 
-from tc_hivemind_backend.db.mongo import MongoSingleton
 from pymongo.cursor import Cursor
+from tc_hivemind_backend.db.mongo import MongoSingleton
 
 
 class ExtractPlatformRawData:

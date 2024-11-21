@@ -1,7 +1,7 @@
 import logging
 
-from tc_hivemind_backend.ingest_qdrant import CustomIngestionPipeline
 from hivemind_etl_helpers.src.db.mediawiki.extractor import MediaWikiExtractor
+from tc_hivemind_backend.ingest_qdrant import CustomIngestionPipeline
 
 
 def process_mediawiki_etl(

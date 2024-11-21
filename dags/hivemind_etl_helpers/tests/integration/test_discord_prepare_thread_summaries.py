@@ -4,9 +4,9 @@ from datetime import datetime
 from hivemind_etl_helpers.src.db.discord.summary.prepare_summaries import (
     PrepareSummaries,
 )
-from tc_hivemind_backend.db.mongo import MongoSingleton
 from llama_index.core import MockEmbedding, Settings
 from llama_index.core.llms import MockLLM
+from tc_hivemind_backend.db.mongo import MongoSingleton
 
 
 class TestPrepareSummaries(unittest.TestCase):

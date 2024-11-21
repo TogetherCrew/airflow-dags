@@ -2,8 +2,8 @@ from analyzer_helper.telegram.utils.date_time_format_converter import (
     DateTimeFormatConverter,
 )
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
-from tc_hivemind_backend.db.mongo import MongoSingleton
 from pymongo import DESCENDING
+from tc_hivemind_backend.db.mongo import MongoSingleton
 
 
 class ExtractRawMembers:

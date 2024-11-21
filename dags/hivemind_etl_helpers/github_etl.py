@@ -2,7 +2,6 @@ import logging
 from datetime import datetime
 
 from dotenv import load_dotenv
-from tc_hivemind_backend.ingest_qdrant import CustomIngestionPipeline
 from hivemind_etl_helpers.src.db.github.extract import (
     GithubExtraction,
     fetch_issues,
@@ -13,6 +12,7 @@ from hivemind_etl_helpers.src.db.github.github_organization_repos import (
 )
 from hivemind_etl_helpers.src.db.github.transform import GitHubTransformation
 from llama_index.core import Document
+from tc_hivemind_backend.ingest_qdrant import CustomIngestionPipeline
 
 
 def process_github_vectorstore(

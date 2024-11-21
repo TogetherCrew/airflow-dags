@@ -1,7 +1,7 @@
 from typing import Any
 
-from tc_hivemind_backend.db.mongo import MongoSingleton
 from pymongo import UpdateOne
+from tc_hivemind_backend.db.mongo import MongoSingleton
 
 
 class LoadPlatformLabeledData:
