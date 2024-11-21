@@ -4,7 +4,7 @@ from uuid import uuid1
 
 import numpy as np
 from hivemind_etl_helpers.src.db.discord.utils.id_transform import convert_user_id
-from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
+from tc_hivemind_backend.db.mongo import MongoSingleton
 
 
 class TestUserIdConvert(unittest.TestCase):

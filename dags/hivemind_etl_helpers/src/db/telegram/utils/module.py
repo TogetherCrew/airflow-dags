@@ -2,7 +2,7 @@ import logging
 from datetime import datetime, timezone
 
 from bson import ObjectId
-from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
+from tc_hivemind_backend.db.mongo import MongoSingleton
 
 
 class TelegramModules:

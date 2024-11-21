@@ -1,6 +1,6 @@
 import logging
 
-from .modules_base import ModulesBase
+from tc_hivemind_backend.db.modules_base import ModulesBase
 
 
 class ModulesNotion(ModulesBase):

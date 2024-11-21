@@ -5,7 +5,7 @@ from bson import ObjectId
 from hivemind_etl_helpers.src.db.discord.fetch_raw_messages import (
     fetch_channels_and_from_date,
 )
-from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
+from tc_hivemind_backend.db.mongo import MongoSingleton
 
 
 class TestDiscordFetchModulesChannels(TestCase):

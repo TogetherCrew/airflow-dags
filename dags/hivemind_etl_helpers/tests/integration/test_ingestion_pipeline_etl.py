@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import Mock
 
-from hivemind_etl_helpers.ingestion_pipeline import CustomIngestionPipeline
+from tc_hivemind_backend.ingest_qdrant import CustomIngestionPipeline
 from llama_index.core.ingestion import IngestionPipeline
 from llama_index.core.schema import Document
 

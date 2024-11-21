@@ -5,7 +5,7 @@ from bson import ObjectId
 from hivemind_etl_helpers.src.db.discord.find_guild_id import (
     find_guild_id_by_platform_id,
 )
-from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
+from tc_hivemind_backend.db.mongo import MongoSingleton
 
 
 class TestFindDiscordGuildId(TestCase):

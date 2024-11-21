@@ -1,5 +1,5 @@
 from bson import ObjectId
-from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
+from tc_hivemind_backend.db.mongo import MongoSingleton
 
 
 def find_guild_id_by_platform_id(platform_id: str) -> str:

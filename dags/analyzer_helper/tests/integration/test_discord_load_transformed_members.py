@@ -4,7 +4,7 @@ from datetime import datetime
 from analyzer_helper.discord.discord_load_transformed_members import (
     DiscordLoadTransformedMembers,
 )
-from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
+from tc_hivemind_backend.db.mongo import MongoSingleton
 
 
 class TestDiscordLoadTransformedMembers(unittest.TestCase):

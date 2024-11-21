@@ -2,7 +2,7 @@ import logging
 from datetime import datetime
 
 from dotenv import load_dotenv
-from hivemind_etl_helpers.ingestion_pipeline import CustomIngestionPipeline
+from tc_hivemind_backend.ingest_qdrant import CustomIngestionPipeline
 from hivemind_etl_helpers.src.db.github.extract import (
     GithubExtraction,
     fetch_issues,

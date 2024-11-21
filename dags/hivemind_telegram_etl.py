@@ -5,7 +5,7 @@ from typing import Literal
 from airflow import DAG
 from airflow.decorators import task
 from dotenv import load_dotenv
-from hivemind_etl_helpers.ingestion_pipeline import CustomIngestionPipeline
+from tc_hivemind_backend.ingest_qdrant import CustomIngestionPipeline
 from hivemind_etl_helpers.src.db.telegram.extract import (
     ExtractMessages,
     ExtractMessagesDaily,

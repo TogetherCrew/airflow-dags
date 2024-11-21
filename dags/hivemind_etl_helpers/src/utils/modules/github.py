@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
 
-from .modules_base import ModulesBase
+from tc_hivemind_backend.db.modules_base import ModulesBase
 
 
 class ModulesGitHub(ModulesBase):

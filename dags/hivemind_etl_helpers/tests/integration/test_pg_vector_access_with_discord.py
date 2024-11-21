@@ -6,7 +6,7 @@ from bson import ObjectId
 from hivemind_etl_helpers.src.db.discord.discord_raw_message_to_document import (
     discord_raw_to_documents,
 )
-from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
+from tc_hivemind_backend.db.mongo import MongoSingleton
 from llama_index.core.indices.vector_store import VectorStoreIndex
 from tc_hivemind_backend.db.credentials import load_postgres_credentials
 from tc_hivemind_backend.db.pg_db_utils import setup_db

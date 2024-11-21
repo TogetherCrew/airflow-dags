@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from bson import ObjectId
 from hivemind_etl_helpers.src.utils.modules import ModulesDiscord
-from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
+from tc_hivemind_backend.db.mongo import MongoSingleton
 
 
 class TestGetAllDiscordCommunitites(TestCase):
