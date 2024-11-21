@@ -1,7 +1,7 @@
 from datetime import datetime
 from unittest import TestCase
 
-from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
+from tc_hivemind_backend.db.mongo import MongoSingleton
 from violation_detection_helpers import ExtractPlatformRawData
 
 

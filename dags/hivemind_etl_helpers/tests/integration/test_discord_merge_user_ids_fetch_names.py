@@ -6,7 +6,7 @@ import numpy as np
 from hivemind_etl_helpers.src.db.discord.utils.merge_user_ids_fetch_names import (
     merge_user_ids_and_fetch_names,
 )
-from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
+from tc_hivemind_backend.db.mongo import MongoSingleton
 
 
 class TestMergeUserIdsFetchNames(unittest.TestCase):

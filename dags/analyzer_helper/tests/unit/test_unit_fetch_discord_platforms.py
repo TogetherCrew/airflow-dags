@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 
 from analyzer_helper.discord.fetch_discord_platforms import FetchDiscordPlatforms
 from bson import ObjectId
-from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
+from tc_hivemind_backend.db.mongo import MongoSingleton
 
 
 class TestFetchDiscordPlatformsUnit(unittest.TestCase):

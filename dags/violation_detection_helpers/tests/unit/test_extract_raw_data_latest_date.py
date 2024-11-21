@@ -6,7 +6,7 @@ from violation_detection_helpers import ExtractPlatformRawData
 
 
 class TestExtractRawDataLatestDate(TestCase):
-    @patch("hivemind_etl_helpers.src.utils.mongo.MongoSingleton.get_instance")
+    @patch("tc_hivemind_backend.db.mongo.MongoSingleton.get_instance")
     def test_extract_latest_date(self, mock_get_instance):
         mock_client = MagicMock()
 

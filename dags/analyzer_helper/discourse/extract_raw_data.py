@@ -5,7 +5,7 @@ from analyzer_helper.discourse.utils.convert_date_time_formats import (
     DateTimeFormatConverter,
 )
 from github.neo4j_storage.neo4j_connection import Neo4jConnection
-from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
+from tc_hivemind_backend.db.mongo import MongoSingleton
 
 
 class ExtractRawInfo:

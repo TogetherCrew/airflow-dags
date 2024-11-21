@@ -4,7 +4,7 @@ from datetime import datetime
 from analyzer_helper.discord.discord_transform_raw_data import DiscordTransformRawData
 from analyzer_helper.discord.utils.is_user_bot import UserBotChecker
 from bson import ObjectId
-from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
+from tc_hivemind_backend.db.mongo import MongoSingleton
 
 
 class TestDiscordTransformRawData(unittest.TestCase):

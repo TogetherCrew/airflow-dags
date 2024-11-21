@@ -5,7 +5,7 @@ from bson import ObjectId
 from hivemind_etl_helpers.src.db.discord.summary.prepare_grouped_data import (
     prepare_grouped_data,
 )
-from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
+from tc_hivemind_backend.db.mongo import MongoSingleton
 
 
 class TestDiscordGroupedDataPreparation(TestCase):

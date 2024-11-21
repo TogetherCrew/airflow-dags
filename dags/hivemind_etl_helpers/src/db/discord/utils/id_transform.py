@@ -1,5 +1,5 @@
 from hivemind_etl_helpers.src.db.discord.utils.sort_based_id import sort_based_on_id
-from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
+from tc_hivemind_backend.db.mongo import MongoSingleton
 
 
 def convert_user_id(

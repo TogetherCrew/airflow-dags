@@ -5,9 +5,9 @@ from datetime import datetime
 
 from airflow import DAG
 from airflow.decorators import task
-from hivemind_etl_helpers.ingestion_pipeline import CustomIngestionPipeline
 from hivemind_etl_helpers.src.db.gdrive.gdrive_loader import GoogleDriveLoader
 from hivemind_etl_helpers.src.utils.modules import ModulesGDrive
+from tc_hivemind_backend.ingest_qdrant import CustomIngestionPipeline
 
 with DAG(
     dag_id="gdrive_vector_store",

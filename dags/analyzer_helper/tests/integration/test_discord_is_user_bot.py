@@ -3,7 +3,7 @@ from datetime import datetime
 
 from analyzer_helper.discord.utils.is_user_bot import UserBotChecker
 from bson import ObjectId
-from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
+from tc_hivemind_backend.db.mongo import MongoSingleton
 
 
 class TestUserBotChecker(unittest.TestCase):

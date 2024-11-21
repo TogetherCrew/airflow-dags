@@ -2,7 +2,7 @@ import unittest
 from datetime import datetime
 
 from analyzer_helper.discord.discord_extract_raw_members import DiscordExtractRawMembers
-from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
+from tc_hivemind_backend.db.mongo import MongoSingleton
 
 
 class TestDiscordExtractRawMembers(unittest.TestCase):

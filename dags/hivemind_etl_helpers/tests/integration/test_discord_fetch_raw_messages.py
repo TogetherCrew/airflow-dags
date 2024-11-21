@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import numpy as np
 from bson import ObjectId
 from hivemind_etl_helpers.src.db.discord.fetch_raw_messages import fetch_raw_messages
-from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
+from tc_hivemind_backend.db.mongo import MongoSingleton
 
 
 class TestFetchRawMessages(unittest.TestCase):

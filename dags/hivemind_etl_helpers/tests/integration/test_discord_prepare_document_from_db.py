@@ -6,7 +6,7 @@ from bson import ObjectId
 from hivemind_etl_helpers.src.db.discord.discord_raw_message_to_document import (
     discord_raw_to_documents,
 )
-from hivemind_etl_helpers.src.utils.mongo import MongoSingleton
+from tc_hivemind_backend.db.mongo import MongoSingleton
 
 
 class TestTransformRawMsgToDocument(unittest.TestCase):
