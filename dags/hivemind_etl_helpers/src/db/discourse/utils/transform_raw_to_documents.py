@@ -33,12 +33,18 @@ def transform_raw_to_documents(
         doc: Document
 
         if not exclude_metadata:
+            forum_endpoint = post["forum_endpoint"]
+            topic_id = post["topic_id"]
+            post_number = post["post_number"]
+
+            link = f"https://{forum_endpoint}/t/{topic_id}/{post_number}"
+
             doc = Document(
                 text=post["raw"],
                 metadata={
                     "author_name": post["author_name"],
                     "author_username": post["author_username"],
-                    "forum_endpoint": post["forum_endpoint"],
+                    "forum_endpoint": forum_endpoint,
                     "createdAt": post["createdAt"],
                     "updatedAt": post["updatedAt"],
                     "postId": post["postId"],
@@ -49,6 +55,7 @@ def transform_raw_to_documents(
                     "liker_names": post["liker_names"],
                     "replier_usernames": post["replier_usernames"],
                     "replier_names": post["replier_names"],
+                    "link": link,
                 },
             )
         else:
