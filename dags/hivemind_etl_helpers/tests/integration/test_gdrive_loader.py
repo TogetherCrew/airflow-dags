@@ -310,7 +310,7 @@ class TestGoogleDriveLoader(unittest.TestCase):
                 "mime type": "mime",
                 "created at": "date",
                 "modified at": "modified",
-                "url": f"https://drive.google.com/file/d/file_1/view",
+                "url": "https://drive.google.com/file/d/file_1/view",
             },
         )
 
@@ -367,7 +367,7 @@ class TestGoogleDriveLoader(unittest.TestCase):
                 "mime type": "mime",
                 "created at": "date",
                 "modified at": "modified",
-                "url": f"https://drive.google.com/file/d/file_1/view",
+                "url": "https://drive.google.com/file/d/file_1/view",
             },
         )
 
@@ -380,7 +380,7 @@ class TestGoogleDriveLoader(unittest.TestCase):
                 "mime type": "mime",
                 "created at": "date",
                 "modified at": "modified",
-                "url": f"https://drive.google.com/file/d/file_2/view",
+                "url": "https://drive.google.com/file/d/file_2/view",
             },
         )
 
@@ -393,6 +393,6 @@ class TestGoogleDriveLoader(unittest.TestCase):
                 "mime type": "mime",
                 "created at": "date",
                 "modified at": "modified",
-                "url": f"https://drive.google.com/file/d/file_3/view",
+                "url": "https://drive.google.com/file/d/file_3/view",
             },
         )
