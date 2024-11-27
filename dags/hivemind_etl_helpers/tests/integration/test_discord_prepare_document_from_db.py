@@ -300,7 +300,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
             "replier_global_name": "user4_GlobalName",
             "thread": "example_thread1",
             "role_mentions": ["role1"],
-            "url": "https://discord.com/channels/1234/22222/10000000002",
+            "url": "https://discord.com/channels/1234/88888/10000000002",
         }
 
         expected_metadata_3 = {
