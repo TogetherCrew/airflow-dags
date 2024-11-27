@@ -22,7 +22,7 @@ class TransformMessages:
             a list of llama-index documents to be embedded & loaded into db
         """
         transformed_docs: list[Document] = []
-        
+
         # within links the "-100" of chat_id is removed
         chat_id = str(self.chat_id).removeprefix("-100")
 
