@@ -118,8 +118,33 @@ class TestGoogleDriveLoader(unittest.TestCase):
         loader = GoogleDriveLoader(self.refresh_token)
         result = loader.load_data(file_ids=file_ids)
 
+        expected_results = [
+            Document(
+                id_="file_id_1.docx",
+                metadata={
+                    "file_name": "qwertU10p2.docx",
+                    "file id": "qwertU10p2",
+                    "author": "Jacku",
+                    "file name": "Option",
+                    "url": "https://drive.google.com/file/d/qwertU10p2/view",
+                },
+                relationships={},
+                text="Option 1: Keep it super casual",
+            ),
+            Document(
+                id_="file_id_2.docx",
+                metadata={
+                    "file_name": "qwertU10p3.docx",
+                    "file id": "qwertU10p3",
+                    "author": "Jacku",
+                    "file name": "Option",
+                    "url": "https://drive.google.com/file/d/qwertU10p3/view",
+                },
+                text="Option 1: Keep it super casual",
+            ),
+        ]
         self.assertEqual(len(result), 2)
-        self.assertEqual(result, mock_data)
+        self.assertEqual(result, expected_results)
 
     @patch.object(GoogleDriveReader, "load_data")
     def test_load_from_folders_exception(self, mock_reader):
