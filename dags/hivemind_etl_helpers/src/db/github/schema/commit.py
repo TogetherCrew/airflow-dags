@@ -8,7 +8,7 @@ class GitHubCommit:
         committer_name: str,
         message: str,
         api_url: str,
-        html_url: str,
+        url: str,
         repository_id: int,
         repository_name: str,
         sha: str,
@@ -26,7 +26,7 @@ class GitHubCommit:
         self.committer_name = committer_name
         self.message = message
         self.api_url = api_url
-        self.html_url = html_url
+        self.url = url
         self.repository_id = repository_id
         self.repository_name = repository_name
         self.sha = sha
@@ -42,7 +42,7 @@ class GitHubCommit:
             committer_name=data["committer_name"],  # type: ignore
             message=data["message"],  # type: ignore
             api_url=data["api_url"],  # type: ignore
-            html_url=data["html_url"],  # type: ignore
+            url=data["url"],  # type: ignore
             repository_id=data["repository_id"],  # type: ignore
             repository_name=data["repository_name"],  # type: ignore
             sha=data["sha"],  # type: ignore
@@ -58,7 +58,7 @@ class GitHubCommit:
             "committer_name": self.committer_name,
             "message": self.message,
             "api_url": self.api_url,
-            "html_url": self.html_url,
+            "url": self.url,
             "repository_id": self.repository_id,
             "repository_name": self.repository_name,
             "sha": self.sha,
