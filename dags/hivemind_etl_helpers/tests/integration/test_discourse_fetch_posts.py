@@ -56,7 +56,7 @@ class TestFetchRawDiscoursePosts(TestCase):
                 p.id = 100,
                 p.createdAt = '2022-01-01T00:00:00.000Z',
                 p.updatedAt = '2022-01-01T01:00:00.000Z',
-                p.postNumber: 1.0
+                p.postNumber = 1.0
             WITH p
             CREATE (a:DiscourseUser) -[:POSTED]->(p)
             SET
@@ -85,7 +85,7 @@ class TestFetchRawDiscoursePosts(TestCase):
                 p.id = 101,
                 p.createdAt = '2022-01-01T00:01:00.000Z',
                 p.updatedAt = '2022-01-01T01:01:00.000Z',
-                p.postNumber: 2.0
+                p.postNumber = 2.0
             WITH p
             CREATE (a:DiscourseUser) -[:POSTED]->(p)
             SET
@@ -173,7 +173,7 @@ class TestFetchRawDiscoursePosts(TestCase):
                 p.id = 100,
                 p.createdAt = '2022-01-01T00:00:00.000Z',
                 p.updatedAt = '2022-01-01T01:00:00.000Z',
-                p.postNumber: 1.0
+                p.postNumber = 1.0
             WITH p
             CREATE (a:DiscourseUser) -[:POSTED]->(p)
             SET
@@ -202,7 +202,7 @@ class TestFetchRawDiscoursePosts(TestCase):
                 p.id = 101,
                 p.createdAt = '2022-05-01T00:01:00.000Z',
                 p.updatedAt = '2022-05-01T01:01:00.000Z',
-                p.postNumber: 2.0
+                p.postNumber = 2.0
             WITH p
             CREATE (a:DiscourseUser) -[:POSTED]->(p)
             SET
