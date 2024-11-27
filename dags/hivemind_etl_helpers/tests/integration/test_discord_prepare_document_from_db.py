@@ -105,7 +105,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
             "reactions": [],
             "replied_user": None,
             "createdDate": datetime(2023, 5, 1),
-            "messageId": str(np.random.randint(1000000, 9999999)),
+            "messageId": "10000000000",
             "channelId": channels[0],
             "channelName": "channel1",
             "threadId": None,
@@ -123,7 +123,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
             "reactions": [],
             "replied_user": "114",
             "createdDate": datetime(2023, 5, 2),
-            "messageId": str(np.random.randint(1000000, 9999999)),
+            "messageId": "10000000001",
             "channelId": channels[1],
             "channelName": "channel2",
             "threadId": None,
@@ -141,7 +141,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
             "reactions": [],
             "replied_user": "114",
             "createdDate": datetime(2023, 5, 2),
-            "messageId": str(np.random.randint(1000000, 9999999)),
+            "messageId": "10000000002",
             "channelId": channels[1],
             "channelName": "channel2",
             "threadId": "88888",
@@ -159,7 +159,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
             "reactions": [],
             "replied_user": None,
             "createdDate": datetime(2023, 5, 8),
-            "messageId": str(np.random.randint(1000000, 9999999)),
+            "messageId": "10000000003",
             "channelId": channels[0],
             "channelName": "channel1",
             "threadId": None,
@@ -179,7 +179,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
             "reactions": [],
             "replied_user": None,
             "createdDate": datetime(2023, 5, 8),
-            "messageId": str(np.random.randint(1000000, 9999999)),
+            "messageId": "10000000004",
             "channelId": "734738382",
             "channelName": "channel1",
             "threadId": None,
@@ -271,6 +271,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
             "author_username": "user1",
             "author_global_name": "user1_GlobalName",
             "thread": None,
+            "url": "https://discord.com/channels/1234/111111/10000000000",
         }
 
         expected_metadata_1 = {
@@ -284,6 +285,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
             "replier_username": "user4",
             "replier_global_name": "user4_GlobalName",
             "thread": None,
+            "url": "https://discord.com/channels/1234/22222/10000000001",
         }
 
         expected_metadata_2 = {
@@ -298,6 +300,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
             "replier_global_name": "user4_GlobalName",
             "thread": "example_thread1",
             "role_mentions": ["role1"],
+            "url": "https://discord.com/channels/1234/22222/10000000002",
         }
 
         expected_metadata_3 = {
@@ -307,6 +310,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
             "author_global_name": "user1_GlobalName",
             "url_reference": {"[URL0]": "https://www.google.com"},
             "thread": None,
+            "url": "https://discord.com/channels/1234/111111/10000000003",
         }
         print(documents[0].text)
         self.assertDictEqual(documents[0].metadata, expected_metadata_0)
