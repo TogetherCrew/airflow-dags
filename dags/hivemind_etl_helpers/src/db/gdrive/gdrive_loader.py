@@ -1,3 +1,4 @@
+import copy
 import logging
 import os
 from typing import List, Optional
@@ -116,7 +117,7 @@ class GoogleDriveLoader:
         transform google extracted documents by inserting their metadata a url
         """
         # copying
-        transformed_docs: list[Document] = list(documents)
+        transformed_docs: list[Document] = copy.deepcopy(documents)
 
         for doc in transformed_docs:
             file_id: str | None = doc.metadata.get("file id")
