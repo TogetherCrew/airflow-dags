@@ -27,7 +27,7 @@ def transform_commits(data: list[GitHubCommit]) -> list[Document]:
             metadata=metadata,
             # all metadata to be excluded from embedding model
             excluded_embed_metadata_keys=list(metadata.keys()),
-            excluded_llm_metadata_keys=["sha", "api_url", "html_url", "verification"],
+            excluded_llm_metadata_keys=["sha", "api_url", "url", "verification"],
         )
         transformed_commits.append(document)
 
