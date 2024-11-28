@@ -1,5 +1,7 @@
+import copy
 import logging
 
+from llama_index.core import Document
 from hivemind_etl_helpers.src.db.notion.extractor import NotionExtractor
 from tc_hivemind_backend.ingest_qdrant import CustomIngestionPipeline
 
@@ -56,7 +58,8 @@ class NotionProcessor:
         documents = self.notion_extractor.extract(
             page_ids=page_ids, database_ids=database_ids
         )
-        self.ingestion_pipeline.run_pipeline(docs=documents)
+        transformed_docs = self._transform_documents(documents=documents)
+        self.ingestion_pipeline.run_pipeline(docs=transformed_docs)
 
     def process_page(self, page_id: str) -> None:
         """
@@ -71,7 +74,8 @@ class NotionProcessor:
             f"Processing page_id: {page_id}, of community id: {self.community_id}"
         )
         documents = self.notion_extractor.extract_from_pages(page_ids=[page_id])
-        self.ingestion_pipeline.run_pipeline(docs=documents)
+        transformed_docs = self._transform_documents(documents=documents)
+        self.ingestion_pipeline.run_pipeline(docs=transformed_docs)
 
     def process_database(self, database_id: str) -> None:
         """
@@ -86,4 +90,31 @@ class NotionProcessor:
             f"Processing database id: {database_id}, of community id: {self.community_id}"
         )
         documents = self.notion_extractor.extract_from_database(database_id=database_id)
-        self.ingestion_pipeline.run_pipeline(docs=documents)
+        transformed_docs = self._transform_documents(documents=documents)
+        self.ingestion_pipeline.run_pipeline(docs=transformed_docs)
+
+    def _transform_documents(self, documents: list[Document]) -> list[Document]:
+        """
+        transform notion extracted documents by inserting their metadata a url
+
+        Parameters
+        ------------
+        documents : list[Document]
+            a list of notion extracted pages
+
+        Returns
+        ---------
+        documents : list[Document]
+            a list of documents each inlcuded with url in its metadata
+        """
+        # Copying
+        transformed_docs: list[Document] = copy.deepcopy(documents)
+
+        for doc in transformed_docs:
+            page_id: str | None = doc.metadata.get("page_id")
+            if page_id is None:
+                doc.metadata["url"] = None
+            else:
+                doc.metadata["url"] = f"https://www.notion.so/{page_id}"
+
+        return transformed_docs
