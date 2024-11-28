@@ -1,8 +1,8 @@
 import copy
 import logging
 
-from llama_index.core import Document
 from hivemind_etl_helpers.src.db.notion.extractor import NotionExtractor
+from llama_index.core import Document
 from tc_hivemind_backend.ingest_qdrant import CustomIngestionPipeline
 
 
