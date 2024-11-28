@@ -55,7 +55,8 @@ class TestFetchRawDiscoursePosts(TestCase):
                 p.topicId = 1,
                 p.id = 100,
                 p.createdAt = '2022-01-01T00:00:00.000Z',
-                p.updatedAt = '2022-01-01T01:00:00.000Z'
+                p.updatedAt = '2022-01-01T01:00:00.000Z',
+                p.postNumber = 1.0
             WITH p
             CREATE (a:DiscourseUser) -[:POSTED]->(p)
             SET
@@ -83,7 +84,8 @@ class TestFetchRawDiscoursePosts(TestCase):
                 p.topicId = 2,
                 p.id = 101,
                 p.createdAt = '2022-01-01T00:01:00.000Z',
-                p.updatedAt = '2022-01-01T01:01:00.000Z'
+                p.updatedAt = '2022-01-01T01:01:00.000Z',
+                p.postNumber = 2.0
             WITH p
             CREATE (a:DiscourseUser) -[:POSTED]->(p)
             SET
@@ -119,6 +121,7 @@ class TestFetchRawDiscoursePosts(TestCase):
             if data["author_username"] == "user#1":
                 self.assertEqual(data["author_name"], "user1")
                 self.assertEqual(data["topic"], "topic#1")
+                self.assertEqual(data["topic_id"], 1)
                 self.assertEqual(data["createdAt"], "2022-01-01T00:00:00.000Z")
                 self.assertEqual(data["updatedAt"], "2022-01-01T01:00:00.000Z")
                 self.assertEqual(data["authorTrustLevel"], 4)
@@ -130,9 +133,11 @@ class TestFetchRawDiscoursePosts(TestCase):
                 self.assertEqual(data["replier_usernames"], ["user#2"])
                 self.assertEqual(data["replier_names"], ["user2"])
                 self.assertEqual(data["forum_endpoint"], "wwwdwadeswdpoi123")
+                self.assertEqual(data["post_number"], 1.0)
             elif data["author_username"] == "user#2":
                 self.assertEqual(data["author_name"], "user2")
                 self.assertEqual(data["topic"], "topic#2")
+                self.assertEqual(data["topic_id"], 2)
                 self.assertEqual(data["createdAt"], "2022-01-01T00:01:00.000Z")
                 self.assertEqual(data["updatedAt"], "2022-01-01T01:01:00.000Z")
                 self.assertEqual(data["raw"], "texttexttext of post 2")
@@ -144,6 +149,7 @@ class TestFetchRawDiscoursePosts(TestCase):
                 self.assertEqual(data["replier_usernames"], [])
                 self.assertEqual(data["replier_names"], [])
                 self.assertEqual(data["forum_endpoint"], "wwwdwadeswdpoi123")
+                self.assertEqual(data["post_number"], 2.0)
             else:
                 raise IndexError("It shouldn't get here!")
 
@@ -166,7 +172,8 @@ class TestFetchRawDiscoursePosts(TestCase):
                 p.topicId = 1,
                 p.id = 100,
                 p.createdAt = '2022-01-01T00:00:00.000Z',
-                p.updatedAt = '2022-01-01T01:00:00.000Z'
+                p.updatedAt = '2022-01-01T01:00:00.000Z',
+                p.postNumber = 1.0
             WITH p
             CREATE (a:DiscourseUser) -[:POSTED]->(p)
             SET
@@ -194,7 +201,8 @@ class TestFetchRawDiscoursePosts(TestCase):
                 p.topicId = 2,
                 p.id = 101,
                 p.createdAt = '2022-05-01T00:01:00.000Z',
-                p.updatedAt = '2022-05-01T01:01:00.000Z'
+                p.updatedAt = '2022-05-01T01:01:00.000Z',
+                p.postNumber = 2.0
             WITH p
             CREATE (a:DiscourseUser) -[:POSTED]->(p)
             SET
@@ -230,6 +238,7 @@ class TestFetchRawDiscoursePosts(TestCase):
             if data["author_username"] == "user#2":
                 self.assertEqual(data["author_name"], "user2")
                 self.assertEqual(data["topic"], "topic#2")
+                self.assertEqual(data["post_number"], 2.0)
                 self.assertEqual(data["createdAt"], "2022-05-01T00:01:00.000Z")
                 self.assertEqual(data["updatedAt"], "2022-05-01T01:01:00.000Z")
                 self.assertEqual(data["raw"], "texttexttext of post 2")

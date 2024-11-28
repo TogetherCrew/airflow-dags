@@ -168,6 +168,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
             "author_username": "user1",
             "author_global_name": "user1_GlobalName",
             "author_nickname": "user1_nickname",
+            "url": f"https://discord.com/channels/{guild_id}/1313130/1111111110",
             "thread": None,
         }
 
@@ -180,6 +181,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
             "mention_global_names": ["user3_GlobalName", "user4_GlobalName"],
             "replier_username": "user4",
             "replier_global_name": "user4_GlobalName",
+            "url": f"https://discord.com/channels/{guild_id}/1313131/1111111111",
             "thread": None,
         }
 
@@ -192,6 +194,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
             "mention_global_names": ["user3_GlobalName", "user4_GlobalName"],
             "replier_username": "user4",
             "replier_global_name": "user4_GlobalName",
+            "url": f"https://discord.com/channels/{guild_id}/88888/1111111112",
             "thread": "example_thread1",
             "role_mentions": ["role1"],
         }
@@ -203,6 +206,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
             "author_global_name": "user1_GlobalName",
             "author_nickname": "user1_nickname",
             "url_reference": {"[URL0]": "https://www.google.com"},
+            "url": f"https://discord.com/channels/{guild_id}/1313133/1111111113",
             "thread": None,
         }
 

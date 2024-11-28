@@ -23,6 +23,9 @@ class TransformMessages:
         """
         transformed_docs: list[Document] = []
 
+        # within links the "-100" of chat_id is removed
+        chat_id = str(self.chat_id).removeprefix("-100")
+
         for message in messages:
             document = Document(
                 text=message.message_text,
@@ -35,6 +38,7 @@ class TransformMessages:
                     "replies": message.repliers,
                     "reactors": message.reactors,
                     "chat_name": self.chat_name,
+                    "url": f"https://t.me/c/{chat_id}/{message.message_id}",
                 },
                 excluded_embed_metadata_keys=[
                     "author",
@@ -44,6 +48,7 @@ class TransformMessages:
                     "replies",
                     "reactors",
                     "chat_name",
+                    "url",
                 ],
                 excluded_llm_metadata_keys=[
                     "createdAt",
@@ -52,6 +57,7 @@ class TransformMessages:
                     "replies",
                     "reactors",
                     "chat_name",
+                    "url",
                 ],
             )
             transformed_docs.append(document)

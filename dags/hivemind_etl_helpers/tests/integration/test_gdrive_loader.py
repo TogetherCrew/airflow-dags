@@ -118,8 +118,33 @@ class TestGoogleDriveLoader(unittest.TestCase):
         loader = GoogleDriveLoader(self.refresh_token)
         result = loader.load_data(file_ids=file_ids)
 
+        expected_results = [
+            Document(
+                id_="file_id_1.docx",
+                metadata={
+                    "file_name": "qwertU10p2.docx",
+                    "file id": "qwertU10p2",
+                    "author": "Jacku",
+                    "file name": "Option",
+                    "url": "https://drive.google.com/file/d/qwertU10p2/view",
+                },
+                relationships={},
+                text="Option 1: Keep it super casual",
+            ),
+            Document(
+                id_="file_id_2.docx",
+                metadata={
+                    "file_name": "qwertU10p3.docx",
+                    "file id": "qwertU10p3",
+                    "author": "Jacku",
+                    "file name": "Option",
+                    "url": "https://drive.google.com/file/d/qwertU10p3/view",
+                },
+                text="Option 1: Keep it super casual",
+            ),
+        ]
         self.assertEqual(len(result), 2)
-        self.assertEqual(result, mock_data)
+        self.assertEqual(result, expected_results)
 
     @patch.object(GoogleDriveReader, "load_data")
     def test_load_from_folders_exception(self, mock_reader):
@@ -255,3 +280,119 @@ class TestGoogleDriveLoader(unittest.TestCase):
         for i in range(4):
             self.assertEqual(result[i].id_, mock_data[i % 2].id_)
         self.assertEqual(len(result), 4)
+
+    def test_transform_single_document(self):
+        loader = GoogleDriveLoader(refresh_token=self.refresh_token)
+
+        documents = [
+            Document(
+                doc_id=1,
+                text="test",
+                metadata={
+                    "file id": "file_1",
+                    "author": "author_1",
+                    "file name": "file_name_1",
+                    "mime type": "mime",
+                    "created at": "date",
+                    "modified at": "modified",
+                },
+            )
+        ]
+        transformed_docs = loader._transform_google_documents(documents=documents)
+
+        self.assertEqual(len(transformed_docs), 1)
+        self.assertEqual(
+            transformed_docs[0].metadata,
+            {
+                "file id": "file_1",
+                "author": "author_1",
+                "file name": "file_name_1",
+                "mime type": "mime",
+                "created at": "date",
+                "modified at": "modified",
+                "url": "https://drive.google.com/file/d/file_1/view",
+            },
+        )
+
+    def test_transform_multiple_document(self):
+        loader = GoogleDriveLoader(refresh_token=self.refresh_token)
+
+        documents = [
+            Document(
+                doc_id=1,
+                text="test",
+                metadata={
+                    "file id": "file_1",
+                    "author": "author_1",
+                    "file name": "file_name_1",
+                    "mime type": "mime",
+                    "created at": "date",
+                    "modified at": "modified",
+                },
+            ),
+            Document(
+                doc_id=2,
+                text="test",
+                metadata={
+                    "file id": "file_2",
+                    "author": "author_2",
+                    "file name": "file_name_2",
+                    "mime type": "mime",
+                    "created at": "date",
+                    "modified at": "modified",
+                },
+            ),
+            Document(
+                doc_id=3,
+                text="test",
+                metadata={
+                    "file id": "file_3",
+                    "author": "author_3",
+                    "file name": "file_name_3",
+                    "mime type": "mime",
+                    "created at": "date",
+                    "modified at": "modified",
+                },
+            ),
+        ]
+        transformed_docs = loader._transform_google_documents(documents=documents)
+
+        self.assertEqual(len(transformed_docs), 3)
+        self.assertEqual(
+            transformed_docs[0].metadata,
+            {
+                "file id": "file_1",
+                "author": "author_1",
+                "file name": "file_name_1",
+                "mime type": "mime",
+                "created at": "date",
+                "modified at": "modified",
+                "url": "https://drive.google.com/file/d/file_1/view",
+            },
+        )
+
+        self.assertEqual(
+            transformed_docs[1].metadata,
+            {
+                "file id": "file_2",
+                "author": "author_2",
+                "file name": "file_name_2",
+                "mime type": "mime",
+                "created at": "date",
+                "modified at": "modified",
+                "url": "https://drive.google.com/file/d/file_2/view",
+            },
+        )
+
+        self.assertEqual(
+            transformed_docs[2].metadata,
+            {
+                "file id": "file_3",
+                "author": "author_3",
+                "file name": "file_name_3",
+                "mime type": "mime",
+                "created at": "date",
+                "modified at": "modified",
+                "url": "https://drive.google.com/file/d/file_3/view",
+            },
+        )

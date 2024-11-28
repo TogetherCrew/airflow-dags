@@ -95,6 +95,10 @@ def prepare_document(
     reactions = message["reactions"]
     raw_content = message["content"]
 
+    message_id = message["messageId"]
+    channel_id = message["channelId"]
+    thread_id = message["threadId"]
+
     reaction_ids = prepare_raction_ids(reactions)
 
     mention_names: list[str]
@@ -161,10 +165,16 @@ def prepare_document(
     # always has length 1
     assert len(author_name) == 1, "Either None or multiple authors!"
 
+    if thread_id is None:
+        url = f"https://discord.com/channels/{guild_id}/{channel_id}/{message_id}"
+    else:
+        url = f"https://discord.com/channels/{guild_id}/{thread_id}/{message_id}"
+
     msg_meta_data = {
         "channel": message["channelName"],
         "date": message["createdDate"].strftime(DATE_FORMAT),
         "author_username": author_name[0],
+        "url": url,
         # always including the thread_name, if `None`, then it was a channel message
         "thread": message["threadName"],
     }
@@ -234,6 +244,7 @@ def prepare_document(
             "replier_global_name",
             "replier_nickname",
             "role_mentions",
+            "url",
         ]
         doc.excluded_llm_metadata_keys = [
             "author_nickname",
@@ -250,6 +261,7 @@ def prepare_document(
             "replier_global_name",
             "replier_nickname",
             "role_mentions",
+            "url",
         ]
     else:
         doc = Document(text=content_url_updated)

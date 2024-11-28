@@ -62,7 +62,7 @@ class TestFetchRawCommits(TestCase):
         self.assertEqual(
             commits[0]["api_url"], "https://api.sample_url_for_commit.html"
         )
-        self.assertEqual(commits[0]["html_url"], "https://sample_url_for_commit.html")
+        self.assertEqual(commits[0]["url"], "https://sample_url_for_commit.html")
         self.assertEqual(commits[0]["repository_id"], 123)
         self.assertEqual(commits[0]["repository_name"], "Org/SampleRepo")
         self.assertEqual(commits[0]["sha"], "sha#1111")
@@ -106,7 +106,7 @@ class TestFetchRawCommits(TestCase):
         self.assertEqual(
             commits[0]["api_url"], "https://api.sample_url_for_commit.html"
         )
-        self.assertEqual(commits[0]["html_url"], "https://sample_url_for_commit.html")
+        self.assertEqual(commits[0]["url"], "https://sample_url_for_commit.html")
         self.assertEqual(commits[0]["repository_id"], 123)
         self.assertEqual(commits[0]["repository_name"], "Org/SampleRepo2")
         self.assertEqual(commits[0]["sha"], "sha#1111")

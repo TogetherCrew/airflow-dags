@@ -78,7 +78,7 @@ class GithubCommitExtraction:
                 user_commiter.login AS committer_name,
                 co.`commit.message` AS message,
                 co.`commit.url` AS api_url,
-                co.`parents.0.html_url` AS html_url,
+                co.`parents.0.html_url` AS url,
                 co.repository_id AS repository_id,
                 repo.full_name AS repository_name,
                 co.sha AS sha,

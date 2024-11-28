@@ -1,3 +1,4 @@
+import copy
 import logging
 import os
 from typing import List, Optional
@@ -49,7 +50,9 @@ class GoogleDriveLoader:
             documents.extend(self._load_from_files(file_ids))
         if not documents:
             raise ValueError("One input at least must be given!")
-        return documents
+
+        transformed_documents = self._transform_google_documents(documents)
+        return transformed_documents
 
     def _load_from_folders(self, folder_ids: List[str]):
         folders_data = []
@@ -108,3 +111,19 @@ class GoogleDriveLoader:
             raise ValueError("`GOOGLE_CLIENT_SECRET` not found from env variables!")
 
         return client_id, client_secret
+
+    def _transform_google_documents(self, documents: list[Document]) -> list[Document]:
+        """
+        transform google extracted documents by inserting their metadata a url
+        """
+        # copying
+        transformed_docs: list[Document] = copy.deepcopy(documents)
+
+        for doc in transformed_docs:
+            file_id: str | None = doc.metadata.get("file id")
+            if file_id is None:
+                doc.metadata["url"] = None
+            else:
+                doc.metadata["url"] = f"https://drive.google.com/file/d/{file_id}/view"
+
+        return transformed_docs
