@@ -41,7 +41,7 @@ class ExtractRawMembers:
         parameters = {"forum_endpoint": self.forum_endpoint}
 
         if start_date:
-            query += " AND user.createdAt >= $start_date"
+            query += " AND user.createdAt > $start_date"
             parameters["start_date"] = start_date
 
         query += """
