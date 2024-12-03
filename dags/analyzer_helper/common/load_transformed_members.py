@@ -1,6 +1,6 @@
 import logging
-import pymongo
 
+import pymongo
 from analyzer_helper.common.base.load_transformed_members_base import (
     LoadTransformedMembersBase,
 )

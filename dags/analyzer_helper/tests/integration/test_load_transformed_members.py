@@ -1,8 +1,7 @@
 import unittest
-from datetime import datetime
-from dotenv import load_dotenv
 
 from analyzer_helper.common.load_transformed_members import LoadTransformedMembers
+from dotenv import load_dotenv
 
 
 class TestLoadTransformedMembersIntegration(unittest.TestCase):
