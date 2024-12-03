@@ -1,4 +1,5 @@
 import logging
+import pymongo
 
 from analyzer_helper.common.base.load_transformed_members_base import (
     LoadTransformedMembersBase,
@@ -19,4 +20,25 @@ class LoadTransformedMembers(LoadTransformedMembersBase):
         if recompute:
             logging.info("Recompute is true, deleting all the previous data!")
             self.collection.delete_many({})
-        self.collection.insert_many(processed_data)
+            self.collection.insert_many(processed_data)
+            return
+
+        # Perform bulk updates
+        bulk_operations = []
+        for document in processed_data:
+            # Using document's id as the unique identifier
+            filter_criteria = {"id": document["id"]}
+            bulk_operations.append(
+                pymongo.UpdateOne(filter_criteria, {"$set": document}, upsert=True)
+            )
+
+        if bulk_operations:
+            try:
+                # Execute bulk write operations
+                result = self.collection.bulk_write(bulk_operations, ordered=False)
+                logging.info(f"Matched {result.matched_count} documents")
+                logging.info(f"Modified {result.modified_count} documents")
+                logging.info(f"Upserted {result.upserted_count} documents")
+            except Exception as e:
+                logging.error(f"Error during bulk write operation: {str(e)}")
+                raise
