@@ -367,14 +367,17 @@ class TestFetchRawMessages(unittest.TestCase):
 
         client[guild_id]["rawinfos"].insert_many(raw_data)
 
-        # Fetch messages from a specific date (October 3, 2023)
-        messages = fetch_raw_messages(guild_id, selected_channels=channels)
+        messages = fetch_raw_messages(
+            guild_id,
+            selected_channels=channels,
+            from_date=datetime(2023, 9, 20),
+        )
         # Check if the fetched messages are equal to the expected messages
         self.assertCountEqual(messages, 1)
 
-    def test_fetch_raw_messages_fetch_limited_characters(self):
+    def test_fetch_raw_messages_fetch_limited_characters_specified(self):
         """
-        fetch raw messages and do filtering
+        fetch raw messages and do filtering with a specified value
         """
         client = MongoSingleton.get_instance().client
 
@@ -456,6 +459,7 @@ class TestFetchRawMessages(unittest.TestCase):
         messages = fetch_raw_messages(
             guild_id,
             selected_channels=channels,
+            from_date=datetime(2023, 9, 20),
             min_word_limit=1,
         )
         # Check if the fetched messages are equal to the expected messages
