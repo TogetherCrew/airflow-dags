@@ -286,3 +286,177 @@ class TestFetchRawMessages(unittest.TestCase):
 
         # Check if the fetched messages are equal to the expected messages
         self.assertCountEqual(messages, expected_messages)
+
+    def test_fetch_raw_messages_fetch_limited_characters(self):
+        """
+        fetch raw messages and do filtering
+        """
+        client = MongoSingleton.get_instance().client
+
+        guild_id = "1234"
+        channels = ["111111", "22222"]
+        users_id = ["user1", "user2", "user3", "user4", "user5"]
+        guild_id = "1234"
+        self.setup_db(
+            channels=channels,
+            guild_id=guild_id,
+        )
+
+        for user in users_id:
+            is_bot = False
+            if user == "user3":
+                is_bot = True
+
+            client[guild_id]["guildmembers"].insert_one(
+                {
+                    "discordId": user,
+                    "username": f"username_{user}",
+                    "roles": None,
+                    "joinedAt": datetime(2023, 1, 1),
+                    "avatar": None,
+                    "isBot": is_bot,
+                    "discriminator": "0",
+                    "permissions": None,
+                    "deletedAt": None,
+                    "globalName": None,
+                    "nickname": None,
+                }
+            )
+
+        # Dropping any previous data
+        client[guild_id].drop_collection("rawinfos")
+
+        # Insert messages with different dates
+        raw_data = []
+
+        data = {
+            "type": 0,
+            "author": users_id[0],
+            "content": "AA",
+            "user_mentions": [],
+            "role_mentions": [],
+            "reactions": [],
+            "replied_user": None,
+            "createdDate": datetime(2023, 10, 1),
+            "messageId": str(np.random.randint(1000000, 9999999)),
+            "channelId": channels[0],
+            "channelName": f"general {channels[0]}",
+            "threadId": None,
+            "threadName": None,
+            "isGeneratedByWebhook": False,
+        }
+        raw_data.append(data)
+
+        data = {
+            "type": 0,
+            "author": users_id[1],
+            "content": "A sample text with more than 8 characters!",
+            "user_mentions": [],
+            "role_mentions": [],
+            "reactions": [],
+            "replied_user": None,
+            "createdDate": datetime(2023, 10, 1),
+            "messageId": str(np.random.randint(1000000, 9999999)),
+            "channelId": channels[1],
+            "channelName": f"general {channels[1]}",
+            "threadId": None,
+            "threadName": None,
+            "isGeneratedByWebhook": False,
+        }
+        raw_data.append(data)
+
+        client[guild_id]["rawinfos"].insert_many(raw_data)
+
+        # Fetch messages from a specific date (October 3, 2023)
+        messages = fetch_raw_messages(guild_id, selected_channels=channels)
+        # Check if the fetched messages are equal to the expected messages
+        self.assertCountEqual(messages, 1)
+
+    def test_fetch_raw_messages_fetch_limited_characters(self):
+        """
+        fetch raw messages and do filtering
+        """
+        client = MongoSingleton.get_instance().client
+
+        guild_id = "1234"
+        channels = ["111111", "22222"]
+        users_id = ["user1", "user2", "user3", "user4", "user5"]
+        guild_id = "1234"
+        self.setup_db(
+            channels=channels,
+            guild_id=guild_id,
+        )
+
+        for user in users_id:
+            is_bot = False
+            if user == "user3":
+                is_bot = True
+
+            client[guild_id]["guildmembers"].insert_one(
+                {
+                    "discordId": user,
+                    "username": f"username_{user}",
+                    "roles": None,
+                    "joinedAt": datetime(2023, 1, 1),
+                    "avatar": None,
+                    "isBot": is_bot,
+                    "discriminator": "0",
+                    "permissions": None,
+                    "deletedAt": None,
+                    "globalName": None,
+                    "nickname": None,
+                }
+            )
+
+        # Dropping any previous data
+        client[guild_id].drop_collection("rawinfos")
+
+        # Insert messages with different dates
+        raw_data = []
+
+        data = {
+            "type": 0,
+            "author": users_id[0],
+            "content": "AA",
+            "user_mentions": [],
+            "role_mentions": [],
+            "reactions": [],
+            "replied_user": None,
+            "createdDate": datetime(2023, 10, 1),
+            "messageId": str(np.random.randint(1000000, 9999999)),
+            "channelId": channels[0],
+            "channelName": f"general {channels[0]}",
+            "threadId": None,
+            "threadName": None,
+            "isGeneratedByWebhook": False,
+        }
+        raw_data.append(data)
+
+        data = {
+            "type": 0,
+            "author": users_id[1],
+            "content": "A sample text with more than 8 characters!",
+            "user_mentions": [],
+            "role_mentions": [],
+            "reactions": [],
+            "replied_user": None,
+            "createdDate": datetime(2023, 10, 1),
+            "messageId": str(np.random.randint(1000000, 9999999)),
+            "channelId": channels[1],
+            "channelName": f"general {channels[1]}",
+            "threadId": None,
+            "threadName": None,
+            "isGeneratedByWebhook": False,
+        }
+        raw_data.append(data)
+
+        client[guild_id]["rawinfos"].insert_many(raw_data)
+
+        # Fetch messages from a specific date (October 3, 2023)
+        messages = fetch_raw_messages(
+            guild_id,
+            selected_channels=channels,
+            min_word_limit=1,
+        )
+        # Check if the fetched messages are equal to the expected messages
+        self.assertCountEqual(messages, 2)
