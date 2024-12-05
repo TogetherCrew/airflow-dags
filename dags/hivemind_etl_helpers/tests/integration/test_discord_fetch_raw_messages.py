@@ -373,7 +373,7 @@ class TestFetchRawMessages(unittest.TestCase):
             from_date=datetime(2023, 9, 20),
         )
         # Check if the fetched messages are equal to the expected messages
-        self.assertCountEqual(messages, 1)
+        self.assertEqual(len(messages), 1)
 
     def test_fetch_raw_messages_fetch_limited_characters_specified(self):
         """
@@ -463,4 +463,4 @@ class TestFetchRawMessages(unittest.TestCase):
             min_word_limit=1,
         )
         # Check if the fetched messages are equal to the expected messages
-        self.assertCountEqual(messages, 2)
+        self.assertEqual(len(messages), 2)
