@@ -34,7 +34,7 @@ def fetch_raw_messages(
     client = MongoSingleton.get_instance().get_client()
     user_ids = get_real_users(guild_id)
 
-    limit_max_words = kwargs.get("min_word_limit", 8)
+    min_word_limit = kwargs.get("min_word_limit", 8)
 
     cursor = (
         client[guild_id]["rawinfos"]
@@ -45,7 +45,7 @@ def fetch_raw_messages(
                 "createdDate": {"$gte": from_date},
                 "isGeneratedByWebhook": False,
                 "channelId": {"$in": selected_channels},
-                "$where": f"this.content.length > {limit_max_words}",
+                "$where": f"this.content.length > {min_word_limit}",
             }
         )
         .sort("createdDate", 1)
