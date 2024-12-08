@@ -1,3 +1,5 @@
+import logging
+
 from analyzer_helper.discourse.utils.convert_date_time_formats import (
     DateTimeFormatConverter,
 )
@@ -90,7 +92,7 @@ class TransformRawInfo:
 
     def transform(self, raw_data: list) -> list:
         transformed_data = []
-        for entry in raw_data:
+        for idx, entry in enumerate(raw_data):
             # Create main post entry
             transformed_data.append(self.create_data_entry(entry))
 
@@ -114,5 +116,7 @@ class TransformRawInfo:
                     )
                 )
             # TODO: Create entry for mentioned users
+
+            logging.info(f"Preparing raw data: {idx + 1}/{len(raw_data)}")
 
         return transformed_data
