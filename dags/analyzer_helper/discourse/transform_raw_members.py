@@ -19,10 +19,12 @@ class TransformRawMembers(TransformRawMembersBase):
         """
         transformed_members = []
 
-        for member in raw_members:
+        for idx, member in enumerate(raw_members):
             try:
                 transformed_member = self.transform_member(member=member)
                 transformed_members.append(transformed_member)
+
+                logging.info(f"Preparing raw members: {idx + 1}/{len(raw_members)}")
             except Exception as e:
                 logging.error(f"Error transforming raw discourse member {member}: {e}")
 

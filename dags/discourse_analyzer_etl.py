@@ -106,6 +106,8 @@ with DAG(
             }
             ```
         """
+        logging.info(f"Processing platform: {platform_info}")
+
         platform_id = platform_info["platform_id"]
         forum_endpoint = platform_info["id"]
         period = platform_info["period"]
@@ -147,6 +149,7 @@ with DAG(
             }
             ```
         """
+        logging.info(f"Processing platform: {platform_info}")
         platform_id = platform_info["platform_id"]
         forum_endpoint = platform_info["id"]
         # period = platform_info["period"]
