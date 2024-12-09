@@ -58,7 +58,7 @@ def update_raw_messages(raw_data: list[dict]) -> list[dict]:
         content = data.get("content")
         if content:
             cleaned_content = preprocessor.clean_text(content)
-            print(cleaned_content)
+
             if cleaned_content:
                 data["content"] = cleaned_content
                 cleaned_data.append(data)
