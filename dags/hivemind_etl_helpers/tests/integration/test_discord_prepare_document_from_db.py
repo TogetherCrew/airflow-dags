@@ -312,14 +312,13 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
             "thread": None,
             "url": "https://discord.com/channels/1234/111111/10000000003",
         }
-        print(documents[0].text)
+
         self.assertDictEqual(documents[0].metadata, expected_metadata_0)
         self.assertDictEqual(documents[1].metadata, expected_metadata_1)
         self.assertDictEqual(documents[2].metadata, expected_metadata_2)
         self.assertDictEqual(documents[3].metadata, expected_metadata_3)
 
-        # Optionally, you can also check the text separately if needed
-        self.assertEqual(documents[0].text, "apple fall trees1")
-        self.assertEqual(documents[1].text, "mention person user3")
-        self.assertEqual(documents[2].text, "mention user3 user4 role1")
+        self.assertEqual(documents[0].text, "test_message1")
+        self.assertEqual(documents[1].text, "mentioning a person user3")
+        self.assertEqual(documents[2].text, "mentioning user3 user4 role1")
         self.assertEqual(documents[3].text, "test_message1 [URL0]")
