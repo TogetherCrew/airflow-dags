@@ -122,7 +122,7 @@ class TestFetchRawMessages(unittest.TestCase):
             data = {
                 "type": 0,
                 "author": users_id[i],
-                "content": f"test_message {np.random.randint(0, 10)}",
+                "content": f"{np.random.randint(0, 10)} Apples are falling from trees!",
                 "user_mentions": [],
                 "role_mentions": [],
                 "reactions": [],
@@ -247,7 +247,7 @@ class TestFetchRawMessages(unittest.TestCase):
             data = {
                 "type": 0,
                 "author": users_id[i],
-                "content": f"test_message {np.random.randint(0, 10)}",
+                "content": f"Apples falling from trees {np.random.randint(0, 10)}",
                 "user_mentions": [],
                 "role_mentions": [],
                 "reactions": [],
@@ -350,7 +350,7 @@ class TestFetchRawMessages(unittest.TestCase):
         data = {
             "type": 0,
             "author": users_id[1],
-            "content": "A sample text with more than 8 characters!",
+            "content": "A sample text with more than 15 characters!",
             "user_mentions": [],
             "role_mentions": [],
             "reactions": [],
