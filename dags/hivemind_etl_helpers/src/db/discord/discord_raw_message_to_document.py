@@ -5,6 +5,7 @@ from hivemind_etl_helpers.src.db.discord.utils.transform_discord_raw_messges imp
     transform_discord_raw_messages,
 )
 from llama_index.core import Document
+from hivemind_etl_helpers.src.db.discord.preprocessor import DiscordPreprocessor
 
 
 def discord_raw_to_documents(
@@ -29,6 +30,37 @@ def discord_raw_to_documents(
         list of messages converted to documents
     """
     raw_mongo_messages = fetch_raw_messages(guild_id, selected_channels, from_date)
-    messages_docuemnt = transform_discord_raw_messages(guild_id, raw_mongo_messages)
+    processed_messages = update_raw_messages(raw_data=raw_mongo_messages)
+    messages_docuemnt = transform_discord_raw_messages(guild_id, processed_messages)
 
     return messages_docuemnt
+
+
+def update_raw_messages(raw_data: list[dict]) -> list[dict]:
+    """
+    Update raw messages text by cleaning their data
+
+    Parameters
+    -----------
+    data : list[dict]
+        a list of raw data fetched from database
+        each dict hold a 'content'
+
+    Returns
+    ---------
+    cleaned_data : list[dict]
+        a list of dictionaries but with cleaned data
+    """
+    preprocessor = DiscordPreprocessor()
+
+    cleaned_data: list[dict] = []
+    for data in raw_data:
+        content = data.get("content")
+        if content:
+            cleaned_content = preprocessor.clean_text(content)
+            print(cleaned_content)
+            if cleaned_content:
+                data["content"] = cleaned_content
+                cleaned_data.append(data)
+
+    return cleaned_data
