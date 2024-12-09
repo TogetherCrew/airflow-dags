@@ -99,7 +99,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
         data = {
             "type": 0,
             "author": "111",
-            "content": "test_message1",
+            "content": "Apples are falling from trees1",
             "user_mentions": [],
             "role_mentions": [],
             "reactions": [],
@@ -319,7 +319,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
         self.assertDictEqual(documents[3].metadata, expected_metadata_3)
 
         # Optionally, you can also check the text separately if needed
-        self.assertEqual(documents[0].text, "test_message1")
-        self.assertEqual(documents[1].text, "mentioning a person user3")
-        self.assertEqual(documents[2].text, "mentioning user3 user4 role1")
+        self.assertEqual(documents[0].text, "apple fall trees1")
+        self.assertEqual(documents[1].text, "mention person user3")
+        self.assertEqual(documents[2].text, "mention user3 user4 role1")
         self.assertEqual(documents[3].text, "test_message1 [URL0]")
