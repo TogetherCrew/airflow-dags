@@ -18,6 +18,7 @@ from hivemind_etl_helpers.src.db.discord.utils.prepare_reactions_id import (
     prepare_raction_ids,
 )
 from hivemind_etl_helpers.src.db.globals import DATE_FORMAT
+from tc_hivemind_backend.db.utils.preprocess_text import BasePreprocessor
 from llama_index.core import Document
 
 
@@ -214,9 +215,8 @@ def prepare_document(
     # if content_url_updated == "":
     #     raise ValueError("Message with Empty content!")
 
-    # TODO: clean the text with preprocessor and check if there's anything availale in it
-    if check_no_content_only_links(content):
-        raise ValueError("Message just did have urls")
+    if BasePreprocessor().extract_main_content(text=content):
+        raise ValueError("Message didn't hold any valuable information!")
 
     # removing null characters
     content = re.sub(r"[\x00-\x1F\x7F]", "", content)
