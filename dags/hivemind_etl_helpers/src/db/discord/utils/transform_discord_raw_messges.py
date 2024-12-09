@@ -14,9 +14,6 @@ from hivemind_etl_helpers.src.db.discord.utils.merge_user_ids_fetch_names import
 from hivemind_etl_helpers.src.db.discord.utils.prepare_raw_message_ids import (
     prepare_raw_message_ids,
 )
-from hivemind_etl_helpers.src.db.discord.utils.prepare_raw_message_urls import (
-    prepare_raw_message_urls,
-)
 from hivemind_etl_helpers.src.db.discord.utils.prepare_reactions_id import (
     prepare_raction_ids,
 )
@@ -160,7 +157,7 @@ def prepare_document(
         roles=dict(zip(role_ids, role_names)),
         users=dict(zip(mention_ids, mention_names)),
     )
-    content_url_updated, url_reference = prepare_raw_message_urls(content)
+    # content_url_updated, url_reference = prepare_raw_message_urls(content)
 
     # always has length 1
     assert len(author_name) == 1, "Either None or multiple authors!"
@@ -202,8 +199,8 @@ def prepare_document(
             msg_meta_data["reactors_global_name"] = reactors_gname
         if reactors_nickname != []:
             msg_meta_data["reactors_nicknames"] = reactors_nickname
-    if url_reference != {}:
-        msg_meta_data["url_reference"] = url_reference
+    # if url_reference != {}:
+    #     msg_meta_data["url_reference"] = url_reference
 
     if replier_name is not None:
         msg_meta_data["replier_username"] = replier_name[0]
@@ -214,18 +211,19 @@ def prepare_document(
     if role_names != []:
         msg_meta_data["role_mentions"] = role_names
 
-    if content_url_updated == "":
-        raise ValueError("Message with Empty content!")
+    # if content_url_updated == "":
+    #     raise ValueError("Message with Empty content!")
 
-    if check_no_content_only_links(content_url_updated):
+    # TODO: clean the text with preprocessor and check if there's anything availale in it
+    if check_no_content_only_links(content):
         raise ValueError("Message just did have urls")
 
     # removing null characters
-    content_url_updated = re.sub(r"[\x00-\x1F\x7F]", "", content_url_updated)
+    content = re.sub(r"[\x00-\x1F\x7F]", "", content)
 
     doc: Document
     if not exclude_metadata:
-        doc = Document(text=content_url_updated, metadata=msg_meta_data)
+        doc = Document(text=content, metadata=msg_meta_data)
         doc.excluded_embed_metadata_keys = [
             "channel",
             "date",
@@ -239,7 +237,7 @@ def prepare_document(
             "reactors_global_name",
             "reactors_nicknames",
             "thread",
-            "url_reference",
+            # "url_reference",
             "replier_username",
             "replier_global_name",
             "replier_nickname",
@@ -256,7 +254,7 @@ def prepare_document(
             "reactors_global_name",
             "reactors_nicknames",
             "thread",
-            "url_reference",
+            # "url_reference",
             "replier_username",
             "replier_global_name",
             "replier_nickname",
@@ -264,6 +262,6 @@ def prepare_document(
             "url",
         ]
     else:
-        doc = Document(text=content_url_updated)
+        doc = Document(text=content)
 
     return doc

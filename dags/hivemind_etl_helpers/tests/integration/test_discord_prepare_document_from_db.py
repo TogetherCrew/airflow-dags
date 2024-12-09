@@ -99,7 +99,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
         data = {
             "type": 0,
             "author": "111",
-            "content": "Apples are falling from trees1",
+            "content": "test_message1",
             "user_mentions": [],
             "role_mentions": [],
             "reactions": [],
