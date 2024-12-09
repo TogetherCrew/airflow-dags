@@ -124,7 +124,7 @@ class TestPGVectorAccess(unittest.TestCase):
             {
                 "type": 0,
                 "author": "111",
-                "content": "test_message1",
+                "content": "Apples are falling from trees 1",
                 "user_mentions": [],
                 "role_mentions": [],
                 "reactions": [],
