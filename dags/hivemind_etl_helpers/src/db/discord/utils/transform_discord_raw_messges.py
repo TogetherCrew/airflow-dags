@@ -215,7 +215,7 @@ def prepare_document(
     # if content_url_updated == "":
     #     raise ValueError("Message with Empty content!")
 
-    if BasePreprocessor().extract_main_content(text=content):
+    if not BasePreprocessor().extract_main_content(text=content):
         raise ValueError("Message didn't hold any valuable information!")
 
     # removing null characters
