@@ -7,6 +7,7 @@ def fetch_raw_messages(
     guild_id: str,
     selected_channels: list[str],
     from_date: datetime,
+    **kwargs,
 ) -> list[dict]:
     """
     fetch rawinfo messages from mongodb database
@@ -20,6 +21,10 @@ def fetch_raw_messages(
     from_date : datetime
         get the raw data from a specific date
         default is None, meaning get all the messages
+    kwargs : dict
+        min_word_limit : int
+            the minimum words that the messages shuold contain
+            default is 8 characters
 
     Returns
     --------
@@ -28,6 +33,8 @@ def fetch_raw_messages(
     """
     client = MongoSingleton.get_instance().get_client()
     user_ids = get_real_users(guild_id)
+
+    min_word_limit = kwargs.get("min_word_limit", 15)
 
     cursor = (
         client[guild_id]["rawinfos"]
@@ -38,6 +45,7 @@ def fetch_raw_messages(
                 "createdDate": {"$gte": from_date},
                 "isGeneratedByWebhook": False,
                 "channelId": {"$in": selected_channels},
+                "$expr": {"$gt": [{"$strLenCP": "$content"}, min_word_limit]},
             }
         )
         .sort("createdDate", 1)

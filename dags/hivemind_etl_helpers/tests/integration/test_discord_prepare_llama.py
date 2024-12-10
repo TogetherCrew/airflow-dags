@@ -205,7 +205,6 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
             "author_username": "user1",
             "author_global_name": "user1_GlobalName",
             "author_nickname": "user1_nickname",
-            "url_reference": {"[URL0]": "https://www.google.com"},
             "url": f"https://discord.com/channels/{guild_id}/1313133/1111111113",
             "thread": None,
         }
@@ -215,8 +214,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
         self.assertDictEqual(documents[2].metadata, expected_metadata_2)
         self.assertDictEqual(documents[3].metadata, expected_metadata_3)
 
-        # Optionally, you can also check the text separately if needed
         self.assertEqual(documents[0].text, "test_message1")
         self.assertEqual(documents[1].text, "mentioning a person user3")
         self.assertEqual(documents[2].text, "mentioning user3 user4 role1")
-        self.assertEqual(documents[3].text, "test_message1 [URL0]")
+        self.assertEqual(documents[3].text, "test_message1 https://www.google.com")
