@@ -3,7 +3,6 @@ import re
 from typing import Any
 
 from hivemind_etl_helpers.src.db.discord.utils.content_parser import (
-    check_no_content_only_links,
     remove_empty_str,
     remove_none_from_list,
 )
@@ -18,8 +17,8 @@ from hivemind_etl_helpers.src.db.discord.utils.prepare_reactions_id import (
     prepare_raction_ids,
 )
 from hivemind_etl_helpers.src.db.globals import DATE_FORMAT
-from tc_hivemind_backend.db.utils.preprocess_text import BasePreprocessor
 from llama_index.core import Document
+from tc_hivemind_backend.db.utils.preprocess_text import BasePreprocessor
 
 
 def transform_discord_raw_messages(
