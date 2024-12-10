@@ -17,7 +17,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
         create_platform: bool = True,
         guild_id: str = "1234",
     ):
-        client = MongoSingleton.get_instance().client
+        client = MongoSingleton.get_instance().get_client()
 
         community_id = ObjectId("9f59dd4f38f3474accdc8f24")
         platform_id = ObjectId("063a2a74282db2c00fbc2428")
@@ -83,7 +83,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
             )
 
     def test_transform_two_data(self):
-        client = MongoSingleton.get_instance().client
+        client = MongoSingleton.get_instance().get_client()
 
         channels = ["111111", "22222"]
         guild_id = "1234"
@@ -99,7 +99,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
         data = {
             "type": 0,
             "author": "111",
-            "content": "test_message1",
+            "content": "test_message1 making it longer!",
             "user_mentions": [],
             "role_mentions": [],
             "reactions": [],
@@ -308,18 +308,16 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
             "date": datetime(2023, 5, 8).strftime("%Y-%m-%d %H:%M:%S"),
             "author_username": "user1",
             "author_global_name": "user1_GlobalName",
-            "url_reference": {"[URL0]": "https://www.google.com"},
             "thread": None,
             "url": "https://discord.com/channels/1234/111111/10000000003",
         }
-        print(documents[0].text)
+
         self.assertDictEqual(documents[0].metadata, expected_metadata_0)
         self.assertDictEqual(documents[1].metadata, expected_metadata_1)
         self.assertDictEqual(documents[2].metadata, expected_metadata_2)
         self.assertDictEqual(documents[3].metadata, expected_metadata_3)
 
-        # Optionally, you can also check the text separately if needed
-        self.assertEqual(documents[0].text, "test_message1")
+        self.assertEqual(documents[0].text, "test_message1 making it longer!")
         self.assertEqual(documents[1].text, "mentioning a person user3")
         self.assertEqual(documents[2].text, "mentioning user3 user4 role1")
-        self.assertEqual(documents[3].text, "test_message1 [URL0]")
+        self.assertEqual(documents[3].text, "test_message1 https://www.google.com")

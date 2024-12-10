@@ -124,7 +124,7 @@ class TestPGVectorAccess(unittest.TestCase):
             {
                 "type": 0,
                 "author": "111",
-                "content": "test_message1",
+                "content": "Apples are falling from trees 1",
                 "user_mentions": [],
                 "role_mentions": [],
                 "reactions": [],
@@ -185,7 +185,7 @@ class TestPGVectorAccess(unittest.TestCase):
         text, _, metadata = data[0]
 
         # nickname was `None`, so it wasn't included in metadata
-        self.assertEqual(text, "test_message1")
+        self.assertEqual(text, "Apples are falling from trees 1")
         self.assertEqual(metadata["channel"], documents[0].metadata["channel"])
         self.assertEqual(
             metadata["author_username"], documents[0].metadata["author_username"]
