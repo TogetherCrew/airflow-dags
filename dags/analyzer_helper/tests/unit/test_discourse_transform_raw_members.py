@@ -46,6 +46,36 @@ class TestDiscordTransformRawMembers(unittest.TestCase):
         result = self.transformer.transform([raw_member])
         self.assertEqual(result, expected_result)
 
+    def test_transform_single_member_null_name(self):
+        """
+        Tests that transform correctly transforms a single member
+        """
+        raw_member = {
+            "id": 85149,
+            "joined_at": "2023-07-02",
+            "isBot": False,
+            "name": "null",
+            "username": "memberUser1",
+            "avatar": "/path1/{size}/endpoint",
+        }
+
+        expected_result = [
+            {
+                "id": "85149",
+                "is_bot": False,
+                "left_at": None,
+                "joined_at": datetime(2023, 7, 2, 0, 0, 0, 0, tzinfo=timezone.utc),
+                "options": {
+                    "name": None,
+                    "username": "memberUser1",
+                    "avatar": "https://" + self.endpoint + "/path1/128/endpoint",
+                },
+            }
+        ]
+
+        result = self.transformer.transform([raw_member])
+        self.assertEqual(result, expected_result)
+
     def test_transform_multiple_members(self):
         """
         Tests that transform correctly transforms multiple members

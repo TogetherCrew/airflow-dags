@@ -38,7 +38,9 @@ class TransformRawMembers(TransformRawMembersBase):
         avatar_template: str = member["avatar"]
 
         avatar: str
-        if avatar_template.startswith(("http://", "https://")):
+        if avatar_template is not None and avatar_template.startswith(
+            ("http://", "https://")
+        ):
             avatar = avatar_template
         elif avatar_template is not None:
             avatar = "https://" + self.endpoint + avatar_template
@@ -46,14 +48,17 @@ class TransformRawMembers(TransformRawMembersBase):
             avatar = None
 
         avatar = avatar.replace("{size}", "128") if avatar else None
+        joined_at = member.get("joined_at")
 
         member = {
             "id": str(int(discourse_id)) if discourse_id is not None else None,
             "is_bot": member.get("isBot", False),
             "left_at": None,
-            "joined_at": self.converter.from_date_string(member.get("joined_at")),
+            "joined_at": (
+                self.converter.from_date_string(joined_at) if joined_at else None
+            ),
             "options": {
-                "name": member["name"] if member["name"] is not "null" else None,
+                "name": member["name"] if member["name"] != "null" else None,
                 "username": member["username"],
                 "avatar": avatar,
             },
