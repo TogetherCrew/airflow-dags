@@ -53,7 +53,7 @@ class TransformRawMembers(TransformRawMembersBase):
             "left_at": None,
             "joined_at": self.converter.from_date_string(member.get("joined_at")),
             "options": {
-                "name": member["name"] if member["name"] is not "null" else None,
+                "name": member["name"] if member["name"] != "null" else None,
                 "username": member["username"],
                 "avatar": avatar,
             },
