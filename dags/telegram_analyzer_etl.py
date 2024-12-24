@@ -203,7 +203,7 @@ with DAG(
         period = platform_data["period"]
         action = platform_data["action"]
         window = platform_data["window"]
-        resources = platform_data["resources"]
+        resources = [platform_data["id"]]
 
         analyzer = Analyzer()
 
