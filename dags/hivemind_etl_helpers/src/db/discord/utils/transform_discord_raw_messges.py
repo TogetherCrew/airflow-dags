@@ -100,7 +100,7 @@ def prepare_document(
 
     # Substitute the patterns with an empty string
     cleaned_message = mention_pattern.sub("", message["content"])
-    if cleaned_message == "":
+    if cleaned_message.strip() == "":
         raise ValueError("Message was just mentioning people or roles!")
 
     reaction_ids = prepare_raction_ids(reactions)
