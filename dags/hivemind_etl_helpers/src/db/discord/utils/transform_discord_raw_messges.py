@@ -96,6 +96,13 @@ def prepare_document(
     channel_id = message["channelId"]
     thread_id = message["threadId"]
 
+    mention_pattern = re.compile(r"<@&?\d+>")
+
+    # Substitute the patterns with an empty string
+    cleaned_message = mention_pattern.sub("", message["content"])
+    if cleaned_message == "":
+        raise ValueError("Message was just mentioning people or roles!")
+
     reaction_ids = prepare_raction_ids(reactions)
 
     mention_names: list[str]
