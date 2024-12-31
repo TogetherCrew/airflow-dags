@@ -1,5 +1,4 @@
 from dateutil.parser import parse
-
 from llama_index.core import Document
 from neo4j import Record
 
