@@ -58,8 +58,8 @@ class TestFetchRawDiscoursePosts(TestCase):
                 p.raw = "texttexttext of post 1",
                 p.topicId = 1,
                 p.id = 100,
-                p.createdAt = '2022-01-01T00:00:00.000Z',
-                p.updatedAt = '2022-01-01T01:00:00.000Z'
+                p.createdAt = '2022-01-01 00:00:00',
+                p.updatedAt = '2022-01-01 01:00:00'
             WITH p
             CREATE (a:DiscourseUser) -[:POSTED]->(p)
             SET

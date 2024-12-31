@@ -48,7 +48,7 @@ def transform_raw_to_documents(
                     "author_username": post["author_username"],
                     "forum_endpoint": forum_endpoint,
                     "date": parse(post["createdAt"]).strftime("%Y-%m-%d %H:%M:%S"),
-                    "updatedAt": post["updatedAt"],
+                    "updatedAt": parse(post["updatedAt"]).strftime("%Y-%m-%d %H:%M:%S"),
                     "postId": post["postId"],
                     "topic": post["topic"],
                     "category": post["category"],
