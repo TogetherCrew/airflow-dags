@@ -1,3 +1,5 @@
+from dateutil.parser import parser
+
 from llama_index.core import Document
 from neo4j import Record
 
@@ -45,7 +47,7 @@ def transform_raw_to_documents(
                     "author_name": post["author_name"],
                     "author_username": post["author_username"],
                     "forum_endpoint": forum_endpoint,
-                    "createdAt": post["createdAt"],
+                    "date": parser.parse(post["createdAt"]).strftime("%Y-%m-%d %H:%M:%S"),
                     "updatedAt": post["updatedAt"],
                     "postId": post["postId"],
                     "topic": post["topic"],
