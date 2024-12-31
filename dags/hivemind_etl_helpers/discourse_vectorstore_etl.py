@@ -71,11 +71,11 @@ def process_forum(
     table_name = "discourse"
 
     latest_date_query = f"""
-        SELECT (metadata_->> 'updatedAt')::timestamp
+        SELECT (metadata_->> 'date')::timestamp
         AS latest_date
         FROM data_discourse
         WHERE (metadata_ ->> 'forum_endpoint') = '{forum_endpoint}'
-        ORDER BY (metadata_->>'updatedAt')::timestamp DESC
+        ORDER BY (metadata_->>'date')::timestamp DESC
         LIMIT 1;
     """
     from_last_saved_date = setup_db(
