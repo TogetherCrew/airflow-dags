@@ -125,12 +125,12 @@ class TestFetchRawDiscoursePosts(TestCase):
                 self.assertEqual(metadata["author_name"], "user1")
                 self.assertEqual(metadata["topic"], "topic#1")
                 self.assertEqual(
-                    metadata["createdAt"],
-                    "2022-01-01T00:00:00.000Z",
+                    metadata["date"],
+                    "2022-01-01 00:00:00",
                 )
                 self.assertEqual(
                     metadata["updatedAt"],
-                    "2022-01-01T01:00:00.000Z",
+                    "2022-01-01 01:00:00",
                 )
                 self.assertEqual(metadata["authorTrustLevel"], 4)
                 self.assertEqual(cooked, "texttexttext of post 1")
@@ -143,12 +143,12 @@ class TestFetchRawDiscoursePosts(TestCase):
                 self.assertEqual(metadata["author_name"], "user2")
                 self.assertEqual(metadata["topic"], "topic#2")
                 self.assertEqual(
-                    metadata["createdAt"],
-                    "2022-01-01T00:01:00.000Z",
+                    metadata["date"],
+                    "2022-01-01 00:01:00",
                 )
                 self.assertEqual(
                     metadata["updatedAt"],
-                    "2022-01-01T01:01:00.000Z",
+                    "2022-01-01 01:01:00",
                 )
                 self.assertEqual(cooked, "texttexttext of post 2")
                 self.assertEqual(metadata["authorTrustLevel"], 1)
@@ -245,12 +245,12 @@ class TestFetchRawDiscoursePosts(TestCase):
                 self.assertEqual(metadata["author_name"], "user2")
                 self.assertEqual(metadata["topic"], "topic#2")
                 self.assertEqual(
-                    metadata["createdAt"],
-                    "2022-05-01T00:01:00.000Z",
+                    metadata["date"],
+                    "2022-05-01 00:01:00",
                 )
                 self.assertEqual(
                     metadata["updatedAt"],
-                    "2022-05-01T01:01:00.000Z",
+                    "2022-05-01 01:01:00",
                 )
                 self.assertEqual(cooked, "texttexttext of post 2")
                 self.assertEqual(metadata["authorTrustLevel"], 1)
