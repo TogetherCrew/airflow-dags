@@ -55,7 +55,7 @@ class TestGitHubCommentAggregator(unittest.TestCase):
         self.aggregator.add_comment(self.comment1)
         daily_comments = self.aggregator.get_daily_comments("2024-01-01")
         self.assertEqual(len(daily_comments["2024-01-01"]), 1)
-        self.assertEqual(daily_comments["2024-01-01"][0]["id"], 1)
+        self.assertEqual(daily_comments["2024-01-01"][0].id, 1)
 
     def test_add_multiple_comments(self):
         comments = [self.comment1, self.comment2, self.comment3]

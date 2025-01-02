@@ -42,7 +42,7 @@ class TestIssueAggregator(unittest.TestCase):
         self.aggregator.add_issue(self.issue1)
         daily_issues = self.aggregator.get_daily_issues("2024-01-01")
         self.assertEqual(len(daily_issues["2024-01-01"]), 1)
-        self.assertEqual(daily_issues["2024-01-01"][0]["id"], 1)
+        self.assertEqual(daily_issues["2024-01-01"][0].id, 1)
 
     def test_add_multiple_issues(self):
         issues = [self.issue1, self.issue2]

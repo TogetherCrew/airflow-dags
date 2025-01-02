@@ -42,7 +42,7 @@ class TestPullRequestAggregator(unittest.TestCase):
         self.aggregator.add_pr(self.pr1)
         daily_prs = self.aggregator.get_daily_prs("2024-01-01")
         self.assertEqual(len(daily_prs["2024-01-01"]), 1)
-        self.assertEqual(daily_prs["2024-01-01"][0]["id"], 1)
+        self.assertEqual(daily_prs["2024-01-01"][0].id, 1)
 
     def test_add_multiple_prs(self):
         prs = [self.pr1, self.pr2]

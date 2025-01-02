@@ -42,7 +42,7 @@ class TestCommitAggregator(unittest.TestCase):
         self.aggregator.add_commit(self.commit1)
         daily_commits = self.aggregator.get_daily_commits("2024-01-01")
         self.assertEqual(len(daily_commits["2024-01-01"]), 1)
-        self.assertEqual(daily_commits["2024-01-01"][0]["sha"], "abc123")
+        self.assertEqual(daily_commits["2024-01-01"][0].sha, "abc123")
 
     def test_add_multiple_commits(self):
         commits = [self.commit1, self.commit2]
