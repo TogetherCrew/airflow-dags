@@ -13,7 +13,7 @@ class TestTelegramSummarize(unittest.TestCase):
         Settings.chunk_size = 256
         Settings.embed_model = MockEmbedding(embed_dim=1024)
 
-        self.summarizer = SummarizeMessages(chat_id="temp_id", chat_name="temp_chat")
+        self.summarizer = SummarizeMessages(chat_id="1111111", chat_name="temp_chat")
 
     def test_summarize_empty_messages(self):
         summaries = self.summarizer.summarize_daily(messages={})
