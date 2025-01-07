@@ -38,7 +38,7 @@ class TransformMessages:
                     "replies": message.repliers,
                     "reactors": message.reactors,
                     "chat_name": self.chat_name,
-                    "url": f"https://t.me/c/{int(chat_id)}/{message.message_id}",
+                    "url": f"https://t.me/c/{int(float(chat_id))}/{message.message_id}",
                 },
                 excluded_embed_metadata_keys=[
                     "author",
