@@ -6,6 +6,7 @@ from datetime import datetime
 from airflow import DAG
 from airflow.decorators import task
 from hivemind_etl_helpers.github_etl import process_github_vectorstore
+from hivemind_etl_helpers.github_summary_etl import process_github_summary_vectorstore
 from hivemind_etl_helpers.src.utils.modules import ModulesGitHub
 
 with DAG(
@@ -40,3 +41,35 @@ with DAG(
 
     communities_info = get_github_communities()
     process_github_community.expand(community_information=communities_info)
+
+
+with DAG(
+    dag_id="github_summary_vector_store",
+    start_date=datetime(2024, 2, 21),
+    schedule_interval="0 2 * * *",
+    catchup=False,
+    max_active_runs=1,
+) as dag:
+
+    @task
+    def get_github_communities_():
+        github_communities = ModulesGitHub().get_learning_platforms()
+        return github_communities
+
+    @task
+    def process_github_community_summary(
+        community_information: dict[str, str | datetime | list[str] | None]
+    ):
+        community_id: str = community_information["community_id"]  # type: ignore
+        organization_ids: list[str] = community_information.get("organization_ids", [])  # type: ignore
+        repo_ids: list[str] = community_information.get("repo_ids", [])  # type: ignore
+
+        logging.info(f"Starting Github ETL | community_id: {community_id}")
+        process_github_summary_vectorstore(
+            community_id=community_id,
+            github_org_ids=organization_ids,
+            repo_ids=repo_ids,
+        )
+
+    communities_info = get_github_communities_()
+    process_github_community_summary.expand(community_information=communities_info)
