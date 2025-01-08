@@ -39,7 +39,7 @@ class TestGitHubCommentAggregator(unittest.TestCase):
         )
         self.comment3 = GitHubComment(
             author_name="user3",
-            id=2,
+            id=3,
             repository_name="repo1",
             url="http://example.com/3",
             created_at="2024-01-02 13:00:00",

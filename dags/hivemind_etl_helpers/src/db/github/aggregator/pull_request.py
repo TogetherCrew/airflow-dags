@@ -26,7 +26,7 @@ class PullRequestAggregator:
 
         Parameters
         ----------
-        commits : list of GitHubPullRequest
+        prs : list of GitHubPullRequest
             List of GitHubPullRequest objects to be added.
         """
         for pr in prs:
@@ -39,12 +39,12 @@ class PullRequestAggregator:
         Parameters
         ----------
         date : str, optional
-            The date for which to retrieve commits in 'YYYY-MM-DD' format.
-            If not provided, all commits are returned.
+            The date for which to retrieve prs in 'YYYY-MM-DD' format.
+            If not provided, all prs are returned.
 
         Returns
         -------
-        daily_commits : dict[str, list[GitHubPullRequest]]
+        daily_prs : dict[str, list[GitHubPullRequest]]
             A dictionary where the key is the date
             and the value is a list of GitHubPullRequest objects for that date.
         """

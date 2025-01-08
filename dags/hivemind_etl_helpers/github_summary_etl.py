@@ -77,36 +77,36 @@ def process_github_summary_vectorstore(
     pull_request_aggregator.add_multiple_prs(prs=prs)
     issue_aggregator.add_multiple_issues(issues=issues)
 
-    aggreagted_comments = comment_aggregator.get_daily_comments()
-    aggreagted_commits = commit_aggregator.get_daily_commits()
-    aggreagted_prs = pull_request_aggregator.get_daily_prs()
-    aggreagted_issues = issue_aggregator.get_daily_issues()
+    aggregated_comments = comment_aggregator.get_daily_comments()
+    aggregated_commits = commit_aggregator.get_daily_commits()
+    aggregated_prs = pull_request_aggregator.get_daily_prs()
+    aggregated_issues = issue_aggregator.get_daily_issues()
 
     github_transformation = GitHubTransformation()
 
     # TRANSFORM
     logging.debug(f"{prefix}Transforming commits!")
-    aggreagted_commit_docs: dict[str, list[Document]] = {
-        date: github_transformation.transform_commits(aggreagted_commits[date])
-        for date in aggreagted_commits.keys()
+    aggregated_commit_docs: dict[str, list[Document]] = {
+        date: github_transformation.transform_commits(aggregated_commits[date])
+        for date in aggregated_commits.keys()
     }
 
     logging.debug(f"{prefix}Transforming comments!")
-    aggreagted_comment_docs: dict[str, list[Document]] = {
-        date: github_transformation.transform_comments(aggreagted_comments[date])
-        for date in aggreagted_comments.keys()
+    aggregated_comment_docs: dict[str, list[Document]] = {
+        date: github_transformation.transform_comments(aggregated_comments[date])
+        for date in aggregated_comments.keys()
     }
 
     logging.debug(f"{prefix}Transforming issues!")
-    aggreagted_issue_docs: dict[str, list[Document]] = {
-        date: github_transformation.transform_issues(aggreagted_issues[date])
-        for date in aggreagted_issues.keys()
+    aggregated_issue_docs: dict[str, list[Document]] = {
+        date: github_transformation.transform_issues(aggregated_issues[date])
+        for date in aggregated_issues.keys()
     }
 
     logging.debug(f"{prefix}Transforming pull requests!")
-    aggreagted_pr_docs: dict[str, list[Document]] = {
-        date: github_transformation.transform_pull_requests(aggreagted_prs[date])
-        for date in aggreagted_prs.keys()
+    aggregated_pr_docs: dict[str, list[Document]] = {
+        date: github_transformation.transform_pull_requests(aggregated_prs[date])
+        for date in aggregated_prs.keys()
     }
 
     summarizer = GitHubSummary(
@@ -117,44 +117,44 @@ def process_github_summary_vectorstore(
         summarizer.transform_summary(
             date=date,
             summary=summarizer.process_commits(
-                date=date, documents=aggreagted_commit_docs[date]
+                date=date, documents=aggregated_commit_docs[date]
             ),
             type=SummaryType.COMMIT,
         )
-        for date in aggreagted_commit_docs.keys()
+        for date in aggregated_commit_docs.keys()
     ]
 
     comments_summarized: list[Document] = [
         summarizer.transform_summary(
             date=date,
-            summary=summarizer.process_commits(
-                date=date, documents=aggreagted_comment_docs[date]
+            summary=summarizer.process_comments(
+                date=date, documents=aggregated_comment_docs[date]
             ),
             type=SummaryType.COMMENT,
         )
-        for date in aggreagted_comment_docs.keys()
+        for date in aggregated_comment_docs.keys()
     ]
 
     prs_summarized: list[Document] = [
         summarizer.transform_summary(
             date=date,
-            summary=summarizer.process_commits(
-                date=date, documents=aggreagted_pr_docs[date]
+            summary=summarizer.process_prs(
+                date=date, documents=aggregated_pr_docs[date]
             ),
             type=SummaryType.PR,
         )
-        for date in aggreagted_pr_docs.keys()
+        for date in aggregated_pr_docs.keys()
     ]
 
     issues_summarized: list[Document] = [
         summarizer.transform_summary(
             date=date,
             summary=summarizer.process_commits(
-                date=date, documents=aggreagted_issue_docs[date]
+                date=date, documents=aggregated_issue_docs[date]
             ),
             type=SummaryType.ISSUE,
         )
-        for date in aggreagted_issue_docs.keys()
+        for date in aggregated_issue_docs.keys()
     ]
 
     all_documents: list[Document] = (

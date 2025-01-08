@@ -107,7 +107,7 @@ class GitHubSummary(SummaryBase):
         """
         response = self._get_summary(
             summarization_query=self.prefix
-            + f"GitHub Comments from date: {date} "
+            + f"GitHub Commits from date: {date} "
             + self.postfix,
             messages_document=documents,
         )

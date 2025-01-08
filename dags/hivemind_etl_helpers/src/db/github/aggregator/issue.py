@@ -39,8 +39,8 @@ class IssueAggregator:
         Parameters
         ----------
         date : str, optional
-            The date for which to retrieve commits in 'YYYY-MM-DD' format.
-            If not provided, all commits are returned.
+            The date for which to retrieve issues in 'YYYY-MM-DD' format.
+            If not provided, all issues are returned.
         Returns
         -------
         daily_issues : dict[str, list[GitHubIssue]]
