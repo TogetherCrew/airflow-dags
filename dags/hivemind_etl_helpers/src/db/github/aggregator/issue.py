@@ -10,7 +10,7 @@ class IssueAggregator:
     def add_issue(self, issue: GitHubIssue) -> None:
         """
         Add a single issue to the aggregator.
-        
+
         Parameters
         -------------
         issue : GitHubIssue
@@ -23,7 +23,7 @@ class IssueAggregator:
     def add_multiple_issues(self, issues: list[GitHubIssue]) -> None:
         """
         Add multiple issues at once.
-        
+
         Parameters
         ----------
         issues : list of GitHubIssue
@@ -35,7 +35,7 @@ class IssueAggregator:
     def get_daily_issues(self, date: str = None) -> dict[str, list[GitHubIssue]]:
         """
         Get issues for a specific date or all dates.
-        
+
         Parameters
         ----------
         date : str, optional

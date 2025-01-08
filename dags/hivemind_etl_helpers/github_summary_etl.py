@@ -54,7 +54,6 @@ def process_github_summary_vectorstore(
     Settings.embed_model = CohereEmbedding()
     Settings.chunk_size = chunk_size
 
-
     org_repository_ids = get_github_organization_repos(
         github_organization_ids=github_org_ids
     )
@@ -114,61 +113,59 @@ def process_github_summary_vectorstore(
         response_synthesizer=get_response_synthesizer(response_mode="tree_summarize"),
     )
 
-
     commits_summarized: list[Document] = [
         summarizer.transform_summary(
             date=date,
             summary=summarizer.process_commits(
-                date=date,
-                documents=aggreagted_commit_docs[date]
+                date=date, documents=aggreagted_commit_docs[date]
             ),
             type=SummaryType.COMMIT,
-        ) for date in aggreagted_commit_docs.keys()
+        )
+        for date in aggreagted_commit_docs.keys()
     ]
 
     comments_summarized: list[Document] = [
         summarizer.transform_summary(
             date=date,
             summary=summarizer.process_commits(
-                date=date,
-                documents=aggreagted_comment_docs[date]
+                date=date, documents=aggreagted_comment_docs[date]
             ),
             type=SummaryType.COMMENT,
-        ) for date in aggreagted_comment_docs.keys()
+        )
+        for date in aggreagted_comment_docs.keys()
     ]
 
     prs_summarized: list[Document] = [
         summarizer.transform_summary(
             date=date,
             summary=summarizer.process_commits(
-                date=date,
-                documents=aggreagted_pr_docs[date]
+                date=date, documents=aggreagted_pr_docs[date]
             ),
             type=SummaryType.PR,
-        ) for date in aggreagted_pr_docs.keys()
+        )
+        for date in aggreagted_pr_docs.keys()
     ]
 
     issues_summarized: list[Document] = [
         summarizer.transform_summary(
             date=date,
             summary=summarizer.process_commits(
-                date=date,
-                documents=aggreagted_issue_docs[date]
+                date=date, documents=aggreagted_issue_docs[date]
             ),
             type=SummaryType.ISSUE,
-        ) for date in aggreagted_issue_docs.keys()
+        )
+        for date in aggreagted_issue_docs.keys()
     ]
 
     all_documents: list[Document] = (
-        issues_summarized
-        + comments_summarized
-        + prs_summarized
-        + commits_summarized
+        issues_summarized + comments_summarized + prs_summarized + commits_summarized
     )
 
     logging.debug(f"{len(all_documents)} prepared to be saved!")
 
     # LOAD
     logging.info(f"{prefix}Loading data into qdrant db")
-    ingestion_pipeline = CustomIngestionPipeline(community_id, collection_name="github_summary")
+    ingestion_pipeline = CustomIngestionPipeline(
+        community_id, collection_name="github_summary"
+    )
     ingestion_pipeline.run_pipeline(docs=all_documents)

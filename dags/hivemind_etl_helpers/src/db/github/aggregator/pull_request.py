@@ -10,7 +10,7 @@ class PullRequestAggregator:
     def add_pr(self, pr: GitHubPullRequest) -> None:
         """
         Add a single pull request to the aggregator.
-        
+
         Parameters
         -------------
         pr : GitHubPullRequest

@@ -2,8 +2,9 @@ from llama_index.core import Document, Settings
 from hivemind_etl_helpers.src.utils.summary.summary_base import SummaryBase
 from hivemind_etl_helpers.src.db.github.summary.type import SummaryType
 
+
 class GitHubSummary(SummaryBase):
-    def __init__(self, response_synthesizer = None, verbose = False, **kwargs):
+    def __init__(self, response_synthesizer=None, verbose=False, **kwargs):
         llm = kwargs.get("llm", Settings.llm)
         super().__init__(llm, response_synthesizer, verbose)
 
@@ -11,7 +12,9 @@ class GitHubSummary(SummaryBase):
             ". Organize the output in one or multiple descriptive "
             "bullet points and include important details"
         )
-        self.prefix = "Please make a concise summary based only on the provided text from this"
+        self.prefix = (
+            "Please make a concise summary based only on the provided text from this"
+        )
 
     def process_prs(self, date: str, documents: list[Document]) -> str:
         """
@@ -30,7 +33,9 @@ class GitHubSummary(SummaryBase):
             the response of summarizer
         """
         response = self._get_summary(
-            summarization_query=self.prefix + f"GitHub Pull Requests from date: {date}" + self.postfix,
+            summarization_query=self.prefix
+            + f"GitHub Pull Requests from date: {date}"
+            + self.postfix,
             messages_document=documents,
         )
         return response
@@ -52,7 +57,9 @@ class GitHubSummary(SummaryBase):
             the response of summarizer
         """
         response = self._get_summary(
-            summarization_query=self.prefix + f"GitHub Issues from date: {date}" + self.postfix,
+            summarization_query=self.prefix
+            + f"GitHub Issues from date: {date}"
+            + self.postfix,
             messages_document=documents,
         )
         return response
@@ -74,11 +81,13 @@ class GitHubSummary(SummaryBase):
             the response of summarizer
         """
         response = self._get_summary(
-            summarization_query=self.prefix + f"GitHub Comments from date: {date}" + self.postfix,
+            summarization_query=self.prefix
+            + f"GitHub Comments from date: {date}"
+            + self.postfix,
             messages_document=documents,
         )
         return response
-    
+
     def process_commits(self, date: str, documents: list[Document]) -> str:
         """
         summarize the given github documents
@@ -97,17 +106,19 @@ class GitHubSummary(SummaryBase):
             the response of summarizer
         """
         response = self._get_summary(
-            summarization_query=self.prefix + f"GitHub Comments from date: {date} " + self.postfix,
+            summarization_query=self.prefix
+            + f"GitHub Comments from date: {date} "
+            + self.postfix,
             messages_document=documents,
         )
         return response
 
     def transform_summary(
-            self,
-            date: str,
-            summary: str,
-            type: SummaryType,
-        ) -> Document:
+        self,
+        date: str,
+        summary: str,
+        type: SummaryType,
+    ) -> Document:
         """
         transform the given summary to a llama-index document
 
@@ -131,7 +142,7 @@ class GitHubSummary(SummaryBase):
             metadata={
                 "date": date,
                 "summary_type": type.value,
-            }
+            },
         )
 
         return summary_doc
