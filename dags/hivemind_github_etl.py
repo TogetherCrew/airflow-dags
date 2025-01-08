@@ -52,7 +52,7 @@ with DAG(
 ) as dag:
 
     @task
-    def get_github_communities():
+    def get_github_communities_():
         github_communities = ModulesGitHub().get_learning_platforms()
         return github_communities
 
@@ -71,5 +71,5 @@ with DAG(
             repo_ids=repo_ids,
         )
 
-    communities_info = get_github_communities()
+    communities_info = get_github_communities_()
     process_github_community_summary.expand(community_information=communities_info)

@@ -1,7 +1,7 @@
 import unittest
 
-from hivemind_etl_helpers.src.db.github.schema import GitHubPullRequest
 from hivemind_etl_helpers.src.db.github.aggregator import PullRequestAggregator
+from hivemind_etl_helpers.src.db.github.schema import GitHubPullRequest
 
 
 class TestPullRequestAggregator(unittest.TestCase):

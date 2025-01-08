@@ -1,4 +1,5 @@
 from collections import defaultdict
+
 from hivemind_etl_helpers.src.db.github.schema import GitHubComment
 
 

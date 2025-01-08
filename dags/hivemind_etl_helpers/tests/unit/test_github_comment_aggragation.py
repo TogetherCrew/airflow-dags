@@ -1,7 +1,7 @@
 import unittest
 
-from hivemind_etl_helpers.src.db.github.schema import GitHubComment
 from hivemind_etl_helpers.src.db.github.aggregator import CommentAggregator
+from hivemind_etl_helpers.src.db.github.schema import GitHubComment
 
 
 class TestGitHubCommentAggregator(unittest.TestCase):

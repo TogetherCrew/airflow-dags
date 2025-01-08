@@ -1,6 +1,12 @@
 import logging
 
 from dotenv import load_dotenv
+from hivemind_etl_helpers.src.db.github.aggregator import (
+    CommentAggregator,
+    CommitAggregator,
+    IssueAggregator,
+    PullRequestAggregator,
+)
 from hivemind_etl_helpers.src.db.github.extract import (
     GithubExtraction,
     fetch_issues,
@@ -9,21 +15,15 @@ from hivemind_etl_helpers.src.db.github.extract import (
 from hivemind_etl_helpers.src.db.github.github_organization_repos import (
     get_github_organization_repos,
 )
-from hivemind_etl_helpers.src.db.github.aggregator import (
-    CommentAggregator,
-    CommitAggregator,
-    IssueAggregator,
-    PullRequestAggregator,
-)
-from hivemind_etl_helpers.src.db.github.summary.type import SummaryType
 from hivemind_etl_helpers.src.db.github.summary import GitHubSummary
+from hivemind_etl_helpers.src.db.github.summary.type import SummaryType
 from hivemind_etl_helpers.src.db.github.transform import GitHubTransformation
 from hivemind_etl_helpers.src.document_node_parser import configure_node_parser
 from llama_index.core import Document, Settings
 from llama_index.core.response_synthesizers import get_response_synthesizer
 from tc_hivemind_backend.db.utils.model_hyperparams import load_model_hyperparams
-from tc_hivemind_backend.ingest_qdrant import CustomIngestionPipeline
 from tc_hivemind_backend.embeddings.cohere import CohereEmbedding
+from tc_hivemind_backend.ingest_qdrant import CustomIngestionPipeline
 
 
 def process_github_summary_vectorstore(

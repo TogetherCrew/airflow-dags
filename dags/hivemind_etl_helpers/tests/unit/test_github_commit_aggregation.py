@@ -1,7 +1,7 @@
 import unittest
 
-from hivemind_etl_helpers.src.db.github.schema import GitHubCommit
 from hivemind_etl_helpers.src.db.github.aggregator import CommitAggregator
+from hivemind_etl_helpers.src.db.github.schema import GitHubCommit
 
 
 class TestCommitAggregator(unittest.TestCase):
