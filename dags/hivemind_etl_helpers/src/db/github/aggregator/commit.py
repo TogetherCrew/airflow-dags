@@ -1,11 +1,12 @@
 from collections import defaultdict
+from datetime import datetime
 
 from hivemind_etl_helpers.src.db.github.schema import GitHubCommit
 
 
 class CommitAggregator:
     def __init__(self):
-        self.daily_commits: dict[str, list[GitHubCommit]] = defaultdict(list)
+        self.daily_commits: dict[float, list[GitHubCommit]] = defaultdict(list)
 
     def add_commit(self, commit: GitHubCommit) -> None:
         """
@@ -16,9 +17,10 @@ class CommitAggregator:
         commit : GitHubCommit
             The commit object to be added.
         """
-        commit_dict = commit.to_dict()
-        date_str = commit_dict["created_at"].split()[0]
-        self.daily_commits[date_str].append(commit)
+        date = datetime.fromtimestamp(commit.created_at).date()
+        self.daily_commits[
+            datetime.combine(date, datetime.min.time()).timestamp()
+        ].append(commit)
 
     def add_multiple_commits(self, commits: list[GitHubCommit]) -> None:
         """
@@ -32,18 +34,18 @@ class CommitAggregator:
         for commit in commits:
             self.add_commit(commit)
 
-    def get_daily_commits(self, date: str = None) -> dict[str, list[GitHubCommit]]:
+    def get_daily_commits(self, date: float = None) -> dict[float, list[GitHubCommit]]:
         """
         Get commits for a specific date or all dates.
 
         Parameters
         ----------
-        date : str, optional
-            The date for which to retrieve commits in 'YYYY-MM-DD' format.
+        date : float, optional
+            The date timestamp for which to retrieve commits
             If not provided, all commits are returned.
         Returns
         -------
-        daily_commits : dict[str, list[GitHubCommit]]
+        daily_commits : dict[float, list[GitHubCommit]]
             A dictionary where the key is the date
             and the value is a list of GitHubCommit objects for that date.
         """

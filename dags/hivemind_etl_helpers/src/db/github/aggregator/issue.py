@@ -1,11 +1,13 @@
 from collections import defaultdict
+from datetime import datetime
 
 from hivemind_etl_helpers.src.db.github.schema import GitHubIssue
 
 
 class IssueAggregator:
     def __init__(self):
-        self.daily_issues: dict[str, list[GitHubIssue]] = defaultdict(list)
+        # a dict with timestamp keys
+        self.daily_issues: dict[float, list[GitHubIssue]] = defaultdict(list)
 
     def add_issue(self, issue: GitHubIssue) -> None:
         """
@@ -16,9 +18,10 @@ class IssueAggregator:
         issue : GitHubIssue
             The issue object to be added.
         """
-        issue_dict = issue.to_dict()
-        date_str = issue_dict["created_at"].split()[0]
-        self.daily_issues[date_str].append(issue)
+        date = datetime.fromtimestamp(issue.created_at).date()
+        self.daily_issues[
+            datetime.combine(date, datetime.min.time()).timestamp()
+        ].append(issue)
 
     def add_multiple_issues(self, issues: list[GitHubIssue]) -> None:
         """
@@ -32,18 +35,19 @@ class IssueAggregator:
         for issue in issues:
             self.add_issue(issue)
 
-    def get_daily_issues(self, date: str = None) -> dict[str, list[GitHubIssue]]:
+    def get_daily_issues(self, date: str = None) -> dict[float, list[GitHubIssue]]:
         """
         Get issues for a specific date or all dates.
 
         Parameters
         ----------
         date : str, optional
-            The date for which to retrieve issues in 'YYYY-MM-DD' format.
+            The date timestamp for which to retrieve issues
             If not provided, all issues are returned.
+
         Returns
         -------
-        daily_issues : dict[str, list[GitHubIssue]]
+        daily_issues : dict[float, list[GitHubIssue]]
             A dictionary where the key is the date
             and the value is a list of GitHubIssue objects for that date.
         """

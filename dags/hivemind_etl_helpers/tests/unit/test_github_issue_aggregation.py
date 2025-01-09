@@ -1,4 +1,5 @@
 import unittest
+from dateutil.parser import parse
 
 from hivemind_etl_helpers.src.db.github.aggregator import IssueAggregator
 from hivemind_etl_helpers.src.db.github.schema import GitHubIssue
@@ -40,12 +41,16 @@ class TestIssueAggregator(unittest.TestCase):
 
     def test_add_single_issue(self):
         self.aggregator.add_issue(self.issue1)
-        daily_issues = self.aggregator.get_daily_issues("2024-01-01")
-        self.assertEqual(len(daily_issues["2024-01-01"]), 1)
-        self.assertEqual(daily_issues["2024-01-01"][0].id, 1)
+        date = parse("2024-01-01").timestamp()
+
+        daily_issues = self.aggregator.get_daily_issues(date)
+        self.assertEqual(len(daily_issues[date]), 1)
+        self.assertEqual(daily_issues[date][0].id, 1)
 
     def test_add_multiple_issues(self):
         issues = [self.issue1, self.issue2]
+        date = parse("2024-01-01").timestamp()
+
         self.aggregator.add_multiple_issues(issues)
-        daily_issues = self.aggregator.get_daily_issues("2024-01-01")
-        self.assertEqual(len(daily_issues["2024-01-01"]), 2)
+        daily_issues = self.aggregator.get_daily_issues(date)
+        self.assertEqual(len(daily_issues[date]), 2)

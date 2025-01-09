@@ -45,6 +45,12 @@ def process_github_summary_vectorstore(
     """
     load_dotenv()
     prefix = f"COMMUNITYID: {community_id} "
+    ingestion_pipeline = CustomIngestionPipeline(
+        community_id, collection_name="github_summary"
+    )
+    date = ingestion_pipeline.get_latest_document_date(field_name="date")
+    logging.info(f"Latest Document date available: {date}")
+
     logging.info(f"{prefix}Processing data!")
 
     chunk_size, _ = load_model_hyperparams()
@@ -62,10 +68,10 @@ def process_github_summary_vectorstore(
 
     # EXTRACT
     github_extractor = GithubExtraction()
-    comments = github_extractor.fetch_comments(repository_id=repository_ids)
-    commits = github_extractor.fetch_commits(repository_id=repository_ids)
-    issues = fetch_issues(repository_id=repository_ids)
-    prs = fetch_pull_requests(repository_id=repository_ids)
+    comments = github_extractor.fetch_comments(repository_id=repository_ids, from_date=date)
+    commits = github_extractor.fetch_commits(repository_id=repository_ids, from_date=date)
+    issues = fetch_issues(repository_id=repository_ids, from_date=date)
+    prs = fetch_pull_requests(repository_id=repository_ids, from_date=date)
 
     comment_aggregator = CommentAggregator()
     commit_aggregator = CommitAggregator()
@@ -165,7 +171,5 @@ def process_github_summary_vectorstore(
 
     # LOAD
     logging.info(f"{prefix}Loading data into qdrant db")
-    ingestion_pipeline = CustomIngestionPipeline(
-        community_id, collection_name="github_summary"
-    )
+
     ingestion_pipeline.run_pipeline(docs=all_documents)

@@ -1,4 +1,5 @@
 import unittest
+from dateutil.parser import parse
 
 from hivemind_etl_helpers.src.db.github.aggregator import CommitAggregator
 from hivemind_etl_helpers.src.db.github.schema import GitHubCommit
@@ -40,12 +41,16 @@ class TestCommitAggregator(unittest.TestCase):
 
     def test_add_single_commit(self):
         self.aggregator.add_commit(self.commit1)
-        daily_commits = self.aggregator.get_daily_commits("2024-01-01")
-        self.assertEqual(len(daily_commits["2024-01-01"]), 1)
-        self.assertEqual(daily_commits["2024-01-01"][0].sha, "abc123")
+        date = parse("2024-01-01").timestamp()
+
+        daily_commits = self.aggregator.get_daily_commits(date)
+        self.assertEqual(len(daily_commits[date]), 1)
+        self.assertEqual(daily_commits[date][0].sha, "abc123")
 
     def test_add_multiple_commits(self):
         commits = [self.commit1, self.commit2]
         self.aggregator.add_multiple_commits(commits)
-        daily_commits = self.aggregator.get_daily_commits("2024-01-01")
-        self.assertEqual(len(daily_commits["2024-01-01"]), 2)
+        date = parse("2024-01-01").timestamp()
+
+        daily_commits = self.aggregator.get_daily_commits(date)
+        self.assertEqual(len(daily_commits[date]), 2)

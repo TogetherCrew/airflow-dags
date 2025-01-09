@@ -1,11 +1,12 @@
 from collections import defaultdict
+from datetime import datetime
 
 from hivemind_etl_helpers.src.db.github.schema import GitHubPullRequest
 
 
 class PullRequestAggregator:
     def __init__(self):
-        self.daily_prs: dict[str, list[GitHubPullRequest]] = defaultdict(list)
+        self.daily_prs: dict[float, list[GitHubPullRequest]] = defaultdict(list)
 
     def add_pr(self, pr: GitHubPullRequest) -> None:
         """
@@ -16,9 +17,10 @@ class PullRequestAggregator:
         pr : GitHubPullRequest
             The GitHubPullRequest object to be added.
         """
-        pr_dict = pr.to_dict()
-        date_str = pr_dict["created_at"].split()[0]
-        self.daily_prs[date_str].append(pr)
+        date = datetime.fromtimestamp(pr.created_at).date()
+        self.daily_prs[
+            datetime.combine(date, datetime.min.time()).timestamp()
+        ].append(pr)
 
     def add_multiple_prs(self, prs: list[GitHubPullRequest]) -> None:
         """
@@ -32,19 +34,19 @@ class PullRequestAggregator:
         for pr in prs:
             self.add_pr(pr)
 
-    def get_daily_prs(self, date: str = None) -> dict[str, list[GitHubPullRequest]]:
+    def get_daily_prs(self, date: float = None) -> dict[float, list[GitHubPullRequest]]:
         """
         Get pull requests for a specific date or all dates.
 
         Parameters
         ----------
-        date : str, optional
-            The date for which to retrieve prs in 'YYYY-MM-DD' format.
+        date : float, optional
+            The date timestamp for which to retrieve prs
             If not provided, all prs are returned.
 
         Returns
         -------
-        daily_prs : dict[str, list[GitHubPullRequest]]
+        daily_prs : dict[float, list[GitHubPullRequest]]
             A dictionary where the key is the date
             and the value is a list of GitHubPullRequest objects for that date.
         """
