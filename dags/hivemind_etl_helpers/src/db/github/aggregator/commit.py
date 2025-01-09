@@ -1,7 +1,7 @@
 from collections import defaultdict
-from datetime import datetime
 
 from hivemind_etl_helpers.src.db.github.schema import GitHubCommit
+from hivemind_etl_helpers.src.db.github.aggregator.utils import get_day_timestamp
 
 
 class CommitAggregator:
@@ -17,10 +17,8 @@ class CommitAggregator:
         commit : GitHubCommit
             The commit object to be added.
         """
-        date = datetime.fromtimestamp(commit.created_at).date()
-        self.daily_commits[
-            datetime.combine(date, datetime.min.time()).timestamp()
-        ].append(commit)
+        date = get_day_timestamp(commit.created_at)
+        self.daily_commits[date].append(commit)
 
     def add_multiple_commits(self, commits: list[GitHubCommit]) -> None:
         """
@@ -34,7 +32,9 @@ class CommitAggregator:
         for commit in commits:
             self.add_commit(commit)
 
-    def get_daily_commits(self, date: float = None) -> dict[float, list[GitHubCommit]]:
+    def get_daily_commits(
+        self, date: float | None = None
+    ) -> dict[float, list[GitHubCommit]]:
         """
         Get commits for a specific date or all dates.
 

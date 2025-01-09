@@ -1,7 +1,7 @@
 from collections import defaultdict
-from datetime import datetime
 
 from hivemind_etl_helpers.src.db.github.schema import GitHubPullRequest
+from hivemind_etl_helpers.src.db.github.aggregator.utils import get_day_timestamp
 
 
 class PullRequestAggregator:
@@ -17,10 +17,8 @@ class PullRequestAggregator:
         pr : GitHubPullRequest
             The GitHubPullRequest object to be added.
         """
-        date = datetime.fromtimestamp(pr.created_at).date()
-        self.daily_prs[datetime.combine(date, datetime.min.time()).timestamp()].append(
-            pr
-        )
+        date = get_day_timestamp(pr.created_at)
+        self.daily_prs[date].append(pr)
 
     def add_multiple_prs(self, prs: list[GitHubPullRequest]) -> None:
         """
@@ -34,7 +32,9 @@ class PullRequestAggregator:
         for pr in prs:
             self.add_pr(pr)
 
-    def get_daily_prs(self, date: float = None) -> dict[float, list[GitHubPullRequest]]:
+    def get_daily_prs(
+        self, date: float | None = None
+    ) -> dict[float, list[GitHubPullRequest]]:
         """
         Get pull requests for a specific date or all dates.
 

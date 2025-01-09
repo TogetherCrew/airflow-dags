@@ -1,7 +1,7 @@
 from collections import defaultdict
-from datetime import datetime
 
 from hivemind_etl_helpers.src.db.github.schema import GitHubComment
+from hivemind_etl_helpers.src.db.github.aggregator.utils import get_day_timestamp
 
 
 class CommentAggregator:
@@ -16,10 +16,8 @@ class CommentAggregator:
         comment : GitHubComment
             The comment to be added.
         """
-        date = datetime.fromtimestamp(comment.created_at).date()
-        self.daily_comments[
-            datetime.combine(date, datetime.min.time()).timestamp()
-        ].append(comment)
+        date = get_day_timestamp(comment.created_at)
+        self.daily_comments[date].append(comment)
 
     def add_multiple_comments(self, comments: list[GitHubComment]) -> None:
         """
@@ -34,7 +32,7 @@ class CommentAggregator:
             self.add_comment(comment)
 
     def get_daily_comments(
-        self, date: float = None
+        self, date: float | None = None
     ) -> dict[float, list[GitHubComment]]:
         """
         Get comments for a specific date or all dates.

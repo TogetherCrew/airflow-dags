@@ -1,7 +1,6 @@
 import unittest
-from datetime import datetime
-from dateutil.parser import parse
 
+from dateutil.parser import parse
 from hivemind_etl_helpers.src.db.github.aggregator import PullRequestAggregator
 from hivemind_etl_helpers.src.db.github.schema import GitHubPullRequest
 

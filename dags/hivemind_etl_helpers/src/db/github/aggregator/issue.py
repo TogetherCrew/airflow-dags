@@ -1,7 +1,7 @@
 from collections import defaultdict
-from datetime import datetime
 
 from hivemind_etl_helpers.src.db.github.schema import GitHubIssue
+from hivemind_etl_helpers.src.db.github.aggregator.utils import get_day_timestamp
 
 
 class IssueAggregator:
@@ -18,10 +18,8 @@ class IssueAggregator:
         issue : GitHubIssue
             The issue object to be added.
         """
-        date = datetime.fromtimestamp(issue.created_at).date()
-        self.daily_issues[
-            datetime.combine(date, datetime.min.time()).timestamp()
-        ].append(issue)
+        date = get_day_timestamp(issue.created_at)
+        self.daily_issues[date].append(issue)
 
     def add_multiple_issues(self, issues: list[GitHubIssue]) -> None:
         """
@@ -35,13 +33,15 @@ class IssueAggregator:
         for issue in issues:
             self.add_issue(issue)
 
-    def get_daily_issues(self, date: str = None) -> dict[float, list[GitHubIssue]]:
+    def get_daily_issues(
+        self, date: float | None = None
+    ) -> dict[float, list[GitHubIssue]]:
         """
         Get issues for a specific date or all dates.
 
         Parameters
         ----------
-        date : str, optional
+        date : float, optional
             The date timestamp for which to retrieve issues
             If not provided, all issues are returned.
 
