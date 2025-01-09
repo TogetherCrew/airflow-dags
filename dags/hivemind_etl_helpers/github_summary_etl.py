@@ -68,8 +68,12 @@ def process_github_summary_vectorstore(
 
     # EXTRACT
     github_extractor = GithubExtraction()
-    comments = github_extractor.fetch_comments(repository_id=repository_ids, from_date=date)
-    commits = github_extractor.fetch_commits(repository_id=repository_ids, from_date=date)
+    comments = github_extractor.fetch_comments(
+        repository_id=repository_ids, from_date=date
+    )
+    commits = github_extractor.fetch_commits(
+        repository_id=repository_ids, from_date=date
+    )
     issues = fetch_issues(repository_id=repository_ids, from_date=date)
     prs = fetch_pull_requests(repository_id=repository_ids, from_date=date)
 

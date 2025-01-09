@@ -18,9 +18,9 @@ class PullRequestAggregator:
             The GitHubPullRequest object to be added.
         """
         date = datetime.fromtimestamp(pr.created_at).date()
-        self.daily_prs[
-            datetime.combine(date, datetime.min.time()).timestamp()
-        ].append(pr)
+        self.daily_prs[datetime.combine(date, datetime.min.time()).timestamp()].append(
+            pr
+        )
 
     def add_multiple_prs(self, prs: list[GitHubPullRequest]) -> None:
         """

@@ -33,7 +33,9 @@ class CommentAggregator:
         for comment in comments:
             self.add_comment(comment)
 
-    def get_daily_comments(self, date: float = None) -> dict[float, list[GitHubComment]]:
+    def get_daily_comments(
+        self, date: float = None
+    ) -> dict[float, list[GitHubComment]]:
         """
         Get comments for a specific date or all dates.
 
@@ -41,7 +43,7 @@ class CommentAggregator:
         ----------
         date : float, optional
             The specific date timestamp to retrieve comments for, by default None.
-        
+
         Returns
         -------
         daily_comments : dict[float, list[GitHubComment]]
