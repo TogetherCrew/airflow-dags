@@ -66,12 +66,12 @@ class TestGithubETLFetchComments(TestCase):
         self.assertEqual(comments[0].author_name, "author #1")
         self.assertEqual(comments[0].repository_name, "Org/SampleRepo")
         self.assertEqual(comments[0].url, "https://www.someurl.com")
-        self.assertEqual(comments[0].created_at, "2024-02-06 10:23:50")
-        self.assertEqual(comments[0].updated_at, "2024-02-06 10:23:51")
+        self.assertEqual(comments[0].created_at, 1707215030.0)
+        self.assertEqual(comments[0].updated_at, 1707215031.0)
         self.assertEqual(comments[0].related_title, "sample pr title")
         self.assertEqual(comments[0].related_node, "GitHubPullRequest")
         self.assertEqual(comments[0].text, "A sample comment")
-        self.assertEqual(comments[0].latest_saved_at, "2024-02-10 10:23:50")
+        self.assertEqual(comments[0].latest_saved_at, 1707560630.0)
         expected_reactions = {
             "hooray": 0,
             "eyes": 1,
@@ -147,12 +147,12 @@ class TestGithubETLFetchComments(TestCase):
         self.assertEqual(comments[0].author_name, "author #1")
         self.assertEqual(comments[0].repository_name, "Org/SampleRepo")
         self.assertEqual(comments[0].url, "https://www.someurl.com")
-        self.assertEqual(comments[0].created_at, "2024-02-06 10:23:50")
-        self.assertEqual(comments[0].updated_at, "2024-02-06 10:23:51")
+        self.assertEqual(comments[0].created_at, 1707215030.0)
+        self.assertEqual(comments[0].updated_at, 1707215031.0)
         self.assertEqual(comments[0].related_title, "sample pr title")
         self.assertEqual(comments[0].related_node, "GitHubPullRequest")
         self.assertEqual(comments[0].text, "A sample comment")
-        self.assertEqual(comments[0].latest_saved_at, "2024-02-10 10:23:50")
+        self.assertEqual(comments[0].latest_saved_at, 1707560630.0)
         expected_reactions = {
             "hooray": 0,
             "eyes": 1,

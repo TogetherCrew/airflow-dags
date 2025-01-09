@@ -1,5 +1,6 @@
 import unittest
 
+from dateutil.parser import parse
 from hivemind_etl_helpers.src.db.github.aggregator import PullRequestAggregator
 from hivemind_etl_helpers.src.db.github.schema import GitHubPullRequest
 
@@ -40,12 +41,16 @@ class TestPullRequestAggregator(unittest.TestCase):
 
     def test_add_single_pr(self):
         self.aggregator.add_pr(self.pr1)
-        daily_prs = self.aggregator.get_daily_prs("2024-01-01")
-        self.assertEqual(len(daily_prs["2024-01-01"]), 1)
-        self.assertEqual(daily_prs["2024-01-01"][0].id, 1)
+        date = parse("2024-01-01").timestamp()
+
+        daily_prs = self.aggregator.get_daily_prs(date)
+        self.assertEqual(len(daily_prs[date]), 1)
+        self.assertEqual(daily_prs[date][0].id, 1)
 
     def test_add_multiple_prs(self):
         prs = [self.pr1, self.pr2]
         self.aggregator.add_multiple_prs(prs)
-        daily_prs = self.aggregator.get_daily_prs("2024-01-01")
-        self.assertEqual(len(daily_prs["2024-01-01"]), 2)
+        date = parse("2024-01-01").timestamp()
+
+        daily_prs = self.aggregator.get_daily_prs(date)
+        self.assertEqual(len(daily_prs[date]), 2)

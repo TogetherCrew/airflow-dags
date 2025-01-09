@@ -1,11 +1,12 @@
 from collections import defaultdict
 
+from hivemind_etl_helpers.src.db.github.aggregator.utils import get_day_timestamp
 from hivemind_etl_helpers.src.db.github.schema import GitHubComment
 
 
 class CommentAggregator:
     def __init__(self):
-        self.daily_comments: dict[str, list[GitHubComment]] = defaultdict(list)
+        self.daily_comments: dict[float, list[GitHubComment]] = defaultdict(list)
 
     def add_comment(self, comment: GitHubComment) -> None:
         """
@@ -15,9 +16,8 @@ class CommentAggregator:
         comment : GitHubComment
             The comment to be added.
         """
-        comment_dict = comment.to_dict()
-        date_str = comment_dict["created_at"].split()[0]  # Get YYYY-MM-DD part
-        self.daily_comments[date_str].append(comment)
+        date = get_day_timestamp(comment.created_at)
+        self.daily_comments[date].append(comment)
 
     def add_multiple_comments(self, comments: list[GitHubComment]) -> None:
         """
@@ -31,17 +31,20 @@ class CommentAggregator:
         for comment in comments:
             self.add_comment(comment)
 
-    def get_daily_comments(self, date: str = None) -> dict[str, list[GitHubComment]]:
+    def get_daily_comments(
+        self, date: float | None = None
+    ) -> dict[float, list[GitHubComment]]:
         """
         Get comments for a specific date or all dates.
 
         Parameters
         ----------
-        date : str, optional
-            The specific date to retrieve comments for, by default None.
+        date : float, optional
+            The specific date timestamp to retrieve comments for, by default None.
+
         Returns
         -------
-        daily_comments : dict[str, list[GitHubComment]]
+        daily_comments : dict[float, list[GitHubComment]]
             A dictionary where the key is the date and the value is a list of GitHubComment objects.
             If a date is provided and exists in daily_comments, returns comments for that date.
             Otherwise, returns all comments.

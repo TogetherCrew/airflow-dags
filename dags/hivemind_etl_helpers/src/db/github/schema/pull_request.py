@@ -1,4 +1,4 @@
-from hivemind_etl_helpers.src.db.github.schema.utils import parse_date_variables
+from hivemind_etl_helpers.src.db.github.schema.utils import parse_date_variable
 
 
 class GitHubPullRequest:
@@ -21,14 +21,14 @@ class GitHubPullRequest:
         self.repository_id = repository_id
         self.repository_name = repository_name
         self.issue_url = issue_url
-        self.created_at = parse_date_variables(created_at)
+        self.created_at = parse_date_variable(created_at)
         self.title = title
         self.id = id
-        self.closed_at = parse_date_variables(closed_at)
-        self.merged_at = parse_date_variables(merged_at)
+        self.closed_at = parse_date_variable(closed_at)
+        self.merged_at = parse_date_variable(merged_at)
         self.state = state
         self.url = url
-        self.latest_saved_at = parse_date_variables(latest_saved_at)
+        self.latest_saved_at = parse_date_variable(latest_saved_at)
 
     @classmethod
     def from_dict(cls, data: dict[str, int | str | None]) -> "GitHubPullRequest":
@@ -47,7 +47,7 @@ class GitHubPullRequest:
             latest_saved_at=data["latest_saved_at"],  # type: ignore
         )
 
-    def to_dict(self) -> dict[str, int | str | None]:
+    def to_dict(self) -> dict[str, int | str | float | None]:
         return {
             "author_name": self.author_name,
             "repository_id": self.repository_id,

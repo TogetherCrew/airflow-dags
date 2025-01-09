@@ -1,4 +1,4 @@
-from hivemind_etl_helpers.src.db.github.schema.utils import parse_date_variables
+from hivemind_etl_helpers.src.db.github.schema.utils import parse_date_variable
 
 
 class GitHubCommit:
@@ -30,8 +30,8 @@ class GitHubCommit:
         self.repository_id = repository_id
         self.repository_name = repository_name
         self.sha = sha
-        self.latest_saved_at = parse_date_variables(latest_saved_at)
-        self.created_at = parse_date_variables(created_at)
+        self.latest_saved_at = parse_date_variable(latest_saved_at)
+        self.created_at = parse_date_variable(created_at)
         self.verification = verification
         self.related_pr_title = related_pr_title
 

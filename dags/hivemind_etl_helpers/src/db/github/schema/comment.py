@@ -1,4 +1,4 @@
-from hivemind_etl_helpers.src.db.github.schema.utils import parse_date_variables
+from hivemind_etl_helpers.src.db.github.schema.utils import parse_date_variable
 
 
 class GitHubComment:
@@ -24,13 +24,13 @@ class GitHubComment:
         self.author_name = author_name
         self.id = id
         self.repository_name = repository_name
-        self.created_at = parse_date_variables(created_at)
+        self.created_at = parse_date_variable(created_at)
         self.related_title = related_title
         self.related_node = related_node
-        self.updated_at = parse_date_variables(updated_at)
+        self.updated_at = parse_date_variable(updated_at)
         self.url = url
         self.text = text
-        self.latest_saved_at = parse_date_variables(latest_saved_at)
+        self.latest_saved_at = parse_date_variable(latest_saved_at)
         self.reactions = reactions
 
     @classmethod
