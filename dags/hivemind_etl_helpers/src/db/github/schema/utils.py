@@ -13,7 +13,7 @@ def parse_date_variable(date: datetime | str) -> float:
     if isinstance(date, str):
         date_parsed = parser.parse(date).replace(tzinfo=timezone.utc).timestamp()
     elif isinstance(date, datetime):
-        date_parsed = date.timestamp()
+        date_parsed = date.replace(tzinfo=timezone.utc).timestamp()
     elif isinstance(date, DateTime):
         date_parsed = (
             datetime(

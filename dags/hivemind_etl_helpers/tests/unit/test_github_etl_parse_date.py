@@ -11,7 +11,7 @@ class TestParseDateVariables(unittest.TestCase):
         self.assertEqual(parse_date_variable("2024-02-26"), 1708905600.0)
 
     def test_valid_datetime_object(self):
-        self.assertEqual(parse_date_variable(datetime(2024, 2, 26)), 1708893000.0)
+        self.assertEqual(parse_date_variable(datetime(2024, 2, 26)), 1708905600.0)
 
     def test_valid_neo4j_datetime_object(self):
         self.assertEqual(
