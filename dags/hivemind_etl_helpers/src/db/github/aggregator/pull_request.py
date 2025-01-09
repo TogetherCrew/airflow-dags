@@ -1,7 +1,7 @@
 from collections import defaultdict
 
-from hivemind_etl_helpers.src.db.github.schema import GitHubPullRequest
 from hivemind_etl_helpers.src.db.github.aggregator.utils import get_day_timestamp
+from hivemind_etl_helpers.src.db.github.schema import GitHubPullRequest
 
 
 class PullRequestAggregator:
