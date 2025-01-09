@@ -47,7 +47,7 @@ class GitHubPullRequest:
             latest_saved_at=data["latest_saved_at"],  # type: ignore
         )
 
-    def to_dict(self) -> dict[str, int | str | None]:
+    def to_dict(self) -> dict[str, int | str | float | None]:
         return {
             "author_name": self.author_name,
             "repository_id": self.repository_id,
