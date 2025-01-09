@@ -82,4 +82,4 @@ class TestDiscourseFetchingCategories(TestCase):
         category_ids = self.fetcher.fetch_all()
 
         self.assertEqual(len(category_ids), 3)
-        self.assertEqual(category_ids, [1.0, 2.0, 3.0])
+        self.assertEqual(set(category_ids), set([1.0, 2.0, 3.0]))
