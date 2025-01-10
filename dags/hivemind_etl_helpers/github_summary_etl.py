@@ -75,7 +75,7 @@ def process_github_summary_vectorstore(
         repository_id=repository_ids, from_date=date
     )
     issues = fetch_issues(repository_id=repository_ids, from_date=date)
-    prs = fetch_pull_requests(repository_id=repository_ids, from_date=date)
+    prs = fetch_pull_requests(repository_id=repository_ids, from_date_created=date)
 
     comment_aggregator = CommentAggregator()
     commit_aggregator = CommitAggregator()
