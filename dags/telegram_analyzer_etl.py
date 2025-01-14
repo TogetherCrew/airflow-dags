@@ -3,6 +3,7 @@ from datetime import datetime
 
 from airflow import DAG
 from airflow.decorators import task
+from airflow.utils.trigger_rule import TriggerRule
 from analyzer_helper.common.analyzer import Analyzer
 from analyzer_helper.common.fetch_platforms import FetchPlatforms
 from analyzer_helper.common.load_transformed_data import LoadTransformedData
@@ -176,7 +177,7 @@ with DAG(
         else:
             logging.info(f"CHAT_ID: {chat_id}. No raw members extracted!")
 
-    @task
+    @task(trigger_rule=TriggerRule.ONE_DONE)
     def analyze_telegram(platform_processed: dict[str, str | bool]) -> None:
         """
         start the analyzer to process data
