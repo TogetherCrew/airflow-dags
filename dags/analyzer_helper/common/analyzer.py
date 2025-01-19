@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from tc_analyzer_lib.publish_on_success import publish_on_success
 from tc_analyzer_lib.schemas.platform_configs import DiscordAnalyzerConfig
@@ -50,10 +50,14 @@ class Analyzer:
         prefix = f"PLATFORMID: {platform_id} "
         logging.info(f"{prefix} Starting Analyzer job!")
 
+        period_date = period.replace(
+            hour=0, minute=0, second=0, microsecond=0, tzinfo=timezone.utc
+        )
+
         analyzer = TCAnalyzer(
             platform_id=platform_id,
             resources=resources,
-            period=period,
+            period=period_date,
             action=action,
             window=window,
             analyzer_config=config,
