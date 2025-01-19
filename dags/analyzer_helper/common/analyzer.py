@@ -50,9 +50,10 @@ class Analyzer:
         prefix = f"PLATFORMID: {platform_id} "
         logging.info(f"{prefix} Starting Analyzer job!")
 
-        period_date = period.replace(
-            hour=0, minute=0, second=0, microsecond=0, tzinfo=timezone.utc
-        )
+        # First zero out time components
+        period_date = period.replace(hour=0, minute=0, second=0, microsecond=0)
+        # Then ensure correct timezone conversion
+        period_date = period_date.astimezone(timezone.utc)
 
         analyzer = TCAnalyzer(
             platform_id=platform_id,
