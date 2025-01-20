@@ -4,6 +4,7 @@ from typing import Literal
 
 from airflow import DAG
 from airflow.decorators import task
+from airflow.utils.trigger_rule import TriggerRule
 from dotenv import load_dotenv
 from hivemind_etl_helpers.src.db.telegram.extract import (
     ExtractMessages,
@@ -76,7 +77,7 @@ def create_telegram_dag(dag_type: Literal["messages", "summaries"]) -> DAG:
                 "community_id": str(community_id),
             }
 
-        @task
+        @task(trigger_rule=TriggerRule.NONE_SKIPPED)
         def processor(details: dict[str, tuple[str, str] | str]) -> None:
             """Extract, transform, and load telegram data."""
             load_dotenv()
