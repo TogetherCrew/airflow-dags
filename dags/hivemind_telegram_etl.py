@@ -4,6 +4,7 @@ from typing import Literal
 
 from airflow import DAG
 from airflow.decorators import task
+from airflow.utils.trigger_rule import TriggerRule
 from dotenv import load_dotenv
 from hivemind_etl_helpers.src.db.telegram.extract import (
     ExtractMessages,
@@ -15,7 +16,7 @@ from hivemind_etl_helpers.src.db.telegram.transform import (
     TransformMessages,
     TransformSummary,
 )
-from hivemind_etl_helpers.src.db.telegram.utils import TelegramModules, TelegramPlatform
+from hivemind_etl_helpers.src.db.telegram.utils import TelegramPlatform
 from qdrant_client.http import models
 from tc_hivemind_backend.ingest_qdrant import CustomIngestionPipeline
 
@@ -60,23 +61,25 @@ def create_telegram_dag(dag_type: Literal["messages", "summaries"]) -> DAG:
             chat_id, chat_name = chat_info
 
             platform_utils = TelegramPlatform(chat_id=chat_id, chat_name=chat_name)
-            community_id, platform_id = platform_utils.check_platform_existence()
-
+            community_id, _ = platform_utils.check_platform_existence()
             if community_id is None:
-                logging.info(
-                    f"Platform with chat_id: {chat_id} doesn't exist. Creating one!"
-                )
-                community_id, platform_id = platform_utils.create_platform()
+                raise ValueError(f"Telegram platform with chat_id: {chat_id} doesn't exist!")
 
-            modules = TelegramModules(community_id, platform_id)
-            modules.create()
+            # if community_id is None:
+            #     logging.info(
+            #         f"Platform with chat_id: {chat_id} doesn't exist. Creating one!"
+            #     )
+            #     community_id, platform_id = platform_utils.create_platform()
+
+            # modules = TelegramModules(community_id, platform_id)
+            # modules.create()
 
             return {
                 "chat_info": chat_info,
                 "community_id": str(community_id),
             }
 
-        @task
+        @task(trigger_rule=TriggerRule.NONE_SKIPPED)
         def processor(details: dict[str, tuple[str, str] | str]) -> None:
             """Extract, transform, and load telegram data."""
             load_dotenv()
