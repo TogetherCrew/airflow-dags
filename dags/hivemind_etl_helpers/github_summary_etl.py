@@ -159,7 +159,7 @@ def process_github_summary_vectorstore(
     issues_summarized: list[Document] = [
         summarizer.transform_summary(
             date=date,
-            summary=summarizer.process_commits(
+            summary=summarizer.process_issues(
                 date=date, documents=aggregated_issue_docs[date]
             ),
             type=SummaryType.ISSUE,
