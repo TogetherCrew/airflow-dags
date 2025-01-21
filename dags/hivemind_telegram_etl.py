@@ -62,12 +62,10 @@ def create_telegram_dag(dag_type: Literal["messages", "summaries"]) -> DAG:
 
             platform_utils = TelegramPlatform(chat_id=chat_id, chat_name=chat_name)
             community_id, platform_id = platform_utils.check_platform_existence()
-
             if community_id is None:
-                logging.info(
-                    f"Platform with chat_id: {chat_id} doesn't exist. Creating one!"
+                raise ValueError(
+                    f"Telegram platform with chat_id: {chat_id} doesn't exist!"
                 )
-                community_id, platform_id = platform_utils.create_platform()
 
             modules = TelegramModules(community_id, platform_id)
             modules.create()
