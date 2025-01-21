@@ -16,7 +16,7 @@ from hivemind_etl_helpers.src.db.telegram.transform import (
     TransformMessages,
     TransformSummary,
 )
-from hivemind_etl_helpers.src.db.telegram.utils import TelegramPlatform
+from hivemind_etl_helpers.src.db.telegram.utils import TelegramModules, TelegramPlatform
 from qdrant_client.http import models
 from tc_hivemind_backend.ingest_qdrant import CustomIngestionPipeline
 
@@ -61,20 +61,14 @@ def create_telegram_dag(dag_type: Literal["messages", "summaries"]) -> DAG:
             chat_id, chat_name = chat_info
 
             platform_utils = TelegramPlatform(chat_id=chat_id, chat_name=chat_name)
-            community_id, _ = platform_utils.check_platform_existence()
+            community_id, platform_id = platform_utils.check_platform_existence()
             if community_id is None:
                 raise ValueError(
                     f"Telegram platform with chat_id: {chat_id} doesn't exist!"
                 )
 
-            # if community_id is None:
-            #     logging.info(
-            #         f"Platform with chat_id: {chat_id} doesn't exist. Creating one!"
-            #     )
-            #     community_id, platform_id = platform_utils.create_platform()
-
-            # modules = TelegramModules(community_id, platform_id)
-            # modules.create()
+            modules = TelegramModules(community_id, platform_id)
+            modules.create()
 
             return {
                 "chat_info": chat_info,
