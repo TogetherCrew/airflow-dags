@@ -56,7 +56,10 @@ class TelegramModules:
             False, if there's no module related to the community
         """
         document = self._client[self.database][self.collection].find_one(
-            {"community": ObjectId(self.community_id)},
+            {
+                "name": "hivemind",
+                "community": ObjectId(self.community_id)
+            },
             {
                 "_id": 1,
             },
@@ -69,6 +72,7 @@ class TelegramModules:
         """
         document = self._client[self.database][self.collection].find_one(
             {
+                "name": "hivemind",
                 "community": ObjectId(self.community_id),
                 "options.platforms.platform": ObjectId(self.platform_id),
             },
