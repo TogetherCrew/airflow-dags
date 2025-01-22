@@ -56,7 +56,7 @@ class TelegramModules:
             False, if there's no module related to the community
         """
         document = self._client[self.database][self.collection].find_one(
-            {"community": ObjectId(self.community_id)},
+            {"name": "hivemind", "community": ObjectId(self.community_id)},
             {
                 "_id": 1,
             },
@@ -69,6 +69,7 @@ class TelegramModules:
         """
         document = self._client[self.database][self.collection].find_one(
             {
+                "name": "hivemind",
                 "community": ObjectId(self.community_id),
                 "options.platforms.platform": ObjectId(self.platform_id),
             },
@@ -83,7 +84,10 @@ class TelegramModules:
         Having the community_id modules insert the platform into it
         """
         result = self._client[self.database][self.collection].update_one(
-            {"community": ObjectId(self.community_id)},
+            {
+                "community": ObjectId(self.community_id),
+                "name": "hivemind",
+            },
             {
                 "$push": {
                     "options.platforms": {
@@ -92,7 +96,7 @@ class TelegramModules:
                         "_id": ObjectId(),
                     }
                 },
-                "$set": {"updatedAt": datetime.now().replace(tzinfo=timezone.utc)},
+                "$set": {"updatedAt": datetime.now(timezone.utc)},
                 "$inc": {"__v": 1},
             },
         )

@@ -21,6 +21,6 @@ redis===5.0.4
 tc-wikipedia-lib==1.0.1
 llama-index-readers-file==0.1.22
 docx2txt==0.8
-tc-analyzer-lib==1.4.15
+tc-analyzer-lib==1.4.16
 pydantic==2.9.2
 spacy==3.7.5
