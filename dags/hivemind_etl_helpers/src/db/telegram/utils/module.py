@@ -87,7 +87,10 @@ class TelegramModules:
         Having the community_id modules insert the platform into it
         """
         result = self._client[self.database][self.collection].update_one(
-            {"community": ObjectId(self.community_id)},
+            {
+                "community": ObjectId(self.community_id),
+                "name": "hivemind",
+            },
             {
                 "$push": {
                     "options.platforms": {
@@ -96,7 +99,7 @@ class TelegramModules:
                         "_id": ObjectId(),
                     }
                 },
-                "$set": {"updatedAt": datetime.now().replace(tzinfo=timezone.utc)},
+                "$set": {"updatedAt": datetime.now(timezone.utc)},
                 "$inc": {"__v": 1},
             },
         )
