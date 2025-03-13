@@ -55,9 +55,9 @@ class ExtractPlatformRawData:
         # normally would happen if no data was labeled
         override_recompute: bool = False
 
+        lte_query = to_date if to_date else datetime.now()
         if not recompute:
             latest_labeled_date = self._find_latest_labeled()
-            lte_query = to_date if to_date else datetime.now()
 
             # all data was processed before
             if to_date and latest_labeled_date and latest_labeled_date >= to_date:
