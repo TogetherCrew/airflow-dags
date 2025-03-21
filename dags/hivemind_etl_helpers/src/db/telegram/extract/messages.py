@@ -29,7 +29,7 @@ class ExtractMessages:
         from_date_timestamp: int | None = None
 
         if from_date:
-            from_date_timestamp = int(from_date.timestamp() * 1000)
+            from_date_timestamp = from_date.timestamp()
             where_clause = """
             AND message.date >= $from_date_timestamp
             """
