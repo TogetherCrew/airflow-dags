@@ -106,8 +106,8 @@ class TestExtractTelegramMessages(TestCase):
             session.run(
                 """
                 CREATE (c:TGChat {id: $chat_id}),
-                    (u1:TGUser {id: '927814807.0', username: 'User One'}),
-                    (u2:TGUser {id: '203678862.0', username: 'User Two'}),
+                    (u1:TGUser {id: 927814807.0}), // missing username as in real data can happen
+                    (u2:TGUser {id: 203678862.0, username: 'User Two'}),
                     (m1:TGMessage {
                             id: '3.0',
                             text: '🎉️️️️️️ Welcome to the TC Ingestion Pipeline',
@@ -163,7 +163,7 @@ class TestExtractTelegramMessages(TestCase):
             TelegramMessagesModel(
                 message_id=3,
                 message_text="🎉️️️️️️ Welcome to the TC Ingestion Pipeline. EDITED MSG",
-                author_username="User One",
+                author_username="927814807.0",
                 message_created_at=1672531200.0,
                 message_edited_at=1672531205.0,
                 mentions=[],
