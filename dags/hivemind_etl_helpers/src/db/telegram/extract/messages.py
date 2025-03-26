@@ -64,6 +64,7 @@ class ExtractMessages:
                 message.id AS message_id,
                 message_text,
                 author.username AS author_username,
+                author.id AS author_id,
                 message.date AS message_created_at,
                 edited_at AS message_edited_at,
                 COLLECT(DISTINCT mentioned_user.username) AS mentions,
@@ -83,6 +84,25 @@ class ExtractMessages:
                 parameters=parameters,
             )
             messages = result.data()
-            tg_messages = [TelegramMessagesModel(**message) for message in messages]
+            tg_messages: list[TelegramMessagesModel] = []
+
+            for message in messages:
+                tg_messages.append(
+                    TelegramMessagesModel(
+                        message_id=message["message_id"],
+                        message_text=message["message_text"],
+                        author_username=(
+                            message["author_username"]
+                            if message["author_username"]
+                            else str(message["author_id"])
+                        ),
+                        author_id=message["author_id"],
+                        message_created_at=message["message_created_at"],
+                        message_edited_at=message["message_edited_at"],
+                        mentions=message["mentions"],
+                        repliers=message["repliers"],
+                        reactors=message["reactors"],
+                    )
+                )
 
         return tg_messages
