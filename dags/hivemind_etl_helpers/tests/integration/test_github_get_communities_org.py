@@ -63,6 +63,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                         }
                     ]
                 },
+                "activated": True,
             }
         )
 
@@ -152,6 +153,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                         },
                     ]
                 },
+                "activated": True,
             }
         )
 
@@ -292,6 +294,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                             },
                         ]
                     },
+                    "activated": True,
                 },
                 {
                     "name": "hivemind",
@@ -318,6 +321,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                             },
                         ]
                     },
+                    "activated": True,
                 },
             ]
         )
@@ -474,6 +478,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                             },
                         ]
                     },
+                    "activated": True,
                 },
                 {
                     "name": "hivemind",
@@ -500,6 +505,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                             },
                         ]
                     },
+                    "activated": True,
                 },
             ]
         )

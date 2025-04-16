@@ -38,6 +38,7 @@ class TestGetAllDiscordCommunitites(TestCase):
                         }
                     ]
                 },
+                "activated": True,
             }
         )
 
@@ -91,6 +92,7 @@ class TestGetAllDiscordCommunitites(TestCase):
                         },
                     ]
                 },
+                "activated": True,
             }
         )
 

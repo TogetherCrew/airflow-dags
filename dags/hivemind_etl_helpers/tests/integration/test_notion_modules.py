@@ -78,6 +78,7 @@ class TestGetNotionModules(TestCase):
                         }
                     ]
                 },
+                "activated": True,
             }
         )
 
@@ -165,6 +166,7 @@ class TestGetNotionModules(TestCase):
                         },
                     ]
                 },
+                "activated": True,
             }
         )
 

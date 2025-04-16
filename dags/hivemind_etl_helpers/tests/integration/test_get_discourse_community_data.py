@@ -37,6 +37,7 @@ class TestGetDiscourseCommunityData(TestCase):
                         }
                     ]
                 },
+                "activated": True,
             }
         )
 
@@ -79,6 +80,7 @@ class TestGetDiscourseCommunityData(TestCase):
                             }
                         ]
                     },
+                    "activated": True,
                 },
                 {
                     "name": "hivemind",
@@ -97,6 +99,7 @@ class TestGetDiscourseCommunityData(TestCase):
                             }
                         ]
                     },
+                    "activated": True,
                 },
             ]
         )
