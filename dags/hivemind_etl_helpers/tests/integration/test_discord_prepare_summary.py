@@ -46,6 +46,7 @@ class TestDiscordGroupedDataPreparation(TestCase):
                         }
                     ]
                 },
+                "activated": True,
             }
             client["Core"]["modules"].insert_one(data)
 

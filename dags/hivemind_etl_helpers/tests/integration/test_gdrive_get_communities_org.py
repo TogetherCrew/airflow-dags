@@ -61,6 +61,7 @@ class TestQueryGDriveModulesDB(unittest.TestCase):
                         }
                     ]
                 },
+                "activated": True,
             }
         )
         self.client["Core"]["tokens"].insert_one(
@@ -166,6 +167,7 @@ class TestQueryGDriveModulesDB(unittest.TestCase):
                         },
                     ]
                 },
+                "activated": True,
             }
         )
         self.client["Core"]["tokens"].insert_one(
@@ -289,6 +291,7 @@ class TestQueryGDriveModulesDB(unittest.TestCase):
                             },
                         ]
                     },
+                    "activated": True,
                 },
                 {
                     "name": "hivemind",
@@ -306,6 +309,7 @@ class TestQueryGDriveModulesDB(unittest.TestCase):
                             }
                         ]
                     },
+                    "activated": True,
                 },
             ]
         )
