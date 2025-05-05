@@ -19,6 +19,7 @@ def process_github_vectorstore(
     community_id: str,
     github_org_ids: list[str],
     repo_ids: list[str],
+    platform_id: str,
     from_starting_date: datetime | None = None,
 ) -> None:
     """
@@ -32,6 +33,8 @@ def process_github_vectorstore(
         a list of github organization ids to process their data
     repo_ids : list[str]
         a list of github repositories to process their data
+    platform_id : str
+        the platform id to save the data under qdrant collection
     from_starting_date : datetime | None
         the date to start processing data from
     """
@@ -74,5 +77,7 @@ def process_github_vectorstore(
 
     # LOAD
     logging.info(f"{prefix}Loading data into postgres db")
-    ingestion_pipeline = CustomIngestionPipeline(community_id, collection_name="github")
+    ingestion_pipeline = CustomIngestionPipeline(
+        community_id=community_id, collection_name=platform_id
+    )
     ingestion_pipeline.run_pipeline(docs=all_documents)

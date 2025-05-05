@@ -32,6 +32,7 @@ with DAG(
         folder_ids = community_information["folder_ids"]
         drive_ids = community_information["drive_ids"]
         refresh_token = community_information["refresh_token"]
+        platform_id = community_information["platform_id"]
 
         logging.info(f"Starting Gdrive ETL | community_id: {community_id}")
         loader = GoogleDriveLoader(refresh_token=refresh_token)
@@ -40,7 +41,7 @@ with DAG(
         )
 
         ingest_data = CustomIngestionPipeline(
-            community_id=community_id, collection_name="google"
+            community_id=community_id, collection_name=platform_id
         )
         ingest_data.run_pipeline(load_file_data)
 

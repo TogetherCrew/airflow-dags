@@ -10,6 +10,7 @@ class NotionProcessor:
     def __init__(
         self,
         community_id: str,
+        platform_id: str,
         access_token: str | None = None,
     ) -> None:
         """
@@ -19,14 +20,16 @@ class NotionProcessor:
             the community to save its data
         access_token : str | None
             notion ingegration access token
+        platform_id : str
+            the platform id to save the data under qdrant collection
         """
         self.community_id = community_id
-        collection_name = "notion"
+        collection_name = platform_id
 
         # preparing the data extractor and ingestion pipelines
         self.notion_extractor = NotionExtractor(notion_token=access_token)
         self.ingestion_pipeline = CustomIngestionPipeline(
-            self.community_id, collection_name=collection_name
+            community_id=self.community_id, collection_name=collection_name
         )
 
     def process(

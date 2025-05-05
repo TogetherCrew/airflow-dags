@@ -22,10 +22,11 @@ class ModulesNotion(ModulesBase):
             example data output:
             ```
             [{
-            "community_id": "6579c364f1120850414e0dc5",
-            "database_ids": ["dadd27f1dc1e4fa6b5b9dea76858dabe"],
-            "page_ids": ["6a3c20b6861145b29030292120aa03e6"],
-            "access_token": "some_random_access_token",
+                "platform_id": "platform1",
+                "community_id": "6579c364f1120850414e0dc5",
+                "database_ids": ["dadd27f1dc1e4fa6b5b9dea76858dabe"],
+                "page_ids": ["6a3c20b6861145b29030292120aa03e6"],
+                "access_token": "some_random_access_token",
             }]
             ```
         """
@@ -48,6 +49,7 @@ class ModulesNotion(ModulesBase):
                     )
                     communities_data.append(
                         {
+                            "platform_id": str(platform["platform"]),
                             "community_id": str(community),
                             "database_ids": modules_options.get("databaseIds", []),
                             "page_ids": modules_options.get("pageIds", []),

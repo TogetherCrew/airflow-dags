@@ -29,9 +29,12 @@ with DAG(
         for community in communities:
             community_id = community["community_id"]
             access_token = community["access_token"]
+            platform_id = community["platform_id"]
+
             prepared_data = {
                 "community_id": community_id,
                 "access_token": access_token,
+                "platform_id": platform_id,
             }
             for page_id in community["page_ids"]:
                 community_data_flattened.append(
@@ -56,11 +59,13 @@ with DAG(
         access_token = community_info["access_token"]
         database_id = community_info.get("database_id", None)
         page_id = community_info.get("page_id", None)
+        platform_id = community_info["platform_id"]
 
         logging.info(f"Working on community, {community_id}")
         extractor = NotionProcessor(
             community_id=community_id,  # type: ignore
             access_token=access_token,  # type: ignore
+            platform_id=platform_id,
         )
         if database_id is not None:
             extractor.process_database(
