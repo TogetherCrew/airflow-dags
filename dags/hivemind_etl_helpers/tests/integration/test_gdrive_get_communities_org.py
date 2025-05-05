@@ -85,6 +85,7 @@ class TestQueryGDriveModulesDB(unittest.TestCase):
         self.assertEqual(
             result[0],
             {
+                "platform_id": str(platform_id),
                 "community_id": "6579c364f1120850414e0dc5",
                 "drive_ids": ["1234"],
                 "folder_ids": ["111", "234"],
@@ -172,6 +173,7 @@ class TestQueryGDriveModulesDB(unittest.TestCase):
         )
         self.client["Core"]["tokens"].insert_one(
             {
+                "platform_id": str(platform_id1),
                 "token": sample_refresh_token1,
                 "user": sample_user1,
                 "type": "google_refresh",
@@ -184,6 +186,7 @@ class TestQueryGDriveModulesDB(unittest.TestCase):
 
         self.client["Core"]["tokens"].insert_one(
             {
+                "platform_id": str(platform_id2),
                 "token": sample_refresh_token2,
                 "user": sample_user2,
                 "type": "google_refresh",
@@ -202,6 +205,7 @@ class TestQueryGDriveModulesDB(unittest.TestCase):
         self.assertEqual(
             result[0],
             {
+                "platform_id": str(platform_id1),
                 "community_id": "1009c364f1120850414e0dc5",
                 "drive_ids": ["1234"],
                 "folder_ids": ["111", "234"],
@@ -212,6 +216,7 @@ class TestQueryGDriveModulesDB(unittest.TestCase):
         self.assertEqual(
             result[1],
             {
+                "platform_id": str(platform_id2),
                 "community_id": "1009c364f1120850414e0dc5",
                 "drive_ids": ["8438348"],
                 "folder_ids": ["9090"],
@@ -368,6 +373,7 @@ class TestQueryGDriveModulesDB(unittest.TestCase):
         self.assertEqual(
             result[0],
             {
+                "platform_id": str(platform_id1),
                 "community_id": "1009c364f1120850414e0dc5",
                 "drive_ids": ["1234"],
                 "folder_ids": ["111", "234"],
@@ -378,6 +384,7 @@ class TestQueryGDriveModulesDB(unittest.TestCase):
         self.assertEqual(
             result[1],
             {
+                "platform_id": str(platform_id2),
                 "community_id": "6579c364f1120850414e0dc5",
                 "drive_ids": ["8438348"],
                 "folder_ids": ["9090"],

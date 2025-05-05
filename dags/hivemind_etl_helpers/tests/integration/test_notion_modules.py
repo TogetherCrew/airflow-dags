@@ -260,6 +260,7 @@ class TestGetNotionModules(TestCase):
         self.assertEqual(
             result[0],
             {
+                "platform_id": str(platform_id1),
                 "community_id": str(community_id),
                 "database_ids": [
                     "dadd27f1dc1e4fa6b5b9dea76858dabe",
@@ -275,6 +276,7 @@ class TestGetNotionModules(TestCase):
         self.assertEqual(
             result[1],
             {
+                "platform_id": str(platform_id2),
                 "community_id": str(community_id),
                 "database_ids": [
                     "eadd27f1dc1e4fa6b5b9dea76858dabe",
