@@ -51,7 +51,7 @@ class ModulesGDrive(ModulesBase):
                     )
                     platforms_data.append(
                         {
-                            "platform_id": platform_id,
+                            "platform_id": str(platform_id),
                             "community_id": str(community),
                             "drive_ids": modules_options.get("driveIds", []),
                             "folder_ids": modules_options.get("folderIds", []),

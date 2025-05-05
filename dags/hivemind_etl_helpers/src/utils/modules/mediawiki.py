@@ -59,7 +59,7 @@ class ModulesMediaWiki(ModulesBase):
                     modules_options = platform["metadata"]
                     communities_data.append(
                         {
-                            "platform_id": platform_id,
+                            "platform_id": str(platform_id),
                             "community_id": str(community),
                             "page_titles": modules_options.get("pageIds", []),
                             "base_url": base_url + path,  # type: ignore
