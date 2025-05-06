@@ -30,6 +30,7 @@ with DAG(
         organization_ids: list[str] = community_information.get("organization_ids", [])  # type: ignore
         repo_ids: list[str] = community_information.get("repo_ids", [])  # type: ignore
         from_date: datetime | None = community_information["from_date"]  # type: ignore
+        platform_id: str = community_information["platform_id"]  # type: ignore
 
         logging.info(f"Starting Github ETL | community_id: {community_id}")
         process_github_vectorstore(
@@ -37,6 +38,7 @@ with DAG(
             github_org_ids=organization_ids,
             repo_ids=repo_ids,
             from_starting_date=from_date,
+            platform_id=platform_id,
         )
 
     communities_info = get_github_communities()
@@ -63,12 +65,14 @@ with DAG(
         community_id: str = community_information["community_id"]  # type: ignore
         organization_ids: list[str] = community_information.get("organization_ids", [])  # type: ignore
         repo_ids: list[str] = community_information.get("repo_ids", [])  # type: ignore
+        platform_id: str = community_information["platform_id"]  # type: ignore
 
         logging.info(f"Starting Github ETL | community_id: {community_id}")
         process_github_summary_vectorstore(
             community_id=community_id,
             github_org_ids=organization_ids,
             repo_ids=repo_ids,
+            platform_id=platform_id,
         )
 
     communities_info = get_github_communities_()

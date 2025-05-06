@@ -29,12 +29,14 @@ with DAG(
         community_id = community_info["community_id"]
         page_titles = community_info["page_titles"]
         api_url = community_info["base_url"]
+        platform_id = community_info["platform_id"]
 
         logging.info(f"Working on community, {community_id}")
         process_mediawiki_etl(
             community_id=community_id,  # type: ignore
             page_titles=page_titles,  # type: ignore
             api_url=api_url,  # type: ignore
+            platform_id=platform_id,
         )
         logging.info(f"Community {community_id} Job finished!")
 

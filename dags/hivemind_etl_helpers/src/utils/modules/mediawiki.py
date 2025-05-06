@@ -22,6 +22,7 @@ class ModulesMediaWiki(ModulesBase):
             example data output:
             ```
             [{
+                "platform_id": "platform1",
                 "community_id": "6579c364f1120850414e0dc5",
                 "page_titles": ["Main_Page", "Default_Page"],
                 "base_url": "some_api_url",
@@ -58,6 +59,7 @@ class ModulesMediaWiki(ModulesBase):
                     modules_options = platform["metadata"]
                     communities_data.append(
                         {
+                            "platform_id": str(platform_id),
                             "community_id": str(community),
                             "page_titles": modules_options.get("pageIds", []),
                             "base_url": base_url + path,  # type: ignore

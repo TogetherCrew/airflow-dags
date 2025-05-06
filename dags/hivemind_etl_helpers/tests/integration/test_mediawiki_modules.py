@@ -154,6 +154,7 @@ class TestGetMediaWikiModules(TestCase):
         self.assertEqual(
             result[0],
             {
+                "platform_id": str(platform_id1),
                 "community_id": str(community_id),
                 "page_titles": [
                     "Main_Page",
@@ -165,6 +166,7 @@ class TestGetMediaWikiModules(TestCase):
         self.assertEqual(
             result[1],
             {
+                "platform_id": str(platform_id2),
                 "community_id": str(community_id),
                 "page_titles": [
                     "Sandbox",

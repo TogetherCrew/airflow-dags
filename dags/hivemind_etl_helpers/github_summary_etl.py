@@ -30,6 +30,7 @@ def process_github_summary_vectorstore(
     community_id: str,
     github_org_ids: list[str],
     repo_ids: list[str],
+    platform_id: str,
 ) -> None:
     """
     ETL process for github summary data
@@ -42,11 +43,13 @@ def process_github_summary_vectorstore(
         a list of github organization ids to process their data
     repo_ids : list[str]
         a list of github repositories to process their data
+    platform_id : str
+        the platform id to save the data under qdrant collection
     """
     load_dotenv()
     prefix = f"COMMUNITYID: {community_id} "
     ingestion_pipeline = CustomIngestionPipeline(
-        community_id, collection_name="github_summary"
+        community_id=community_id, collection_name=f"{platform_id}_summary"
     )
     date = ingestion_pipeline.get_latest_document_date(field_name="date")
     logging.info(f"Latest Document date available: {date}")

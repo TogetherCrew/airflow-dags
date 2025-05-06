@@ -73,6 +73,7 @@ def create_telegram_dag(dag_type: Literal["messages", "summaries"]) -> DAG:
             return {
                 "chat_info": chat_info,
                 "community_id": str(community_id),
+                "platform_id": platform_id,
             }
 
         @task(trigger_rule=TriggerRule.NONE_SKIPPED)
@@ -83,6 +84,7 @@ def create_telegram_dag(dag_type: Literal["messages", "summaries"]) -> DAG:
 
             chat_info = details["chat_info"]
             community_id = details["community_id"]
+            platform_id = details["platform_id"]
             chat_id, chat_name = chat_info
 
             logging.info(f"Started processing community: {community_id}")
@@ -91,7 +93,7 @@ def create_telegram_dag(dag_type: Literal["messages", "summaries"]) -> DAG:
             if dag_type == "messages":
                 extractor = ExtractMessages(chat_id=chat_id)
                 transformer = TransformMessages(chat_id=chat_id, chat_name=chat_name)
-                collection_name = "telegram"
+                collection_name = platform_id
                 date_field = "createdAt"
                 date_schema = models.PayloadSchemaType.FLOAT
 
@@ -102,7 +104,7 @@ def create_telegram_dag(dag_type: Literal["messages", "summaries"]) -> DAG:
                 extractor = ExtractMessagesDaily(chat_id=chat_id)
                 summarizer = SummarizeMessages(chat_id=chat_id, chat_name=chat_name)
                 transformer = TransformSummary()
-                collection_name = "telegram_summary"
+                collection_name = f"{platform_id}_summary"
                 date_field = "date"
                 date_schema = models.PayloadSchemaType.DATETIME
 

@@ -8,6 +8,7 @@ def process_mediawiki_etl(
     community_id: str,
     api_url: str,
     page_titles: list[str],
+    platform_id: str,
 ) -> None:
     """
     Process the MediaWiki pages or categories
@@ -35,6 +36,6 @@ def process_mediawiki_etl(
     )
 
     ingestion_pipeline = CustomIngestionPipeline(
-        community_id=community_id, collection_name="mediawiki"
+        community_id=community_id, collection_name=platform_id
     )
     ingestion_pipeline.run_pipeline(docs=documents)

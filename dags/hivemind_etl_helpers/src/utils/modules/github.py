@@ -23,6 +23,7 @@ class ModulesGitHub(ModulesBase):
             example data output:
             ```
             [{
+                "platform_id": "platform1",
                 "community_id": "community1",
                 "organization_ids": ["1111", "2222"],
                 "repo_ids": ["132", "45232"],
@@ -61,6 +62,7 @@ class ModulesGitHub(ModulesBase):
                         platforms_data.append(
                             {
                                 "community_id": str(community),
+                                "platform_id": str(platform_id),
                                 "organization_ids": [organization_id],
                                 # "repo_ids": modules_options.get("repoIds", []),
                                 # "from_date": modules_options["fromDate"],

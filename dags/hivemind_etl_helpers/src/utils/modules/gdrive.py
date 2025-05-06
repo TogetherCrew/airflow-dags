@@ -21,6 +21,7 @@ class ModulesGDrive(ModulesBase):
             example data output:
             ```
             [{
+                "platform_id": "platform1",
                 "community_id": "community1",
                 "drive_ids": ["1111", "2222"],
                 "folder_ids": ["132", "45232"],
@@ -50,6 +51,7 @@ class ModulesGDrive(ModulesBase):
                     )
                     platforms_data.append(
                         {
+                            "platform_id": str(platform_id),
                             "community_id": str(community),
                             "drive_ids": modules_options.get("driveIds", []),
                             "folder_ids": modules_options.get("folderIds", []),

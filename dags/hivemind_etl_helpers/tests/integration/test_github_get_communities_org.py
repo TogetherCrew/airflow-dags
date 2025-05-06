@@ -76,6 +76,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
         self.assertEqual(
             result[0],
             {
+                "platform_id": str(platform_id),
                 "community_id": "6579c364f1120850414e0dc5",
                 "organization_ids": ["345678"],
                 # "repo_ids": ["111", "234"],
@@ -167,6 +168,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
         self.assertEqual(
             result[0],
             {
+                "platform_id": str(platform_id),
                 "community_id": str(community_id),
                 "organization_ids": ["11111"],
                 # "repo_ids": [],
@@ -177,6 +179,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
         self.assertEqual(
             result[1],
             {
+                "platform_id": str(platform_id2),
                 "community_id": str(community_id),
                 "organization_ids": ["222222"],
                 # "repo_ids": [],
@@ -336,6 +339,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                 self.assertEqual(
                     res,
                     {
+                        "platform_id": str(platform_id),
                         "community_id": str(community_id),
                         "organization_ids": ["11111"],
                         # "repo_ids": [],
@@ -347,6 +351,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                 self.assertEqual(
                     res,
                     {
+                        "platform_id": str(platform_id2),
                         "community_id": str(community_id),
                         "organization_ids": ["222222"],
                         # "repo_ids": ["AAAAA"],
@@ -358,6 +363,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                 self.assertEqual(
                     res,
                     {
+                        "platform_id": str(platform_id3),
                         "community_id": str(community_id2),
                         "organization_ids": ["333333"],
                         # "repo_ids": [],
@@ -520,6 +526,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                 self.assertEqual(
                     res,
                     {
+                        "platform_id": str(platform_id),
                         "community_id": str(community_id),
                         "organization_ids": ["11111"],
                         # "repo_ids": [],
@@ -531,6 +538,7 @@ class TestQueryGitHubModulesDB(unittest.TestCase):
                 self.assertEqual(
                     res,
                     {
+                        "platform_id": str(platform_id2),
                         "community_id": str(community_id),
                         "organization_ids": ["222222"],
                         # "repo_ids": ["AAAAA"],
