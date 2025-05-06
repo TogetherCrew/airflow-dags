@@ -73,7 +73,7 @@ def create_telegram_dag(dag_type: Literal["messages", "summaries"]) -> DAG:
             return {
                 "chat_info": chat_info,
                 "community_id": str(community_id),
-                "platform_id": platform_id,
+                "platform_id": str(platform_id),
             }
 
         @task(trigger_rule=TriggerRule.NONE_SKIPPED)
