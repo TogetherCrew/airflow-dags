@@ -101,7 +101,7 @@ class TestDiscordGroupedDataPreparation(TestCase):
         self.assertEqual(data, {})
 
     def test_some_data_prepare_with_from_date(self):
-        channels = ["111111", "22222"]
+        channels = ["111111", "22222", "33333"]
         user_ids = ["user1", "user2"]
 
         guild_id = "1234"

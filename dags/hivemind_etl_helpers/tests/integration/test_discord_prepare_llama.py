@@ -30,6 +30,16 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
                     "channelId": "1313131",
                     "name": "channel2",
                     "parentId": None,
+                },
+                {
+                    "channelId": "1313132",
+                    "name": "channel2",
+                    "parentId": None,
+                },
+                {
+                    "channelId": "1313133",
+                    "name": "channel1",
+                    "parentId": None,
                 }
             ]
         )
