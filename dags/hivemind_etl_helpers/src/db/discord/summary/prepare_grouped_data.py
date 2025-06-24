@@ -1,5 +1,8 @@
 from datetime import datetime
 
+from hivemind_etl_helpers.src.db.discord.utils.fetch_channel_thread_name import (
+    FetchDiscordChannelThreadNames,
+)
 from hivemind_etl_helpers.src.db.discord.fetch_raw_messages import fetch_raw_msg_grouped
 
 
@@ -38,12 +41,13 @@ def prepare_grouped_data(
         msg_date = msg["_id"]["date"]
         raw_daily_grouped[msg_date] = msg["messages"]
 
-    raw_data_grouped = group_per_channel_thread(daily_messages=raw_daily_grouped)
+    raw_data_grouped = group_per_channel_thread(guild_id=guild_id, daily_messages=raw_daily_grouped)
 
     return raw_data_grouped
 
 
 def group_per_channel_thread(
+    guild_id: str,
     daily_messages: dict[str, list]
 ) -> dict[str, dict[str, dict[str | None, list]]]:
     """
@@ -52,6 +56,8 @@ def group_per_channel_thread(
 
     Parameters
     ------------
+    guild_id : str
+        the guild id to access data
     daily_messages : dict[str, list]
         a dictionary that each key represents the day
         and values are a list of messages in that day
@@ -66,11 +72,13 @@ def group_per_channel_thread(
     """
     raw_data_grouped: dict[str, dict[str, dict[str | None, list]]] = {}
 
+    name_fetcher = FetchDiscordChannelThreadNames(guild_id)
+
     # grouping by channel
     for date in daily_messages.keys():
         for msg in daily_messages[date]:
-            channel = msg["channelName"]
-            thread = msg["threadName"]
+            channel = name_fetcher.fetch_discord_channel_name(msg["channelId"])
+            thread = name_fetcher.fetch_discord_thread_name(msg["threadId"]) if msg["threadId"] else None
 
             raw_data_grouped.setdefault(date, {}).setdefault(channel, {}).setdefault(
                 thread, []
