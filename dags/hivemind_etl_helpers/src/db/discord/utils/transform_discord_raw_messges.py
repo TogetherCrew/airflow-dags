@@ -2,6 +2,9 @@ import logging
 import re
 from typing import Any
 
+from hivemind_etl_helpers.src.db.discord.utils.fetch_channel_thread_name import (
+    FetchDiscordChannelThreadNames,
+)
 from hivemind_etl_helpers.src.db.discord.utils.content_parser import (
     remove_empty_str,
     remove_none_from_list,
@@ -174,13 +177,14 @@ def prepare_document(
     else:
         url = f"https://discord.com/channels/{guild_id}/{thread_id}/{message_id}"
 
+    name_fetcher = FetchDiscordChannelThreadNames(guild_id)
     msg_meta_data = {
-        "channel": message["channelName"],
+        "channel": name_fetcher.fetch_discord_channel_name(channel_id),
         "date": message["createdDate"].strftime(DATE_FORMAT),
         "author_username": author_name[0],
         "url": url,
         # always including the thread_name, if `None`, then it was a channel message
-        "thread": message["threadName"],
+        "thread": name_fetcher.fetch_discord_thread_name(thread_id) if thread_id else None,
     }
     if author_global_name[0] is not None:
         msg_meta_data["author_global_name"] = author_global_name[0]
