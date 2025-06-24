@@ -94,6 +94,32 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
         # droping any previous data
         client[guild_id].drop_collection("guildmembers")
         client[guild_id].drop_collection("rawinfos")
+        client[guild_id].drop_collection("channels")
+        client[guild_id].drop_collection("threads")
+
+        client[guild_id]["channels"].insert_many(
+            [
+                {
+                    "channelId": channels[0],
+                    "name": "channel1",
+                    "parentId": None,
+
+                },
+                {
+                    "channelId": channels[1],
+                    "name": "channel2",
+                    "parentId": None,
+                },
+            ]
+        )
+
+        client[guild_id]["threads"].insert_one(
+            {
+                "id": "88888",
+                "name": "example_thread1",
+            }
+        )
+        
 
         messages = []
         data = {
@@ -107,7 +133,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
             "createdDate": datetime(2023, 5, 1),
             "messageId": "10000000000",
             "channelId": channels[0],
-            "channelName": "channel1",
+            "channelName": None,
             "threadId": None,
             "threadName": None,
             "isGeneratedByWebhook": False,
@@ -125,7 +151,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
             "createdDate": datetime(2023, 5, 2),
             "messageId": "10000000001",
             "channelId": channels[1],
-            "channelName": "channel2",
+            "channelName": None,
             "threadId": None,
             "threadName": None,
             "isGeneratedByWebhook": False,
@@ -143,9 +169,9 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
             "createdDate": datetime(2023, 5, 2),
             "messageId": "10000000002",
             "channelId": channels[1],
-            "channelName": "channel2",
+            "channelName": None,
             "threadId": "88888",
-            "threadName": "example_thread1",
+            "threadName": None,
             "isGeneratedByWebhook": False,
         }
         messages.append(data)
@@ -161,7 +187,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
             "createdDate": datetime(2023, 5, 8),
             "messageId": "10000000003",
             "channelId": channels[0],
-            "channelName": "channel1",
+            "channelName": None,
             "threadId": None,
             "threadName": None,
             "isGeneratedByWebhook": False,
@@ -181,7 +207,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
             "createdDate": datetime(2023, 5, 8),
             "messageId": "10000000004",
             "channelId": "734738382",
-            "channelName": "channel1",
+            "channelName": None,
             "threadId": None,
             "threadName": None,
             "isGeneratedByWebhook": False,
