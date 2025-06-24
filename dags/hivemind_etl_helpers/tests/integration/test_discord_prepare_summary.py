@@ -179,9 +179,9 @@ class TestDiscordGroupedDataPreparation(TestCase):
                     2023, 10, i + 1
                 ),  # Different dates in October 2023
                 "messageId": f"11111{i}",
-                "channelId": channels[i % len(channels)],
+                "channelId": "111111",  # general channel
                 "channelName": None,
-                "threadId": "987123",
+                "threadId": "987123",  # Something thread
                 "threadName": None,
                 "isGeneratedByWebhook": False,
             }
@@ -199,10 +199,10 @@ class TestDiscordGroupedDataPreparation(TestCase):
                 "createdDate": datetime(
                     2023, 10, i + 1
                 ),  # Different dates in October 2023
-                "messageId": f"11111{i}",
-                "channelId": channels[i % len(channels)],
+                "messageId": f"22222{i}",
+                "channelId": "22222",  # writing channel
                 "channelName": None,
-                "threadId": "123443211",
+                "threadId": "123443211",  # Available thread
                 "threadName": None,
                 "isGeneratedByWebhook": False,
             }
@@ -220,8 +220,8 @@ class TestDiscordGroupedDataPreparation(TestCase):
                 "createdDate": datetime(
                     2023, 10, i + 1
                 ),  # Different dates in October 2023
-                "messageId": f"11111{i}",
-                "channelId": channels[i % len(channels)],
+                "messageId": f"33333{i}",
+                "channelId": "33333",  # Use the reading channel ID
                 "channelName": None,
                 "threadId": None,
                 "threadName": None,
