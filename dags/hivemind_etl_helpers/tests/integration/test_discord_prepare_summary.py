@@ -221,7 +221,7 @@ class TestDiscordGroupedDataPreparation(TestCase):
                     2023, 10, i + 1
                 ),  # Different dates in October 2023
                 "messageId": f"11111{i}",
-                "channelId": "33333",  # Use the reading channel ID
+                "channelId": channels[i % len(channels)],
                 "channelName": None,
                 "threadId": None,
                 "threadName": None,
