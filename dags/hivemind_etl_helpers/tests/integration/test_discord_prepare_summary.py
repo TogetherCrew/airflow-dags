@@ -97,6 +97,8 @@ class TestDiscordGroupedDataPreparation(TestCase):
 
         client = MongoSingleton.get_instance().client
         client[guild_id].drop_collection("rawinfos")
+        client[guild_id].drop_collection("channels")
+        client[guild_id].drop_collection("threads")
         from_date = datetime(2023, 8, 1)
 
         discord_summary = DiscordSummary()
@@ -127,6 +129,23 @@ class TestDiscordGroupedDataPreparation(TestCase):
         client = MongoSingleton.get_instance().client
         client[guild_id].drop_collection("rawinfos")
         client[guild_id].drop_collection("guildmembers")
+        client[guild_id].drop_collection("channels")
+        client[guild_id].drop_collection("threads")
+
+        # Create channels collection
+        channels_data = [
+            {"channelId": "111111", "name": "general"},
+            {"channelId": "22222", "name": "writing"},
+            {"channelId": "33333", "name": "reading"},
+        ]
+        client[guild_id]["channels"].insert_many(channels_data)
+
+        # Create threads collection
+        threads_data = [
+            {"id": "987123", "name": "Something"},
+            {"id": "123443211", "name": "Available"},
+        ]
+        client[guild_id]["threads"].insert_many(threads_data)
 
         for user in user_ids:
             client[guild_id]["guildmembers"].insert_one(
@@ -161,9 +180,9 @@ class TestDiscordGroupedDataPreparation(TestCase):
                 ),  # Different dates in October 2023
                 "messageId": f"11111{i}",
                 "channelId": channels[i % len(channels)],
-                "channelName": "general",
+                "channelName": None,
                 "threadId": "987123",
-                "threadName": "Something",
+                "threadName": None,
                 "isGeneratedByWebhook": False,
             }
             raw_data.append(data)
@@ -182,9 +201,9 @@ class TestDiscordGroupedDataPreparation(TestCase):
                 ),  # Different dates in October 2023
                 "messageId": f"11111{i}",
                 "channelId": channels[i % len(channels)],
-                "channelName": "writing",
+                "channelName": None,
                 "threadId": "123443211",
-                "threadName": "Available",
+                "threadName": None,
                 "isGeneratedByWebhook": False,
             }
             raw_data.append(data)
@@ -202,8 +221,8 @@ class TestDiscordGroupedDataPreparation(TestCase):
                     2023, 10, i + 1
                 ),  # Different dates in October 2023
                 "messageId": f"11111{i}",
-                "channelId": channels[i % len(channels)],
-                "channelName": "reading",
+                "channelId": "33333",  # Use the reading channel ID
+                "channelName": None,
                 "threadId": None,
                 "threadName": None,
                 "isGeneratedByWebhook": False,
@@ -258,6 +277,23 @@ class TestDiscordGroupedDataPreparation(TestCase):
         client = MongoSingleton.get_instance().client
         client[guild_id].drop_collection("rawinfos")
         client[guild_id].drop_collection("guildmembers")
+        client[guild_id].drop_collection("channels")
+        client[guild_id].drop_collection("threads")
+
+        # Create channels collection
+        channels_data = [
+            {"channelId": "111111", "name": "general"},
+            {"channelId": "22222", "name": "writing"},
+            {"channelId": "33333", "name": "reading"},
+        ]
+        client[guild_id]["channels"].insert_many(channels_data)
+
+        # Create threads collection
+        threads_data = [
+            {"id": "987123", "name": "Something"},
+            {"id": "123443211", "name": "Available"},
+        ]
+        client[guild_id]["threads"].insert_many(threads_data)
 
         for user in user_ids:
             client[guild_id]["guildmembers"].insert_one(
@@ -293,9 +329,9 @@ class TestDiscordGroupedDataPreparation(TestCase):
                 ),  # Different dates in October 2023
                 "messageId": f"11111{i}",
                 "channelId": channels[i % len(channels)],
-                "channelName": "general",
+                "channelName": None,
                 "threadId": None,
-                "threadName": "Something",
+                "threadName": None,
                 "isGeneratedByWebhook": False,
             }
             raw_data.append(data)
@@ -314,9 +350,9 @@ class TestDiscordGroupedDataPreparation(TestCase):
                 ),  # Different dates in October 2023
                 "messageId": f"11111{i}",
                 "channelId": channels[i % len(channels)],
-                "channelName": "writing",
+                "channelName": None,
                 "threadId": "123443211",
-                "threadName": "Available",
+                "threadName": None,
                 "isGeneratedByWebhook": False,
             }
             raw_data.append(data)
@@ -334,8 +370,8 @@ class TestDiscordGroupedDataPreparation(TestCase):
                     2023, 10, i + 1
                 ),  # Different dates in October 2023
                 "messageId": f"11111{i}",
-                "channelId": channels[i % len(channels)],
-                "channelName": "reading",
+                "channelId": "33333",  # Use the reading channel ID
+                "channelName": None,
                 "threadId": None,
                 "threadName": None,
                 "isGeneratedByWebhook": False,
