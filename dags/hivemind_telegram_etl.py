@@ -23,7 +23,7 @@ from tc_hivemind_backend.ingest_qdrant import CustomIngestionPipeline
 # Common DAG configuration
 default_args = {
     "start_date": datetime(2024, 1, 1),
-    "schedule_interval": "0 3 * * *",
+    "schedule_interval": "0 */4 * * *",
     "catchup": False,
     "max_active_runs": 1,
 }
