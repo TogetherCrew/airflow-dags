@@ -133,8 +133,13 @@ def create_telegram_dag(dag_type: Literal["messages", "summaries"]) -> DAG:
                     logging.info("Started extracting data from scratch!")
                     messages = extractor.extract()
                 else:
-                    logging.info(f"Started extracting from date: {latest_date}!")
-                    messages = extractor.extract(from_date=latest_date)
+                    # replacing the latest date with the day before to avoid missing any data
+                    # in case real time extraction is needed
+                    latest_date_day_before = latest_date - timedelta(days=1)
+                    logging.info(
+                        f"Started extracting from date: {latest_date_day_before}!"
+                    )
+                    messages = extractor.extract(from_date=latest_date_day_before)
 
             if dag_type == "messages":
                 msg_count = len(messages)
