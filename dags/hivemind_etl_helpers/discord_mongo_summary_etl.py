@@ -7,15 +7,10 @@ from hivemind_etl_helpers.src.db.discord.discord_summary import DiscordSummary
 from hivemind_etl_helpers.src.db.discord.find_guild_id import (
     find_guild_id_by_platform_id,
 )
-from hivemind_etl_helpers.src.document_node_parser import configure_node_parser
 from hivemind_etl_helpers.src.utils.sort_summary_docs import sort_summaries_daily
-from llama_index.core import Settings
 from llama_index.core.response_synthesizers import get_response_synthesizer
-from llama_index.llms.openai import OpenAI
-from tc_hivemind_backend.db.pg_db_utils import setup_db
-from tc_hivemind_backend.db.utils.model_hyperparams import load_model_hyperparams
-from tc_hivemind_backend.embeddings.cohere import CohereEmbedding
-from tc_hivemind_backend.pg_vector_access import PGVectorAccess
+from qdrant_client.http import models
+from tc_hivemind_backend.ingest_qdrant import CustomIngestionPipeline
 from traceloop.sdk import Traceloop
 
 
@@ -28,7 +23,7 @@ def process_discord_summaries(
 ) -> None:
     """
     prepare the discord data by grouping it into thread, channel and day
-    and save the processed summaries into postgresql
+    and save the processed summaries into qdrant
 
     Note: This will always process the data until 1 day ago.
 
@@ -49,41 +44,38 @@ def process_discord_summaries(
     """
     load_dotenv()
     otel_endpoint = os.getenv("TRACELOOP_BASE_URL")
-    Traceloop.init(app_name="hivemind-discord-summary", api_endpoint=otel_endpoint)
+    if otel_endpoint:
+        logging.info(f"Initializing Traceloop with endpoint: {otel_endpoint}")
+        Traceloop.init(app_name="hivemind-discord-summary", api_endpoint=otel_endpoint)
 
-    chunk_size, _ = load_model_hyperparams()
     guild_id = find_guild_id_by_platform_id(platform_id)
     logging.info(f"COMMUNITYID: {community_id}, GUILDID: {guild_id}")
-    table_name = "discord_summary"
-    dbname = f"community_{community_id}"
-
-    latest_date_query = f"""
-            SELECT (metadata_->> 'date')::timestamp
-            AS latest_date
-            FROM data_{table_name}
-            WHERE  (metadata_ ->> 'channel' IS NULL AND metadata_ ->> 'thread' IS NULL)
-            ORDER BY (metadata_->>'date')::timestamp DESC
-            LIMIT 1;
-    """
-    from_date = setup_db(
-        community_id=community_id, dbname=dbname, latest_date_query=latest_date_query
+    
+    collection_name = f"{platform_id}_summary"
+    
+    # Set up ingestion pipeline
+    ingestion_pipeline = CustomIngestionPipeline(
+        community_id=community_id, collection_name=collection_name
     )
-    if from_date is not None:
-        # deleting any in-complete saved summaries (meaning for threads or channels)
-        deletion_query = f"""
-            DELETE FROM data_{table_name}
-            WHERE (metadata_ ->> 'date')::timestamp > '{from_date.strftime("%Y-%m-%d")}';
-        """
-        from_date += timedelta(days=1)
-    else:
-        deletion_query = ""
 
-    # if no data was saved, start pre-processing from the given date on modules document
-    if from_date is None:
+    # Get latest date from Qdrant for daily summaries only
+    # We filter for daily summaries by checking the type field
+    latest_date = ingestion_pipeline.get_latest_document_date(
+        field_name="date",
+        field_schema=models.PayloadSchemaType.DATETIME,
+    )
+
+    if latest_date is not None:
+        # Start from 1 day before so to catch all the last day data
+        from_date = latest_date - timedelta(days=1)
+        logging.info(f"Started extracting summaries from date: {from_date}!")
+    else:
+        # if no data was saved, start pre-processing from the given date on modules document
         from_date = default_from_date
+        logging.info("Started extracting summaries from scratch!")
 
     discord_summary = DiscordSummary(
-        response_synthesizer=get_response_synthesizer(response_mode="tree_summarize"),
+        response_synthesizer=get_response_synthesizer(response_mode="tree_summarize"),  # type: ignore
         verbose=verbose,
     )
 
@@ -107,20 +99,13 @@ def process_discord_summaries(
         level2_docs=channel_summary_documenets,
         daily_docs=daily_summary_documenets,
     )
+    
+    logging.info(f"Processed {len(docs_daily_sorted)} summary documents!")
 
-    node_parser = configure_node_parser(chunk_size=chunk_size)
-    pg_vector = PGVectorAccess(table_name=table_name, dbname=dbname)
-
-    Settings.node_parser = node_parser
-    Settings.embed_model = CohereEmbedding()
-    Settings.chunk_size = chunk_size
-    Settings.llm = OpenAI(model="gpt-3.5-turbo")
-
-    pg_vector.save_documents_in_batches(
-        community_id=community_id,
-        documents=docs_daily_sorted,
-        batch_size=100,
-        max_request_per_minute=None,
-        request_per_minute=10000,
-        deletion_query=deletion_query,
-    )
+    # Process and load data into Qdrant
+    # do a batch of 50
+    for i in range(0, len(docs_daily_sorted), 50):
+        batch = docs_daily_sorted[i:i+50]
+        logging.info(f"Processing batch {i//50}/{len(docs_daily_sorted)//50}")
+        ingestion_pipeline.run_pipeline(docs=batch)
+    logging.info("Finished loading summaries into Qdrant database!")

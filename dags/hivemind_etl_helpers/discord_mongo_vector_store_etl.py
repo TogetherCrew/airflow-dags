@@ -7,13 +7,8 @@ from hivemind_etl_helpers.src.db.discord.discord_raw_message_to_document import 
 from hivemind_etl_helpers.src.db.discord.find_guild_id import (
     find_guild_id_by_platform_id,
 )
-from hivemind_etl_helpers.src.document_node_parser import configure_node_parser
-from llama_index.core import Settings
-from llama_index.llms.openai import OpenAI
-from tc_hivemind_backend.db.pg_db_utils import setup_db
-from tc_hivemind_backend.db.utils.model_hyperparams import load_model_hyperparams
-from tc_hivemind_backend.embeddings.cohere import CohereEmbedding
-from tc_hivemind_backend.pg_vector_access import PGVectorAccess
+from qdrant_client.http import models
+from tc_hivemind_backend.ingest_qdrant import CustomIngestionPipeline
 
 
 def process_discord_guild_mongo(
@@ -24,7 +19,7 @@ def process_discord_guild_mongo(
 ) -> None:
     """
     process the discord guild messages from mongodb
-    and save the processed data within postgres
+    and save the processed data within qdrant
 
     Parameters
     -----------
@@ -37,52 +32,47 @@ def process_discord_guild_mongo(
     default_from_date : datetime
         the default from_date set in db
     """
-    chunk_size, _ = load_model_hyperparams()
     guild_id = find_guild_id_by_platform_id(platform_id)
     logging.info(f"COMMUNITYID: {community_id}, GUILDID: {guild_id}")
-    table_name = "discord"
-    dbname = f"community_{community_id}"
-
-    latest_date_query = f"""
-            SELECT (metadata_->> 'date')::timestamp
-            AS latest_date
-            FROM data_{table_name}
-            ORDER BY (metadata_->>'date')::timestamp DESC
-            LIMIT 1;
-    """
-    from_date = setup_db(
-        community_id=community_id, dbname=dbname, latest_date_query=latest_date_query
+    
+    collection_name = platform_id
+    
+    # Set up ingestion pipeline
+    ingestion_pipeline = CustomIngestionPipeline(
+        community_id=community_id, collection_name=collection_name
     )
 
-    # because postgresql does not support miliseconds
+    # Get latest date from Qdrant
+    latest_date = ingestion_pipeline.get_latest_document_date(
+        field_name="date",
+        field_schema=models.PayloadSchemaType.DATETIME,
+    )
+
+    # because qdrant might have precision differences 
     # we might get duplicate messages
     # so adding just a second after
-    if from_date is not None:
-        from_date += timedelta(seconds=1)
-
-    # if no data was processed
-    # start from the time set in database
-    if from_date is None:
+    if latest_date is not None:
+        from_date = latest_date + timedelta(seconds=1)
+        logging.info(f"Started extracting from date: {from_date}!")
+    else:
+        # if no data was processed
+        # start from the time set in database
         from_date = default_from_date
+        logging.info("Started extracting data from scratch!")
 
     documents = discord_raw_to_documents(
         guild_id=guild_id,
         from_date=from_date,
         selected_channels=selected_channels,
     )
-    node_parser = configure_node_parser(chunk_size=chunk_size)
-    pg_vector = PGVectorAccess(table_name=table_name, dbname=dbname)
+    
+    logging.info(f"Extracted {len(documents)} messages!")
 
-    Settings.node_parser = node_parser
-    Settings.embed_model = CohereEmbedding()
-    Settings.chunk_size = chunk_size
-    Settings.llm = OpenAI(model="gpt-3.5-turbo")
+    # Process and load data into Qdrant
+    # do a batch of 50
+    for i in range(0, len(documents), 50):
+        batch = documents[i:i+50]
+        logging.info(f"Processing batch {i//50}/{len(documents)//50}")
+        ingestion_pipeline.run_pipeline(docs=batch)
 
-    pg_vector.save_documents_in_batches(
-        community_id=community_id,
-        documents=documents,
-        batch_size=100,
-        node_parser=node_parser,
-        max_request_per_minute=None,
-        request_per_minute=10000,
-    )
+    logging.info("Finished loading into Qdrant database!")
