@@ -6,7 +6,7 @@ from hivemind_etl_helpers.src.db.discord.summary.prepare_grouped_data import (
     prepare_grouped_data,
 )
 from tc_hivemind_backend.db.mongo import MongoSingleton
-
+from dateutil.parser import parse
 
 class TestDiscordGroupedDataPreparation(TestCase):
     def setup_db(
@@ -219,9 +219,9 @@ class TestDiscordGroupedDataPreparation(TestCase):
             guild_id=guild_id, selected_channels=channels, from_date=from_date
         )
 
-        self.assertEqual(set(data.keys()), set(["2023-10-01", "2023-10-02"]))
+        self.assertEqual(set(data.keys()), set([parse("2023-10-01").timestamp(), parse("2023-10-02").timestamp()]))
         for date in data.keys():
-            if date == "2023-10-01":
+            if date == parse("2023-10-01").timestamp():
                 for channel in data[date].keys():
                     if channel == "reading":
                         self.assertEqual(len(data[date][channel].keys()), 1)
@@ -249,7 +249,7 @@ class TestDiscordGroupedDataPreparation(TestCase):
                         )
                         # 1 message were there
                         self.assertEqual(len(data[date][channel]["Something"]), 1)
-            elif date == "2023-10-02":
+            elif date == parse("2023-10-02").timestamp():
                 for channel in data[date].keys():
                     if channel == "reading":
                         self.assertEqual(len(data[date][channel].keys()), 1)
