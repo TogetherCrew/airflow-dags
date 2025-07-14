@@ -23,7 +23,7 @@ class DiscordSummaryTransformer(SummaryTransformer):
         self,
         thread_name: str,
         thread_summary: str,
-        summary_date: str,
+        summary_date: float,
         thread_channel: str,
     ) -> Document:
         """
@@ -35,7 +35,7 @@ class DiscordSummaryTransformer(SummaryTransformer):
             the related dicord thread name
         thread_summary : str
             the related summary for the thread
-        summary_date : str
+        summary_date : float
             the date for the summary
         thread_channel : str
             the channel related to the thread
@@ -62,7 +62,7 @@ class DiscordSummaryTransformer(SummaryTransformer):
         self,
         channel_name: str,
         channel_summary: str,
-        summary_date: str,
+        summary_date: float,
     ) -> Document:
         """
         prepare the channel summary document
@@ -73,7 +73,7 @@ class DiscordSummaryTransformer(SummaryTransformer):
             the related dicord thread name
         channel_summary : str
             the related summary for the thread
-        summary_date : str
+        summary_date : float
             the date for the summary
 
         Returns
@@ -92,16 +92,16 @@ class DiscordSummaryTransformer(SummaryTransformer):
 
     def transform_daily_summary_to_document(
         self,
-        daily_summary: dict[str, str],
+        daily_summary: dict[float, str],
     ) -> list[Document]:
         """
         prepare the daily summary document
 
         Parameters
         -----------
-        daily_summary : dict[str, str]
+        daily_summary : dict[float, str]
             the summary of each date
-            they keys are the date in format `%Y-%m-%d`
+            they keys are the date in format `float` (timestamp)
 
         Returns
         ---------
