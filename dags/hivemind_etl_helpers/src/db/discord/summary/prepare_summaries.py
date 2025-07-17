@@ -30,9 +30,9 @@ class PrepareSummaries(SummaryBase):
     def prepare_thread_summaries(
         self,
         guild_id: str,
-        raw_data_grouped: dict[str, dict[str, dict[str | None, list]]],
+        raw_data_grouped: dict[float, dict[str, dict[str | None, list]]],
         summarization_query: str,
-    ) -> dict[str, dict[str, dict[str | None, str]]]:
+    ) -> dict[float, dict[str, dict[str | None, str]]]:
         """
         prepare the summaries for threads
 
@@ -40,14 +40,14 @@ class PrepareSummaries(SummaryBase):
         -----------
         guild_id : str
             the guild id to convert the raw messages to documents
-        raw_data_grouped : dict[str, dict[str, dict[str | None, list]]]
+        raw_data_grouped : dict[float, dict[str, dict[str | None, list]]]
             the raw data grouped by date, channel and thread in third nesting level
         summarization_query : str
             the summarization query to do on the LLM
 
         Returns
         --------
-        thread_summaries : dict[str, dict[str, dict[str | None, str]]]
+        thread_summaries : dict[float, dict[str, dict[str | None, str]]]
             the summaries per date, channel, and thread
             the third level are the summaries saved
         """
@@ -84,22 +84,22 @@ class PrepareSummaries(SummaryBase):
 
     def prepare_channel_summaries(
         self,
-        thread_summaries: dict[str, dict[str, dict[str | None, str]]],
+        thread_summaries: dict[float, dict[str, dict[str | None, str]]],
         summarization_query: str,
-    ) -> tuple[dict[str, dict[str, str]], list[Document]]:
+    ) -> tuple[dict[float, dict[str, str]], list[Document]]:
         """
         prepare the daily channel summaries based on the thread summaries
 
         Parameters
         -----------
-        thread_summaries : dict[str, dict[str, dict[str | None, str]]]
+        thread_summaries : dict[float, dict[str, dict[str | None, str]]]
             the thread summaries per day and per channel
         summarization_query : str
             the summarization query to do on the LLM
 
         Returns
         ---------
-        channel_summaries : dict[str, dict[str, str]]
+        channel_summaries : dict[float, dict[str, str]]
             the summaries per day for different channel
         thread_summary_documenets : list[llama_index.Document]
             a list of documents related to channel summaries
@@ -162,7 +162,7 @@ class PrepareSummaries(SummaryBase):
 
     def prepare_daily_summaries(
         self,
-        channel_summaries: dict[str, dict[str, str]],
+        channel_summaries: dict[float, dict[str, str]],
         summarization_query: str,
     ) -> tuple[dict[str, str], list[Document]]:
         """
@@ -170,21 +170,21 @@ class PrepareSummaries(SummaryBase):
 
         Parameters
         -----------
-        channel_summaries : dict[str, dict[str, str]]
+        channel_summaries : dict[float, dict[str, str]]
             the thread summaries per day, per channel
         summarization_query : str
             the summarization query to do on the LLM
 
         Returns
         ---------
-        daily_summaries : dict[str, str]
+        daily_summaries : dict[float, str]
             the summaries per day for different channel
         channel_summary_documenets : list[llama_index.Document]
             a list of documents related to the summaries of the channel
         """
         logging.info(f"{self.prefix}Preparing the daily summaries")
         channel_summary_documenets: list[Document] = []
-        daily_summaries: dict[str, str] = {}
+        daily_summaries: dict[float, str] = {}
 
         total_call_count = len(channel_summaries.keys())
 

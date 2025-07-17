@@ -181,3 +181,4 @@ main.ipynb
 main.py
 dags/sample_test_etl.py
 .vscode
+.venv/*

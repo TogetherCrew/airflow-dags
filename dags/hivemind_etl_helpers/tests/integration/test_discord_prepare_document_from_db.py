@@ -293,7 +293,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
 
         expected_metadata_0 = {
             "channel": "channel1",
-            "date": datetime(2023, 5, 1).strftime("%Y-%m-%d %H:%M:%S"),
+            "date": datetime(2023, 5, 1).timestamp(),
             "author_username": "user1",
             "author_global_name": "user1_GlobalName",
             "thread": None,
@@ -302,7 +302,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
 
         expected_metadata_1 = {
             "channel": "channel2",
-            "date": datetime(2023, 5, 2).strftime("%Y-%m-%d %H:%M:%S"),
+            "date": datetime(2023, 5, 2).timestamp(),
             "author_username": "user2",
             "author_global_name": "user2_GlobalName",
             "mention_usernames": ["user3", "user4"],
@@ -316,7 +316,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
 
         expected_metadata_2 = {
             "channel": "channel2",
-            "date": datetime(2023, 5, 2).strftime("%Y-%m-%d %H:%M:%S"),
+            "date": datetime(2023, 5, 2).timestamp(),
             "author_username": "user2",
             "author_global_name": "user2_GlobalName",
             "mention_usernames": ["user3", "user4"],
@@ -331,7 +331,7 @@ class TestTransformRawMsgToDocument(unittest.TestCase):
 
         expected_metadata_3 = {
             "channel": "channel1",
-            "date": datetime(2023, 5, 8).strftime("%Y-%m-%d %H:%M:%S"),
+            "date": datetime(2023, 5, 8).timestamp(),
             "author_username": "user1",
             "author_global_name": "user1_GlobalName",
             "thread": None,

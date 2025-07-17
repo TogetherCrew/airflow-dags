@@ -180,7 +180,7 @@ def prepare_document(
     name_fetcher = FetchDiscordChannelThreadNames(guild_id)
     msg_meta_data = {
         "channel": name_fetcher.fetch_discord_channel_name(channel_id),
-        "date": message["createdDate"].strftime(DATE_FORMAT),
+        "date": message["createdDate"].timestamp(),
         "author_username": author_name[0],
         "url": url,
         # always including the thread_name, if `None`, then it was a channel message
