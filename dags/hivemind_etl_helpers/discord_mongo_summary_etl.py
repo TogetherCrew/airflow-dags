@@ -62,7 +62,7 @@ def process_discord_summaries(
     # We filter for daily summaries by checking the type field
     latest_date = ingestion_pipeline.get_latest_document_date(
         field_name="date",
-        field_schema=models.PayloadSchemaType.DATETIME,
+        field_schema=models.PayloadSchemaType.FLOAT,
     )
 
     if latest_date is not None:
