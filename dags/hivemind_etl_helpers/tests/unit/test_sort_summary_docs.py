@@ -16,36 +16,36 @@ class TestSortSummariesDaily(unittest.TestCase):
         doc_daily = [
             Document(
                 text="Document 1",
-                metadata={"date": "2023-01-10", "channel": None, "thread": None},
+                metadata={"date": 1673296200.0, "channel": None, "thread": None},
             ),
             Document(
                 text="Document 2",
-                metadata={"date": "2023-01-05", "channel": None, "thread": None},
+                metadata={"date": 1672864200.0, "channel": None, "thread": None},
             ),
             Document(
                 text="Document 3",
-                metadata={"date": "2023-01-15", "channel": None, "thread": None},
+                metadata={"date": 1673728200.0, "channel": None, "thread": None},
             ),
         ]
         doc_channel = [
             Document(
                 text="Document 4",
-                metadata={"date": "2023-01-10", "channel": "channel#1", "thread": None},
+                metadata={"date": 1673296200.0, "channel": "channel#1", "thread": None},
             ),
             Document(
                 text="Document 5",
-                metadata={"date": "2023-01-05", "channel": "channel#2", "thread": None},
+                metadata={"date": 1672864200.0, "channel": "channel#2", "thread": None},
             ),
             Document(
                 text="Document 6",
-                metadata={"date": "2023-01-15", "channel": "channel#3", "thread": None},
+                metadata={"date": 1673728200.0, "channel": "channel#3", "thread": None},
             ),
         ]
         doc_thread = [
             Document(
                 text="Document 7",
                 metadata={
-                    "date": "2023-01-10",
+                    "date": 1673296200.0,
                     "channel": "channel#1",
                     "thread": "thread#1",
                 },
@@ -53,7 +53,7 @@ class TestSortSummariesDaily(unittest.TestCase):
             Document(
                 text="Document 8",
                 metadata={
-                    "date": "2023-01-05",
+                    "date": 1672864200.0,
                     "channel": "channel#2",
                     "thread": "thread#2",
                 },
@@ -61,7 +61,7 @@ class TestSortSummariesDaily(unittest.TestCase):
             Document(
                 text="Document 9",
                 metadata={
-                    "date": "2023-01-15",
+                    "date": 1673728200.0,
                     "channel": "channel#3",
                     "thread": "thread#3",
                 },
@@ -95,44 +95,44 @@ class TestSortSummariesDaily(unittest.TestCase):
         doc_daily = [
             Document(
                 text="Document 1",
-                metadata={"date": "2023-01-10", "channel": None, "thread": None},
+                metadata={"date": 1673296200.0, "channel": None, "thread": None},
             ),
             Document(
                 text="Document 2",
-                metadata={"date": "2023-01-05", "channel": None, "thread": None},
+                metadata={"date": 1672864200.0, "channel": None, "thread": None},
             ),
             Document(
                 text="Document 3",
-                metadata={"date": "2023-01-05", "channel": None, "thread": None},
+                metadata={"date": 1672864200.0, "channel": None, "thread": None},
             ),
             Document(
                 text="Document 4",
-                metadata={"date": "2023-01-15", "channel": None, "thread": None},
+                metadata={"date": 1673728200.0, "channel": None, "thread": None},
             ),
         ]
         doc_channel = [
             Document(
                 text="Document 5",
-                metadata={"date": "2023-01-10", "channel": "channel#1", "thread": None},
+                metadata={"date": 1673296200.0, "channel": "channel#1", "thread": None},
             ),
             Document(
                 text="Document 6",
-                metadata={"date": "2023-01-05", "channel": "channel#2", "thread": None},
+                metadata={"date": 1672864200.0, "channel": "channel#2", "thread": None},
             ),
             Document(
                 text="Document 7",
-                metadata={"date": "2023-01-15", "channel": "channel#3", "thread": None},
+                metadata={"date": 1673728200.0, "channel": "channel#3", "thread": None},
             ),
             Document(
                 text="Document 8",
-                metadata={"date": "2023-01-15", "channel": "channel#3", "thread": None},
+                metadata={"date": 1673728200.0, "channel": "channel#3", "thread": None},
             ),
         ]
         doc_thread = [
             Document(
                 text="Document 9",
                 metadata={
-                    "date": "2023-01-10",
+                    "date": 1673296200.0,
                     "channel": "channel#1",
                     "thread": "thread#1",
                 },
@@ -140,7 +140,7 @@ class TestSortSummariesDaily(unittest.TestCase):
             Document(
                 text="Document 10",
                 metadata={
-                    "date": "2023-01-05",
+                    "date": 1672864200.0,
                     "channel": "channel#2",
                     "thread": "thread#2",
                 },
@@ -148,7 +148,7 @@ class TestSortSummariesDaily(unittest.TestCase):
             Document(
                 text="Document 11",
                 metadata={
-                    "date": "2023-01-15",
+                    "date": 1673728200.0,
                     "channel": "channel#3",
                     "thread": "thread#3",
                 },
@@ -156,7 +156,7 @@ class TestSortSummariesDaily(unittest.TestCase):
             Document(
                 text="Document 12",
                 metadata={
-                    "date": "2023-01-15",
+                    "date": 1673728200.0,
                     "channel": "channel#3",
                     "thread": "thread#3",
                 },
@@ -168,16 +168,16 @@ class TestSortSummariesDaily(unittest.TestCase):
 
         # Expected order after sorting
         expected_order = [
-            # 2023-01-05
+            # 1672864200.0 (2023-01-05)
             doc_thread[1],
             doc_channel[1],
             doc_daily[1],
             doc_daily[2],
-            # 2023-01-10
+            # 1673296200.0 (2023-01-10)
             doc_thread[0],
             doc_channel[0],
             doc_daily[0],
-            # 2023-01-15
+            # 1673728200.0 (2023-01-15)
             doc_thread[2],
             doc_thread[3],
             doc_channel[2],
@@ -192,15 +192,15 @@ class TestSortSummariesDaily(unittest.TestCase):
         # Create sample documents with different dates
         doc1 = Document(
             text="Document 1",
-            metadata={"date": "2023-01-10", "channel": None, "thread": None},
+            metadata={"date": 1673296200.0, "channel": None, "thread": None},
         )
         doc2 = Document(
             text="Document 2",
-            metadata={"date": "2023-01-05", "channel": None, "thread": None},
+            metadata={"date": 1672864200.0, "channel": None, "thread": None},
         )
         doc3 = Document(
             text="Document 3",
-            metadata={"date": "2023-01-15", "channel": None, "thread": None},
+            metadata={"date": 1673728200.0, "channel": None, "thread": None},
         )
 
         # Call the function with unsorted documents
@@ -217,44 +217,44 @@ class TestSortSummariesDaily(unittest.TestCase):
         doc_daily = [
             Document(
                 text="Document 1",
-                metadata={"date": "2023-01-10", "channel": None, "thread": None},
+                metadata={"date": 1673296200.0, "channel": None, "thread": None},
             ),
             Document(
                 text="Document 2",
-                metadata={"date": "2023-01-05", "channel": None, "thread": None},
+                metadata={"date": 1672864200.0, "channel": None, "thread": None},
             ),
             Document(
                 text="Document 3",
-                metadata={"date": "2023-01-05", "channel": None, "thread": None},
+                metadata={"date": 1672864200.0, "channel": None, "thread": None},
             ),
             Document(
                 text="Document 4",
-                metadata={"date": "2023-01-15", "channel": None, "thread": None},
+                metadata={"date": 1673728200.0, "channel": None, "thread": None},
             ),
         ]
         doc_channel = [
             Document(
                 text="Document 5",
-                metadata={"date": "2023-01-10", "channel": "channel#1", "thread": None},
+                metadata={"date": 1673296200.0, "channel": "channel#1", "thread": None},
             ),
             Document(
                 text="Document 6",
-                metadata={"date": "2023-01-05", "channel": "channel#2", "thread": None},
+                metadata={"date": 1672864200.0, "channel": "channel#2", "thread": None},
             ),
             Document(
                 text="Document 7",
-                metadata={"date": "2023-01-15", "channel": "channel#3", "thread": None},
+                metadata={"date": 1673728200.0, "channel": "channel#3", "thread": None},
             ),
             Document(
                 text="Document 8",
-                metadata={"date": "2023-01-15", "channel": "channel#3", "thread": None},
+                metadata={"date": 1673728200.0, "channel": "channel#3", "thread": None},
             ),
         ]
         doc_thread = [
             Document(
                 text="Document 9",
                 metadata={
-                    "date": "2023-01-10",
+                    "date": 1673296200.0,
                     "channel": "channel#1",
                     "thread": "thread#1",
                 },
@@ -262,7 +262,7 @@ class TestSortSummariesDaily(unittest.TestCase):
             Document(
                 text="Document 10",
                 metadata={
-                    "date": "2023-01-05",
+                    "date": 1672864200.0,
                     "channel": "channel#2",
                     "thread": "thread#2",
                 },
@@ -270,7 +270,7 @@ class TestSortSummariesDaily(unittest.TestCase):
             Document(
                 text="Document 11",
                 metadata={
-                    "date": "2023-01-15",
+                    "date": 1673728200.0,
                     "channel": "channel#3",
                     "thread": "thread#3",
                 },
@@ -278,7 +278,7 @@ class TestSortSummariesDaily(unittest.TestCase):
             Document(
                 text="Document 12",
                 metadata={
-                    "date": "2023-01-15",
+                    "date": 1673728200.0,
                     "channel": "channel#3",
                     "thread": "thread#3",
                 },

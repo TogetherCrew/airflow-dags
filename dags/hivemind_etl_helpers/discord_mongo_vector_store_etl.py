@@ -45,7 +45,7 @@ def process_discord_guild_mongo(
     # Get latest date from Qdrant
     latest_date = ingestion_pipeline.get_latest_document_date(
         field_name="date",
-        field_schema=models.PayloadSchemaType.DATETIME,
+        field_schema=models.PayloadSchemaType.FLOAT,
     )
 
     # because qdrant might have precision differences 
