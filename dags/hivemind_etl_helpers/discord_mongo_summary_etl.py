@@ -7,7 +7,6 @@ from hivemind_etl_helpers.src.db.discord.discord_summary import DiscordSummary
 from hivemind_etl_helpers.src.db.discord.find_guild_id import (
     find_guild_id_by_platform_id,
 )
-from hivemind_etl_helpers.src.utils.sort_summary_docs import sort_summaries_daily
 from llama_index.core.response_synthesizers import get_response_synthesizer
 from qdrant_client.http import models
 from tc_hivemind_backend.ingest_qdrant import CustomIngestionPipeline
@@ -79,33 +78,22 @@ def process_discord_summaries(
         verbose=verbose,
     )
 
-    (
-        thread_summaries_documents,
-        channel_summary_documenets,
-        daily_summary_documenets,
-    ) = discord_summary.prepare_summaries(
+    logging.info("Preparing summaries and streaming batches into Qdrant!")
+
+    batch_index = 0
+    for batch in discord_summary.stream_summary_documents(
         guild_id=guild_id,
         selected_channels=selected_channels,
         from_date=from_date,
         summarization_prefix="Please make a concise summary based only on the provided text from this",
-    )
-
-    logging.info("Getting the summaries embedding and saving within database!")
-
-    # sorting the summaries per date
-    # this is to assure in case of server break, we could continue from the previous date
-    docs_daily_sorted = sort_summaries_daily(
-        level1_docs=thread_summaries_documents,
-        level2_docs=channel_summary_documenets,
-        daily_docs=daily_summary_documenets,
-    )
-    
-    logging.info(f"Processed {len(docs_daily_sorted)} summary documents!")
-
-    # Process and load data into Qdrant
-    # do a batch of 50
-    for i in range(0, len(docs_daily_sorted), 50):
-        batch = docs_daily_sorted[i:i+50]
-        logging.info(f"Processing batch {i//50}/{len(docs_daily_sorted)//50}")
+        batch_size=50,
+    ):
+        logging.info(
+            f"Processing streamed batch {batch_index} | size={len(batch)}"
+        )
+        # Ensure final sort in case upstream changed batch boundaries
+        batch.sort(key=lambda d: d.metadata.get("date", 0.0))
         ingestion_pipeline.run_pipeline(docs=batch)
-    logging.info("Finished loading summaries into Qdrant database!")
+        batch_index += 1
+
+    logging.info("Finished streaming summaries into Qdrant database!")
