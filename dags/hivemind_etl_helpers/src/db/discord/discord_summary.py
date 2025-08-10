@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime
+from typing import Iterator
 
 from hivemind_etl_helpers.src.db.discord.summary.prepare_grouped_data import (
     prepare_grouped_data,
@@ -132,7 +133,7 @@ class DiscordSummary(PrepareSummaries):
         summarization_prefix: str,
         from_date: datetime,
         batch_size: int = 50,
-    ):
+    ) -> Iterator[list[Document]]:
         """
         Stream summary documents in sorted batches while preparing them.
 
