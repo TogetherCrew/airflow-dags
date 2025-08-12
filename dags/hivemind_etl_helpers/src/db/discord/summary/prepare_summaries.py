@@ -20,6 +20,7 @@ class PrepareSummaries(SummaryBase):
     ) -> None:
         self.discord_summary_transformer = DiscordSummaryTransformer()
         llm = kwargs.get("llm", Settings.llm)
+        logging.info(f"Using LLM for summaries: {llm.model}")
 
         super().__init__(
             llm=llm, response_synthesizer=response_synthesizer, verbose=verbose
