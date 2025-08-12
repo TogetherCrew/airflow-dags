@@ -21,6 +21,7 @@ from hivemind_etl_helpers.src.db.github.transform import GitHubTransformation
 from hivemind_etl_helpers.src.document_node_parser import configure_node_parser
 from llama_index.core import Document, Settings
 from llama_index.core.response_synthesizers import get_response_synthesizer
+from llama_index.llms.openai import OpenAI
 from tc_hivemind_backend.db.utils.model_hyperparams import load_model_hyperparams
 from tc_hivemind_backend.embeddings.cohere import CohereEmbedding
 from tc_hivemind_backend.ingest_qdrant import CustomIngestionPipeline
@@ -53,6 +54,8 @@ def process_github_summary_vectorstore(
     )
     date = ingestion_pipeline.get_latest_document_date(field_name="date")
     logging.info(f"Latest Document date available: {date}")
+
+    Settings.llm = OpenAI(model="gpt-4o-mini-2024-07-18")
 
     logging.info(f"{prefix}Processing data!")
 

@@ -9,6 +9,8 @@ from hivemind_etl_helpers.discord_mongo_vector_store_etl import (
     process_discord_guild_mongo,
 )
 from hivemind_etl_helpers.src.utils.modules import ModulesDiscord
+from llama_index.core import Settings
+from llama_index.llms.openai import OpenAI
 
 with DAG(
     dag_id="discord_vector_store_update",
@@ -34,6 +36,8 @@ with DAG(
         platform_id = community_info["platform_id"]
         selected_channels = community_info["selected_channels"]
         from_date = community_info["from_date"]
+
+        Settings.llm = OpenAI(model="gpt-4o-mini-2024-07-18")
 
         logging.info(
             f"Processing community_id: {community_id} | platform_id: {platform_id}"

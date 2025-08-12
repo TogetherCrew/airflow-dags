@@ -7,9 +7,8 @@ from hivemind_etl_helpers.src.db.discord.utils.transform_discord_raw_messges imp
     transform_discord_raw_messages,
 )
 from hivemind_etl_helpers.src.utils.summary.summary_base import SummaryBase
-from llama_index.core import Document
+from llama_index.core import Document, Settings
 from llama_index.core.response_synthesizers.base import BaseSynthesizer
-from llama_index.llms.openai import OpenAI
 
 
 class PrepareSummaries(SummaryBase):
@@ -20,7 +19,7 @@ class PrepareSummaries(SummaryBase):
         **kwargs,
     ) -> None:
         self.discord_summary_transformer = DiscordSummaryTransformer()
-        llm = kwargs.get("llm", OpenAI(model="gpt-4o-mini-2024-07-18"))
+        llm = kwargs.get("llm", Settings.llm)
 
         super().__init__(
             llm=llm, response_synthesizer=response_synthesizer, verbose=verbose
