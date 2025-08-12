@@ -3,8 +3,8 @@ from datetime import date, timedelta
 from hivemind_etl_helpers.src.db.telegram.schema import TelegramMessagesModel
 from hivemind_etl_helpers.src.db.telegram.transform import TransformMessages
 from hivemind_etl_helpers.src.utils.summary.summary_base import SummaryBase
-from llama_index.core import Settings
 from llama_index.core.response_synthesizers.base import BaseSynthesizer
+from llama_index.llms.openai import OpenAI
 
 
 class SummarizeMessages(SummaryBase):
@@ -16,7 +16,7 @@ class SummarizeMessages(SummaryBase):
         verbose: bool = False,
         **kwargs,
     ) -> None:
-        llm = kwargs.get("llm", Settings.llm)
+        llm = kwargs.get("llm", OpenAI(model="gpt-4o-mini-2024-07-18"))
         super().__init__(llm, response_synthesizer, verbose)
 
         self.message_transformer = TransformMessages(
