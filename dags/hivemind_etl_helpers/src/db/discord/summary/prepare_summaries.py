@@ -1,5 +1,6 @@
 import logging
 
+from llama_index.core.llms import MockLLM
 from hivemind_etl_helpers.src.db.discord.summary.summary_utils import (
     DiscordSummaryTransformer,
 )
@@ -20,6 +21,10 @@ class PrepareSummaries(SummaryBase):
     ) -> None:
         self.discord_summary_transformer = DiscordSummaryTransformer()
         llm = kwargs.get("llm", Settings.llm)
+        if not isinstance(llm, MockLLM):
+            logging.info(f"Using LLM for summaries: {llm.model}")
+        else:
+            logging.info("Mock LLM is enabled! No LLM will be used for summaries!")
 
         super().__init__(
             llm=llm, response_synthesizer=response_synthesizer, verbose=verbose
