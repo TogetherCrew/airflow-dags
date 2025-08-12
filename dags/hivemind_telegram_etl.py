@@ -17,6 +17,8 @@ from hivemind_etl_helpers.src.db.telegram.transform import (
     TransformSummary,
 )
 from hivemind_etl_helpers.src.db.telegram.utils import TelegramModules, TelegramPlatform
+from llama_index.core import Settings
+from llama_index.llms.openai import OpenAI
 from qdrant_client.http import models
 from tc_hivemind_backend.ingest_qdrant import CustomIngestionPipeline
 
@@ -86,6 +88,8 @@ def create_telegram_dag(dag_type: Literal["messages", "summaries"]) -> DAG:
             community_id = details["community_id"]
             platform_id = details["platform_id"]
             chat_id, chat_name = chat_info
+
+            Settings.llm = OpenAI(model="gpt-4o-mini-2024-07-18")
 
             logging.info(f"Started processing community: {community_id}")
 

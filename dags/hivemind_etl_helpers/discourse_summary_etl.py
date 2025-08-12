@@ -134,7 +134,7 @@ def process_forum(
         Settings.node_parser = node_parser
         Settings.embed_model = CohereEmbedding()
         Settings.chunk_size = chunk_size
-        Settings.llm = OpenAI(model="gpt-3.5-turbo")
+        Settings.llm = OpenAI(model="gpt-4o-mini-2024-07-18")
 
         pg_vector.save_documents_in_batches(
             community_id=community_id,
