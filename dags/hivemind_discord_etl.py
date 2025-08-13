@@ -78,13 +78,21 @@ with DAG(
 ) as dag:
 
     @task
-    def get_mongo_discord_communities() -> list[dict[str, str | datetime | list]]:
+    def get_mongo_discord_communities(**kwargs) -> list[dict[str, str | datetime | list]]:
         """
         Getting all communities having discord from database
         this function is the same with `get_discord_communities`
         we just changed the name for the pylint
         """
+        from_start = kwargs["dag_run"].conf.get("from_start", False)
+        logging.info(f"From start: {from_start}")
+
         communities = ModulesDiscord().get_learning_platforms()
+
+        if from_start:
+            for community in communities:
+                community["from_start"] = from_start
+
         return communities
 
     @task
