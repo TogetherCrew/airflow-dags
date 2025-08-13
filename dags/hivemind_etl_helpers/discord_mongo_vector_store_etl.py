@@ -16,6 +16,7 @@ def process_discord_guild_mongo(
     platform_id: str,
     selected_channels: list[str],
     default_from_date: datetime,
+    from_start: bool = False,
 ) -> None:
     """
     process the discord guild messages from mongodb
@@ -31,9 +32,14 @@ def process_discord_guild_mongo(
         a list of channels to start processing the data
     default_from_date : datetime
         the default from_date set in db
+    from_date : bool
+        whether to start from the beginning of the data or not
+        default is `False`
     """
     guild_id = find_guild_id_by_platform_id(platform_id)
-    logging.info(f"COMMUNITYID: {community_id}, GUILDID: {guild_id}")
+    logging.info(
+        f"COMMUNITYID: {community_id}, GUILDID: {guild_id} | from_start: {from_start}"
+    )
     
     collection_name = platform_id
     
@@ -51,7 +57,7 @@ def process_discord_guild_mongo(
     # because qdrant might have precision differences 
     # we might get duplicate messages
     # so adding just a second after
-    if latest_date is not None:
+    if latest_date is not None and not from_start:
         from_date = latest_date + timedelta(seconds=1)
         logging.info(f"Started extracting from date: {from_date}!")
     else:

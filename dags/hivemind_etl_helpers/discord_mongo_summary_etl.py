@@ -18,6 +18,7 @@ def process_discord_summaries(
     platform_id: str,
     selected_channels: list[str],
     default_from_date: datetime,
+    from_start: bool = False,
     verbose: bool = False,
 ) -> None:
     """
@@ -36,6 +37,9 @@ def process_discord_summaries(
         a list of channels to start processing the data
     default_from_date : datetime
         the default from_date set in db
+    from_start : bool
+        whether to start from the beginning of the data or not
+        default is `False`
     verbose : bool
         verbose the process of summarization or not
         if `True` the summarization process will be printed out
@@ -48,7 +52,7 @@ def process_discord_summaries(
         Traceloop.init(app_name="hivemind-discord-summary", api_endpoint=otel_endpoint)
 
     guild_id = find_guild_id_by_platform_id(platform_id)
-    logging.info(f"COMMUNITYID: {community_id}, GUILDID: {guild_id}")
+    logging.info(f"COMMUNITYID: {community_id}, GUILDID: {guild_id} | from_start: {from_start}")
     
     collection_name = f"{platform_id}_summary"
     
@@ -64,7 +68,7 @@ def process_discord_summaries(
         field_schema=models.PayloadSchemaType.FLOAT,
     )
 
-    if latest_date is not None:
+    if latest_date is not None and not from_start:
         # Start from 1 day before so to catch all the last day data
         from_date = latest_date - timedelta(days=1)
         logging.info(f"Started extracting summaries from date: {from_date}!")
