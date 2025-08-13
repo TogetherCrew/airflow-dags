@@ -50,17 +50,22 @@ def create_telegram_dag(dag_type: Literal["messages", "summaries"]) -> DAG:
     with DAG(dag_id=dag_id, **default_args) as dag:
 
         @task
-        def fetch_chat_ids() -> list[tuple[int, str]]:
+        def fetch_chat_ids(**kwargs) -> list[tuple[int, str, bool]]:
             """Get all Telegram chats from the database."""
             load_dotenv()
-            return TelegramChats().extract_chats()
+            from_start = kwargs["dag_run"].conf.get("from_start", False)
+            logging.info(f"From start: {from_start}")
+            
+            chat_infos = TelegramChats().extract_chats()
+            # Add from_start flag to each chat info
+            return [(chat_id, chat_name, from_start) for chat_id, chat_name in chat_infos]
 
         @task
         def chat_existence(
-            chat_info: tuple[str, str]
-        ) -> dict[str, tuple[str, str] | str]:
+            chat_info: tuple[str, str, bool]
+        ) -> dict[str, tuple[str, str] | str | bool]:
             """Check and create community & platform for Telegram if needed."""
-            chat_id, chat_name = chat_info
+            chat_id, chat_name, from_start = chat_info
 
             platform_utils = TelegramPlatform(chat_id=chat_id, chat_name=chat_name)
             community_id, platform_id = platform_utils.check_platform_existence()
@@ -73,13 +78,14 @@ def create_telegram_dag(dag_type: Literal["messages", "summaries"]) -> DAG:
             modules.create()
 
             return {
-                "chat_info": chat_info,
+                "chat_info": (chat_id, chat_name),
                 "community_id": str(community_id),
                 "platform_id": str(platform_id),
+                "from_start": from_start,
             }
 
         @task(trigger_rule=TriggerRule.NONE_SKIPPED)
-        def processor(details: dict[str, tuple[str, str] | str]) -> None:
+        def processor(details: dict[str, tuple[str, str] | str | bool]) -> None:
             """Extract, transform, and load telegram data."""
             load_dotenv()
             logging.info(f"received details: {details}!")
@@ -87,6 +93,7 @@ def create_telegram_dag(dag_type: Literal["messages", "summaries"]) -> DAG:
             chat_info = details["chat_info"]
             community_id = details["community_id"]
             platform_id = details["platform_id"]
+            from_start = details.get("from_start", False)
             chat_id, chat_name = chat_info
 
             Settings.llm = OpenAI(model="gpt-4o-mini-2024-07-18")
@@ -122,28 +129,32 @@ def create_telegram_dag(dag_type: Literal["messages", "summaries"]) -> DAG:
             )
 
             # Get latest date and handle extraction
-            latest_date = ingestion_pipeline.get_latest_document_date(
-                field_name=date_field,
-                field_schema=date_schema,
-            )
-
-            if latest_date and dag_type == "messages":
-                # For messages, look back 30 days to catch edits
-                from_date = latest_date - timedelta(days=30)
-                logging.info(f"Started extracting from date: {from_date}!")
-                messages = extractor.extract(from_date=from_date)
+            if from_start:
+                logging.info("Extracting data from scratch due to from_start=True!")
+                messages = extractor.extract()
             else:
-                if dag_type == "messages":
-                    logging.info("Started extracting data from scratch!")
-                    messages = extractor.extract()
+                latest_date = ingestion_pipeline.get_latest_document_date(
+                    field_name=date_field,
+                    field_schema=date_schema,
+                )
+
+                if latest_date and dag_type == "messages":
+                    # For messages, look back 30 days to catch edits
+                    from_date = latest_date - timedelta(days=30)
+                    logging.info(f"Started extracting from date: {from_date}!")
+                    messages = extractor.extract(from_date=from_date)
                 else:
-                    # replacing the latest date with the day before to avoid missing any data
-                    # in case real time extraction is needed
-                    latest_date_day_before = latest_date - timedelta(days=1)
-                    logging.info(
-                        f"Started extracting from date: {latest_date_day_before}!"
-                    )
-                    messages = extractor.extract(from_date=latest_date_day_before)
+                    if dag_type == "messages":
+                        logging.info("Started extracting data from scratch!")
+                        messages = extractor.extract()
+                    else:
+                        # replacing the latest date with the day before to avoid missing any data
+                        # in case real time extraction is needed
+                        latest_date_day_before = latest_date - timedelta(days=1)
+                        logging.info(
+                            f"Started extracting from date: {latest_date_day_before}!"
+                        )
+                        messages = extractor.extract(from_date=latest_date_day_before)
 
             if dag_type == "messages":
                 msg_count = len(messages)
