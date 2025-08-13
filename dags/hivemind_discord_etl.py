@@ -107,6 +107,8 @@ with DAG(
         from_date = community_info["from_date"]
         from_start = community_info.get("from_start", False)
 
+        Settings.llm = OpenAI(model="gpt-4o-mini-2024-07-18")
+
         logging.info(
             f"Working on community, {community_id}| platform_id: {platform_id}"
         )
