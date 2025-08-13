@@ -1,10 +1,12 @@
 from datetime import date, timedelta
+import logging
 
 from hivemind_etl_helpers.src.db.telegram.schema import TelegramMessagesModel
 from hivemind_etl_helpers.src.db.telegram.transform import TransformMessages
 from hivemind_etl_helpers.src.utils.summary.summary_base import SummaryBase
 from llama_index.core import Settings
 from llama_index.core.response_synthesizers.base import BaseSynthesizer
+from llama_index.core.llms import MockLLM
 
 
 class SummarizeMessages(SummaryBase):
@@ -18,6 +20,11 @@ class SummarizeMessages(SummaryBase):
     ) -> None:
         llm = kwargs.get("llm", Settings.llm)
         super().__init__(llm, response_synthesizer, verbose)
+
+        if not isinstance(llm, MockLLM):
+            logging.info(f"Using LLM for summaries: {llm.model}")
+        else:
+            logging.info("Mock LLM is enabled! No LLM will be used for summaries!")
 
         self.message_transformer = TransformMessages(
             chat_id=chat_id, chat_name=chat_name
