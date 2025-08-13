@@ -22,11 +22,19 @@ with DAG(
 ) as dag:
 
     @task
-    def get_discord_communities() -> list[dict[str, str | datetime | list]]:
+    def get_discord_communities(**kwargs) -> list[dict[str, str | datetime | list]]:
         """
         Getting all communities having discord from database
         """
+        from_start = kwargs["dag_run"].conf.get("from_start", False)
+        logging.info(f"From start: {from_start}")
+
         communities = ModulesDiscord().get_learning_platforms()
+
+        if from_start:
+            for community in communities:
+                community["from_start"] = from_start
+
         return communities
 
     @task
@@ -36,6 +44,7 @@ with DAG(
         platform_id = community_info["platform_id"]
         selected_channels = community_info["selected_channels"]
         from_date = community_info["from_date"]
+        from_start = community_info.get("from_start", False)
 
         Settings.llm = OpenAI(model="gpt-4o-mini-2024-07-18")
 
@@ -47,6 +56,7 @@ with DAG(
             platform_id=platform_id,
             selected_channels=selected_channels,
             default_from_date=from_date,
+            from_start=from_start,
         )
         logging.info(
             f"Community {community_id} Job finished | platform_id: {platform_id}"
@@ -87,6 +97,8 @@ with DAG(
         platform_id = community_info["platform_id"]
         selected_channels = community_info["selected_channels"]
         from_date = community_info["from_date"]
+        from_start = community_info.get("from_start", False)
+
         logging.info(
             f"Working on community, {community_id}| platform_id: {platform_id}"
         )
@@ -95,6 +107,7 @@ with DAG(
             platform_id=platform_id,
             selected_channels=selected_channels,
             default_from_date=from_date,
+            from_start=from_start,
             verbose=False,
         )
         logging.info(
