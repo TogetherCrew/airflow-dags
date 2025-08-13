@@ -140,7 +140,7 @@ def create_telegram_dag(dag_type: Literal["messages", "summaries"]) -> DAG:
 
                 if latest_date and dag_type == "messages":
                     # For messages, look back 30 days to catch edits
-                    from_date = latest_date - timedelta(days=30)
+                    from_date = latest_date - timedelta(days=30) if latest_date else None
                     logging.info(f"Started extracting from date: {from_date}!")
                     messages = extractor.extract(from_date=from_date)
                 else:
@@ -150,7 +150,7 @@ def create_telegram_dag(dag_type: Literal["messages", "summaries"]) -> DAG:
                     else:
                         # replacing the latest date with the day before to avoid missing any data
                         # in case real time extraction is needed
-                        latest_date_day_before = latest_date - timedelta(days=1)
+                        latest_date_day_before = latest_date - timedelta(days=1) if latest_date else None
                         logging.info(
                             f"Started extracting from date: {latest_date_day_before}!"
                         )
