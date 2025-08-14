@@ -89,7 +89,6 @@ def process_discord_summaries(
         guild_id=guild_id,
         selected_channels=selected_channels,
         from_date=from_date,
-        summarization_prefix="Please make a concise summary based only on the provided text from this",
         batch_size=50,
     ):
         logging.info(

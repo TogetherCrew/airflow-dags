@@ -16,6 +16,51 @@ from llama_index.core.response_synthesizers.base import BaseSynthesizer
 
 
 class DiscordSummary(PrepareSummaries):
+    # Shared prompt components
+    PROMPT_HEADER = "You are a social media summarizer."
+    
+    COMMON_GUIDELINES = (
+        "- Capture concrete facts (who/what/when/where), decisions, outcomes, blockers, and action items.\n"
+        "- Note counts if many users mention the same thing (e.g., \"~12 mentions\").\n"
+        "- Resolve pronouns to canonical entities when obvious.\n"
+        "- Include important dates/times and hashtags only if they add meaning.\n"
+        "- No speculation; avoid quotes unless essential."
+    )
+    
+    OUTPUT_FORMAT = (
+        "Output:\n"
+        "- 5-10 concise bullets (one line each), most important first.\n"
+        "- Each bullet starts with a bold topic tag in brackets, then the point.\n"
+        "- No preamble or conclusion."
+    )
+    
+    # Thread-specific guidelines
+    THREAD_GUIDELINES = (
+        "- Merge overlapping/duplicate posts; remove noise, greetings, emojis, and links.\n"
+        "- Group by topic; surface consensus and notable disagreements."
+    )
+    
+    # Channel-specific guidelines  
+    CHANNEL_GUIDELINES = (
+        "- Merge related thread topics; identify overarching themes and patterns.\n"
+        "- Surface key discussions, decisions, and outcomes across all threads.\n"
+        "- Note recurring topics and user participation patterns.\n"
+        "- Resolve context from thread summaries to create coherent narrative.\n"
+        "- Include important announcements, milestones, and blockers.\n"
+        "- No speculation; focus on factual content from thread summaries."
+    )
+    
+    # Daily-specific guidelines
+    DAILY_GUIDELINES = (
+        "- Merge related channel activities; identify cross-channel themes and coordination.\n"
+        "- Surface key daily highlights, major decisions, and community-wide outcomes.\n"
+        "- Capture important announcements, project milestones, and collaboration efforts.\n"
+        "- Note significant user activities and community engagement patterns.\n"
+        "- Resolve context from channel summaries to create unified daily narrative.\n"
+        "- Include critical updates, blockers, and action items that impact the community.\n"
+        "- No speculation; focus on factual content from channel summaries."
+    )
+
     def __init__(
         self,
         response_synthesizer: BaseSynthesizer | None = None,
@@ -45,12 +90,47 @@ class DiscordSummary(PrepareSummaries):
         super().__init__(
             llm=llm, response_synthesizer=response_synthesizer, verbose=verbose
         )
+    
+    def _build_thread_prompt(self) -> str:
+        """Build the thread summarization prompt using shared components."""
+        return (
+            f"{self.PROMPT_HEADER} Given the raw Discord thread messages below, "
+            f"produce a clear, de-duplicated bullet-point summary optimized for retrieval.\n\n"
+            f"Guidelines:\n"
+            f"{self.THREAD_GUIDELINES}\n"
+            f"{self.COMMON_GUIDELINES}\n\n"
+            f"{self.OUTPUT_FORMAT}\n\n"
+            f"Summarize these Discord thread messages:"
+        )
+    
+    def _build_channel_prompt(self) -> str:
+        """Build the channel summarization prompt using shared components."""
+        return (
+            f"{self.PROMPT_HEADER} Given the Discord thread summaries below from a single channel, "
+            f"produce a comprehensive channel-level summary optimized for retrieval.\n\n"
+            f"Guidelines:\n"
+            f"{self.CHANNEL_GUIDELINES}\n"
+            f"{self.COMMON_GUIDELINES}\n\n"
+            f"{self.OUTPUT_FORMAT}\n\n"
+            f"Summarize these Discord channel thread summaries:"
+        )
+    
+    def _build_daily_prompt(self) -> str:
+        """Build the daily summarization prompt using shared components."""
+        return (
+            f"{self.PROMPT_HEADER} Given the Discord channel summaries below from a single day, "
+            f"produce a comprehensive daily summary optimized for retrieval.\n\n"
+            f"Guidelines:\n"
+            f"{self.DAILY_GUIDELINES}\n"
+            f"{self.COMMON_GUIDELINES}\n\n"
+            f"{self.OUTPUT_FORMAT}\n\n"
+            f"Summarize these Discord daily channel summaries:"
+        )
 
     def prepare_summaries(
         self,
         guild_id: str,
         selected_channels: list[str],
-        summarization_prefix: str,
         from_date: datetime,
     ) -> tuple[list[Document], list[Document], list[Document],]:
         """
@@ -63,8 +143,6 @@ class DiscordSummary(PrepareSummaries):
             the guild id to access data
         selected_channels: list[str]
             the discord channels to produce summaries
-        summarization_prefix : str
-            the summarization query prefix to do on the LLM
         from_date : datetime
             get the raw data from a specific date
             default is None, meaning get all the messages
@@ -79,35 +157,26 @@ class DiscordSummary(PrepareSummaries):
         daily_summary_documenets : list[llama_index.Document]
             list of daily summaries converted to llama_index documents
         """
-        summary_prompt_posfix = (
-            ". Organize the output in one or multiple descriptive "
-            "bullet points and include important details"
-        )
         raw_data_grouped = prepare_grouped_data(guild_id, from_date, selected_channels)
         if raw_data_grouped != {}:
             thread_summaries = self.prepare_thread_summaries(
                 guild_id,
                 raw_data_grouped,
-                (summarization_prefix + " discord thread" + summary_prompt_posfix),
+                self._build_thread_prompt(),
             )
             (
                 channel_summaries,
                 thread_summary_documenets,
             ) = self.prepare_channel_summaries(
                 thread_summaries,
-                summarization_prefix
-                + (" selection of discord thread summaries" + summary_prompt_posfix),
+                self._build_channel_prompt(),
             )
             (
                 daily_summaries,
                 channel_summary_documenets,
             ) = self.prepare_daily_summaries(
                 channel_summaries,
-                (
-                    summarization_prefix
-                    + " selection of discord channel summaries"
-                    + summary_prompt_posfix
-                ),
+                self._build_daily_prompt(),
             )
             daily_summary_documents = (
                 self.discord_summary_transformer.transform_daily_summary_to_document(
@@ -130,7 +199,6 @@ class DiscordSummary(PrepareSummaries):
         self,
         guild_id: str,
         selected_channels: list[str],
-        summarization_prefix: str,
         from_date: datetime,
         batch_size: int = 50,
     ) -> Iterator[list[Document]]:
@@ -143,8 +211,6 @@ class DiscordSummary(PrepareSummaries):
             The guild id to access data
         selected_channels : list[str]
             The discord channels to produce summaries
-        summarization_prefix : str
-            The summarization query prefix to do on the LLM
         from_date : datetime
             Get the raw data from a specific date
         batch_size : int
@@ -155,11 +221,6 @@ class DiscordSummary(PrepareSummaries):
         list[llama_index.Document]
             A batch of documents sorted by date
         """
-        summary_prompt_posfix = (
-            ". Organize the output in one or multiple descriptive "
-            "bullet points and include important details"
-        )
-
         raw_data_grouped = prepare_grouped_data(
             guild_id, from_date, selected_channels
         )
@@ -176,11 +237,7 @@ class DiscordSummary(PrepareSummaries):
             thread_summaries = self.prepare_thread_summaries(
                 guild_id,
                 {date_key: raw_data_grouped[date_key]},
-                (
-                    summarization_prefix
-                    + " discord thread"
-                    + summary_prompt_posfix
-                ),
+                self._build_thread_prompt(),
             )
 
             # Prepare channel summaries and collect thread documents
@@ -189,11 +246,7 @@ class DiscordSummary(PrepareSummaries):
                 thread_summary_documenets,
             ) = self.prepare_channel_summaries(
                 thread_summaries,
-                summarization_prefix
-                + (
-                    " selection of discord thread summaries"
-                    + summary_prompt_posfix
-                ),
+                self._build_channel_prompt(),
             )
 
             # Prepare daily summaries and collect channel documents
@@ -202,11 +255,7 @@ class DiscordSummary(PrepareSummaries):
                 channel_summary_documenets,
             ) = self.prepare_daily_summaries(
                 channel_summaries,
-                (
-                    summarization_prefix
-                    + " selection of discord channel summaries"
-                    + summary_prompt_posfix
-                ),
+                self._build_daily_prompt(),
             )
 
             # Convert daily summaries to documents
