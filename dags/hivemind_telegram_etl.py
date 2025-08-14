@@ -28,6 +28,7 @@ default_args = {
     "schedule_interval": "0 */4 * * *",
     "catchup": False,
     "max_active_runs": 1,
+    "max_active_tasks": 3,
 }
 
 
