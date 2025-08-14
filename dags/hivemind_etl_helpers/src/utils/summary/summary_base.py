@@ -48,7 +48,6 @@ class SummaryBase:
         try:
             summary_index = SummaryIndex.from_documents(
                 documents=messages_document,
-                response_synthesizer=self.response_synthesizer,
                 show_progress=self.verbose,
             )
             summary_response = self.retrieve_summary(summary_index, summarization_query)
