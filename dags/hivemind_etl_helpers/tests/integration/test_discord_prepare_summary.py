@@ -110,7 +110,6 @@ class TestDiscordGroupedDataPreparation(TestCase):
             guild_id,
             selected_channels=channels,
             from_date=from_date,
-            summarization_prefix="",
         )
 
         self.assertEqual(thread_summary_docs, [])
@@ -240,7 +239,6 @@ class TestDiscordGroupedDataPreparation(TestCase):
             guild_id,
             selected_channels=channels,
             from_date=from_date,
-            summarization_prefix="",
         )
 
         # we had 2 days with 3 channels of each 1 thread
@@ -389,7 +387,6 @@ class TestDiscordGroupedDataPreparation(TestCase):
             guild_id,
             selected_channels=channels,
             from_date=from_date,
-            summarization_prefix="",
         )
 
         self.assertEqual(thread_summary_docs, [])
