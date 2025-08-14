@@ -21,7 +21,7 @@ class TestDiscordGroupedDataPreparation(TestCase):
         create_platform: bool = True,
         guild_id: str = "1234",
     ):
-        client = MongoSingleton.get_instance().client
+        client = MongoSingleton.get_instance().get_client()
 
         community_id = ObjectId("9f59dd4f38f3474accdc8f24")
         platform_id = ObjectId("063a2a74282db2c00fbc2428")
@@ -95,7 +95,7 @@ class TestDiscordGroupedDataPreparation(TestCase):
             guild_id=guild_id,
         )
 
-        client = MongoSingleton.get_instance().client
+        client = MongoSingleton.get_instance().get_client()
         client[guild_id].drop_collection("rawinfos")
         client[guild_id].drop_collection("channels")
         client[guild_id].drop_collection("threads")
@@ -125,7 +125,7 @@ class TestDiscordGroupedDataPreparation(TestCase):
             guild_id=guild_id,
         )
 
-        client = MongoSingleton.get_instance().client
+        client = MongoSingleton.get_instance().get_client()
         client[guild_id].drop_collection("rawinfos")
         client[guild_id].drop_collection("guildmembers")
         client[guild_id].drop_collection("channels")
@@ -243,10 +243,10 @@ class TestDiscordGroupedDataPreparation(TestCase):
 
         # we had 2 days with 3 channels of each 1 thread
         # MockLLM will output exactly the given query to it
-        # which is out custom prompt
+        # which is our custom prompt
         # each day the MockLLM output would be multiplied
-        # by 7 because we're breaking the lines
-        self.assertEqual(len(thread_summary_docs), 6 * 7)
+        # by 20 because we're breaking the lines (updated prompt generates 20 documents per summary)
+        self.assertEqual(len(thread_summary_docs), 6 * 20)
         for doc in thread_summary_docs:
             self.assertIsInstance(doc, Document)
 
@@ -272,7 +272,7 @@ class TestDiscordGroupedDataPreparation(TestCase):
             guild_id=guild_id,
         )
 
-        client = MongoSingleton.get_instance().client
+        client = MongoSingleton.get_instance().get_client()
         client[guild_id].drop_collection("rawinfos")
         client[guild_id].drop_collection("guildmembers")
         client[guild_id].drop_collection("channels")
