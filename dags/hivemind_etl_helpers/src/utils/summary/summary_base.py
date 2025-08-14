@@ -1,3 +1,5 @@
+import logging
+
 from llama_index.core import Document, SummaryIndex
 from llama_index.core.llms import LLM
 from llama_index.core.response_synthesizers.base import BaseSynthesizer
@@ -36,13 +38,30 @@ class SummaryBase:
         """
         a simple wrapper to get the summaries of multiple documents
         """
-        summary_index = SummaryIndex.from_documents(
-            documents=messages_document,
-            # response_synthesizer=self.response_synthesizer,
-            show_progress=self.verbose,
-        )
-        summary_response = self.retrieve_summary(summary_index, summarization_query)
-        return summary_response
+        if not messages_document:
+            logging.warning("No documents provided for summarization")
+            return ""
+        
+        if len(messages_document) > 1000:
+            logging.warning(f"Large document set ({len(messages_document)} docs) - consider batching")
+        
+        try:
+            summary_index = SummaryIndex.from_documents(
+                documents=messages_document,
+                response_synthesizer=self.response_synthesizer,
+                show_progress=self.verbose,
+            )
+            summary_response = self.retrieve_summary(summary_index, summarization_query)
+            
+            # Basic validation of summary quality
+            if len(summary_response.strip()) < 10:
+                logging.warning("Generated summary appears too short, might be low quality")
+            
+            return summary_response
+            
+        except Exception as e:
+            logging.error(f"Failed to generate summary: {str(e)}")
+            raise e
 
     def retrieve_summary(
         self,
@@ -50,7 +69,7 @@ class SummaryBase:
         query: str,
     ) -> str:
         """
-        retreive a summary of the available documents within the doc_summary_index
+        retrieve a summary of the available documents within the doc_summary_index
 
         Parameters
         -----------
@@ -59,10 +78,14 @@ class SummaryBase:
         query : str
             the query to get summary
         """
-        query_engine = doc_summary_index.as_query_engine(
-            response_mode="tree_summarize",
-            response_synthesizer=self.response_synthesizer,
-            llm=self.llm,
-        )
-        response = query_engine.query(query)
-        return response.response
+        try:
+            query_engine = doc_summary_index.as_query_engine(
+                response_mode="tree_summarize",
+                response_synthesizer=self.response_synthesizer,
+                llm=self.llm,
+            )
+            response = query_engine.query(query)
+            return response.response
+        except Exception as e:
+            logging.error(f"Failed to retrieve summary from index: {str(e)}")
+            raise e

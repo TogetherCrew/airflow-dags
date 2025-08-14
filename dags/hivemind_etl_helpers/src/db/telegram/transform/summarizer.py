@@ -61,10 +61,20 @@ class SummarizeMessages(SummaryBase):
             summary = self._get_summary(
                 messages_document=day_documents,
                 summarization_query=(
-                    "Please make a concise summary based only on the provided "
-                    f"messages from a Telegram group chat from {start_date} to {end_date}."
-                    " Please focus on main topics, decisions, and key information exchanged."
-                    " Organize the output in one or multiple descriptive bullet points."
+                    "You are a social media summarizer. Given the raw messages below, produce a clear, de-duplicated bullet-point summary optimized for retrieval.\n\n"
+                    "Guidelines:\n"
+                    "- Merge overlapping/duplicate posts; remove noise, greetings, emojis, and links.\n"
+                    "- Group by topic; surface consensus and notable disagreements.\n"
+                    "- Capture concrete facts (who/what/when/where), decisions, outcomes, blockers, and action items.\n"
+                    "- Note counts if many users mention the same thing (e.g., \"~12 mentions\").\n"
+                    "- Resolve pronouns to canonical entities when obvious.\n"
+                    "- Include important dates/times and hashtags only if they add meaning.\n"
+                    "- No speculation; avoid quotes unless essential.\n\n"
+                    "Output:\n"
+                    "- 5-10 concise bullets (one line each), most important first.\n"
+                    "- Each bullet starts with a bold topic tag in brackets, then the point.\n"
+                    "- No preamble or conclusion.\n\n"
+                    f"Summarize these Telegram group chat messages from {start_date} to {end_date}:"
                 ),
             )
 
