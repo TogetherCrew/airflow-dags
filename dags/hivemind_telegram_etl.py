@@ -17,7 +17,7 @@ from hivemind_etl_helpers.src.db.telegram.transform import (
     TransformSummary,
 )
 from hivemind_etl_helpers.src.db.telegram.utils import TelegramModules, TelegramPlatform
-from llama_index.core import Settings
+from llama_index.core import response_synthesizers, Settings
 from llama_index.llms.openai import OpenAI
 from qdrant_client.http import models
 from tc_hivemind_backend.ingest_qdrant import CustomIngestionPipeline
@@ -98,6 +98,11 @@ def create_telegram_dag(dag_type: Literal["messages", "summaries"]) -> DAG:
             chat_id, chat_name = chat_info
 
             Settings.llm = OpenAI(model="gpt-4o-mini-2024-07-18")
+            response_synthesizer = response_synthesizers.get_response_synthesizer(
+                response_mode="tree_summarize",
+                llm=Settings.llm,
+                verbose=False,
+            )
 
             logging.info(f"Started processing community: {community_id}")
 
@@ -114,7 +119,12 @@ def create_telegram_dag(dag_type: Literal["messages", "summaries"]) -> DAG:
 
             else:  # summaries
                 extractor = ExtractMessagesDaily(chat_id=chat_id)
-                summarizer = SummarizeMessages(chat_id=chat_id, chat_name=chat_name)
+                summarizer = SummarizeMessages(
+                    chat_id=chat_id,
+                    chat_name=chat_name,
+                    response_synthesizer=response_synthesizer,
+                    verbose=False,
+                )
                 transformer = TransformSummary()
                 collection_name = f"{platform_id}_summary"
                 date_field = "date"
