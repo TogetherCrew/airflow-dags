@@ -12,7 +12,7 @@ class DiscordSummaryTransformer(SummaryTransformer):
     def transform(self, summary: str, metadata: dict[str, Any], **kwargs) -> Document:
         excluded_llm_metadata_keys = kwargs.get("excluded_llm_metadata_keys", [])
         excluded_embed_metadata_keys = kwargs.get("excluded_embed_metadata_keys", [])
-        doc_id = metadata.get("doc_id", str(uuid.uuid4()))
+        doc_id = kwargs.get("doc_id", str(uuid.uuid4()))
 
         document = Document(
             text=summary,
