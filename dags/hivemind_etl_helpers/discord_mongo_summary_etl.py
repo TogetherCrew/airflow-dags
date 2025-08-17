@@ -65,10 +65,13 @@ def process_discord_summaries(
     # We filter for daily summaries by checking the type field
     latest_date = ingestion_pipeline.get_latest_document_date(
         field_name="date",
-        field_schema=models.PayloadSchemaType.FLOAT,
+        field_schema=models.PayloadSchemaType.DATETIME,
     )
 
     if latest_date is not None and not from_start:
+        # Convert string date to datetime if needed
+        if isinstance(latest_date, str):
+            latest_date = datetime.strptime(latest_date, "%Y-%m-%d")
         # Start from 1 day before so to catch all the last day data
         from_date = latest_date - timedelta(days=1)
         logging.info(f"Started extracting summaries from date: {from_date}!")
@@ -95,7 +98,7 @@ def process_discord_summaries(
             f"Processing streamed batch {batch_index} | size={len(batch)}"
         )
         # Ensure final sort in case upstream changed batch boundaries
-        batch.sort(key=lambda d: d.metadata.get("date", 0.0))
+        batch.sort(key=lambda d: d.metadata.get("date", "0000-00-00"))
         ingestion_pipeline.run_pipeline(docs=batch)
         batch_index += 1
 

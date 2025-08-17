@@ -271,7 +271,7 @@ class DiscordSummary(PrepareSummaries):
                 + channel_summary_documenets
                 + daily_summary_documents
             )
-            day_docs.sort(key=lambda d: datetime.fromtimestamp(d.metadata["date"]))
+            day_docs.sort(key=lambda d: d.metadata["date"])
 
             buffer.extend(day_docs)
 
@@ -279,7 +279,7 @@ class DiscordSummary(PrepareSummaries):
             while len(buffer) >= batch_size:
                 batch = buffer[:batch_size]
                 batch.sort(
-                    key=lambda d: datetime.fromtimestamp(d.metadata["date"])  # type: ignore
+                    key=lambda d: d.metadata["date"]  # type: ignore
                 )
                 yield batch
                 buffer = buffer[batch_size:]
@@ -287,6 +287,6 @@ class DiscordSummary(PrepareSummaries):
         # Yield any remaining documents
         if buffer:
             buffer.sort(
-                key=lambda d: datetime.fromtimestamp(d.metadata["date"])  # type: ignore
+                key=lambda d: d.metadata["date"]  # type: ignore
             )
             yield buffer

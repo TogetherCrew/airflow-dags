@@ -30,7 +30,12 @@ def sort_summaries_daily(
 
     # Define a custom sorting key function based on the date in metadata
     def get_date(doc: Document):
-        return datetime.fromtimestamp(doc.metadata["date"])
+        date_value = doc.metadata["date"]
+        # Handle both timestamp (float) and string date formats
+        if isinstance(date_value, str):
+            return datetime.strptime(date_value, "%Y-%m-%d")
+        else:
+            return datetime.fromtimestamp(date_value)
 
     # Sort the documents based on the custom key
     docs_sorted = sorted(all_docs, key=get_date)

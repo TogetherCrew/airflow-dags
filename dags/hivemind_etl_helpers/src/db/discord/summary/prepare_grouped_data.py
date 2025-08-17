@@ -11,7 +11,7 @@ def prepare_grouped_data(
     guild_id: str,
     from_date: datetime,
     selected_channels: list[str],
-) -> dict[float, dict[str, dict[str | None, list]]]:
+) -> dict[float | str, dict[str, dict[str | None, list]]]:
     """
     prepare the nested dictionary of grouped data
 
@@ -27,7 +27,7 @@ def prepare_grouped_data(
 
     Returns
     --------
-    raw_data_grouped : dict[float, dict[str, dict[str | None, list]]]
+    raw_data_grouped : dict[float | str, dict[str, dict[str | None, list]]]
         grouping the messages into a nested dictionary
         first level should be representative of day, second level channel
         and third level would be the thread
@@ -50,7 +50,7 @@ def prepare_grouped_data(
 def group_per_channel_thread(
     guild_id: str,
     daily_messages: dict[float, list]
-) -> dict[float, dict[str, dict[str | None, list]]]:
+) -> dict[float | str, dict[str, dict[str | None, list]]]:
     """
     group the data into a nested dictionary.
     Note that the daily_messages should be already grouped by day
@@ -65,13 +65,13 @@ def group_per_channel_thread(
 
     Returns
     ---------
-    raw_data_grouped : dict[float, dict[str, dict[str | None, list]]]
+    raw_data_grouped : dict[float | str, dict[str, dict[str | None, list]]]
         grouping the messages into a nested dictionary
         first level should be representative of day, second level channel
         and third level would be the thread
         (thread can be `None` meaning it is the main channel)
     """
-    raw_data_grouped: dict[float, dict[str, dict[str | None, list]]] = {}
+    raw_data_grouped: dict[float | str, dict[str, dict[str | None, list]]] = {}
 
     name_fetcher = FetchDiscordChannelThreadNames(guild_id)
 
