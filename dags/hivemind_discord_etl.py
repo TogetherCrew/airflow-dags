@@ -85,13 +85,18 @@ with DAG(
         we just changed the name for the pylint
         """
         from_start = kwargs["dag_run"].conf.get("from_start", False)
-        logging.info(f"From start: {from_start}")
+        cleanup_collections = kwargs["dag_run"].conf.get("cleanup_collections", False)
+        logging.info(f"From start: {from_start}, Cleanup collections: {cleanup_collections}")
 
         communities = ModulesDiscord().get_learning_platforms()
 
         if from_start:
             for community in communities:
                 community["from_start"] = from_start
+        
+        if cleanup_collections:
+            for community in communities:
+                community["cleanup_collections"] = cleanup_collections
 
         return communities
 
@@ -106,6 +111,7 @@ with DAG(
         selected_channels = community_info["selected_channels"]
         from_date = community_info["from_date"]
         from_start = community_info.get("from_start", False)
+        cleanup_collections = community_info.get("cleanup_collections", False)
 
         Settings.llm = OpenAI(model="gpt-4o-mini-2024-07-18")
 
@@ -119,6 +125,7 @@ with DAG(
             default_from_date=from_date,
             from_start=from_start,
             verbose=False,
+            cleanup_collections=cleanup_collections,
         )
         logging.info(
             f"Community {community_id} Job finished | platform_id: {platform_id}"

@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import Any
+import uuid
 
 from hivemind_etl_helpers.src.utils.summary.summary_transformer import (
     SummaryTransformer,
@@ -11,11 +12,14 @@ class DiscordSummaryTransformer(SummaryTransformer):
     def transform(self, summary: str, metadata: dict[str, Any], **kwargs) -> Document:
         excluded_llm_metadata_keys = kwargs.get("excluded_llm_metadata_keys", [])
         excluded_embed_metadata_keys = kwargs.get("excluded_embed_metadata_keys", [])
+        doc_id = metadata.get("doc_id", str(uuid.uuid4()))
+
         document = Document(
             text=summary,
             metadata=metadata,
             excluded_embed_metadata_keys=excluded_embed_metadata_keys,
             excluded_llm_metadata_keys=excluded_llm_metadata_keys,
+            doc_id=doc_id,
         )
 
         return document
@@ -54,6 +58,7 @@ class DiscordSummaryTransformer(SummaryTransformer):
             formatted_date = datetime.fromtimestamp(summary_date).strftime("%Y-%m-%d")
         
         thread_summary_document = self.transform(
+            doc_id = f"{formatted_date}-{thread_name}-{thread_channel}",
             summary=thread_summary,
             metadata={
                 "date": formatted_date,
@@ -97,6 +102,7 @@ class DiscordSummaryTransformer(SummaryTransformer):
             formatted_date = datetime.fromtimestamp(summary_date).strftime("%Y-%m-%d")
 
         channel_summary_document = self.transform(
+            doc_id = f"{formatted_date}-{channel_name}",
             summary=channel_summary,
             metadata={"date": formatted_date, "channel": channel_name, "type": "channel"},
             excluded_embed_metadata_keys=["date", "thread", "channel", "type"],
@@ -135,6 +141,7 @@ class DiscordSummaryTransformer(SummaryTransformer):
                 formatted_date = datetime.fromtimestamp(date).strftime("%Y-%m-%d")
             
             doc = self.transform(
+                doc_id = f"{formatted_date}-day",
                 summary=summary,
                 metadata={"date": formatted_date, "type": "day"},
                 excluded_embed_metadata_keys=["date", "thread", "channel", "type"],
