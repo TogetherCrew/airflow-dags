@@ -18,7 +18,7 @@ with DAG(
     schedule_interval="0 2 * * *",
     catchup=False,
     max_active_runs=1,
-    max_active_tasks=3,
+    max_active_tasks=1,
 ) as dag:
 
     @task
@@ -74,7 +74,7 @@ with DAG(
     schedule_interval="0 2 * * *",
     catchup=False,
     max_active_runs=1,
-    max_active_tasks=3,
+    max_active_tasks=1,
 ) as dag:
 
     @task
