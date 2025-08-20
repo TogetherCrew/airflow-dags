@@ -78,6 +78,6 @@ def process_github_vectorstore(
     # LOAD
     logging.info(f"{prefix}Loading data into postgres db")
     ingestion_pipeline = CustomIngestionPipeline(
-        community_id=community_id, collection_name=platform_id
+        community_id=community_id, collection_name=platform_id, use_cache=False
     )
     ingestion_pipeline.run_pipeline(docs=all_documents)

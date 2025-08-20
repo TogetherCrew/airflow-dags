@@ -29,7 +29,7 @@ class NotionProcessor:
         # preparing the data extractor and ingestion pipelines
         self.notion_extractor = NotionExtractor(notion_token=access_token)
         self.ingestion_pipeline = CustomIngestionPipeline(
-            community_id=self.community_id, collection_name=collection_name
+            community_id=self.community_id, collection_name=collection_name, use_cache=False
         )
 
     def process(

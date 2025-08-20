@@ -35,7 +35,8 @@ def cleanup_discord_summary_collections(community_id: str, platform_id: str) -> 
         # Create a CustomIngestionPipeline instance to access the Qdrant client
         temp_pipeline = CustomIngestionPipeline(
             community_id=community_id, 
-            collection_name=f"{platform_id}_summary"
+            collection_name=f"{platform_id}_summary",
+            use_cache=False,
         )
         # Access the Qdrant client and delete the collection
         temp_pipeline.qdrant_client.delete_collection(collection_name=qdrant_collection_name)
