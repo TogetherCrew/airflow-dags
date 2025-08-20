@@ -12,7 +12,10 @@ class TestIngestionPipeline(unittest.TestCase):
         community = "1234"
         collection_name = "google"
         ingestion_pipeline = CustomIngestionPipeline(
-            community_id=community, collection_name=collection_name, testing=True
+            community_id=community,
+            collection_name=collection_name,
+            testing=True,
+            use_cache=False,
         )
         docs = [
             Document(
@@ -31,7 +34,7 @@ class TestIngestionPipeline(unittest.TestCase):
 
     def test_load_pipeline_run_exception(self):
         ingestion_pipeline = CustomIngestionPipeline(
-            "1234", collection_name="google", testing=True
+            "1234", collection_name="google", testing=True, use_cache=False
         )
         ingestion_pipeline.run_pipeline = Mock()
         ingestion_pipeline.run_pipeline.side_effect = Exception("Test Exception")

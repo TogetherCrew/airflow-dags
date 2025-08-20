@@ -126,7 +126,9 @@ def process_discord_summaries(
     
     # Set up ingestion pipeline
     ingestion_pipeline = CustomIngestionPipeline(
-        community_id=community_id, collection_name=collection_name
+        community_id=community_id,
+        collection_name=collection_name,
+        use_cache=False,
     )
 
     # Get latest date from Qdrant for daily summaries only
