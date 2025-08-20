@@ -41,7 +41,7 @@ with DAG(
         )
 
         ingest_data = CustomIngestionPipeline(
-            community_id=community_id, collection_name=platform_id
+            community_id=community_id, collection_name=platform_id, use_cache=False
         )
         ingest_data.run_pipeline(load_file_data)
 

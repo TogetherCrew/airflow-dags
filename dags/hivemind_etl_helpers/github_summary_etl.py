@@ -50,7 +50,9 @@ def process_github_summary_vectorstore(
     load_dotenv()
     prefix = f"COMMUNITYID: {community_id} "
     ingestion_pipeline = CustomIngestionPipeline(
-        community_id=community_id, collection_name=f"{platform_id}_summary"
+        community_id=community_id,
+        collection_name=f"{platform_id}_summary",
+        use_cache=False,
     )
     date = ingestion_pipeline.get_latest_document_date(field_name="date")
     logging.info(f"Latest Document date available: {date}")

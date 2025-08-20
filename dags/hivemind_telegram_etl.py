@@ -136,7 +136,9 @@ def create_telegram_dag(dag_type: Literal["messages", "summaries"]) -> DAG:
 
             # Set up ingestion pipeline
             ingestion_pipeline = CustomIngestionPipeline(
-                community_id=community_id, collection_name=collection_name
+                community_id=community_id,
+                collection_name=collection_name,
+                use_cache=False,
             )
 
             # Get latest date and handle extraction
