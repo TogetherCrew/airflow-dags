@@ -11,6 +11,7 @@ from data_cleaning_utils.cleaning import (
 from airflow import DAG
 from airflow.decorators import task
 from llama_index.core import Document
+from dotenv import load_dotenv
 
 
 try:
@@ -38,7 +39,7 @@ with DAG(
     },
 ) as dag:
 
-    @task(retries=1, retry_delay=timedelta(minutes=2))
+    @task(retries=3, retry_delay=timedelta(minutes=2))
     def clean_and_reingest(**kwargs) -> None:
         """
         End-to-end task: fetch, merge by doc_id, clean using LLM, and re-ingest.
@@ -50,6 +51,7 @@ with DAG(
         - doc_batch_size: number of doc_ids per cleaning/ingest batch (optional)
         - reset: when true, resets resume index
         """
+        load_dotenv()
         conf = kwargs.get("dag_run").conf if "dag_run" in kwargs else {}
         params = kwargs.get("params", {})
         ti = kwargs.get("ti")
