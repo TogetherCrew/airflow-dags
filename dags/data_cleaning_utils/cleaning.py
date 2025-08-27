@@ -92,29 +92,45 @@ def group_and_merge_by_doc_id(points: Iterable) -> dict[str, dict[str, Any]]:
     grouped: dict[str, list[tuple[int, str]]] = defaultdict(list)
     metadata_by_doc: dict[str, dict[str, Any]] = {}
 
-    for p in points:
-        payload = getattr(p, "payload", None) or {}
-        doc_id = payload.get("doc_id") or payload.get("document_id") or payload.get("ref_doc_id")
-        if not doc_id:
-            # Skip nodes without a doc identifier
-            continue
-        # Ensure doc_id is coerced to string immediately after retrieval
-        doc_id_str = str(doc_id)
-
-        text, order_key = extract_text_and_order(payload)
-        if not text:
+    for item in points:
+        # Support both individual records and batches (lists/tuples of records)
+        if hasattr(item, "payload"):
+            batch = (item,)
+        elif isinstance(item, (list, tuple)):
+            batch = item
+        else:
+            # Unknown item from iterator; skip gracefully
             continue
 
-        # Use a stable fallback order if start_char_idx is missing
-        order_index = order_key if isinstance(order_key, int) else len(grouped[doc_id_str])
-        grouped[doc_id_str].append((order_index, text))
+        for record in batch:
+            payload = getattr(record, "payload", None) or {}
+            doc_id = (
+                payload.get("doc_id")
+                or payload.get("document_id")
+                or payload.get("ref_doc_id")
+            )
+            if not doc_id:
+                # Skip nodes without a doc identifier
+                continue
+            # Ensure doc_id is coerced to string immediately after retrieval
+            doc_id_str = str(doc_id)
 
-        # Record metadata once per doc_id (all points share same metadata per user's note)
-        if doc_id_str not in metadata_by_doc:
-            # Keep all payload fields to preserve metadata and normalize doc_id
-            meta_copy = dict(payload)
-            meta_copy["doc_id"] = doc_id_str
-            metadata_by_doc[doc_id_str] = meta_copy
+            text, order_key = extract_text_and_order(payload)
+            if not text:
+                continue
+
+            # Use a stable fallback order if start_char_idx is missing
+            order_index = (
+                order_key if isinstance(order_key, int) else len(grouped[doc_id_str])
+            )
+            grouped[doc_id_str].append((order_index, text))
+
+            # Record metadata once per doc_id (all points share same metadata per user's note)
+            if doc_id_str not in metadata_by_doc:
+                # Keep all payload fields to preserve metadata and normalize doc_id
+                meta_copy = dict(payload)
+                meta_copy["doc_id"] = doc_id_str
+                metadata_by_doc[doc_id_str] = meta_copy
 
     merged_with_meta: dict[str, dict[str, Any]] = {}
     for doc_id, chunks in grouped.items():
