@@ -98,19 +98,23 @@ def group_and_merge_by_doc_id(points: Iterable) -> dict[str, dict[str, Any]]:
         if not doc_id:
             # Skip nodes without a doc identifier
             continue
+        # Ensure doc_id is coerced to string immediately after retrieval
+        doc_id_str = str(doc_id)
 
         text, order_key = extract_text_and_order(payload)
         if not text:
             continue
 
         # Use a stable fallback order if start_char_idx is missing
-        order_index = order_key if isinstance(order_key, int) else len(grouped[doc_id])
-        grouped[doc_id].append((order_index, text))
+        order_index = order_key if isinstance(order_key, int) else len(grouped[doc_id_str])
+        grouped[doc_id_str].append((order_index, text))
 
         # Record metadata once per doc_id (all points share same metadata per user's note)
-        if doc_id not in metadata_by_doc:
-            # Keep all payload fields to preserve metadata
-            metadata_by_doc[doc_id] = dict(payload)
+        if doc_id_str not in metadata_by_doc:
+            # Keep all payload fields to preserve metadata and normalize doc_id
+            meta_copy = dict(payload)
+            meta_copy["doc_id"] = doc_id_str
+            metadata_by_doc[doc_id_str] = meta_copy
 
     merged_with_meta: dict[str, dict[str, Any]] = {}
     for doc_id, chunks in grouped.items():
