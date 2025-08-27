@@ -244,6 +244,13 @@ def scroll_all_points(client: QdrantClient, collection: str, batch_size: int = 5
         )
         if not points:
             break
-        for p in points:
-            yield p
+        yield points
+
+        # Break when there is no next page
+        if next_offset is None:
+            break
+        # Safety guard: if server returns the same offset, stop to avoid infinite loop
+        if next_offset == offset:
+            logging.warning("Qdrant scroll returned the same offset; breaking to avoid infinite loop.")
+            break
         offset = next_offset
