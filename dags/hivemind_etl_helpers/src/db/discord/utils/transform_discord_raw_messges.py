@@ -233,7 +233,11 @@ def prepare_document(
 
     doc: Document
     if not exclude_metadata:
-        doc = Document(text=content, metadata=msg_meta_data)
+        doc = Document(
+            text=content,
+            metadata=msg_meta_data,
+            doc_id=message_id,
+        )
         doc.excluded_embed_metadata_keys = [
             "channel",
             "date",
@@ -272,6 +276,9 @@ def prepare_document(
             "url",
         ]
     else:
-        doc = Document(text=content)
+        doc = Document(
+            text=content,
+            doc_id=message_id,
+        )
 
     return doc
