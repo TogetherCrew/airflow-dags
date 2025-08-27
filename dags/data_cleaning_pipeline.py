@@ -33,7 +33,7 @@ with DAG(
     params={
         "collection": None,  # e.g., "<community_id>_<platform_name>"
         "model": "gpt-5-nano-2025-08-07",
-        "batch_size": 512,
+        "batch_size": 128,
         "doc_batch_size": 100,  # number of doc_ids to clean and ingest per batch
         "reset": False,  # reset resume progress
     },
@@ -148,6 +148,11 @@ with DAG(
                 total_docs,
                 resume_index,
             )
+
+            # free up memory by removing the batch from the merged_by_doc dict
+            merged_by_doc = {
+                doc_id: merged_by_doc.pop(doc_id) for doc_id in batch_doc_ids
+            }
 
         logging.info("All %s documents cleaned and re-ingested for %s", total_docs, collection)
 
