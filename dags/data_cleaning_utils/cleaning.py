@@ -75,6 +75,33 @@ def extract_text_and_order(payload: dict) -> tuple[str, int | None]:
     return text_value, order_key
 
 
+def extract_node_metadata(payload: dict) -> dict[str, Any]:
+    """
+    Extract node metadata from the serialized llama-index node stored under
+    the "_node_content" key in the payload.
+
+    Returns a shallow copy of the node's internal `metadata` dictionary,
+    with `_node_content` removed if present and `None` values pruned.
+    Returns an empty dict if unavailable or on parse failure.
+    """
+    node_blob = payload.get("_node_content")
+    if isinstance(node_blob, str):
+        try:
+            node_json = json.loads(node_blob)
+            node_meta = node_json.get("metadata") or {}
+            if isinstance(node_meta, dict):
+                # Copy and prune undesired keys/values
+                clean_meta: dict[str, Any] = {
+                    k: v
+                    for k, v in node_meta.items()
+                    if v is not None and k not in {"_node_content", "_node_type"}
+                }
+                return clean_meta
+        except Exception:  # noqa: BLE001 - best-effort parsing
+            return {}
+    return {}
+
+
 def group_and_merge_by_doc_id(points: Iterable) -> dict[str, dict[str, Any]]:
     """
     Group all nodes by their doc_id and merge their texts in order.
@@ -125,10 +152,10 @@ def group_and_merge_by_doc_id(points: Iterable) -> dict[str, dict[str, Any]]:
             )
             grouped[doc_id_str].append((order_index, text))
 
-            # Record metadata once per doc_id (all points share same metadata per user's note)
+            # Record metadata once per doc_id using the inner node metadata
             if doc_id_str not in metadata_by_doc:
-                # Keep all payload fields to preserve metadata and normalize doc_id
-                meta_copy = dict(payload)
+                meta_copy = extract_node_metadata(payload) or {}
+                # Ensure doc_id present and normalized
                 meta_copy["doc_id"] = doc_id_str
                 metadata_by_doc[doc_id_str] = meta_copy
 
