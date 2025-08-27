@@ -145,14 +145,19 @@ def clean_text_with_llm(raw_text: str, model: str = "gpt-5-nano-2025-08-07") -> 
 
         client = OpenAI()
 
-        system_prompt = (
-            "You are a data-cleaning assistant for preparing text for a RAG pipeline. "
-            "Remove menus, disclaimers, ads, cookie notices, boilerplate, irrelevant chatter, emojis, hashtags, "
-            "greetings, spam, or repeated filler. Keep explanations, facts, FAQs, instructions, discussions with "
-            "unique informational value. Output should be clean, structured, concise, and faithful to the input."
+        system_prompt = ( 
+            "You are a data-cleaning assistant for preparing text for a retrieval-augmented generation (RAG) pipeline.\n"
+            "Your job is to extract **informative, knowledge-rich content** and remove noise.\n\n"
+            "* **Remove:** navigation menus, disclaimers, ads, cookie notices, boilerplate, irrelevant chatter, emojis, hashtags, greetings, spam, or repeated filler.\n"
+            "* **Keep:** explanations, facts, product/service info, FAQs, instructions, discussions containing substantive knowledge, or any text with unique informational value.\n"
+            "* Output should be **clean, structured, and concise**, ready for semantic search indexing.\n"
+            "* Do not add new information and just return the cleaned text."
         )
 
-        user_prompt = f"Clean the following text and return only the cleaned text.\n\n```\n{raw_text}\n```"
+        user_prompt = (
+            "Here is some raw text. Please clean it according to the above instructions:"
+            f"\n\n```\n{raw_text}\n```"
+        )
 
         response = client.chat.completions.create(
             model=model,
