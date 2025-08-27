@@ -61,7 +61,7 @@ with DAG(
             raise ValueError("'collection' must be provided via params or conf")
 
         model: str = conf.get("model", params.get("model", "gpt-5-nano-2025-08-07"))
-        batch_size: int = int(conf.get("batch_size", params.get("batch_size", 512)))
+        batch_size: int = int(conf.get("batch_size", params.get("batch_size", 128)))
         doc_batch_size: int = int(
             conf.get("doc_batch_size", params.get("doc_batch_size", 100))
         )
