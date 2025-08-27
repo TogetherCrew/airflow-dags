@@ -9,12 +9,12 @@ from tc_hivemind_backend.db.qdrant import QdrantSingleton
 
 
 with DAG(
-    dag_id="make_filtered_qdrant_collection",
+    dag_id="make_filtered_qdrant_collection_etl",
     start_date=datetime(2025, 8, 26),
     schedule_interval=None,
     catchup=False,
     max_active_runs=1,
-    max_active_tasks=1,
+    max_active_tasks=3,
     params={
         "dst": None,  # defaults to f"{src}_filtered_backup" when not provided
         "target_ts": 1735689600,  # 2025-01-01 00:00:00
