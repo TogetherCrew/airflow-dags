@@ -122,9 +122,26 @@ with DAG(
         # 4) Loop through batches; after each successful batch, persist resume_index
         while resume_index < total_docs:
             batch_doc_ids = doc_ids[resume_index : resume_index + doc_batch_size]
+            # Guard against missing doc_ids due to prior mutations or data issues
+            existing_ids = [doc_id for doc_id in batch_doc_ids if doc_id in merged_by_doc]
+            if len(existing_ids) < len(batch_doc_ids):
+                missing = set(batch_doc_ids) - set(existing_ids)
+                logging.warning(
+                    "Skipping %s missing doc_ids in current batch: %s",
+                    len(missing),
+                    list(missing)[:5],
+                )
+
             merged_subset: dict[str, dict[str, Any]] = {
-                doc_id: merged_by_doc[doc_id] for doc_id in batch_doc_ids
+                doc_id: merged_by_doc[doc_id] for doc_id in existing_ids
             }
+
+            if not merged_subset:
+                logging.info("No available documents in this batch; advancing resume_index")
+                resume_index += len(batch_doc_ids)
+                if ti is not None:
+                    ti.xcom_push(key="resume_index", value=resume_index)
+                continue
 
             documents: list[Document] = build_documents(
                 merged=merged_subset, model=model
@@ -149,10 +166,9 @@ with DAG(
                 resume_index,
             )
 
-            # free up memory by removing the batch from the merged_by_doc dict
-            merged_by_doc = {
-                doc_id: merged_by_doc.pop(doc_id) for doc_id in batch_doc_ids
-            }
+            # Free up memory by removing processed ids from the dict without corrupting it
+            for doc_id in existing_ids:
+                merged_by_doc.pop(doc_id, None)
 
         logging.info("All %s documents cleaned and re-ingested for %s", total_docs, collection)
 
