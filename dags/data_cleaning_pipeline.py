@@ -116,7 +116,7 @@ with DAG(
         ingestion_pipeline = CustomIngestionPipeline(
             community_id=community_id,
             collection_name=platform_collection,
-            testing=False,
+            use_cache=False,
         )
 
         # 4) Loop through batches; after each successful batch, persist resume_index
