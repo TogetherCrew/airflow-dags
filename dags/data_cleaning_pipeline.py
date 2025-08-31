@@ -7,6 +7,7 @@ from data_cleaning_utils.cleaning import (
     build_documents,
     scroll_all_points,
 )
+from data_cleaning_utils.resume_state import ResumeState
 
 from airflow import DAG
 from airflow.decorators import task
@@ -38,6 +39,7 @@ with DAG(
         "max_workers": 8,  # parallel LLM workers
         "min_chars_for_llm": 0,  # skip LLM for shorter texts
         "sort_doc_ids": True,  # set False to skip sorting for speed
+        "platform_id": None,  # optional: persist resume_index in Core.platforms
         "reset": False,  # reset resume progress
     },
 ) as dag:
@@ -76,6 +78,7 @@ with DAG(
             conf.get("sort_doc_ids", params.get("sort_doc_ids", True))
         )
         reset_progress: bool = bool(conf.get("reset", params.get("reset", False)))
+        platform_id: Optional[str] = conf.get("platform_id", params.get("platform_id"))
 
         community_id, platform_collection = split_collection_name(collection)
         logging.basicConfig(level=logging.INFO)
@@ -101,17 +104,34 @@ with DAG(
             logging.info("No documents to process; exiting")
             return
 
-        # 3) Determine resume index
+        # 3) Determine resume index (conf > Mongo > XCom), and honor reset state
         provided_resume_index = conf.get("resume_index")
+
+        # Persist resume in Mongo under platforms.metadata.resume_index, keyed by platform_collection
+        # platform_collection is used as platform_id (expected to be ObjectId string when available)
+        resume_store = ResumeState(platform_id=platform_collection)
+
         if reset_progress:
+            # reset both Mongo and XCom state
+            resume_store.reset()
+            if ti is not None:
+                ti.xcom_push(key="resume_index", value=0)
             resume_index = 0
         else:
-            resume_index = (
-                int(provided_resume_index)
-                if provided_resume_index is not None
-                else int(ti.xcom_pull(key="resume_index") or 0) if ti is not None
-                else 0
-            )
+            if provided_resume_index is not None:
+                resume_index = int(provided_resume_index)
+            else:
+                mongo_resume = resume_store.get()
+                if mongo_resume:
+                    resume_index = int(mongo_resume)
+                else:
+                    resume_index = int(ti.xcom_pull(key="resume_index") or 0) if ti is not None else 0
+
+        # If a platform_id is provided, prefer MongoDB stored progress unless overridden
+        if not reset_progress and platform_id and provided_resume_index is None:
+            mongo_resume = resume_store.get()
+            if mongo_resume and mongo_resume > resume_index:
+                resume_index = mongo_resume
 
         if resume_index < 0 or resume_index > total_docs:
             logging.warning(
@@ -176,6 +196,11 @@ with DAG(
             resume_index += len(batch_doc_ids)
             if ti is not None:
                 ti.xcom_push(key="resume_index", value=resume_index)
+            # persist to Mongo as well
+            resume_store.set(resume_index)
+            # persist to Mongo if configured
+            if platform_id:
+                resume_store.set(resume_index)
             logging.info(
                 "Progress saved: processed %s/%s documents; resume_index=%s",
                 resume_index,
