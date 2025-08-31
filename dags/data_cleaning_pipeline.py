@@ -35,6 +35,9 @@ with DAG(
         "model": "gpt-5-nano-2025-08-07",
         "batch_size": 128,
         "doc_batch_size": 100,  # number of doc_ids to clean and ingest per batch
+        "max_workers": 8,  # parallel LLM workers
+        "min_chars_for_llm": 0,  # skip LLM for shorter texts
+        "sort_doc_ids": True,  # set False to skip sorting for speed
         "reset": False,  # reset resume progress
     },
 ) as dag:
@@ -65,6 +68,13 @@ with DAG(
         doc_batch_size: int = int(
             conf.get("doc_batch_size", params.get("doc_batch_size", 100))
         )
+        max_workers: int = int(conf.get("max_workers", params.get("max_workers", 8)))
+        min_chars_for_llm: int = int(
+            conf.get("min_chars_for_llm", params.get("min_chars_for_llm", 0))
+        )
+        sort_doc_ids: bool = bool(
+            conf.get("sort_doc_ids", params.get("sort_doc_ids", True))
+        )
         reset_progress: bool = bool(conf.get("reset", params.get("reset", False)))
 
         community_id, platform_collection = split_collection_name(collection)
@@ -79,7 +89,11 @@ with DAG(
         merged_by_doc: dict[str, dict[str, Any]] = group_and_merge_by_doc_id(
             scroll_all_points(client, collection=collection, batch_size=batch_size)
         )
-        doc_ids: list[str] = sorted(merged_by_doc.keys())
+        doc_ids: list[str]
+        if sort_doc_ids:
+            doc_ids = sorted(merged_by_doc.keys())
+        else:
+            doc_ids = list(merged_by_doc.keys())
         total_docs = len(doc_ids)
         logging.info("Merged into %s documents by doc_id", total_docs)
 
@@ -144,7 +158,10 @@ with DAG(
                 continue
 
             documents: list[Document] = build_documents(
-                merged=merged_subset, model=model
+                merged=merged_subset,
+                model=model,
+                max_workers=max_workers,
+                min_chars_for_llm=min_chars_for_llm,
             )
             logging.info(
                 "Built %s cleaned documents for current batch (%s..%s)",

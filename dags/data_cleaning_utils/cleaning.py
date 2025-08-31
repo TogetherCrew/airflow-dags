@@ -1,10 +1,15 @@
 import logging
 from collections import defaultdict
 from typing import Any, Iterable
+from concurrent.futures import ThreadPoolExecutor
 
 import json
 from llama_index.core import Document
 from qdrant_client import QdrantClient
+try:  # Optional include selector for reducing payload size if available
+    from qdrant_client.http.models import PayloadSelectorInclude
+except Exception:  # pragma: no cover - older clients may not have this
+    PayloadSelectorInclude = None  # type: ignore
 
 
 def split_collection_name(full_collection: str) -> tuple[str, str]:
@@ -220,7 +225,12 @@ def clean_text_with_llm(raw_text: str, model: str = "gpt-5-nano-2025-08-07") -> 
         return raw_text
 
 
-def build_documents(merged: dict[str, dict[str, Any]], model: str) -> list[Document]:
+def build_documents(
+    merged: dict[str, dict[str, Any]],
+    model: str,
+    max_workers: int = 4,
+    min_chars_for_llm: int = 0,
+) -> list[Document]:
     """
     Build llama-index Document objects for cleaned texts.
 
@@ -237,17 +247,27 @@ def build_documents(merged: dict[str, dict[str, Any]], model: str) -> list[Docum
         A list of Documents with cleaned text and original doc_id.
     """
     documents: list[Document] = []
-    for doc_id, bundle in merged.items():
-        raw_text: str = bundle.get("text", "")
+
+    # Materialize items once to allow ordered parallel processing
+    items: list[tuple[str, dict[str, Any]]] = list(merged.items())
+    raw_texts: list[str] = [bundle.get("text", "") for _, bundle in items]
+
+    def clean_single(input_text: str) -> str:
+        if min_chars_for_llm and len(input_text) < min_chars_for_llm:
+            return input_text
+        return clean_text_with_llm(raw_text=input_text, model=model)
+
+    if max_workers and max_workers > 1 and len(raw_texts) > 1:
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            cleaned_texts = list(executor.map(clean_single, raw_texts))
+    else:
+        cleaned_texts = [clean_single(t) for t in raw_texts]
+
+    for (doc_id, bundle), cleaned in zip(items, cleaned_texts):
         original_metadata: dict[str, Any] = dict(bundle.get("metadata", {}))
-
-        cleaned = clean_text_with_llm(raw_text=raw_text, model=model)
-
-        # Ensure doc_id is present and mark as cleaned without removing any existing fields
         if "doc_id" not in original_metadata:
             original_metadata["doc_id"] = str(doc_id)
         original_metadata["cleaned"] = True
-
         documents.append(
             Document(
                 text=cleaned,
@@ -278,10 +298,20 @@ def scroll_all_points(client: QdrantClient, collection: str, batch_size: int = 5
     """
     offset = None
     while True:
+        # Use payload include selector to reduce transfer if available
+        with_payload_arg = True
+        if PayloadSelectorInclude is not None:
+            try:
+                with_payload_arg = PayloadSelectorInclude(
+                    keys=["_node_content", "doc_id", "document_id", "ref_doc_id"]
+                )
+            except Exception:  # pragma: no cover - be resilient to client changes
+                with_payload_arg = True
+
         points, next_offset = client.scroll(
             collection_name=collection,
             with_vectors=False,
-            with_payload=True,
+            with_payload=with_payload_arg,
             limit=batch_size,
             offset=offset,
         )
