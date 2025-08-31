@@ -159,6 +159,7 @@ with DAG(
                 community_id=community_id,
                 collection_name=platform_collection,
                 testing=False,
+                use_cache=False,
             )
             pipe.run_pipeline(docs=docs)
 
