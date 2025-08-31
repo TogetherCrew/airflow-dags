@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime, timedelta
 from typing import Any, Optional
+from concurrent.futures import ThreadPoolExecutor, Future
 from data_cleaning_utils.cleaning import (
     split_collection_name,
     group_and_merge_by_doc_id,
@@ -147,70 +148,102 @@ with DAG(
             resume_index,
         )
 
-        ingestion_pipeline = CustomIngestionPipeline(
-            community_id=community_id,
-            collection_name=platform_collection,
-            use_cache=False,
-        )
+        # 4) Loop through batches with pipelined ingestion; overlap next batch build while previous ingests
+        ingest_pool = ThreadPoolExecutor(max_workers=1)
+        prev_future: Optional[Future] = None
+        prev_existing_ids: list[str] = []
+        prev_batch_len: int = 0
 
-        # 4) Loop through batches; after each successful batch, persist resume_index
-        while resume_index < total_docs:
-            batch_doc_ids = doc_ids[resume_index : resume_index + doc_batch_size]
-            # Guard against missing doc_ids due to prior mutations or data issues
-            existing_ids = [doc_id for doc_id in batch_doc_ids if doc_id in merged_by_doc]
-            if len(existing_ids) < len(batch_doc_ids):
-                missing = set(batch_doc_ids) - set(existing_ids)
-                logging.warning(
-                    "Skipping %s missing doc_ids in current batch: %s",
-                    len(missing),
-                    list(missing)[:5],
+        def _ingest_batch(docs: list[Document]) -> None:
+            pipe = CustomIngestionPipeline(
+                community_id=community_id,
+                collection_name=platform_collection,
+                testing=False,
+            )
+            pipe.run_pipeline(docs=docs)
+
+        try:
+            while resume_index < total_docs:
+                batch_doc_ids = doc_ids[resume_index : resume_index + doc_batch_size]
+                # Guard against missing doc_ids due to prior mutations or data issues
+                existing_ids = [doc_id for doc_id in batch_doc_ids if doc_id in merged_by_doc]
+                if len(existing_ids) < len(batch_doc_ids):
+                    missing = set(batch_doc_ids) - set(existing_ids)
+                    logging.warning(
+                        "Skipping %s missing doc_ids in current batch: %s",
+                        len(missing),
+                        list(missing)[:5],
+                    )
+
+                merged_subset: dict[str, dict[str, Any]] = {
+                    doc_id: merged_by_doc[doc_id] for doc_id in existing_ids
+                }
+
+                if not merged_subset:
+                    logging.info("No available documents in this batch; advancing resume_index")
+                    resume_index += len(batch_doc_ids)
+                    if ti is not None:
+                        ti.xcom_push(key="resume_index", value=resume_index)
+                    continue
+
+                documents: list[Document] = build_documents(
+                    merged=merged_subset,
+                    model=model,
+                    max_workers=max_workers,
+                    min_chars_for_llm=min_chars_for_llm,
+                )
+                logging.info(
+                    "Built %s cleaned documents for current batch (%s..%s)",
+                    len(documents),
+                    resume_index,
+                    resume_index + len(batch_doc_ids) - 1,
                 )
 
-            merged_subset: dict[str, dict[str, Any]] = {
-                doc_id: merged_by_doc[doc_id] for doc_id in existing_ids
-            }
+                # If a previous ingestion is in flight, wait for completion, then persist progress
+                if prev_future is not None:
+                    prev_future.result()
+                    resume_index += prev_batch_len
+                    if ti is not None:
+                        ti.xcom_push(key="resume_index", value=resume_index)
+                    resume_store.set(resume_index)
+                    if platform_id:
+                        resume_store.set(resume_index)
+                    logging.info(
+                        "Progress saved: processed %s/%s documents; resume_index=%s",
+                        resume_index,
+                        total_docs,
+                        resume_index,
+                    )
+                    # Free memory of the completed batch
+                    for did in prev_existing_ids:
+                        merged_by_doc.pop(did, None)
 
-            if not merged_subset:
-                logging.info("No available documents in this batch; advancing resume_index")
-                resume_index += len(batch_doc_ids)
+                # Submit current batch ingestion asynchronously
+                prev_future = ingest_pool.submit(_ingest_batch, documents)
+                prev_existing_ids = existing_ids
+                prev_batch_len = len(batch_doc_ids)
+
+                # Loop continues to build the next batch while current ingests
+
+        finally:
+            # Ensure last batch (if any) is committed and persisted
+            if prev_future is not None:
+                prev_future.result()
+                resume_index += prev_batch_len
                 if ti is not None:
                     ti.xcom_push(key="resume_index", value=resume_index)
-                continue
-
-            documents: list[Document] = build_documents(
-                merged=merged_subset,
-                model=model,
-                max_workers=max_workers,
-                min_chars_for_llm=min_chars_for_llm,
-            )
-            logging.info(
-                "Built %s cleaned documents for current batch (%s..%s)",
-                len(documents),
-                resume_index,
-                resume_index + len(batch_doc_ids) - 1,
-            )
-
-            ingestion_pipeline.run_pipeline(docs=documents)
-
-            # advance the resume index only after successful ingestion
-            resume_index += len(batch_doc_ids)
-            if ti is not None:
-                ti.xcom_push(key="resume_index", value=resume_index)
-            # persist to Mongo as well
-            resume_store.set(resume_index)
-            # persist to Mongo if configured
-            if platform_id:
                 resume_store.set(resume_index)
-            logging.info(
-                "Progress saved: processed %s/%s documents; resume_index=%s",
-                resume_index,
-                total_docs,
-                resume_index,
-            )
-
-            # Free up memory by removing processed ids from the dict without corrupting it
-            for doc_id in existing_ids:
-                merged_by_doc.pop(doc_id, None)
+                if platform_id:
+                    resume_store.set(resume_index)
+                logging.info(
+                    "Final progress saved: processed %s/%s documents; resume_index=%s",
+                    resume_index,
+                    total_docs,
+                    resume_index,
+                )
+                for did in prev_existing_ids:
+                    merged_by_doc.pop(did, None)
+            ingest_pool.shutdown(wait=True)
 
         logging.info("All %s documents cleaned and re-ingested for %s", total_docs, collection)
 
