@@ -91,7 +91,7 @@ with DAG(
 
         # 1) Scroll points lazily and group/merge by doc_id without materializing all points
         merged_by_doc: dict[str, dict[str, Any]] = group_and_merge_by_doc_id(
-            scroll_all_points(client, collection=collection, batch_size=batch_size)
+            scroll_all_points(client, collection=collection, batch_size=batch_size), reset=reset_progress
         )
         doc_ids: list[str]
         if sort_doc_ids:

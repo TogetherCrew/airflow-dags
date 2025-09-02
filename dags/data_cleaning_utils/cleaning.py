@@ -46,7 +46,7 @@ def split_collection_name(full_collection: str) -> tuple[str, str]:
     return community_id, remainder
 
 
-def extract_text_and_order(payload: dict) -> tuple[str, int | None]:
+def extract_text_and_order(payload: dict, reset: bool = False) -> tuple[str, int | None]:
     """
     Extract the textual content and an optional ordering key from a Qdrant point payload.
 
@@ -54,6 +54,8 @@ def extract_text_and_order(payload: dict) -> tuple[str, int | None]:
     ----------
     payload : dict
         The payload of a Qdrant point.
+    reset : bool
+        Whether to skip the cleaned data or start from the beginning
 
     Returns
     -------
@@ -67,10 +69,18 @@ def extract_text_and_order(payload: dict) -> tuple[str, int | None]:
     node_blob = payload.get("_node_content")
     if isinstance(node_blob, str):
         try:
+            # Convert to python compatible json
+            node_blob = node_blob.replace("True", "true").replace("False", "false").replace("None", "null")
             node_json = json.loads(node_blob)
-            text_value = node_json.get("text", "") or ""
-            order_key = node_json.get("start_char_idx")
-        except Exception:  # noqa: BLE001 - best-effort parsing
+            if not reset and node_json["metadata"].get("cleaned") is not True:
+                text_value = ""
+                order_key = None
+            else:
+                text_value = node_json.get("text", "") or ""
+                order_key = node_json.get("start_char_idx")
+            
+        except Exception as exp:  # noqa: BLE001 - best-effort parsing
+            print("Failed to parse node blob: ", exp)
             text_value = ""
 
     # Fallback: sometimes text may be present at top-level payload
@@ -107,7 +117,7 @@ def extract_node_metadata(payload: dict) -> dict[str, Any]:
     return {}
 
 
-def group_and_merge_by_doc_id(points: Iterable) -> dict[str, dict[str, Any]]:
+def group_and_merge_by_doc_id(points: Iterable, reset: bool = False) -> dict[str, dict[str, Any]]:
     """
     Group all nodes by their doc_id and merge their texts in order.
 
@@ -115,6 +125,8 @@ def group_and_merge_by_doc_id(points: Iterable) -> dict[str, dict[str, Any]]:
     ----------
     points : Iterable
         Iterable of Qdrant points with payloads containing 'doc_id' and '_node_content'.
+    reset : bool
+        Whether to skip the cleaned data or start from the beginning
 
     Returns
     -------
@@ -147,7 +159,7 @@ def group_and_merge_by_doc_id(points: Iterable) -> dict[str, dict[str, Any]]:
             # Ensure doc_id is coerced to string immediately after retrieval
             doc_id_str = str(doc_id)
 
-            text, order_key = extract_text_and_order(payload)
+            text, order_key = extract_text_and_order(payload, reset=reset)
             if not text:
                 continue
 
