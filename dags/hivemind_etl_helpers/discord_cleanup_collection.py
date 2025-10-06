@@ -23,7 +23,7 @@ def cleanup_discord_summary_collections(community_id: str, platform_id: str) -> 
     try:
         # Create a CustomIngestionPipeline instance to access the Qdrant client
         temp_pipeline = CustomIngestionPipeline(
-            community_id=community_id, 
+            community_id=community_id,
             collection_name=f"{platform_id}_summary",
             use_cache=False,
         )
@@ -42,15 +42,15 @@ def cleanup_discord_summary_collections(community_id: str, platform_id: str) -> 
         db = mongo_client[mongo_db_name]
         
         # Delete metadata collection
-        metadata_collection_name = f"{platform_id}/metadata"
+        metadata_collection_name = f"{platform_id}_summary/metadata"
         if metadata_collection_name in db.list_collection_names():
             db.drop_collection(metadata_collection_name)
             logging.info(f"Successfully deleted MongoDB collection: {metadata_collection_name}")
         else:
             logging.info(f"MongoDB collection {metadata_collection_name} does not exist")
         
-        # Delete data collection  
-        data_collection_name = f"{platform_id}/data"
+        # Delete data collection
+        data_collection_name = f"{platform_id}_summary/data"
         if data_collection_name in db.list_collection_names():
             db.drop_collection(data_collection_name)
             logging.info(f"Successfully deleted MongoDB collection: {data_collection_name}")
