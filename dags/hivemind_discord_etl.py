@@ -27,13 +27,33 @@ with DAG(
         Getting all communities having discord from database
         """
         from_start = kwargs["dag_run"].conf.get("from_start", False)
-        logging.info(f"From start: {from_start}")
+        community_id_filter = kwargs["dag_run"].conf.get("community_id")
+        platform_id_filter = kwargs["dag_run"].conf.get("platform_id")
+        cleanup_collections = kwargs["dag_run"].conf.get("cleanup_collections", False)
+        logging.info(
+            f"From start: {from_start} | community_id: {community_id_filter} | platform_id: {platform_id_filter}"
+        )
 
         communities = ModulesDiscord().get_learning_platforms()
+
+        # Filter by optional community_id/platform_id if provided via dag_run.conf
+        if community_id_filter or platform_id_filter:
+            communities = [
+                c
+                for c in communities
+                if (
+                    (community_id_filter is None or c.get("community_id") == str(community_id_filter))
+                    and (platform_id_filter is None or c.get("platform_id") == str(platform_id_filter))
+                )
+            ]
 
         if from_start:
             for community in communities:
                 community["from_start"] = from_start
+
+        if cleanup_collections:
+            for community in communities:
+                community["cleanup_collections"] = cleanup_collections
 
         return communities
 
@@ -45,7 +65,7 @@ with DAG(
         selected_channels = community_info["selected_channels"]
         from_date = community_info["from_date"]
         from_start = community_info.get("from_start", False)
-
+        cleanup_collections = community_info.get("cleanup_collections", False)
         Settings.llm = OpenAI(model="gpt-4o-mini-2024-07-18")
 
         logging.info(
@@ -57,6 +77,7 @@ with DAG(
             selected_channels=selected_channels,
             default_from_date=from_date,
             from_start=from_start,
+            cleanup_collections=cleanup_collections,
         )
         logging.info(
             f"Community {community_id} Job finished | platform_id: {platform_id}"
@@ -86,9 +107,24 @@ with DAG(
         """
         from_start = kwargs["dag_run"].conf.get("from_start", False)
         cleanup_collections = kwargs["dag_run"].conf.get("cleanup_collections", False)
-        logging.info(f"From start: {from_start}, Cleanup collections: {cleanup_collections}")
+        community_id_filter = kwargs["dag_run"].conf.get("community_id")
+        platform_id_filter = kwargs["dag_run"].conf.get("platform_id")
+        logging.info(
+            f"From start: {from_start}, Cleanup collections: {cleanup_collections} | community_id: {community_id_filter} | platform_id: {platform_id_filter}"
+        )
 
         communities = ModulesDiscord().get_learning_platforms()
+
+        # Filter by optional community_id/platform_id if provided via dag_run.conf
+        if community_id_filter or platform_id_filter:
+            communities = [
+                c
+                for c in communities
+                if (
+                    (community_id_filter is None or c.get("community_id") == str(community_id_filter))
+                    and (platform_id_filter is None or c.get("platform_id") == str(platform_id_filter))
+                )
+            ]
 
         if from_start:
             for community in communities:

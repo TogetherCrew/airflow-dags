@@ -7,6 +7,9 @@ from hivemind_etl_helpers.src.db.discord.discord_raw_message_to_document import 
 from hivemind_etl_helpers.src.db.discord.find_guild_id import (
     find_guild_id_by_platform_id,
 )
+from hivemind_etl_helpers.discord_cleanup_collection import (
+    cleanup_discord_vector_collections,
+)
 from qdrant_client.http import models
 from tc_hivemind_backend.ingest_qdrant import CustomIngestionPipeline
 
@@ -17,6 +20,7 @@ def process_discord_guild_mongo(
     selected_channels: list[str],
     default_from_date: datetime,
     from_start: bool = False,
+    cleanup_collections: bool = False,
 ) -> None:
     """
     process the discord guild messages from mongodb
@@ -40,13 +44,15 @@ def process_discord_guild_mongo(
     logging.info(
         f"COMMUNITYID: {community_id}, GUILDID: {guild_id} | from_start: {from_start}"
     )
-    
-    collection_name = platform_id
-    
+
+    # Cleanup collections if requested
+    if cleanup_collections:
+        cleanup_discord_vector_collections(community_id, platform_id)
+
     # Set up ingestion pipeline
     ingestion_pipeline = CustomIngestionPipeline(
         community_id=community_id,
-        collection_name=collection_name,
+        collection_name=platform_id,
         use_cache=False,
     )
 
