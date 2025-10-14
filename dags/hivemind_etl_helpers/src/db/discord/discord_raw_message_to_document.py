@@ -11,7 +11,7 @@ def discord_raw_to_documents(
     guild_id: str,
     selected_channels: list[str],
     from_date: datetime | None,
-    to_date: datetime | None,
+    to_date: datetime | None = None,
 ) -> list[Document]:
     """
     fetch the discord raw messages from db and convert them to llama_index Documents
