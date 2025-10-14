@@ -2,6 +2,7 @@
 This DAG is used just for research purposes. and not for production environment
 """
 import logging
+import json
 from datetime import datetime
 from dateutil.parser import parse
 from airflow import DAG
@@ -67,10 +68,12 @@ with DAG(
         to_date = dag_params.get("to_date")
         to_date = parse(to_date) if to_date else None
 
-        selected_channels = dag_params.get("selected_channels")
 
         if selected_channels is None:
             raise ValueError("selected_channels is required")
+
+        selected_channels = dag_params.get("selected_channels")
+        selected_channels = json.loads(selected_channels)
 
         # the specific guild id of a discord server
         guild_id = dag_params.get("guild_id")
