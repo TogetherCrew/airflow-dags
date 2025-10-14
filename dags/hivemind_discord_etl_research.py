@@ -119,7 +119,7 @@ with DAG(
         # Cleanup collections if requested
         if cleanup_collections:
             logging.info(f"Cleaning up collections for community_id: {community_id} | platform_id: {platform_id + '_research'}")
-            cleanup_discord_vector_collections(community_id, platform_id + "_research")
+            cleanup_discord_vector_collections(community_id, platform_id + collection_name_postfix + "_research")
         
         logging.info(f"Extracting messages for community_id: {community_id} | platform_id: {platform_id + '_research'}")
         docs = discord_raw_to_documents(
