@@ -23,7 +23,7 @@ from llama_index.llms.openai import OpenAI
 with DAG(
     dag_id="discord_vector_store_etl_research",
     start_date=datetime(2024, 1, 1),
-    schedule_interval="0 2 * * *",
+    schedule_interval=None,
     catchup=False,
     max_active_runs=1,
     max_active_tasks=3,
