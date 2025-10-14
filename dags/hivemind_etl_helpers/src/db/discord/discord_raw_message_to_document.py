@@ -10,7 +10,8 @@ from llama_index.core import Document
 def discord_raw_to_documents(
     guild_id: str,
     selected_channels: list[str],
-    from_date: datetime,
+    from_date: datetime | None,
+    to_date: datetime | None = None,
 ) -> list[Document]:
     """
     fetch the discord raw messages from db and convert them to llama_index Documents
@@ -19,8 +20,11 @@ def discord_raw_to_documents(
     -----------
     guild_id : str
         the guild id to fetch their `rawinfos` messages
-    from_date : datetime | None
+    from_date : datetime
         get the raw data from a specific date
+        default is None, meaning get all the messages
+    to_date : datetime | None
+        get the raw data to a specific date
         default is None, meaning get all the messages
 
     Returns
@@ -28,7 +32,7 @@ def discord_raw_to_documents(
     messages_docuemnt : list[llama_index.Document]
         list of messages converted to documents
     """
-    raw_mongo_messages = fetch_raw_messages(guild_id, selected_channels, from_date)
+    raw_mongo_messages = fetch_raw_messages(guild_id, selected_channels, from_date, to_date)
     messages_docuemnt = transform_discord_raw_messages(guild_id, raw_mongo_messages)
 
     return messages_docuemnt

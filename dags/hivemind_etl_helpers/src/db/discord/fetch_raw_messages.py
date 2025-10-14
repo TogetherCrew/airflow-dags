@@ -7,6 +7,7 @@ def fetch_raw_messages(
     guild_id: str,
     selected_channels: list[str],
     from_date: datetime,
+    to_date: datetime | None = None,
     **kwargs,
 ) -> list[dict]:
     """
@@ -20,6 +21,9 @@ def fetch_raw_messages(
         the selected channels id to process messages on discord
     from_date : datetime
         get the raw data from a specific date
+        default is None, meaning get all the messages
+    to_date : datetime | None
+        get the raw data to a specific date
         default is None, meaning get all the messages
     kwargs : dict
         min_word_limit : int
@@ -42,7 +46,7 @@ def fetch_raw_messages(
             {
                 "author": {"$in": user_ids},
                 "type": {"$ne": 18},
-                "createdDate": {"$gte": from_date},
+                "createdDate": {"$gte": from_date, "$lt": to_date} if to_date else {"$gte": from_date},
                 "isGeneratedByWebhook": False,
                 "channelId": {"$in": selected_channels},
                 "$expr": {"$gt": [{"$strLenCP": "$content"}, min_word_limit]},
