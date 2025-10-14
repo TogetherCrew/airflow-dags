@@ -3,7 +3,7 @@ This DAG is used just for research purposes. and not for production environment
 """
 import logging
 from datetime import datetime
-
+from dateutil.parser import parse
 from airflow import DAG
 from airflow.decorators import task
 from dotenv import load_dotenv
@@ -61,9 +61,11 @@ with DAG(
 
         # from a specific date
         from_date = dag_params.get("from_date")
+        from_date = parse(from_date) if from_date else None
 
         # to a specific date
         to_date = dag_params.get("to_date")
+        to_date = parse(to_date) if to_date else None
 
         selected_channels = dag_params.get("selected_channels")
 
