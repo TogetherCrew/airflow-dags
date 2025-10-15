@@ -50,7 +50,9 @@ with DAG(
         # from_start = dag_params.get("from_start", False)
         community_id = dag_params.get("community_id")
         platform_id = dag_params.get("platform_id")
-        collection_name_postfix = dag_params.get("collection_name_postfix", "")
+        collection_name_postfix = dag_params.get("collection_name_postfix")
+        if collection_name_postfix is None:
+            collection_name_postfix = ""
 
         if platform_id is None:
             raise ValueError("platform_id is required")
