@@ -141,7 +141,7 @@ with DAG(
             community_id=community_id,
             collection_name=platform_id + collection_name_postfix + "_research",
             use_cache=False,
-            embedding_model=embedding_model,
+            embed_model=embedding_model,
             embed_dim=1536,
         )
 
