@@ -158,7 +158,7 @@ with DAG(
             logging.info(f"Processing batch {i//50}/{len(docs)//50}")
             ingestion_pipeline.run_pipeline(
                 docs=batch,
-                transformations_pipeline=transformations_pipeline,
+                transformations=transformations_pipeline,
             )
         logging.info("Finished embedding the documents!")
 
