@@ -11,6 +11,7 @@ def prepare_grouped_data(
     guild_id: str,
     from_date: datetime,
     selected_channels: list[str],
+    to_date: datetime | None = None,
 ) -> dict[float | str, dict[str, dict[str | None, list]]]:
     """
     prepare the nested dictionary of grouped data
@@ -34,7 +35,7 @@ def prepare_grouped_data(
     """
     raw_daily_grouped = {}
     raw_mongo_grouped_messages = fetch_raw_msg_grouped(
-        guild_id, from_date, selected_channels
+        guild_id, from_date, selected_channels, to_date=to_date
     )
 
     # saving the grouping per day
