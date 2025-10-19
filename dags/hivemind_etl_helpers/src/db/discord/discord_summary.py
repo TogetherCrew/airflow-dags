@@ -132,6 +132,7 @@ class DiscordSummary(PrepareSummaries):
         guild_id: str,
         selected_channels: list[str],
         from_date: datetime,
+        to_date: datetime | None = None,
     ) -> tuple[list[Document], list[Document], list[Document],]:
         """
         prepare per thread summaries of discord messages.
@@ -157,7 +158,7 @@ class DiscordSummary(PrepareSummaries):
         daily_summary_documenets : list[llama_index.Document]
             list of daily summaries converted to llama_index documents
         """
-        raw_data_grouped = prepare_grouped_data(guild_id, from_date, selected_channels)
+        raw_data_grouped = prepare_grouped_data(guild_id, from_date, selected_channels, to_date=to_date)
         if raw_data_grouped != {}:
             thread_summaries = self.prepare_thread_summaries(
                 guild_id,
@@ -201,6 +202,7 @@ class DiscordSummary(PrepareSummaries):
         selected_channels: list[str],
         from_date: datetime,
         batch_size: int = 50,
+        to_date: datetime | None = None,
     ) -> Iterator[list[Document]]:
         """
         Stream summary documents in sorted batches while preparing them.
@@ -222,7 +224,7 @@ class DiscordSummary(PrepareSummaries):
             A batch of documents sorted by date
         """
         raw_data_grouped = prepare_grouped_data(
-            guild_id, from_date, selected_channels
+            guild_id, from_date, selected_channels, to_date=to_date
         )
 
         if raw_data_grouped == {}:

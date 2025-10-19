@@ -64,6 +64,7 @@ def fetch_raw_msg_grouped(
     from_date: datetime,
     selected_channels: list[str],
     sort: int = 1,
+    to_date: datetime | None = None,
 ) -> list[dict[str, dict]]:
     """
     fetch raw messages grouped by day
@@ -102,17 +103,21 @@ def fetch_raw_msg_grouped(
     # the pipeline grouping data per day
     pipeline: list[dict] = []
 
+    # Build createdDate range
+    created_date_filter = {"$gte": from_date}
+    if to_date is not None:
+        created_date_filter["$lt"] = to_date
+    else:
+        created_date_filter["$lt"] = datetime.now().replace(
+            hour=0, minute=0, second=0, microsecond=0
+        )
+
     pipeline.append(
         {
             "$match": {
                 "author": {"$in": user_ids},
                 "type": {"$ne": 18},
-                "createdDate": {
-                    "$gte": from_date,
-                    "$lt": datetime.now().replace(
-                        hour=0, minute=0, second=0, microsecond=0
-                    ),
-                },
+                "createdDate": created_date_filter,
                 "isGeneratedByWebhook": False,
                 "channelId": {"$in": selected_channels},
             }
