@@ -26,6 +26,9 @@ from hivemind_etl_helpers.src.db.discord.discord_summary import DiscordSummary
 from llama_index.core.response_synthesizers import get_response_synthesizer
 from qdrant_client.http import models
 from tc_hivemind_backend.ingest_qdrant import CustomIngestionPipeline
+from tc_hivemind_backend.embeddings import CohereEmbedding
+
+from llama_index.core.node_parser import SemanticSplitterNodeParser
 
 
 with DAG(
@@ -140,11 +143,14 @@ with DAG(
             except Exception as cleanup_error:  # pragma: no cover - defensive
                 logging.warning(f"Cleanup failed (non-fatal): {cleanup_error}")
 
+        embedding_model = CohereEmbedding(model_name="embed-v4.0")
         # Set up ingestion pipeline with research collection name
         ingestion_pipeline = CustomIngestionPipeline(
             community_id=community_id,
             collection_name=collection_name,
             use_cache=False,
+            embed_model=embedding_model,
+            embed_dim=1536,
         )
 
         # Resolve latest date from research collection for daily summaries
@@ -171,6 +177,14 @@ with DAG(
             verbose=False,
         )
 
+        transformations_pipeline = [
+            SemanticSplitterNodeParser(
+                embed_model=embedding_model,
+                buffer_size=5,
+            ),
+            embedding_model,
+        ]
+
         logging.info("Preparing (research) summaries and streaming batches into Qdrant!")
         batch_index = 0
         for batch in discord_summary.stream_summary_documents(
@@ -182,7 +196,10 @@ with DAG(
         ):
             logging.info(f"Processing (research) streamed batch {batch_index} | size={len(batch)}")
             batch.sort(key=lambda d: d.metadata.get("date", "0000-00-00"))
-            ingestion_pipeline.run_pipeline(docs=batch)
+            ingestion_pipeline.run_pipeline(
+                docs=batch,
+                transformations=transformations_pipeline,
+            )
             batch_index += 1
 
         logging.info("Finished streaming (research) summaries into Qdrant database!")
